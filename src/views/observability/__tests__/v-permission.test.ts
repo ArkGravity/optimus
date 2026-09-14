@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { NodeTypes, parse, type ElementNode, type RootNode, type TemplateChildNode } from '@vue/compiler-dom'
-import seed from '../../../../../optimus-be/internal/seed/seed.go?raw'
+import contract from '../../../test/fixtures/menu-contract.json'
 import en from '../../../locales/en-US.json?raw'
 import zh from '../../../locales/zh-CN.json?raw'
 import types from '../../../types/observability.ts?raw'
@@ -67,15 +67,14 @@ describe('P5 structural permission/casing audit', () => {
     ['observability/kubernetes/Index', 'observability:metric:read', '../kubernetes/Index.vue'],
     ['observability/dashboards/List', 'observability:dashboard:read', '../dashboards/List.vue'],
     ['observability/datasources/List', 'observability:datasource:read', '../datasources/List.vue'],
-  ] as const)('seed row %s resolves exact Linux file', (component, permission, file) => {
+  ] as const)('menu contract %s resolves exact Linux file', (component, permission, file) => {
     const path = `/${component.replace('/List', '').replace('/Index', '')}`
-    const row = seed.split('\n').find(line => line.includes(`Component: "${component}"`)) ?? ''
-    expect(row).toContain(`Path: "${path}"`)
-    expect(row).toContain(`PermissionCode: sp("${permission}")`)
+    const row = contract.menus.find(menu => menu.component === component)
+    expect(row).toMatchObject({ path, permission })
     expect(allViews[file]).toBeTypeOf('string')
   })
   it('has no structured alert identifiers', () => {
-    const source = [seed, en, zh, types, ...Object.values(allViews), ...Object.values(apis)].join('\n')
+    const source = [JSON.stringify(contract), en, zh, types, ...Object.values(allViews), ...Object.values(apis)].join('\n')
     expect(source).not.toMatch(/(?:Code|Path|Component|PermissionCode|interface|type|const|function)[^\n]*(?:observability.*alert|alert.*observability)/i)
   })
 })

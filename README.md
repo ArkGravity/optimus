@@ -1,37 +1,84 @@
 # optimus-fe
 
-P0 frontend for Optimus (Vue 3 + AntdV + Pinia + vue-router + vue-i18n).
+Optimus Vue 3 / TypeScript frontend with Ant Design Vue, Pinia, vue-router and
+vue-i18n. Includes administration, credentials, Kubernetes, applications, AWS
+assets, observability and application delivery.
 
-## Prerequisites
+- Repository: https://github.com/ArkGravity/optimus-fe
+- Backend: https://github.com/ArkGravity/optimus-be
+- [Conventions](AGENTS.md) · [Documentation/contracts](docs/README.md)
 
-- bun >= 1.1 (`brew install oven-sh/bun/bun`)
-- Backend running on `http://localhost:8080` (see `optimus-be/README.md`)
+## Development
 
-## Scripts
+Use Bun 1.3.x. Builds/tests work from a standalone clone. Runtime API requests
+require a backend; Vite proxies `/api/v1` to http://localhost:8080.
 
 ```bash
-bun install              # install deps
-bun run dev              # vite dev server at http://localhost:5173
-bun run build            # vue-tsc + vite build into ./dist
-bun run preview          # preview the production build
-bun run lint             # eslint --max-warnings=0
-bun run typecheck        # vue-tsc --noEmit
-bun run i18n:check       # scripts/check-i18n-keys.ts (missing keys + zh/en symmetry)
-bun run test             # vitest run
-bun run test:watch       # vitest watch
+bun install --frozen-lockfile
+bun run dev              # http://localhost:5173
+bun run lint
+bun run typecheck
+bun run i18n:check
+bun run test
+bun run build            # dist/
 ```
 
-## Architecture notes
+Start the backend using its README, save the administrator password printed by
+seed, then sign in through the frontend. Use Bun only. Maintain Chinese/English
+locale parity and route/directive permission gates. CI runs every check above.
 
-- All API requests go through `src/api/client.ts` (axios + single-flight refresh).
-- Routes split into static (login/403/404/500/profile) and dynamic (injected from `/me/menus` after first authenticated navigation).
-- Permissions enforced two ways: `to.meta.permission` on routes, and `v-permission` on DOM elements.
-- i18n keys live in `src/locales/{zh-CN,en-US}.json` and are validated by `bun run i18n:check`.
-- Production deployment (nginx + Dockerfile) is Plan 3.
+## Container
 
-## First-run checklist
+The Docker build context is this repository root:
 
-1. `cd ../optimus-be && docker compose up -d && make migrate-up && make run`
-2. Note the admin password printed once on first boot.
-3. `cd ../optimus-fe && bun install && bun run dev`
-4. Open http://localhost:5173, log in as admin.
+```bash
+docker build -t local/optimus-fe:dev .
+docker run --rm -p 8081:80 \
+  -e BACKEND_URL=http://host.docker.internal:8080 \
+  local/optimus-fe:dev
+```
+
+Use an upstream reachable from the container; the host example depends on the
+runtime's host DNS mapping. For a shared Docker network, attach `--network` and
+use the backend service name. `BACKEND_URL` defaults to `http://optimus-be:8080`
+and must be scheme/host/port without an API path or trailing slash.
+
+nginx renders `nginx.conf` at startup using its official template mechanism and
+proxies `/api/v1/` and `/swagger/`. It serves the SPA with gzip, security headers,
+immutable hashed assets and an uncached HTML shell. Changing the upstream does
+not require rebuilding. Do not put secrets in Vite build inputs.
+
+The integrated Dev/Production Compose stack belongs to
+[optimus-be](https://github.com/ArkGravity/optimus-be) and runs this image through
+the optional `web` profile with `FRONTEND_VERSION`. Frontend and backend Git SHA
+tags are independent. Local container work uses Colima.
+
+## CI and image publishing
+
+[ci.yaml](.github/workflows/ci.yaml) runs quality and compilation checks before
+Docker build. Pull requests and dev pushes build without publishing. Main pushes
+and manual main runs publish the same build to both registries:
+
+- `ghcr.io/arkgravity/optimus-fe:main-<short-sha>`
+- `docker.io/logic379/optimus-fe:main-<short-sha>`
+
+Configure Actions settings at repository or accessible organization scope:
+
+| Type | Name | Value |
+| --- | --- | --- |
+| Variable | `DOCKERHUB_USERNAME` | Docker Hub login with write access to logic379 |
+| Variable | `DOCKERHUB_NAMESPACE` | `logic379` |
+| Secret | `DOCKERHUB_TOKEN` | Docker Hub access token with write permission |
+
+GHCR uses `GITHUB_TOKEN` with `packages: write`; permit Actions package creation
+in the organization. Check package visibility separately for anonymous pulls.
+GitHub does not allow reading back old Actions secrets: configure the token for
+this repository, then rerun Actions → ci → Run workflow on main. Missing
+credentials fail the main publishing job with an explicit configuration error.
+
+## Codex
+
+`.codex/config.toml` contains project MCP configuration. Export `MEM0_API_KEY`
+and `CONTEXT7_API_KEY`, install `serena` on PATH, and open this repository as
+the project. Credentials and local agent caches are excluded from Git and Docker.
+Configuration follows the [official reference](https://learn.chatgpt.com/docs/config-file/config-reference).
