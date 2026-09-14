@@ -1,0 +1,135 @@
+name: ci
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  backend-quality:
+    name: Backend quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+          cache: true
+          cache-dependency-path: go.sum
+
+      - name: go mod download
+        run: go mod download
+
+      - name: install tools
+        run: |
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.64.8
+          go install github.com/swaggo/swag/cmd/swag@v1.16.4
+          go install github.com/securego/gosec/v2/cmd/gosec@v2.22.7
+
+      - name: lint
+        run: make lint
+
+      - name: swagger-diff
+        run: make swagger-diff
+
+      - name: perm-check
+        run: make perm-check
+
+      - name: gosec
+        run: gosec -severity medium -confidence medium -quiet ./...
+
+  backend-unit:
+    name: Backend unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+          cache: true
+          cache-dependency-path: go.sum
+
+      - name: go mod download
+        run: go mod download
+
+      - name: unit tests
+        run: make test
+
+  backend-dbtest:
+    name: Backend database tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+          cache: true
+          cache-dependency-path: go.sum
+
+      - name: go mod download
+        run: go mod download
+
+      - name: dbtest (with real Postgres via dockertest)
+        run: make test-int
+
+  image:
+    name: Build and publish image
+    runs-on: ubuntu-latest
+    needs: [backend-quality, backend-unit, backend-dbtest]
+    permissions:
+      contents: read
+      packages: write
+    env:
+      PUBLISH: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+      DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME || secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_NAMESPACE: ${{ vars.DOCKERHUB_NAMESPACE || 'logic379' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Check publishing configuration
+        if: env.PUBLISH == 'true'
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          test -n "$DOCKERHUB_USERNAME" || { echo '::error::Set DOCKERHUB_USERNAME variable'; exit 1; }
+          test -n "$DOCKERHUB_NAMESPACE" || { echo '::error::Set DOCKERHUB_NAMESPACE variable'; exit 1; }
+          test -n "$DOCKERHUB_TOKEN" || { echo '::error::Set DOCKERHUB_TOKEN secret'; exit 1; }
+      - name: Log in to GHCR
+        if: env.PUBLISH == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Log in to Docker Hub
+        if: env.PUBLISH == 'true'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Generate image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/${{ github.repository }}
+            name=docker.io/${{ env.DOCKERHUB_NAMESPACE }}/optimus-be,enable=${{ env.PUBLISH == 'true' }}
+          tags: type=sha,prefix=${{ github.ref_name }}-,format=short
+      - name: Build image (publish main to both registries)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          push: ${{ env.PUBLISH == 'true' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: VERSION=${{ github.sha }}

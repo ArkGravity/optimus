@@ -29,12 +29,12 @@ chmod 600 "$P6_SMOKE_DIR/kubeconfig"
 ```
 
 Start only disposable PostgreSQL from the shared repository Compose stack, then
-run Optimus from the built server binary on the host. Ignore any deploy `.env`
+run Optimus from the built server binary on the host. Ignore the repository `.env`
 so the smoke remains isolated and deterministic. Keep disposable secrets and
 the server log private.
 
 ```bash
-docker compose --env-file /dev/null -f ../deploy/docker-compose.yml \
+docker compose --env-file /dev/null -f docker-compose.yml \
   -p "$P6_COMPOSE_PROJECT" up -d postgres
 export OPTIMUS_JWT_SECRET="$(openssl rand -hex 32)"
 export OPTIMUS_VAULT_MASTER_KEY="$(openssl rand -base64 32)"
@@ -193,7 +193,7 @@ wait "$P6_SERVER_PID"
 docker rm -f optimus-p6-chart-repo
 kubectl config use-context colima
 kubectl delete namespace "$P6_NAMESPACE" --wait=true --timeout=5m
-docker compose --env-file /dev/null -f ../deploy/docker-compose.yml \
+docker compose --env-file /dev/null -f docker-compose.yml \
   -p "$P6_COMPOSE_PROJECT" down -v
 find "$P6_SMOKE_DIR" -type f -exec chmod 600 {} +
 rm -rf -- "$P6_SMOKE_DIR"

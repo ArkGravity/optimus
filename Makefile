@@ -30,11 +30,13 @@ lint:
 
 swag:
 	swag init -g cmd/server/main.go -o api/docs --parseDependency --parseInternal
-	cp api/docs/swagger.json ../docs/api/swagger.json
+	cp api/docs/swagger.json docs/api/swagger.json
 
 swagger-diff:
 	@swag init -g cmd/server/main.go -o "$(SWAG_DIFF_TMP)" --parseDependency --parseInternal >/dev/null
-	@diff -q "$(SWAG_DIFF_TMP)/swagger.json" ../docs/api/swagger.json || \
+	@diff -q "$(SWAG_DIFF_TMP)/swagger.json" api/docs/swagger.json || \
+	  (echo "embedded swagger.json is stale — run 'make swag' and commit"; exit 1)
+	@diff -q "$(SWAG_DIFF_TMP)/swagger.json" docs/api/swagger.json || \
 	  (echo "swagger.json is stale — run 'make swag' and commit"; exit 1)
 
 migrate-up:
@@ -54,11 +56,11 @@ seed:
 	go run ./cmd/seed
 
 dump-perms:
-	go run ./cmd/dump-permissions > ../docs/permissions.md
+	go run ./cmd/dump-permissions > docs/permissions.md
 
 perm-check:
 	@go run ./cmd/dump-permissions > "$(PERMS_DIFF_TMP)"
-	@diff -q "$(PERMS_DIFF_TMP)" ../docs/permissions.md || \
+	@diff -q "$(PERMS_DIFF_TMP)" docs/permissions.md || \
 	  (echo "permissions.md is stale — run 'make dump-perms' and commit"; exit 1)
 
 perm-db-check:
@@ -67,5 +69,5 @@ perm-db-check:
 tools:
 	go install github.com/air-verse/air@v1.52.3
 	go install github.com/pressly/goose/v3/cmd/goose@v3.20.0
-	go install github.com/swaggo/swag/cmd/swag@latest
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install github.com/swaggo/swag/cmd/swag@v1.16.4
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.64.8
