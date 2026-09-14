@@ -76,7 +76,7 @@ Set `COMPOSE_PROJECT_NAME=optimus-prod`, `IMAGE_REPOSITORY=ghcr.io/arkgravity`,
 `BACKEND_VERSION=main-<backend-short-sha>`,
 `FRONTEND_IMAGE=ghcr.io/arkgravity/optimus-fe`, and
 `FRONTEND_VERSION=main-<frontend-short-sha>`. Versions are independent. Docker Hub
-alternatives use `docker.io/logic379`. Set the HTTPS origin, external TLS proxy,
+alternatives use `docker.io/logic3579`. Set the HTTPS origin, external TLS proxy,
 capacities and retention values.
 
 ```bash
@@ -98,14 +98,14 @@ Docker build. Pull requests and dev pushes build without publishing. Main pushes
 and manual main runs publish the same build to both registries:
 
 - `ghcr.io/arkgravity/optimus-be:main-<short-sha>`
-- `docker.io/logic379/optimus-be:main-<short-sha>`
+- `docker.io/logic3579/optimus-be:main-<short-sha>`
 
 Configure Actions settings at repository or accessible organization scope:
 
 | Type | Name | Value |
 | --- | --- | --- |
-| Variable | `DOCKERHUB_USERNAME` | Docker Hub login with write access to logic379 |
-| Variable | `DOCKERHUB_NAMESPACE` | `logic379` |
+| Variable | `DOCKERHUB_USERNAME` | Docker Hub login with write access to logic3579 |
+| Variable | `DOCKERHUB_NAMESPACE` | `logic3579` |
 | Secret | `DOCKERHUB_TOKEN` | Docker Hub access token with write permission |
 
 GHCR uses `GITHUB_TOKEN` with `packages: write`; permit Actions package creation
