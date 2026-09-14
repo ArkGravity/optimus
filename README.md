@@ -60,14 +60,14 @@ Docker build. Pull requests and dev pushes build without publishing. Main pushes
 and manual main runs publish the same build to both registries:
 
 - `ghcr.io/arkgravity/optimus-fe:main-<short-sha>`
-- `docker.io/logic379/optimus-fe:main-<short-sha>`
+- `docker.io/logic3579/optimus-fe:main-<short-sha>`
 
 Configure Actions settings at repository or accessible organization scope:
 
 | Type | Name | Value |
 | --- | --- | --- |
-| Variable | `DOCKERHUB_USERNAME` | Docker Hub login with write access to logic379 |
-| Variable | `DOCKERHUB_NAMESPACE` | `logic379` |
+| Variable | `DOCKERHUB_USERNAME` | Docker Hub login with write access to logic3579 |
+| Variable | `DOCKERHUB_NAMESPACE` | `logic3579` |
 | Secret | `DOCKERHUB_TOKEN` | Docker Hub access token with write permission |
 
 GHCR uses `GITHUB_TOKEN` with `packages: write`; permit Actions package creation

@@ -62,7 +62,7 @@ jobs:
     env:
       PUBLISH: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
       DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME || secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_NAMESPACE: ${{ vars.DOCKERHUB_NAMESPACE || 'logic379' }}
+      DOCKERHUB_NAMESPACE: ${{ vars.DOCKERHUB_NAMESPACE || 'logic3579' }}
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
