@@ -5,7 +5,11 @@
 Read this file and the active design/plan before substantial changes. See
 `docs/README.md` for document ownership and historical path conventions.
 This is the sole project operating-contract file. Keep code comments in English.
-Use mem0 with `user_id = "logic"`; cross-check checkpoints with Git status/history.
+Use mem0 with `user_id = "logic"`, `metadata.project = "optimus-fe"` and
+`metadata.app_id = "optimus-fe"` on every write. Filter project reads by all
+three fields and prefix memory text with
+`[optimus-fe]`; keep backend checkpoints under `optimus-be`. Cross-check
+checkpoints with Git status/history.
 Never require a sibling checkout for builds, tests, or generated artifacts.
 
 ## Status
@@ -16,6 +20,12 @@ Production acceptance, the persistent-data upgrade smoke from `4e2d08b` through
 `00023_p6_delivery.sql`, and release tagging remain outstanding. Dev and Production
 are the selected environments; UAT is skipped. Pre-split commit IDs refer to the
 original repository. Split histories have new commit IDs.
+
+Verified on 2026-09-15 against local and remote main `b43f605`:
+GitHub Actions run `34901419162` passed frontend checks, Docker build and image
+publishing to GHCR and Docker Hub. This does not establish production acceptance
+or the backend persistent-data upgrade smoke. The general `/dashboard` page is
+still a coming-soon placeholder; P5 observability dashboards are implemented.
 
 ## Commands
 
@@ -39,7 +49,8 @@ Run a focused frontend test with
 
 - Bootstrap order is Pinia, Ant Design Vue, i18n, API client, provided module
   APIs, router guards, then mount.
-- Static routes contain login/error/profile pages. On the first authenticated
+- Static routes contain login/error/profile pages and application, asset and
+  delivery detail/action sub-routes. On the first authenticated
   navigation, fetch `/me`, menus, and permissions in parallel, register dynamic
   routes, then replace-navigate to the original destination.
 - Permission enforcement has two synchronized layers: route
@@ -98,6 +109,9 @@ Run a focused frontend test with
 `.codex/config.toml` configures mem0 and Context7 over HTTP and local Serena.
 Export `MEM0_API_KEY` and `CONTEXT7_API_KEY` before starting Codex; install
 `serena` on PATH. Start Codex from this repository root so Serena selects it.
-Preserve `user_id = "logic"` for mem0 reads/writes and distinguish the project
-in checkpoint metadata. Update this file and the current checkpoint after milestones.
+Preserve `user_id = "logic"`, `metadata.project = "optimus-fe"` and
+`metadata.app_id = "optimus-fe"` for mem0 reads/writes. The `app_id` field belongs
+inside the memory metadata. When updating metadata, read and preserve existing
+fields, send the complete merged object, and verify the saved result.
+Update this file and the current checkpoint after milestones.
 Local `.serena/`, `.omo/`, `.worktrees/` and agent caches are ignored.
