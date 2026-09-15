@@ -95,6 +95,18 @@ Compose project name and `pgdata` volume when upgrading an existing stack.
 Moving Compose does not require replacing the volume. Back up the database and
 vault key; never use `docker compose down -v` on persistent data.
 
+### Linux Docker MTU troubleshooting
+
+Verified on a remote Linux server: image builds stalled at `apk add` while
+downloading Alpine indexes. Host and host-network downloads worked, but bridge
+containers timed out; lowering container MTU from 1500 to 1460 restored downloads.
+Persisting `mtu: 1460` and
+`default-network-opts.bridge.com.docker.network.driver.mtu: "1460"` in Docker's
+`/etc/docker/daemon.json`, then restarting Docker, resolved the issue. Merge these
+settings into existing configuration; use an MTU verified for the server's network.
+Existing Compose networks need recreation to adopt new defaults: preserve the
+Compose project name and data volumes, and never use `down -v` for this repair.
+
 ### Release acceptance
 
 Runtime checklists: [P4 assets](scripts/p4-smoke.md),

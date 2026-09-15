@@ -234,6 +234,12 @@ not add AWS write/manage APIs in P4.
 
 ## Local Gotchas
 
+- Remote Linux Docker MTU incident: `apk add` hung downloading Alpine indexes;
+  host/host-network downloads worked while bridge downloads timed out. MTU 1460
+  fixed the test, and persisting Docker daemon `mtu` plus bridge
+  `default-network-opts` at 1460 and restarting Docker resolved the issue.
+  See README's Linux Docker MTU troubleshooting section. Verify the appropriate
+  MTU per server; recreate existing networks without deleting data volumes.
 - Container health checks use GET; keep `/api/v1/health` registered for GET.
 - The initial administrator password is printed exactly once by seed. If it is
   lost, reset it through the database.
