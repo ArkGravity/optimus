@@ -23,7 +23,7 @@ test:
 	go test ./... -race -cover
 
 test-int:
-	go test ./... -tags=dbtest -race
+	go test ./... -tags=dbtest -race -count=1
 
 lint:
 	golangci-lint run

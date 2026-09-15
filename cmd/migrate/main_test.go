@@ -5,6 +5,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"os"
 	"testing"
 	"time"
 
@@ -12,6 +13,8 @@ import (
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
 	"github.com/stretchr/testify/require"
+
+	testdb "optimus-be/internal/infra/db"
 )
 
 func TestRunGoose_UpAppliesAllMigrations(t *testing.T) {
@@ -58,6 +61,9 @@ func TestRunGoose_RejectsUnknownDirection(t *testing.T) {
 // auto-migrates — we explicitly want a virgin DB so runGoose has work to do.
 func startRawPostgres(t *testing.T) (*sql.DB, func()) {
 	t.Helper()
+	if dsn := os.Getenv("OPTIMUS_TEST_POSTGRES_DSN"); dsn != "" {
+		return testdb.StartSharedTestDatabase(t, dsn)
+	}
 	pool, err := dockertest.NewPool("")
 	require.NoError(t, err)
 

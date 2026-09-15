@@ -161,3 +161,20 @@ credentials fail the main publishing job with an explicit configuration error.
 and `CONTEXT7_API_KEY`, install `serena` on PATH, and open this repository as
 the project. Credentials and local agent caches are excluded from Git and Docker.
 Configuration follows the [official reference](https://learn.chatgpt.com/docs/config-file/config-reference).
+
+### CI execution and database tests
+
+CI caches Go build artifacts under `tmp/go-cache`, with separate keys per job.
+Docker validation runs alongside quality, unit, and database checks; publishing
+on main requires all four jobs to succeed. Changes limited to README.md,
+AGENTS.md, or Markdown under docs/ and scripts/ skip database execution and image
+build/publication. Quality and unit checks still run. Manual dispatch and unknown
+change history always run the full checks.
+
+The database job starts one disposable PostgreSQL 16 instance and sets
+`OPTIMUS_TEST_POSTGRES_DSN`. Each test creates a randomly named database, runs all
+migrations, and drops only its own database during cleanup. This connection must
+point to a dedicated test server with CREATE DATABASE privileges, never a shared
+application database server. Without the variable, local tests retain dockertest.
+`make test-int` retains race detection and disables test-result caching with
+`-count=1`; compiled artifacts remain cached.

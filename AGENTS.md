@@ -262,7 +262,13 @@ not add AWS write/manage APIs in P4.
 - `.github/workflows/ci.yaml` runs quality, unit, database and independent Docker
   build gates; only main publishes to `ghcr.io/arkgravity/optimus-be` and
   `docker.io/logic3579/optimus-be`, tagged `main-<short-sha>`.
-  See README for registry setup.
+  Docker validation runs in parallel with tests; publication requires every gate.
+  CI uses one disposable PostgreSQL instance via `OPTIMUS_TEST_POSTGRES_DSN`,
+  with a separate migrated database per test. Never point this variable at an
+  application server. Local tests default to dockertest. Keep `-race -count=1`.
+  Cache `tmp/go-cache` per job. Prose-only changes skip database and image work;
+  manual dispatch and unknown history run full checks. See README for details
+  and registry setup.
 - API/menu/permission changes require coordination with optimus-fe. Its menu
   fixture is a reviewed contract snapshot, not a live backend dependency.
 
