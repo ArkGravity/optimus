@@ -127,10 +127,12 @@ services:
       start_period: 10s
 
   optimus-fe:
-    profiles: [web]
     environment:
       BACKEND_URL: http://optimus-be:8080
-    image: ${FRONTEND_IMAGE:-ghcr.io/arkgravity/optimus-fe}:${FRONTEND_VERSION:-dev}
+    image: ${FRONTEND_IMAGE:-local/optimus-fe}:${FRONTEND_VERSION:-dev}
+    build:
+      context: ${FRONTEND_BUILD_CONTEXT:-../optimus-fe}
+      dockerfile: Dockerfile
     restart: unless-stopped
     depends_on:
       optimus-be:

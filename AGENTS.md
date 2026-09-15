@@ -3,10 +3,17 @@
 ## First Read
 
 Read this file and the active design/plan before substantial changes. See
-`docs/README.md` for document ownership and historical path conventions.
+[README.md — Documentation](README.md#documentation) for document ownership and
+historical path conventions.
 This is the sole project operating-contract file. Keep code comments in English.
 Use mem0 with `user_id = "logic"`; cross-check checkpoints with Git status/history.
-Never require a sibling checkout for builds, tests, or generated artifacts.
+Scope backend memory reads with `app_id = "optimus-be"` and write with that
+app ID plus `metadata.project = "optimus-be"`. Prefix memory text with
+`[optimus-be]`; keep frontend (`optimus-fe`) memories in their own scope.
+Backend builds, tests, and generated artifacts must not require a sibling checkout.
+Compose starts the full stack, including the frontend, without a profile flag.
+It builds `../optimus-fe` by default for local development;
+`FRONTEND_BUILD_CONTEXT` overrides that path.
 
 ## Status
 
@@ -16,6 +23,11 @@ Production acceptance, the persistent-data upgrade smoke from `4e2d08b` through
 `00023_p6_delivery.sql`, and release tagging remain outstanding. Dev and Production
 are the selected environments; UAT is skipped. Pre-split commit IDs refer to the
 original repository. Split histories have new commit IDs.
+
+Last repository review: 2026-09-15, local and remote `main` at `a2aebef`.
+Post-split CI run `34901421269` passed quality, unit, database, Docker build,
+and GHCR/Docker Hub publication jobs. These checks do not replace the outstanding
+production acceptance or persistent-data upgrade smoke.
 
 ## Commands
 
@@ -53,7 +65,9 @@ Integration variants require Colima Docker and the `dbtest` build tag.
   Docker runtime. Do not silently use Docker Desktop or a host system Docker
   daemon instead.
 - Run the backend stack from this root with `docker compose up -d --build`.
-  Add `--profile web` to run a separately published frontend image.
+  This includes building and running the sibling frontend checkout, defaulting
+  to `local/optimus-fe:dev`. Published-image deployments use `pull` followed by
+  `up -d --no-build` and do not require the frontend source.
   Start only `postgres` when running the backend/frontend directly on the host.
   Connect with `psql` through the loopback-only PostgreSQL port; no Adminer
   service is maintained.
@@ -92,8 +106,9 @@ Integration variants require Colima Docker and the `dbtest` build tag.
 
 - Module layering is `dto.go` -> `repo.go` -> `service.go` -> `handler.go`.
   Handlers bind and validate input, services own business logic and audit/cache
-  effects, repositories own GORM access, and handlers always return the fixed
-  `{code,data,message,message_key?}` envelope.
+  effects, repositories own GORM access, and business JSON handlers return the fixed
+  `{code,data,message,message_key?}` envelope. `GET /api/v1/health` returns a raw
+  `{db,version}` probe; pod logs and delivery events use SSE stream responses.
 - `cmd/server/main.go` is the only composition root. It loads configuration,
   registers all in-code permissions, creates the shared RBAC cache and audit
   recorder, wires credential consumers, and mounts routes.
@@ -236,9 +251,12 @@ not add AWS write/manage APIs in P4.
 - GitHub: https://github.com/ArkGravity/optimus-be
 - `Dockerfile` builds server, migrate, seed, and vault-keygen from this root.
 - `docker-compose.yml` and `.env.example` own the integrated deployment stack.
-  Frontend is an optional `web` profile and uses an independently versioned image.
-- CI runs quality, unit, database and Docker build gates; only main publishes to
-  GHCR and Docker Hub, tagged `main-<short-sha>`. See README for registry setup.
+  Frontend starts by default with a configurable sibling build context for local
+  development and an independently versioned image for deployment.
+- `.github/workflows/ci.yaml` runs quality, unit, database and independent Docker
+  build gates; only main publishes to `ghcr.io/arkgravity/optimus-be` and
+  `docker.io/logic3579/optimus-be`, tagged `main-<short-sha>`.
+  See README for registry setup.
 - API/menu/permission changes require coordination with optimus-fe. Its menu
   fixture is a reviewed contract snapshot, not a live backend dependency.
 
@@ -247,6 +265,7 @@ not add AWS write/manage APIs in P4.
 `.codex/config.toml` configures mem0 and Context7 over HTTP and local Serena.
 Export `MEM0_API_KEY` and `CONTEXT7_API_KEY` before starting Codex; install
 `serena` on PATH. Start Codex from this repository root so Serena selects it.
-Preserve `user_id = "logic"` for mem0 reads/writes and distinguish the project
-in checkpoint metadata. Update this file and the current checkpoint after milestones.
+Preserve `user_id = "logic"` and `app_id = "optimus-be"` for mem0 reads/writes;
+include `project = "optimus-be"` in checkpoint metadata. Update this file and
+the current checkpoint after milestones.
 Local `.serena/`, `.omo/`, `.worktrees/` and agent caches are ignored.

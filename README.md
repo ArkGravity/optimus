@@ -5,7 +5,7 @@ Helm applications, AWS assets, Prometheus metrics and immutable application deli
 
 - Repository: https://github.com/ArkGravity/optimus-be
 - Frontend: https://github.com/ArkGravity/optimus-fe
-- [Conventions](AGENTS.md) · [Documentation](docs/README.md)
+- [Conventions](AGENTS.md) · [Documentation](#documentation)
 
 ## Development
 
@@ -53,23 +53,23 @@ Kubernetes v0.30.14 and Helm v3.15.4 pinned. Permission codes originate in
 ## Containers and deployment
 
 ```bash
-docker build -t local/optimus-be:dev .
 docker compose up -d --build
 docker compose ps -a
 ```
 
 The image includes server, migrate, seed and vault-keygen binaries. Compose runs
-PostgreSQL, migrations, seed and the backend, internal to its network. To expose
-the UI, enable the optional `web` profile with a published frontend version:
+PostgreSQL, migrations, seed, the backend and the frontend by default; no profile
+flag is needed. The backend is internal to the Compose network. Compose builds
+the frontend from `../optimus-fe` and tags it `local/optimus-fe:dev` by default.
 
-```bash
-FRONTEND_VERSION=main-<frontend-short-sha> docker compose --profile web up -d --build
-```
-
-For local frontend builds, build `local/optimus-fe:dev` in its own checkout,
-then select `FRONTEND_IMAGE=local/optimus-fe FRONTEND_VERSION=dev`. Compose never
-builds a sibling checkout. Web: http://127.0.0.1:8080. PostgreSQL is loopback-only.
+No separate frontend build command is needed. Set `FRONTEND_BUILD_CONTEXT` in
+`.env` or the shell if the frontend checkout is elsewhere; relative paths resolve
+from this Compose file's directory. Backend-only builds and tests remain independent
+of the frontend checkout. Web: http://127.0.0.1:8080. PostgreSQL is loopback-only.
 Dev and Production are supported; UAT is skipped for this release.
+
+For host development, start only the database with `docker compose up -d postgres`,
+then run the backend and frontend development servers separately.
 
 For Production copy `.env.example` to `.env` and replace development credentials.
 Set `COMPOSE_PROJECT_NAME=optimus-prod`, `IMAGE_REPOSITORY=ghcr.io/arkgravity`,
@@ -79,9 +79,13 @@ Set `COMPOSE_PROJECT_NAME=optimus-prod`, `IMAGE_REPOSITORY=ghcr.io/arkgravity`,
 alternatives use `docker.io/logic3579`. Set the HTTPS origin, external TLS proxy,
 capacities and retention values.
 
+Published-image deployments use `pull` and `up --no-build` below and do not
+require a frontend checkout. Existing `.env` image overrides take precedence
+over the local image defaults.
+
 ```bash
-docker compose --profile web pull
-docker compose --profile web up -d --no-build
+docker compose pull
+docker compose up -d --no-build
 docker compose ps -a
 docker compose logs seed
 ```
@@ -90,6 +94,31 @@ PostgreSQL/backend/frontend should be healthy; migrate/seed exit 0. Preserve the
 Compose project name and `pgdata` volume when upgrading an existing stack.
 Moving Compose does not require replacing the volume. Back up the database and
 vault key; never use `docker compose down -v` on persistent data.
+
+### Release acceptance
+
+Runtime checklists: [P4 assets](scripts/p4-smoke.md),
+[P5 observability](scripts/p5-smoke.md), and [P6 delivery](scripts/p6-smoke.md).
+Local acceptance passed before the 2026-09-14 repository split. Production still
+requires persistent-data upgrade validation from original revision `4e2d08b`
+through migration `00023_p6_delivery.sql`, production acceptance and release
+tagging. Repository migration is not production sign-off.
+
+## Documentation
+
+This repository owns the generated [API specification](docs/api/swagger.json),
+[permission catalog](docs/permissions.md), and backend and shared P0-P6
+[specifications](docs/superpowers/specs/) and [plans](docs/superpowers/plans/).
+`make swag` and `make dump-perms` update files inside this repository only.
+
+Pure frontend P0 plans/addenda live in the
+[frontend docs](https://github.com/ArkGravity/optimus-fe/tree/main/docs/superpowers).
+Shared designs stay here as a single source, linked from frontend documentation.
+
+Historical designs retain monorepo paths and commit IDs. `optimus-be/` means
+this root; `optimus-fe/` refers to the separate frontend repository. Old `deploy/`
+paths map to this root's Compose/Dockerfile or the frontend's Dockerfile/nginx.conf.
+Use current README/AGENTS commands; old steps are implementation history.
 
 ## CI and image publishing
 
