@@ -55,6 +55,12 @@ changes. See `docs/workspace-tabs.md` before extending state retention. Local li
 typecheck, i18n, 298 tests and production build passed; real browser visual and
 backend integration acceptance have not been performed for this change.
 
+Sidebar scrollbar follow-up (2026-09-17, based on `cc96e11`): the menu scroll
+surface uses a dark color scheme, a thin scrollbar with a transparent track and
+a muted thumb that brightens on hover/keyboard focus. This avoids a light track
+against the dark sidebar in light mode. Local lint and production build (including
+typecheck) passed; real browser visual acceptance remains unverified.
+
 ## Commands
 
 Run from this repository root:

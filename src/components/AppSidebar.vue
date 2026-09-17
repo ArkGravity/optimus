@@ -132,11 +132,34 @@ function findNode(ns: MeMenuNode[], code: string): MeMenuNode | undefined {
   gap: 10px;
 }
 .sidebar-menu {
+  --scrollbar-thumb: rgba(255, 255, 255, 0.22);
   flex: 1;
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
   border-inline-end: 0;
+  // The sidebar stays dark even when the rest of the app uses light mode.
+  color-scheme: dark;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+
+  &:hover,
+  &:focus-within {
+    --scrollbar-thumb: rgba(255, 255, 255, 0.42);
+  }
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track,
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 6px;
+  }
 }
 .sidebar-footer {
   flex-shrink: 0;
