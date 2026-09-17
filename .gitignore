@@ -6,6 +6,7 @@
 *.key
 
 # Local tools and caches
+.cloudflare/
 .claude/
 .agents/
 .omo/
