@@ -1,5 +1,5 @@
 <template>
-  <a-dropdown v-if="visible" trigger="click" placement="bottomRight">
+  <a-dropdown v-if="visible" :trigger="['click']" placement="bottomRight">
     <a-button :loading="loading">
       <span
         v-if="k8s.currentClusterId"
@@ -27,7 +27,7 @@
         </a-menu-item>
         <a-menu-divider />
         <a-menu-item key="__refresh" @click="refresh">
-          <reload-outlined /> {{ $t('common.reset') }}
+          <reload-outlined /> {{ $t('common.refresh') }}
         </a-menu-item>
       </a-menu>
     </template>
@@ -36,7 +36,6 @@
 
 <script setup lang="ts">
 import { computed, inject, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { DownOutlined, ReloadOutlined } from '@ant-design/icons-vue'
 import { useAuthStore } from '@/stores/auth'
 import { useK8sStore } from '@/stores/k8s'
@@ -45,7 +44,6 @@ import type { Cluster } from '@/types/api'
 
 const auth = useAuthStore()
 const k8s = useK8sStore()
-const router = useRouter()
 const clusterApi = inject<ClusterApi>('clusterApi')!
 
 const visible = computed(() => auth.permissions.some(p => p.startsWith('k8s:')))
@@ -87,12 +85,6 @@ async function refresh() {
 
 function select(c: Cluster) {
   k8s.setCluster(c.id, c.name)
-  const path = router.currentRoute.value.path
-  // Re-enter k8s detail routes so list views refetch against the new cluster.
-  // The clusters CRUD page itself is cluster-agnostic — skip it.
-  if (path.startsWith('/k8s/') && path !== '/k8s/clusters') {
-    router.replace({ path, query: { ...router.currentRoute.value.query, _r: Date.now().toString() } })
-  }
 }
 
 onMounted(() => { if (visible.value) void refresh() })

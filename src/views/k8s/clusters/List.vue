@@ -1,6 +1,8 @@
 <template>
   <a-card>
-    <PageHeader :title="$t('k8s.cluster.title')" />
+    <PageHeader :title="$t('k8s.cluster.title')">
+      <ClusterPicker />
+    </PageHeader>
 
     <div class="filter-row u-mb-16">
       <a-input-search
@@ -102,6 +104,7 @@ import { useI18n } from '@/hooks/useI18n'
 import { useTable } from '@/hooks/useTable'
 import { isBizError } from '@/utils/http-error'
 import PageHeader from '@/components/PageHeader.vue'
+import ClusterPicker from '@/components/layout/ClusterPicker.vue'
 import ClusterForm from './components/ClusterForm.vue'
 import type { ClusterApi } from '@/api/k8s/cluster'
 import type { Cluster, ClusterListQuery } from '@/types/api'

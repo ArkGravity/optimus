@@ -1,5 +1,7 @@
 {
   "common": {
+    "expand_sidebar": "展开侧栏",
+    "collapse_sidebar": "收起侧栏",
     "ok": "确定",
     "cancel": "取消",
     "save": "保存",

@@ -57,7 +57,9 @@ export const useK8sStore = defineStore('k8s', () => {
   ) {
     if (!currentClusterId.value) return
     if (Date.now() - namespacesFetchedAt.value < NS_CACHE_TTL_MS) return
-    const res = await fetcher(currentClusterId.value)
+    const clusterId = currentClusterId.value
+    const res = await fetcher(clusterId)
+    if (currentClusterId.value !== clusterId) return
     namespaces.value = res.items.map(n => n.name)
     namespacesFetchedAt.value = Date.now()
   }

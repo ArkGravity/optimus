@@ -4,6 +4,7 @@
       <template #title>
         <a-space wrap>
           <span>{{ $t('menu.k8s.workloads') }}</span>
+          <ClusterPicker />
           <a-select
             v-model:value="namespaceModel"
             :placeholder="$t('k8s.cluster.namespace_all')"
@@ -32,7 +33,13 @@
         </a-space>
       </template>
 
-      <a-tabs v-model:active-key="currentKind">
+      <a-alert
+        v-if="k8s.currentClusterId === null"
+        :message="$t('k8s.cluster.no_cluster_selected')"
+        type="info"
+        show-icon
+      />
+      <a-tabs v-else v-model:active-key="currentKind">
         <a-tab-pane
           v-for="k in KINDS"
           :key="k"
@@ -200,7 +207,7 @@
 
 <script setup lang="ts">
 import { computed, inject, onBeforeMount, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import ClusterPicker from '@/components/layout/ClusterPicker.vue'
 import { message } from 'ant-design-vue'
 import { ReloadOutlined } from '@ant-design/icons-vue'
 import dayjs from 'dayjs'
@@ -222,14 +229,9 @@ dayjs.extend(relativeTime)
  *
  * Single page with 7 antd tabs (deployment/statefulset/daemonset/job/cronjob/
  * replicaset/pod). Each tab shares one `<a-table>`-per-pane bound to the
- * current kind. The page is cluster-scoped — landing here without a cluster
- * redirects to /k8s/clusters with a hint message.
- *
- * Namespace selector and tab switch both trigger an immediate reload. The
- * ClusterPicker bumps `?_r=<ts>` on cluster swap so list pages re-enter and
- * refetch; we watch that param too.
+ * current kind. Without a cluster, the page shows a selection prompt.
+ * Cluster, namespace and tab changes reload the resource list.
  */
-const router = useRouter()
 const k8s = useK8sStore()
 const { t } = useI18n()
 
@@ -353,21 +355,18 @@ watch(currentKind, kind => void load(kind))
 watch(
   () => k8s.currentClusterId,
   (id) => {
-    if (id !== null) void load(currentKind.value)
-  },
-)
-// ClusterPicker bumps ?_r=<ts> when the user swaps clusters; re-pull on each bump.
-watch(
-  () => router.currentRoute.value.query._r,
-  () => {
-    if (k8s.currentClusterId !== null) void load(currentKind.value)
+    drawerOpen.value = false
+    drawerDetail.value = null
+    items.value = []
+    if (id !== null) {
+      void k8s.ensureNamespaces(cid => k8sNsApi.list(cid))
+      void load(currentKind.value)
+    }
   },
 )
 
 onBeforeMount(() => {
   if (k8s.currentClusterId === null) {
-    message.info(t('k8s.cluster.no_cluster_selected'))
-    void router.replace('/k8s/clusters')
     return
   }
   void k8s.ensureNamespaces(cid => k8sNsApi.list(cid))

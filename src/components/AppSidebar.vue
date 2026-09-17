@@ -1,6 +1,9 @@
 <template>
   <div class="app-sidebar">
-    <div class="logo">{{ collapsed ? 'O' : 'Optimus' }}</div>
+    <div class="logo">
+      <img src="/optimus-logo.png" alt="Optimus" width="32" height="32" />
+      <span v-if="!collapsed">Optimus</span>
+    </div>
     <a-menu
       :selected-keys="[currentKey]"
       :open-keys="openKeys"
@@ -9,12 +12,18 @@
       :items="items"
       @click="onClick"
       @open-change="onOpenChange"
-    />
+    >
+      <template #expandIcon="{ isOpen }">
+        <DownOutlined v-if="isOpen" class="submenu-chevron" />
+        <RightOutlined v-else class="submenu-chevron" />
+      </template>
+    </a-menu>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { DownOutlined, RightOutlined } from '@ant-design/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useMenuStore } from '@/stores/menu'
 import { useI18n } from '@/hooks/useI18n'
@@ -29,7 +38,7 @@ const { t } = useI18n()
 
 function buildItems(nodes: MeMenuNode[]): ItemType[] {
   return nodes.map(n => {
-    const base = { key: n.code, label: t(n.name) }
+    const base = { key: n.code, label: t(n.name), title: t(n.name) }
     if (n.children?.length) return { ...base, children: buildItems(n.children) } as ItemType
     return base as ItemType
   })
@@ -78,12 +87,31 @@ function findNode(ns: MeMenuNode[], code: string): MeMenuNode | undefined {
   flex-direction: column;
 }
 .logo {
-  height: 48px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
   font-weight: 600;
   letter-spacing: 1px;
+  gap: 10px;
+}
+.submenu-chevron {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+}
+:deep(.ant-menu-title-content) {
+  white-space: normal;
+  line-height: 1.5;
+}
+:deep(.ant-menu-item),
+:deep(.ant-menu-submenu-title) {
+  height: auto;
+  min-height: 40px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 </style>

@@ -1,9 +1,9 @@
 <template>
   <a-layout class="default-layout">
-    <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible>
+    <a-layout-sider v-model:collapsed="collapsed" :width="app.locale === 'en-US' ? 280 : 224" :trigger="null" collapsible>
       <AppSidebar :collapsed="collapsed" />
     </a-layout-sider>
-    <a-layout>
+    <a-layout class="main-layout">
       <a-layout-header class="header">
         <AppHeader :collapsed="collapsed" @toggle="collapsed = !collapsed" />
       </a-layout-header>
@@ -38,9 +38,14 @@ watch(
   min-height: 100vh;
 }
 .header {
-  background: #fff;
+  background: var(--ant-color-bg-container);
+  height: 56px;
+  line-height: normal;
   padding: 0 16px;
   border-bottom: 1px solid var(--ant-color-border, #f0f0f0);
+}
+.main-layout {
+  min-width: 0;
 }
 .content {
   padding: 16px;

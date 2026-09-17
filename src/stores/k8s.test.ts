@@ -80,6 +80,18 @@ describe('useK8sStore', () => {
     expect(fetcher).not.toHaveBeenCalled()
   })
 
+  it('ignores namespaces returned after switching to another cluster', async () => {
+    const s = useK8sStore()
+    s.setCluster(1, 'old')
+    let resolve!: (result: { items: { name: string }[] }) => void
+    const pending = s.ensureNamespaces(() => new Promise(r => { resolve = r }))
+    s.setCluster(2, 'new')
+    await s.ensureNamespaces(async () => ({ items: [{ name: 'new-namespace' }] }))
+    resolve({ items: [{ name: 'old-namespace' }] })
+    await pending
+    expect(s.namespaces).toEqual(['new-namespace'])
+  })
+
   it('invalidateNamespaces forces the next ensureNamespaces to refetch', async () => {
     const s = useK8sStore()
     s.setCluster(1, 'x')

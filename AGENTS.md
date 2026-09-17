@@ -27,6 +27,16 @@ publishing to GHCR and Docker Hub. This does not establish production acceptance
 or the backend persistent-data upgrade smoke. The general `/dashboard` page is
 still a coming-soon placeholder; P5 observability dashboards are implemented.
 
+Local UI checkpoint (2026-09-17, working changes based on `aca5afd`): custom
+surfaces use Ant Design theme tokens via `AppTheme`; the expanded sidebar is
+280px in English and 224px in Chinese with wrapping labels and explicit
+right/down chevrons. `public/optimus-logo.png` is shared by the sidebar, login
+and favicon (see `docs/branding.md`). ClusterPicker lives inside Kubernetes
+pages, never in the global header. Resource pages stay in place and prompt when
+no cluster is selected; cluster changes reload namespaces and resources without
+URL refresh markers. Local lint, typecheck, i18n, 291 tests and production build
+passed. This does not establish browser or production acceptance.
+
 ## Commands
 
 Run from this repository root:

@@ -4,6 +4,7 @@
       <template #title>
         <a-space wrap>
           <span>{{ $t('menu.k8s.config') }}</span>
+          <ClusterPicker />
           <a-select
             v-model:value="namespaceModel"
             :placeholder="$t('k8s.cluster.namespace_all')"
@@ -32,7 +33,13 @@
         </a-space>
       </template>
 
-      <a-tabs v-model:active-key="currentKind">
+      <a-alert
+        v-if="k8s.currentClusterId === null"
+        :message="$t('k8s.cluster.no_cluster_selected')"
+        type="info"
+        show-icon
+      />
+      <a-tabs v-else v-model:active-key="currentKind">
         <a-tab-pane key="configmaps" :tab="$t('k8s.config.configmap')">
           <a-alert
             v-if="truncated && currentKind === 'configmaps'"
@@ -203,7 +210,7 @@
 
 <script setup lang="ts">
 import { computed, inject, onBeforeMount, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import ClusterPicker from '@/components/layout/ClusterPicker.vue'
 import { message } from 'ant-design-vue'
 import { ReloadOutlined } from '@ant-design/icons-vue'
 import dayjs from 'dayjs'
@@ -234,7 +241,6 @@ dayjs.extend(relativeTime)
  */
 type ConfigKind = 'configmaps' | 'secrets'
 
-const router = useRouter()
 const k8s = useK8sStore()
 const { t } = useI18n()
 
@@ -356,20 +362,18 @@ watch(currentKind, kind => void load(kind))
 watch(
   () => k8s.currentClusterId,
   (id) => {
-    if (id !== null) void load(currentKind.value)
-  },
-)
-watch(
-  () => router.currentRoute.value.query._r,
-  () => {
-    if (k8s.currentClusterId !== null) void load(currentKind.value)
+    drawerOpen.value = false
+    drawerDetail.value = null
+    items.value = []
+    if (id !== null) {
+      void k8s.ensureNamespaces(cid => k8sNsApi.list(cid))
+      void load(currentKind.value)
+    }
   },
 )
 
 onBeforeMount(() => {
   if (k8s.currentClusterId === null) {
-    message.info(t('k8s.cluster.no_cluster_selected'))
-    void router.replace('/k8s/clusters')
     return
   }
   void k8s.ensureNamespaces(cid => k8sNsApi.list(cid))

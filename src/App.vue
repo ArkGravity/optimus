@@ -1,8 +1,10 @@
 <template>
   <a-config-provider :locale="antd" :theme="{ algorithm }">
-    <component :is="layout">
-      <router-view />
-    </component>
+    <AppTheme>
+      <component :is="layout">
+        <router-view />
+      </component>
+    </AppTheme>
   </a-config-provider>
 </template>
 
@@ -15,6 +17,7 @@ import { useI18n } from '@/hooks/useI18n'
 import { antdLocale } from '@/locales'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import BlankLayout from '@/layouts/BlankLayout.vue'
+import AppTheme from '@/components/AppTheme.vue'
 
 const app = useAppStore()
 const route = useRoute()

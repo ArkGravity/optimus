@@ -1,5 +1,6 @@
 <template>
   <a-card class="login-card">
+    <img class="brand-mark" src="/optimus-logo.png" alt="Optimus" width="56" height="56" />
     <h1 class="title">{{ $t('auth.login_title') }}</h1>
     <a-form :model="form" layout="vertical" @finish="onSubmit">
       <a-form-item :label="$t('auth.username')" name="username" :rules="[{ required: true }]">
@@ -62,5 +63,9 @@ async function onSubmit() {
   font-size: 20px;
   margin: 0 0 16px;
   text-align: center;
+}
+.brand-mark {
+  display: block;
+  margin: 0 auto 16px;
 }
 </style>

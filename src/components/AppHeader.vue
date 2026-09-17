@@ -1,11 +1,10 @@
 <template>
   <div class="app-header">
-    <a-button type="text" @click="$emit('toggle')">
-      <MenuFoldOutlined v-if="!collapsed" />
-      <MenuUnfoldOutlined v-else />
+    <a-button type="text" :aria-label="collapsed ? $t('common.expand_sidebar') : $t('common.collapse_sidebar')" :aria-expanded="!collapsed" @click="$emit('toggle')">
+      <DownOutlined v-if="!collapsed" />
+      <RightOutlined v-else />
     </a-button>
     <div class="u-flex-1" />
-    <ClusterPicker />
     <LangSwitch />
     <ThemeToggle />
     <a-dropdown>
@@ -25,13 +24,12 @@
 </template>
 
 <script setup lang="ts">
-import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from '@ant-design/icons-vue'
+import { DownOutlined, RightOutlined, UserOutlined } from '@ant-design/icons-vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useMenuStore } from '@/stores/menu'
 import LangSwitch from './LangSwitch.vue'
 import ThemeToggle from './ThemeToggle.vue'
-import ClusterPicker from './layout/ClusterPicker.vue'
 
 defineProps<{ collapsed: boolean }>()
 defineEmits<{ toggle: [] }>()
@@ -51,7 +49,7 @@ function onMenuClick({ key }: { key: string }) {
 
 <style scoped lang="scss">
 .app-header {
-  height: 48px;
+  height: 100%;
   display: flex;
   align-items: center;
   gap: 8px;

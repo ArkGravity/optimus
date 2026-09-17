@@ -1,5 +1,7 @@
 {
   "common": {
+    "expand_sidebar": "Expand sidebar",
+    "collapse_sidebar": "Collapse sidebar",
     "ok": "OK",
     "cancel": "Cancel",
     "save": "Save",

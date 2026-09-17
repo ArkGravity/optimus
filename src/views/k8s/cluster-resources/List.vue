@@ -4,6 +4,7 @@
       <template #title>
         <a-space wrap>
           <span>{{ $t('menu.k8s.cluster_resources') }}</span>
+          <ClusterPicker />
           <!-- Namespace selector is only meaningful on the Events tab; for
                Namespace + Node it would be confusing (a namespace can't filter
                a list of namespaces). -->
@@ -36,7 +37,13 @@
         </a-space>
       </template>
 
-      <a-tabs v-model:active-key="currentKind">
+      <a-alert
+        v-if="k8s.currentClusterId === null"
+        :message="$t('k8s.cluster.no_cluster_selected')"
+        type="info"
+        show-icon
+      />
+      <a-tabs v-else v-model:active-key="currentKind">
         <a-tab-pane key="namespaces" :tab="$t('k8s.cluster_resource.namespace')">
           <a-alert
             v-if="truncated && currentKind === 'namespaces'"
@@ -156,7 +163,7 @@
 
 <script setup lang="ts">
 import { computed, inject, onBeforeMount, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import ClusterPicker from '@/components/layout/ClusterPicker.vue'
 import { message } from 'ant-design-vue'
 import { ReloadOutlined } from '@ant-design/icons-vue'
 import dayjs from 'dayjs'
@@ -188,7 +195,6 @@ dayjs.extend(relativeTime)
  */
 type ClusterResourceKind = 'namespaces' | 'nodes' | 'events'
 
-const router = useRouter()
 const k8s = useK8sStore()
 const { t } = useI18n()
 
@@ -303,20 +309,18 @@ watch(currentKind, kind => void load(kind))
 watch(
   () => k8s.currentClusterId,
   (id) => {
-    if (id !== null) void load(currentKind.value)
-  },
-)
-watch(
-  () => router.currentRoute.value.query._r,
-  () => {
-    if (k8s.currentClusterId !== null) void load(currentKind.value)
+    drawerOpen.value = false
+    drawerDetail.value = null
+    items.value = []
+    if (id !== null) {
+      void k8s.ensureNamespaces(cid => k8sNsApi.list(cid))
+      void load(currentKind.value)
+    }
   },
 )
 
 onBeforeMount(() => {
   if (k8s.currentClusterId === null) {
-    message.info(t('k8s.cluster.no_cluster_selected'))
-    void router.replace('/k8s/clusters')
     return
   }
   // Namespace cache is needed for the Events tab filter.
