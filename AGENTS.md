@@ -29,7 +29,7 @@ still a coming-soon placeholder; P5 observability dashboards are implemented.
 
 Local UI checkpoint (2026-09-17, working changes based on `aca5afd`): custom
 surfaces use Ant Design theme tokens via `AppTheme`; the expanded sidebar is
-280px in English and 224px in Chinese with wrapping labels and explicit
+248px in English and 208px in Chinese with wrapping labels and explicit
 right/down chevrons. `public/optimus-logo.png` is shared by the sidebar, login
 and favicon (see `docs/branding.md`). ClusterPicker lives inside Kubernetes
 pages, never in the global header. Resource pages stay in place and prompt when
@@ -39,10 +39,10 @@ passed. This does not establish browser or production acceptance.
 
 Sidebar follow-up (2026-09-17, working changes based on pushed `b00e884`):
 dark mode uses neutral theme colors for the sidebar and its menus. The sidebar
-collapse control is a Hamburger button anchored in the sidebar footer; the menu
-scrolls independently and the global header has no collapse control. Submenu
-right/down chevrons remain. Local lint, typecheck, i18n, 291 tests and production
-build passed; browser visual acceptance remains unverified.
+collapse control is a triangle-hamburger button anchored in the sidebar footer;
+the menu scrolls independently and the global header has no collapse control.
+Submenu right/down chevrons remain. Local lint, typecheck, i18n, 291 tests and
+production build passed; browser visual acceptance remains unverified.
 
 Workspace follow-up (2026-09-17, working changes based on pushed `e068b65`):
 compact viewport layout with 8px content gutters, 16px first-level card padding,
@@ -60,6 +60,12 @@ surface uses a dark color scheme, a thin scrollbar with a transparent track and
 a muted thumb that brightens on hover/keyboard focus. This avoids a light track
 against the dark sidebar in light mode. Local lint and production build (including
 typecheck) passed; real browser visual acceptance remains unverified.
+
+Sidebar density follow-up (2026-09-17): expanded width is 248px in English and
+208px in Chinese. The footer collapse control uses a hamburger glyph with an
+inset triangle (full top/bottom bars, two short middle bars, solid arrowhead)
+that mirrors when collapsed. Local lint and production build checks follow this
+change; browser visual acceptance remains unverified.
 
 ## Commands
 

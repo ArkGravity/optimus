@@ -4,7 +4,7 @@
       v-model:collapsed="collapsed"
       class="sidebar"
       :class="{ 'sidebar-dark': app.theme === 'dark' }"
-      :width="app.locale === 'en-US' ? 280 : 224"
+      :width="app.locale === 'en-US' ? 248 : 208"
       :trigger="null"
       collapsible
     >

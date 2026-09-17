@@ -23,12 +23,40 @@
       <button
         type="button"
         class="sidebar-toggle"
+        :class="{ 'sidebar-toggle--collapsed': collapsed }"
         :aria-label="collapsed ? $t('common.expand_sidebar') : $t('common.collapse_sidebar')"
         :title="collapsed ? $t('common.expand_sidebar') : $t('common.collapse_sidebar')"
         :aria-expanded="!collapsed"
         @click="$emit('toggle')"
       >
-        <MenuOutlined aria-hidden="true" />
+        <!-- Hamburger with inset triangle; mirrored when collapsed (matches reference). -->
+        <svg
+          class="sidebar-toggle-icon"
+          viewBox="0 0 16 16"
+          width="18"
+          height="18"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <!-- Top / bottom full bars -->
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            d="M2 3.25H14M2 12.75H14"
+          />
+          <!-- Two short middle bars on the right -->
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            d="M8 6.5H14M8 9.5H14"
+          />
+          <!-- Solid triangle pointing left (collapse); scaleX(-1) flips for expand -->
+          <path fill="currentColor" d="M2.25 8L6.75 5.4V10.6Z" />
+        </svg>
       </button>
     </div>
   </div>
@@ -36,7 +64,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { DownOutlined, MenuOutlined, RightOutlined } from '@ant-design/icons-vue'
+import { DownOutlined, RightOutlined } from '@ant-design/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useMenuStore } from '@/stores/menu'
 import { useAppStore } from '@/stores/app'
@@ -163,20 +191,20 @@ function findNode(ns: MeMenuNode[], code: string): MeMenuNode | undefined {
 }
 .sidebar-footer {
   flex-shrink: 0;
-  padding: 8px 16px;
+  padding: 8px 12px;
   border-top: 1px solid var(--sidebar-border);
 }
 .sidebar-toggle {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   width: 100%;
   height: 40px;
+  padding: 0 8px;
   border: 0;
   border-radius: 6px;
   background: transparent;
   color: inherit;
-  font-size: 18px;
   cursor: pointer;
 
   &:hover {
@@ -185,6 +213,19 @@ function findNode(ns: MeMenuNode[], code: string): MeMenuNode | undefined {
   &:focus-visible {
     outline: 2px solid currentColor;
     outline-offset: -2px;
+  }
+}
+.sidebar-toggle-icon {
+  display: block;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+.sidebar-toggle--collapsed {
+  justify-content: center;
+  padding: 0;
+
+  .sidebar-toggle-icon {
+    transform: scaleX(-1);
   }
 }
 .submenu-chevron {
