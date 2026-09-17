@@ -59,6 +59,7 @@
 </template>
 
 <script setup lang="ts">
+import { usePageState } from '@/hooks/usePageState'
 import { computed, inject, onMounted, reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
@@ -124,6 +125,8 @@ async function onPageSizeChange(_: number, size: number) { await action(() => ta
 
 onMounted(() => { if (canRead.value) void action(() => table.reload()) })
 defineExpose({ canRead, table, formOpen, editing, form, openCreate, openEdit, save, remove, openDetail })
+usePageState({ searchInput })
+
 </script>
 
 <style scoped>

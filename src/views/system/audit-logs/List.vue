@@ -51,6 +51,7 @@
 </template>
 
 <script setup lang="ts">
+import { usePageState } from '@/hooks/usePageState'
 import { computed, h, inject, onMounted, ref } from 'vue'
 import type { Dayjs } from 'dayjs'
 import { useI18n } from '@/hooks/useI18n'
@@ -120,6 +121,8 @@ function formatTime(iso: string): string {
 }
 
 onMounted(() => { table.reload() })
+usePageState({ actionInput, userIdInput, rangeInput })
+
 </script>
 
 <style scoped lang="scss">

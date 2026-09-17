@@ -44,6 +44,17 @@ scrolls independently and the global header has no collapse control. Submenu
 right/down chevrons remain. Local lint, typecheck, i18n, 291 tests and production
 build passed; browser visual acceptance remains unverified.
 
+Workspace follow-up (2026-09-17, working changes based on pushed `e068b65`):
+compact viewport layout with 8px content gutters, 16px first-level card padding,
+wrapping filters and menu-level tabs. Tabs deduplicate by menu path; detail/action
+routes belong to their nearest menu tab. Closing all opens `/workspace`.
+Only approved filter/pagination/scroll state is retained in memory; pages unmount
+and refetch on return, so streams, polling and sensitive content are not cached.
+Logout clears workspace state. Install/upgrade/profile routes prompt for unsaved
+changes. See `docs/workspace-tabs.md` before extending state retention. Local lint,
+typecheck, i18n, 298 tests and production build passed; real browser visual and
+backend integration acceptance have not been performed for this change.
+
 ## Commands
 
 Run from this repository root:

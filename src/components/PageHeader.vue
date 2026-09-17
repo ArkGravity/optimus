@@ -15,6 +15,8 @@ defineProps<{ title: string }>()
   align-items: center;
   justify-content: space-between;
   margin-bottom: 16px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 .title {
   margin: 0;
@@ -22,6 +24,7 @@ defineProps<{ title: string }>()
 }
 .actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 </style>

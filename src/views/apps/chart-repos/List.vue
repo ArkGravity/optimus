@@ -76,6 +76,7 @@
 </template>
 
 <script setup lang="ts">
+import { usePageState } from '@/hooks/usePageState'
 import { computed, inject, onMounted, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { useI18n } from '@/hooks/useI18n'
@@ -174,6 +175,8 @@ function formatTime(iso: string): string {
 onMounted(() => {
   table.reload()
 })
+usePageState({ searchInput, typeFilter })
+
 </script>
 
 <style scoped lang="scss">

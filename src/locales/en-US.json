@@ -1,4 +1,12 @@
 {
+  "workspace": {
+    "tabs": "Open pages",
+    "actions": "Tab actions",
+    "close_others": "Close other tabs",
+    "close_all": "Close all tabs",
+    "select_menu": "Select a page from the sidebar to get started",
+    "unsaved": "You have unsaved changes. Leave this page and discard them?"
+  },
   "common": {
     "expand_sidebar": "Expand sidebar",
     "collapse_sidebar": "Collapse sidebar",

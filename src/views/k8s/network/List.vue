@@ -158,6 +158,7 @@
 </template>
 
 <script setup lang="ts">
+import { usePageState } from '@/hooks/usePageState'
 import { computed, inject, onBeforeMount, ref, watch } from 'vue'
 import ClusterPicker from '@/components/layout/ClusterPicker.vue'
 import { message } from 'ant-design-vue'
@@ -277,6 +278,8 @@ function formatAge(iso?: string): string {
   if (!iso) return '-'
   return dayjs(iso).fromNow(true)
 }
+
+usePageState({ currentKind })
 
 watch(currentKind, kind => void load(kind))
 watch(

@@ -24,6 +24,7 @@
 </template>
 
 <script setup lang="ts">
+import { usePageState } from '@/hooks/usePageState'
 import { computed, inject, onMounted, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import type { AssetsAccountApi } from '@/api/assets/account'
@@ -101,6 +102,8 @@ onMounted(() => {
   if (canReadAccounts) void loadAccounts()
   void runTableAction(() => table.reload())
 })
+usePageState({ searchInput, accountID, regionInput, engineInput, statusInput, includeDeleted })
+
 </script>
 
 <style scoped lang="scss">

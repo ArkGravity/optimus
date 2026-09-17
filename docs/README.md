@@ -1,5 +1,8 @@
 # Frontend documentation
 
+- [Workspace layout and menu tabs](workspace-tabs.md): navigation, state retention
+  and lifecycle rules for the compact workspace.
+
 Frontend-only P0 [design addenda](superpowers/specs/) and
 [implementation plans](superpowers/plans/) live here. Backend-owned references:
 

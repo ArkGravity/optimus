@@ -97,6 +97,7 @@
 </template>
 
 <script setup lang="ts">
+import { usePageState } from '@/hooks/usePageState'
 import { computed, inject, onMounted, reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { ReloadOutlined } from '@ant-design/icons-vue'
@@ -114,6 +115,7 @@ const clusterApi = inject<ClusterApi>('clusterApi')!
 
 const searchInput = ref('')
 const tagInput = ref('')
+usePageState({ searchInput, tagInput })
 
 type Filters = Pick<ClusterListQuery, 'search' | 'tag'>
 

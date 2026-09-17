@@ -6,3 +6,14 @@
 .u-mb-16 { margin-bottom: 16px; }
 .u-w-full { width: 100%; }
 .u-text-center { text-align: center; }
+
+// Compact workspace surfaces; nested cards and form controls retain their own spacing.
+.page-session > .ant-card,
+.page-session > div > .ant-card {
+  > .ant-card-body { padding: 16px; }
+  > .ant-card-head { padding-inline: 16px; min-height: 48px; }
+}
+.page-session .filter-row { flex-wrap: wrap; gap: 8px 12px; }
+.page-session .ant-table-wrapper { overflow-x: auto; }
+.page-session > .ant-card { min-height: 100%; }
+.page-session .ant-pagination { flex-wrap: wrap; }

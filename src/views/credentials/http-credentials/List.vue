@@ -45,6 +45,7 @@
 </template>
 
 <script setup lang="ts">
+import { usePageState } from '@/hooks/usePageState'
 import { computed, inject, onMounted, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { useI18n } from '@/hooks/useI18n'
@@ -108,6 +109,8 @@ async function remove(row: HTTPCredentialSummary) {
 function formatTime(value: string) { const date = new Date(value); return Number.isNaN(date.valueOf()) ? value : date.toLocaleString() }
 onMounted(() => { if (canRead.value) void table.reload().catch(() => undefined) })
 defineExpose({ canRead, canWrite, canDelete, table, errorMessage, remove, openEdit })
+usePageState({ searchInput, authType })
+
 </script>
 
 <style scoped lang="scss">

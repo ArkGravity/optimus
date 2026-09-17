@@ -46,6 +46,7 @@ import { useAuthStore } from '@/stores/auth'
 import { isBizError } from '@/utils/http-error'
 import { formDiff } from '@/utils/form-diff'
 import PageHeader from '@/components/PageHeader.vue'
+import { useUnsavedChanges } from '@/hooks/useUnsavedChanges'
 import type { MeApi } from '@/api/me'
 
 const { t } = useI18n()
@@ -67,6 +68,8 @@ const initialProfile = ref({
 const pw = reactive({ old_password: '', new_password: '', confirm: '' })
 const profileSaving = ref(false)
 const pwSaving = ref(false)
+useUnsavedChanges(() => JSON.stringify(profile) !== JSON.stringify(initialProfile.value)
+  || !!pw.old_password || !!pw.new_password || !!pw.confirm)
 
 onMounted(async () => {
   if (!auth.user) {

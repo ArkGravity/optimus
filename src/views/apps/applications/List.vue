@@ -88,6 +88,7 @@
 </template>
 
 <script setup lang="ts">
+import { usePageState } from '@/hooks/usePageState'
 import { computed, inject, onMounted, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
@@ -215,6 +216,8 @@ onMounted(async () => {
   }
   await table.reload()
 })
+usePageState({ searchInput, clusterFilter, namespaceInput })
+
 </script>
 
 <style scoped lang="scss">

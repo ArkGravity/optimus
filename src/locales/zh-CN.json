@@ -1,4 +1,12 @@
 {
+  "workspace": {
+    "tabs": "已打开的页面",
+    "actions": "标签页操作",
+    "close_others": "关闭其他标签",
+    "close_all": "关闭全部标签",
+    "select_menu": "请从左侧菜单选择页面",
+    "unsaved": "有尚未保存的修改，确定离开并放弃这些修改吗？"
+  },
   "common": {
     "expand_sidebar": "展开侧栏",
     "collapse_sidebar": "收起侧栏",

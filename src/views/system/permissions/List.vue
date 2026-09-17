@@ -30,6 +30,7 @@
 </template>
 
 <script setup lang="ts">
+import { usePageState } from '@/hooks/usePageState'
 import { computed, inject, onMounted, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { useI18n } from '@/hooks/useI18n'
@@ -75,4 +76,6 @@ onMounted(async () => {
     message.error(isBizError(e) ? e.message : t('network.error'))
   }
 })
+usePageState({ filter, activeKeys })
+
 </script>

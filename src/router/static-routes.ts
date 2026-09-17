@@ -1,10 +1,9 @@
-import { h } from 'vue'
-import { RouterView, type RouteRecordRaw } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
+import WorkspaceView from '@/components/layout/WorkspaceView.vue'
 
-// Passthrough component used as the `root` parent so dynamic routes can be
-// registered as its children while App.vue picks the actual layout based on
-// `route.meta.layout`.
-const RouterViewPassthrough = { render: () => h(RouterView) }
+// The root renders child pages in isolated sessions while App.vue selects
+// the surrounding layout. Sessions retain approved controls, not components.
+const RouterViewPassthrough = WorkspaceView
 
 export const staticRoutes: RouteRecordRaw[] = [
   {
@@ -37,6 +36,11 @@ export const staticRoutes: RouteRecordRaw[] = [
     component: RouterViewPassthrough,
     redirect: '/dashboard',
     children: [
+      {
+        path: 'workspace',
+        name: 'workspace',
+        component: () => import('@/components/layout/WorkspaceEmpty.vue')
+      },
       {
         path: 'profile',
         name: 'profile',

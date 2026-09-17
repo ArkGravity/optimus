@@ -69,6 +69,7 @@ import { computed, inject, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
 import { useI18n } from '@/hooks/useI18n'
+import { useUnsavedChanges } from '@/hooks/useUnsavedChanges'
 import { isBizError } from '@/utils/http-error'
 import PageHeader from '@/components/PageHeader.vue'
 import ApplicationFormBasic, { type ApplicationFormModel } from './components/ApplicationFormBasic.vue'
@@ -122,6 +123,9 @@ const chart = reactive<{ repoId?: number; name?: string; version?: string }>({
 })
 
 const valuesYaml = ref<string>('')
+const installed = ref(false)
+const initialDraft = JSON.stringify({ basic: basic.value, chart, values: valuesYaml.value })
+useUnsavedChanges(() => !installed.value && initialDraft !== JSON.stringify({ basic: basic.value, chart, values: valuesYaml.value }))
 
 // applicationId is set once step 0 succeeds; the basics card is locked
 // thereafter so the user cannot edit the immutable fields and trigger a
@@ -188,6 +192,7 @@ async function onSubmitInstall() {
       values_yaml: valuesYaml.value,
     })
     message.success(t('common.message.installed'))
+    installed.value = true
     void router.push(`/apps/applications/${applicationId.value}`)
   } catch (e) {
     message.error(isBizError(e) ? e.message : t('network.error'))

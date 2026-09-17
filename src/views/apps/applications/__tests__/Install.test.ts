@@ -4,6 +4,8 @@ import { defineComponent, h, inject, provide } from 'vue'
 import { describe, expect, it, vi } from 'vitest'
 import Install from '../Install.vue'
 
+vi.mock('@/hooks/useUnsavedChanges', () => ({ useUnsavedChanges: vi.fn() }))
+
 vi.mock('@/hooks/useI18n', () => ({
   useI18n: () => ({ t: (key: string) => key }),
 }))

@@ -96,6 +96,7 @@
 </template>
 
 <script setup lang="ts">
+import { usePageState } from '@/hooks/usePageState'
 import { computed, inject, onMounted, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import type { AssetsAccountApi, AssetsAccountListParams } from '@/api/assets/account'
@@ -198,6 +199,8 @@ function statusColor(status: string) {
 function formatTime(value: string) { return new Date(value).toLocaleString() }
 
 onMounted(reloadTable)
+usePageState({ searchInput, enabledFilter })
+
 </script>
 
 <style scoped lang="scss">

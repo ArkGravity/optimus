@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import type { Envelope, MeUser, TokenPair } from '@/types/api'
+import { useWorkspaceStore } from './workspace'
 
 /**
  * Error thrown by `_doRefresh` when the refresh call itself fails.
@@ -44,6 +45,7 @@ export const useAuthStore = defineStore('auth', () => {
     permissions.value = codes
   }
   function reset() {
+    useWorkspaceStore().reset()
     accessToken.value = null
     refreshToken.value = null
     user.value = null

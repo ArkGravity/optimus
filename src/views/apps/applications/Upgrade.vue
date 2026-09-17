@@ -64,6 +64,7 @@ import { computed, inject, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
 import { useI18n } from '@/hooks/useI18n'
+import { useUnsavedChanges } from '@/hooks/useUnsavedChanges'
 import { isBizError } from '@/utils/http-error'
 import PageHeader from '@/components/PageHeader.vue'
 import ChartPickerStep from './components/ChartPickerStep.vue'
@@ -103,6 +104,8 @@ const chart = reactive<{ repoId?: number; name?: string; version?: string }>({
 
 const appId = computed<number>(() => Number(route.params.id))
 const currentVersion = computed(() => detail.value?.chart_version || '')
+const upgraded = ref(false)
+useUnsavedChanges(() => !upgraded.value && (!!chart.version || !!valuesYaml.value))
 
 function goBack() {
   void router.push(`/apps/applications/${appId.value}`)
@@ -120,6 +123,7 @@ async function onSubmit() {
       values_yaml: valuesYaml.value,
     })
     message.success(t('common.message.upgraded'))
+    upgraded.value = true
     void router.push(`/apps/applications/${appId.value}`)
   } catch (e) {
     message.error(isBizError(e) ? e.message : t('network.error'))

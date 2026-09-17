@@ -98,6 +98,7 @@
 </template>
 
 <script setup lang="ts">
+import { usePageState } from '@/hooks/usePageState'
 import { computed, inject, onMounted, ref } from 'vue'
 import { message } from 'ant-design-vue'
 
@@ -187,6 +188,8 @@ onMounted(() => {
   if (canReadAccounts) void loadAccounts()
   void runTableAction(() => table.reload())
 })
+usePageState({ searchInput, accountID, regionInput, stateFilter, vpcInput, includeDeleted })
+
 </script>
 
 <style scoped lang="scss">

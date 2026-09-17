@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { DownOutlined, MenuOutlined, RightOutlined } from '@ant-design/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useMenuStore } from '@/stores/menu'
@@ -76,8 +76,20 @@ const codeByPath = computed(() => {
   return map
 })
 
-const currentKey = computed(() => codeByPath.value.get(route.path) ?? '')
+const currentKey = computed(() => [...codeByPath.value.entries()]
+  .filter(([path]) => route.path === path || route.path.startsWith(`${path}/`))
+  .sort(([a], [b]) => b.length - a.length)[0]?.[1] ?? '')
 const openKeys = ref<string[]>([])
+watch(currentKey, key => {
+  function ancestors(nodes: MeMenuNode[], parents: string[] = []): string[] | undefined {
+    for (const node of nodes) {
+      if (node.code === key) return parents
+      const found = node.children && ancestors(node.children, [...parents, node.code])
+      if (found) return found
+    }
+  }
+  openKeys.value = [...new Set([...openKeys.value, ...(ancestors(menu.tree) ?? [])])]
+}, { immediate: true })
 
 function onClick({ key }: { key: string }) {
   const node = findNode(menu.tree, key)

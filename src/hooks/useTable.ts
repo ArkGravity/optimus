@@ -1,4 +1,5 @@
 import { ref, type Ref } from 'vue'
+import { usePageState } from './usePageState'
 
 export interface PageRequest {
   page: number
@@ -22,6 +23,7 @@ export function useTable<T, F = Record<string, unknown>>(opts: UseTableOptions<T
   const total = ref(0)
   const loading = ref(false)
   const filters = ref<F>(opts.defaultFilters ?? ({} as F)) as Ref<F>
+  usePageState({ page, pageSize, filters }, 'table')
 
   async function reload() {
     loading.value = true

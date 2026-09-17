@@ -30,6 +30,7 @@
         @change="onStatusChange"
       />
       <a-date-picker
+        v-model:value="startedAfterInput"
         show-time
         allow-clear
         :placeholder="t('assets.sync.filter.started_after')"
@@ -78,6 +79,8 @@
 </template>
 
 <script setup lang="ts">
+import { usePageState } from '@/hooks/usePageState'
+import type { Dayjs } from 'dayjs'
 import { computed, inject, onMounted, ref } from 'vue'
 import { message } from 'ant-design-vue'
 
@@ -93,6 +96,7 @@ const api = inject<AssetsSyncApi>('assetsSyncApi')!
 const accountID = ref<number>()
 const resourceType = ref<SyncRunResourceType>()
 const status = ref<SyncRunStatus>()
+const startedAfterInput = ref<Dayjs | null>(null)
 
 const statusColor: Record<SyncRunStatus, string> = {
   running: 'blue', success: 'green', failed: 'red', skipped: 'gold',
@@ -157,6 +161,8 @@ function formatDuration(run: SyncRunSummary) {
 }
 
 onMounted(() => { void runTableAction(() => table.reload()) })
+usePageState({ accountID, resourceType, status, startedAfterInput })
+
 </script>
 
 <style scoped lang="scss">
