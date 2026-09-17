@@ -1,11 +1,18 @@
 <template>
   <a-layout class="default-layout">
-    <a-layout-sider v-model:collapsed="collapsed" :width="app.locale === 'en-US' ? 280 : 224" :trigger="null" collapsible>
-      <AppSidebar :collapsed="collapsed" />
+    <a-layout-sider
+      v-model:collapsed="collapsed"
+      class="sidebar"
+      :class="{ 'sidebar-dark': app.theme === 'dark' }"
+      :width="app.locale === 'en-US' ? 280 : 224"
+      :trigger="null"
+      collapsible
+    >
+      <AppSidebar :collapsed="collapsed" @toggle="collapsed = !collapsed" />
     </a-layout-sider>
     <a-layout class="main-layout">
       <a-layout-header class="header">
-        <AppHeader :collapsed="collapsed" @toggle="collapsed = !collapsed" />
+        <AppHeader />
       </a-layout-header>
       <a-layout-content class="content">
         <router-view />
@@ -36,6 +43,17 @@ watch(
 <style scoped lang="scss">
 .default-layout {
   min-height: 100vh;
+}
+.sidebar {
+  --sidebar-bg: #001529;
+  --sidebar-text: rgba(255, 255, 255, 0.85);
+  --sidebar-border: rgba(255, 255, 255, 0.16);
+  background: var(--sidebar-bg);
+}
+.sidebar-dark {
+  --sidebar-bg: var(--ant-color-bg-container);
+  --sidebar-text: var(--ant-color-text);
+  --sidebar-border: var(--ant-color-border);
 }
 .header {
   background: var(--ant-color-bg-container);

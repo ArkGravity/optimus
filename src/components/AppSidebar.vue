@@ -5,10 +5,11 @@
       <span v-if="!collapsed">Optimus</span>
     </div>
     <a-menu
+      class="sidebar-menu"
       :selected-keys="[currentKey]"
       :open-keys="openKeys"
       mode="inline"
-      theme="dark"
+      :theme="app.theme === 'dark' ? 'light' : 'dark'"
       :items="items"
       @click="onClick"
       @open-change="onOpenChange"
@@ -18,19 +19,36 @@
         <RightOutlined v-else class="submenu-chevron" />
       </template>
     </a-menu>
+    <div class="sidebar-footer">
+      <button
+        type="button"
+        class="sidebar-toggle"
+        :aria-label="collapsed ? $t('common.expand_sidebar') : $t('common.collapse_sidebar')"
+        :title="collapsed ? $t('common.expand_sidebar') : $t('common.collapse_sidebar')"
+        :aria-expanded="!collapsed"
+        @click="$emit('toggle')"
+      >
+        <MenuOutlined aria-hidden="true" />
+      </button>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { DownOutlined, RightOutlined } from '@ant-design/icons-vue'
+import { DownOutlined, MenuOutlined, RightOutlined } from '@ant-design/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useMenuStore } from '@/stores/menu'
+import { useAppStore } from '@/stores/app'
 import { useI18n } from '@/hooks/useI18n'
 import type { MeMenuNode } from '@/types/api'
 import type { ItemType } from 'ant-design-vue'
 
 defineProps<{ collapsed: boolean }>()
+defineEmits<{ toggle: [] }>()
+const app = useAppStore()
+// The light menu variant inherits the global dark algorithm's neutral tokens;
+// Ant Design's dark menu variant uses a separate, fixed navy palette.
 const menu = useMenuStore()
 const route = useRoute()
 const router = useRouter()
@@ -81,20 +99,58 @@ function findNode(ns: MeMenuNode[], code: string): MeMenuNode | undefined {
 
 <style scoped lang="scss">
 .app-sidebar {
-  height: 100%;
-  background: #001529;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
   display: flex;
   flex-direction: column;
 }
 .logo {
   height: 56px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: inherit;
   font-weight: 600;
   letter-spacing: 1px;
   gap: 10px;
+}
+.sidebar-menu {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-inline-end: 0;
+}
+.sidebar-footer {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border-top: 1px solid var(--sidebar-border);
+}
+.sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 40px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font-size: 18px;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+  }
 }
 .submenu-chevron {
   position: absolute;

@@ -37,6 +37,13 @@ no cluster is selected; cluster changes reload namespaces and resources without
 URL refresh markers. Local lint, typecheck, i18n, 291 tests and production build
 passed. This does not establish browser or production acceptance.
 
+Sidebar follow-up (2026-09-17, working changes based on pushed `b00e884`):
+dark mode uses neutral theme colors for the sidebar and its menus. The sidebar
+collapse control is a Hamburger button anchored in the sidebar footer; the menu
+scrolls independently and the global header has no collapse control. Submenu
+right/down chevrons remain. Local lint, typecheck, i18n, 291 tests and production
+build passed; browser visual acceptance remains unverified.
+
 ## Commands
 
 Run from this repository root:
