@@ -11,8 +11,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	apperr "github.com/logic3579/optimus/internal/infra/errors"
-	"github.com/logic3579/optimus/internal/models"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	"github.com/ArkGravity/optimus/internal/models"
 )
 
 const (

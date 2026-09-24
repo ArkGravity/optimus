@@ -1,4 +1,4 @@
-module github.com/logic3579/optimus
+module github.com/ArkGravity/optimus
 
 go 1.25.0
 

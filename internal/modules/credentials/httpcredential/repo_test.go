@@ -14,12 +14,12 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
-	"github.com/logic3579/optimus/internal/infra/db"
-	"github.com/logic3579/optimus/internal/models"
-	"github.com/logic3579/optimus/internal/modules/audit"
-	"github.com/logic3579/optimus/internal/modules/credentials/httpcredential"
-	"github.com/logic3579/optimus/internal/modules/observability/datasource"
-	dsinuse "github.com/logic3579/optimus/internal/modules/observability/datasource/inuse"
+	"github.com/ArkGravity/optimus/internal/infra/db"
+	"github.com/ArkGravity/optimus/internal/models"
+	"github.com/ArkGravity/optimus/internal/modules/audit"
+	"github.com/ArkGravity/optimus/internal/modules/credentials/httpcredential"
+	"github.com/ArkGravity/optimus/internal/modules/observability/datasource"
+	dsinuse "github.com/ArkGravity/optimus/internal/modules/observability/datasource/inuse"
 )
 
 func TestRepoFiltersAndSoftDelete(t *testing.T) {

@@ -7,9 +7,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apperr "github.com/logic3579/optimus/internal/infra/errors"
-	"github.com/logic3579/optimus/internal/modules/credentials"
-	"github.com/logic3579/optimus/internal/modules/k8s/client"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	"github.com/ArkGravity/optimus/internal/modules/credentials"
+	"github.com/ArkGravity/optimus/internal/modules/k8s/client"
 )
 
 // fakeRepo implements client.ReadRepo for unit tests.

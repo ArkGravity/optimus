@@ -10,16 +10,16 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/logic3579/optimus/internal/infra/crypto"
-	"github.com/logic3579/optimus/internal/infra/db"
-	apperr "github.com/logic3579/optimus/internal/infra/errors"
-	"github.com/logic3579/optimus/internal/infra/pagination"
-	"github.com/logic3579/optimus/internal/infra/permissions"
-	"github.com/logic3579/optimus/internal/models"
-	"github.com/logic3579/optimus/internal/modules/audit"
-	"github.com/logic3579/optimus/internal/modules/rbac"
-	"github.com/logic3579/optimus/internal/modules/user"
-	"github.com/logic3579/optimus/internal/seed"
+	"github.com/ArkGravity/optimus/internal/infra/crypto"
+	"github.com/ArkGravity/optimus/internal/infra/db"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	"github.com/ArkGravity/optimus/internal/infra/pagination"
+	"github.com/ArkGravity/optimus/internal/infra/permissions"
+	"github.com/ArkGravity/optimus/internal/models"
+	"github.com/ArkGravity/optimus/internal/modules/audit"
+	"github.com/ArkGravity/optimus/internal/modules/rbac"
+	"github.com/ArkGravity/optimus/internal/modules/user"
+	"github.com/ArkGravity/optimus/internal/seed"
 )
 
 func newSvc(t *testing.T) (*user.Service, func(), *rbac.PermissionCache) {

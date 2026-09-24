@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/logic3579/optimus/internal/infra/crypto"
+	"github.com/ArkGravity/optimus/internal/infra/crypto"
 )
 
 const testSecret = "test_secret_must_be_at_least_32_bytes_!!"

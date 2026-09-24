@@ -11,11 +11,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
-	"github.com/logic3579/optimus/internal/infra/config"
-	"github.com/logic3579/optimus/internal/modules/assets"
-	"github.com/logic3579/optimus/internal/modules/audit"
-	"github.com/logic3579/optimus/internal/modules/credentials"
-	"github.com/logic3579/optimus/internal/modules/credentials/httpcredential"
+	"github.com/ArkGravity/optimus/internal/infra/config"
+	"github.com/ArkGravity/optimus/internal/modules/assets"
+	"github.com/ArkGravity/optimus/internal/modules/audit"
+	"github.com/ArkGravity/optimus/internal/modules/credentials"
+	"github.com/ArkGravity/optimus/internal/modules/credentials/httpcredential"
 )
 
 type fakeCredentials struct{}

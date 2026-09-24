@@ -12,11 +12,11 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
-	"github.com/logic3579/optimus/internal/infra/db"
-	apperr "github.com/logic3579/optimus/internal/infra/errors"
-	"github.com/logic3579/optimus/internal/models"
-	"github.com/logic3579/optimus/internal/modules/assets/errs"
-	"github.com/logic3579/optimus/tests/dbtest"
+	"github.com/ArkGravity/optimus/internal/infra/db"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	"github.com/ArkGravity/optimus/internal/models"
+	"github.com/ArkGravity/optimus/internal/modules/assets/errs"
+	"github.com/ArkGravity/optimus/tests/dbtest"
 )
 
 func setupRepo(t *testing.T) (*Repo, *gorm.DB) {

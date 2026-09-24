@@ -5,8 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	apperr "github.com/logic3579/optimus/internal/infra/errors"
-	"github.com/logic3579/optimus/internal/infra/response"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	"github.com/ArkGravity/optimus/internal/infra/response"
 )
 
 // Handler wires the secret Service into Gin. Route mounting lives in the k8s

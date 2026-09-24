@@ -19,35 +19,35 @@ import (
 	// Blank import registers the generated OpenAPI spec with swag at init time
 	// so /swagger/* serves it. Regenerate via `make swag` whenever annotations
 	// change — CI's `make swagger-diff` will catch drift otherwise.
-	_ "github.com/logic3579/optimus/api/docs"
-	"github.com/logic3579/optimus/internal/infra/config"
-	"github.com/logic3579/optimus/internal/infra/crypto"
-	"github.com/logic3579/optimus/internal/infra/db"
-	"github.com/logic3579/optimus/internal/infra/log"
-	"github.com/logic3579/optimus/internal/infra/middleware"
-	"github.com/logic3579/optimus/internal/infra/permissions"
-	"github.com/logic3579/optimus/internal/infra/ratelimit"
-	"github.com/logic3579/optimus/internal/infra/webui"
-	"github.com/logic3579/optimus/internal/modules/apps/application"
-	"github.com/logic3579/optimus/internal/modules/apps/helmclient"
-	appsmodule "github.com/logic3579/optimus/internal/modules/apps/module"
-	"github.com/logic3579/optimus/internal/modules/apps/release"
-	apprepo "github.com/logic3579/optimus/internal/modules/apps/repo"
-	assetsmodule "github.com/logic3579/optimus/internal/modules/assets/module"
-	"github.com/logic3579/optimus/internal/modules/audit"
-	"github.com/logic3579/optimus/internal/modules/auth"
-	"github.com/logic3579/optimus/internal/modules/credentials"
-	"github.com/logic3579/optimus/internal/modules/credentials/vault"
-	deliverymodule "github.com/logic3579/optimus/internal/modules/delivery/module"
-	"github.com/logic3579/optimus/internal/modules/health"
-	"github.com/logic3579/optimus/internal/modules/k8s"
-	"github.com/logic3579/optimus/internal/modules/menu"
-	observabilitymodule "github.com/logic3579/optimus/internal/modules/observability/module"
-	"github.com/logic3579/optimus/internal/modules/permission"
-	"github.com/logic3579/optimus/internal/modules/rbac"
-	"github.com/logic3579/optimus/internal/modules/role"
-	"github.com/logic3579/optimus/internal/modules/user"
-	"github.com/logic3579/optimus/web"
+	_ "github.com/ArkGravity/optimus/api/docs"
+	"github.com/ArkGravity/optimus/internal/infra/config"
+	"github.com/ArkGravity/optimus/internal/infra/crypto"
+	"github.com/ArkGravity/optimus/internal/infra/db"
+	"github.com/ArkGravity/optimus/internal/infra/log"
+	"github.com/ArkGravity/optimus/internal/infra/middleware"
+	"github.com/ArkGravity/optimus/internal/infra/permissions"
+	"github.com/ArkGravity/optimus/internal/infra/ratelimit"
+	"github.com/ArkGravity/optimus/internal/infra/webui"
+	"github.com/ArkGravity/optimus/internal/modules/apps/application"
+	"github.com/ArkGravity/optimus/internal/modules/apps/helmclient"
+	appsmodule "github.com/ArkGravity/optimus/internal/modules/apps/module"
+	"github.com/ArkGravity/optimus/internal/modules/apps/release"
+	apprepo "github.com/ArkGravity/optimus/internal/modules/apps/repo"
+	assetsmodule "github.com/ArkGravity/optimus/internal/modules/assets/module"
+	"github.com/ArkGravity/optimus/internal/modules/audit"
+	"github.com/ArkGravity/optimus/internal/modules/auth"
+	"github.com/ArkGravity/optimus/internal/modules/credentials"
+	"github.com/ArkGravity/optimus/internal/modules/credentials/vault"
+	deliverymodule "github.com/ArkGravity/optimus/internal/modules/delivery/module"
+	"github.com/ArkGravity/optimus/internal/modules/health"
+	"github.com/ArkGravity/optimus/internal/modules/k8s"
+	"github.com/ArkGravity/optimus/internal/modules/menu"
+	observabilitymodule "github.com/ArkGravity/optimus/internal/modules/observability/module"
+	"github.com/ArkGravity/optimus/internal/modules/permission"
+	"github.com/ArkGravity/optimus/internal/modules/rbac"
+	"github.com/ArkGravity/optimus/internal/modules/role"
+	"github.com/ArkGravity/optimus/internal/modules/user"
+	"github.com/ArkGravity/optimus/web"
 )
 
 // @title           Optimus Admin API
@@ -161,7 +161,7 @@ func runServer(args []string) {
 	r.NoRoute(ui.Handle)
 
 	// Swagger UI: served at /swagger/index.html. The spec is bundled via the
-	// blank import of github.com/logic3579/optimus/api/docs above.
+	// blank import of github.com/ArkGravity/optimus/api/docs above.
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	api := r.Group("/api/v1")

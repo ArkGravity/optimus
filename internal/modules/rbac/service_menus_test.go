@@ -10,11 +10,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/logic3579/optimus/internal/infra/db"
-	"github.com/logic3579/optimus/internal/infra/permissions"
-	"github.com/logic3579/optimus/internal/models"
-	"github.com/logic3579/optimus/internal/modules/rbac"
-	"github.com/logic3579/optimus/internal/seed"
+	"github.com/ArkGravity/optimus/internal/infra/db"
+	"github.com/ArkGravity/optimus/internal/infra/permissions"
+	"github.com/ArkGravity/optimus/internal/models"
+	"github.com/ArkGravity/optimus/internal/modules/rbac"
+	"github.com/ArkGravity/optimus/internal/seed"
 )
 
 func TestMeService_ListMenus_ViewerSeesOnlyPermittedNodes(t *testing.T) {

@@ -8,12 +8,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 
-	"github.com/logic3579/optimus/internal/infra/crypto"
-	apperr "github.com/logic3579/optimus/internal/infra/errors"
-	"github.com/logic3579/optimus/internal/infra/pagination"
-	"github.com/logic3579/optimus/internal/models"
-	"github.com/logic3579/optimus/internal/modules/audit"
-	"github.com/logic3579/optimus/internal/modules/rbac"
+	"github.com/ArkGravity/optimus/internal/infra/crypto"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	"github.com/ArkGravity/optimus/internal/infra/pagination"
+	"github.com/ArkGravity/optimus/internal/models"
+	"github.com/ArkGravity/optimus/internal/modules/audit"
+	"github.com/ArkGravity/optimus/internal/modules/rbac"
 )
 
 type ServiceOptions struct {

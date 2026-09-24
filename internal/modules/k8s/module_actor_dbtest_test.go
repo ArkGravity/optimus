@@ -15,17 +15,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 
-	"github.com/logic3579/optimus/internal/infra/db"
-	"github.com/logic3579/optimus/internal/infra/middleware"
-	"github.com/logic3579/optimus/internal/infra/permissions"
-	"github.com/logic3579/optimus/internal/models"
-	"github.com/logic3579/optimus/internal/modules/audit"
-	"github.com/logic3579/optimus/internal/modules/credentials"
-	"github.com/logic3579/optimus/internal/modules/credentials/kubeconfig"
-	"github.com/logic3579/optimus/internal/modules/credentials/vault"
-	"github.com/logic3579/optimus/internal/modules/k8s"
-	"github.com/logic3579/optimus/internal/modules/rbac"
-	"github.com/logic3579/optimus/internal/seed"
+	"github.com/ArkGravity/optimus/internal/infra/db"
+	"github.com/ArkGravity/optimus/internal/infra/middleware"
+	"github.com/ArkGravity/optimus/internal/infra/permissions"
+	"github.com/ArkGravity/optimus/internal/models"
+	"github.com/ArkGravity/optimus/internal/modules/audit"
+	"github.com/ArkGravity/optimus/internal/modules/credentials"
+	"github.com/ArkGravity/optimus/internal/modules/credentials/kubeconfig"
+	"github.com/ArkGravity/optimus/internal/modules/credentials/vault"
+	"github.com/ArkGravity/optimus/internal/modules/k8s"
+	"github.com/ArkGravity/optimus/internal/modules/rbac"
+	"github.com/ArkGravity/optimus/internal/seed"
 )
 
 const actorBridgeKubeconfig = `apiVersion: v1

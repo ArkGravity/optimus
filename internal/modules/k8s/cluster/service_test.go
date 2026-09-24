@@ -12,12 +12,12 @@ import (
 	"gorm.io/gorm"
 	"k8s.io/apimachinery/pkg/version"
 
-	"github.com/logic3579/optimus/internal/infra/db"
-	apperr "github.com/logic3579/optimus/internal/infra/errors"
-	"github.com/logic3579/optimus/internal/models"
-	"github.com/logic3579/optimus/internal/modules/audit"
-	"github.com/logic3579/optimus/internal/modules/credentials"
-	"github.com/logic3579/optimus/internal/modules/k8s/cluster"
+	"github.com/ArkGravity/optimus/internal/infra/db"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	"github.com/ArkGravity/optimus/internal/models"
+	"github.com/ArkGravity/optimus/internal/modules/audit"
+	"github.com/ArkGravity/optimus/internal/modules/credentials"
+	"github.com/ArkGravity/optimus/internal/modules/k8s/cluster"
 )
 
 // goodYAML is a minimal valid kubeconfig with one context ("ctx") and a

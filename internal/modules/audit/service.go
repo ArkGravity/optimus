@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/logic3579/optimus/internal/infra/pagination"
-	"github.com/logic3579/optimus/internal/models"
+	"github.com/ArkGravity/optimus/internal/infra/pagination"
+	"github.com/ArkGravity/optimus/internal/models"
 )
 
 type Service struct {

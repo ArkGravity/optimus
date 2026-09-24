@@ -12,9 +12,9 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/logic3579/optimus/internal/infra/crypto"
-	apperr "github.com/logic3579/optimus/internal/infra/errors"
-	"github.com/logic3579/optimus/internal/infra/ratelimit"
+	"github.com/ArkGravity/optimus/internal/infra/crypto"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	"github.com/ArkGravity/optimus/internal/infra/ratelimit"
 )
 
 type ServiceOptions struct {

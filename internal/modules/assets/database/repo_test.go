@@ -13,9 +13,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/logic3579/optimus/internal/infra/db"
-	"github.com/logic3579/optimus/internal/models"
-	"github.com/logic3579/optimus/tests/dbtest"
+	"github.com/ArkGravity/optimus/internal/infra/db"
+	"github.com/ArkGravity/optimus/internal/models"
+	"github.com/ArkGravity/optimus/tests/dbtest"
 )
 
 func TestRepoListFiltersEveryPredicateAndMapsFields(t *testing.T) {

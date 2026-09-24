@@ -9,7 +9,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/ArkGravity/optimus/internal/infra/db"
 )
 
 func TestStartTestPostgres_RunsMigrations(t *testing.T) {

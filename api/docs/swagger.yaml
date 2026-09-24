@@ -1,6 +1,6 @@
 basePath: /api/v1
 definitions:
-  github_com_logic3579_optimus_internal_infra_response.Envelope:
+  github_com_ArkGravity_optimus_internal_infra_response.Envelope:
     properties:
       code:
         type: integer
@@ -10,7 +10,7 @@ definitions:
       message_key:
         type: string
     type: object
-  github_com_logic3579_optimus_internal_models.DeliveryApprovalDecision:
+  github_com_ArkGravity_optimus_internal_models.DeliveryApprovalDecision:
     enum:
     - pending
     - approved
@@ -20,13 +20,13 @@ definitions:
     - DeliveryApprovalPending
     - DeliveryApprovalApproved
     - DeliveryApprovalRejected
-  github_com_logic3579_optimus_internal_models.DeliveryExecutor:
+  github_com_ArkGravity_optimus_internal_models.DeliveryExecutor:
     enum:
     - helm_upgrade_existing_release
     type: string
     x-enum-varnames:
     - DeliveryExecutorHelmUpgradeExistingRelease
-  github_com_logic3579_optimus_internal_models.DeliveryRunState:
+  github_com_ArkGravity_optimus_internal_models.DeliveryRunState:
     enum:
     - queued
     - running
@@ -52,7 +52,7 @@ definitions:
     - DeliveryRunCanceled
     - DeliveryRunTimedOut
     - DeliveryRunOutcomeUnknown
-  github_com_logic3579_optimus_internal_models.DeliveryStageState:
+  github_com_ArkGravity_optimus_internal_models.DeliveryStageState:
     enum:
     - pending
     - waiting_approval
@@ -78,15 +78,15 @@ definitions:
     - DeliveryStageCanceled
     - DeliveryStageTimedOut
     - DeliveryStageOutcomeUnknown
-  github_com_logic3579_optimus_internal_modules_observability_prometheus.Result:
+  github_com_ArkGravity_optimus_internal_modules_observability_prometheus.Result:
     properties:
       result_type:
         type: string
       scalar:
-        $ref: '#/definitions/github_com_logic3579_optimus_internal_modules_observability_prometheus.Sample'
+        $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_observability_prometheus.Sample'
       series:
         items:
-          $ref: '#/definitions/github_com_logic3579_optimus_internal_modules_observability_prometheus.Series'
+          $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_observability_prometheus.Series'
         type: array
       text:
         type: string
@@ -95,14 +95,14 @@ definitions:
           type: string
         type: array
     type: object
-  github_com_logic3579_optimus_internal_modules_observability_prometheus.Sample:
+  github_com_ArkGravity_optimus_internal_modules_observability_prometheus.Sample:
     properties:
       timestamp:
         type: number
       value:
         type: string
     type: object
-  github_com_logic3579_optimus_internal_modules_observability_prometheus.Series:
+  github_com_ArkGravity_optimus_internal_modules_observability_prometheus.Series:
     properties:
       labels:
         additionalProperties:
@@ -110,7 +110,7 @@ definitions:
         type: object
       samples:
         items:
-          $ref: '#/definitions/github_com_logic3579_optimus_internal_modules_observability_prometheus.Sample'
+          $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_observability_prometheus.Sample'
         type: array
     type: object
   internal_modules_apps_application.CreateRequest:
@@ -796,7 +796,7 @@ definitions:
       decided_by_user_id:
         type: integer
       decision:
-        $ref: '#/definitions/github_com_logic3579_optimus_internal_models.DeliveryApprovalDecision'
+        $ref: '#/definitions/github_com_ArkGravity_optimus_internal_models.DeliveryApprovalDecision'
       id:
         type: integer
       run_id:
@@ -1142,7 +1142,7 @@ definitions:
       started_at:
         type: string
       state:
-        $ref: '#/definitions/github_com_logic3579_optimus_internal_models.DeliveryRunState'
+        $ref: '#/definitions/github_com_ArkGravity_optimus_internal_models.DeliveryRunState'
       updated_at:
         type: string
     type: object
@@ -1167,7 +1167,7 @@ definitions:
       error_message_key:
         type: string
       executor:
-        $ref: '#/definitions/github_com_logic3579_optimus_internal_models.DeliveryExecutor'
+        $ref: '#/definitions/github_com_ArkGravity_optimus_internal_models.DeliveryExecutor'
       finished_at:
         type: string
       id:
@@ -1185,7 +1185,7 @@ definitions:
       started_at:
         type: string
       state:
-        $ref: '#/definitions/github_com_logic3579_optimus_internal_models.DeliveryStageState'
+        $ref: '#/definitions/github_com_ArkGravity_optimus_internal_models.DeliveryStageState'
       timeout:
         example: 10m0s
         type: string
@@ -1621,7 +1621,7 @@ definitions:
       ref_id:
         type: string
       result:
-        $ref: '#/definitions/github_com_logic3579_optimus_internal_modules_observability_prometheus.Result'
+        $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_observability_prometheus.Result'
     type: object
   internal_modules_observability_query.Query:
     properties:
@@ -1828,7 +1828,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: List applications
@@ -1850,7 +1850,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Create application
@@ -1870,7 +1870,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Delete application
@@ -1889,7 +1889,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Get application
@@ -1916,7 +1916,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Update application
@@ -1936,7 +1936,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Get release history
@@ -1964,7 +1964,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Install release
@@ -1992,7 +1992,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Rollback release
@@ -2012,7 +2012,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Get release status
@@ -2039,7 +2039,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Uninstall release
@@ -2067,7 +2067,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Upgrade release
@@ -2098,7 +2098,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: List chart repos
@@ -2120,7 +2120,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Create chart repo
@@ -2140,7 +2140,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Delete chart repo
@@ -2159,7 +2159,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Get chart repo
@@ -2186,7 +2186,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Update chart repo
@@ -2206,7 +2206,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: List charts in a repo
@@ -2231,7 +2231,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: List versions for a chart
@@ -2261,7 +2261,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Get default values.yaml for a chart version
@@ -2303,7 +2303,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_assets_account.ListResponse'
@@ -2311,19 +2311,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: List cloud accounts
@@ -2346,7 +2346,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_assets_account.Detail'
@@ -2354,23 +2354,23 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Create cloud account
@@ -2390,27 +2390,27 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Delete cloud account
@@ -2430,7 +2430,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_assets_account.Detail'
@@ -2438,23 +2438,23 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Get cloud account
@@ -2482,7 +2482,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_assets_account.Detail'
@@ -2490,27 +2490,27 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Update cloud account
@@ -2530,39 +2530,39 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "501":
           description: Not Implemented
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Trigger cloud account sync
@@ -2613,7 +2613,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_assets_database.ListResponse'
@@ -2621,19 +2621,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: List RDS databases
@@ -2685,7 +2685,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_assets_instance.ListResponse'
@@ -2693,19 +2693,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: List EC2 instances
@@ -2748,7 +2748,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_assets_sync_runs.ListResponse'
@@ -2756,19 +2756,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: List sync runs
@@ -2811,7 +2811,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_assets_vpc.ListResponse'
@@ -2819,19 +2819,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: List VPCs
@@ -2871,7 +2871,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_assets_vpc.SubnetListResponse'
@@ -2879,23 +2879,23 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: List VPC subnets
@@ -2934,19 +2934,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: List audit logs
@@ -2969,19 +2969,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "429":
           description: Too Many Requests
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       summary: Login
       tags:
       - auth
@@ -3002,7 +3002,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       summary: Logout
       tags:
       - auth
@@ -3023,15 +3023,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       summary: Refresh tokens
       tags:
       - auth
@@ -3060,7 +3060,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: List cloud keys
@@ -3082,7 +3082,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Create cloud key
@@ -3102,7 +3102,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Delete cloud key
@@ -3121,7 +3121,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Get cloud key
@@ -3148,7 +3148,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Update cloud key
@@ -3180,7 +3180,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_credentials_httpcredential.ListResponse'
@@ -3188,15 +3188,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: List HTTP credentials
@@ -3219,7 +3219,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_credentials_httpcredential.Detail'
@@ -3227,19 +3227,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Create HTTP credential
@@ -3259,27 +3259,27 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Delete HTTP credential
@@ -3299,7 +3299,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_credentials_httpcredential.Detail'
@@ -3307,19 +3307,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Get HTTP credential
@@ -3347,7 +3347,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_credentials_httpcredential.Detail'
@@ -3355,23 +3355,23 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Update HTTP credential
@@ -3402,7 +3402,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: List kubeconfigs
@@ -3424,7 +3424,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Create kubeconfig
@@ -3444,7 +3444,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Delete kubeconfig
@@ -3463,7 +3463,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Get kubeconfig
@@ -3490,7 +3490,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Update kubeconfig
@@ -3521,15 +3521,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: List SSH credentials
@@ -3551,23 +3551,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Create SSH credential
@@ -3587,19 +3587,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Delete SSH credential
@@ -3618,19 +3618,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Get SSH credential
@@ -3657,27 +3657,27 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Update SSH credential
@@ -3690,7 +3690,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   items:
@@ -3724,7 +3724,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_delivery_project.ListResponse'
@@ -3749,7 +3749,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_delivery_project.ProjectDetail'
@@ -3771,7 +3771,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Delete a delivery project
@@ -3789,7 +3789,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_delivery_project.ProjectDetail'
@@ -3819,7 +3819,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_delivery_project.ProjectDetail'
@@ -3842,7 +3842,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   items:
@@ -3875,7 +3875,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_delivery_pipeline.ResolvedArtifact'
@@ -3898,7 +3898,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   items:
@@ -3930,7 +3930,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_delivery_project.Environment'
@@ -3957,7 +3957,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Unbind a delivery environment
@@ -3988,7 +3988,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_delivery_project.Environment'
@@ -4011,7 +4011,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_delivery_pipeline.Pipeline'
@@ -4041,7 +4041,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_delivery_pipeline.Pipeline'
@@ -4074,7 +4074,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_delivery_run.ListResponse'
@@ -4109,7 +4109,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_delivery_run.RunView'
@@ -4140,7 +4140,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_delivery_approval.Decision'
@@ -4171,7 +4171,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_delivery_approval.Decision'
@@ -4194,7 +4194,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_delivery_run.RunView'
@@ -4217,7 +4217,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_delivery_run.RunView'
@@ -4268,7 +4268,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_delivery_run.RunView'
@@ -4296,7 +4296,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_delivery_run.RunView'
@@ -4355,7 +4355,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: List clusters
@@ -4377,7 +4377,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Create cluster
@@ -4397,7 +4397,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Delete cluster
@@ -4416,7 +4416,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Get cluster
@@ -4443,7 +4443,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Update cluster
@@ -4463,7 +4463,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Ping cluster (apiserver health probe)
@@ -4477,15 +4477,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Current user profile
@@ -4507,15 +4507,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Update current user profile
@@ -4529,11 +4529,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Current user menu tree
@@ -4556,15 +4556,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Change current user password
@@ -4578,11 +4578,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Current user permission codes
@@ -4596,15 +4596,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Menu tree
@@ -4626,19 +4626,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Create menu
@@ -4658,19 +4658,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Delete menu
@@ -4697,23 +4697,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Update menu
@@ -4726,7 +4726,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   items:
@@ -4751,7 +4751,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_observability_builtin.Dashboard'
@@ -4783,7 +4783,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_observability_dashboard.ListResponse'
@@ -4808,7 +4808,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_observability_dashboard.Detail'
@@ -4830,7 +4830,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Delete a custom metric dashboard
@@ -4848,7 +4848,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_observability_dashboard.Detail'
@@ -4878,7 +4878,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_observability_dashboard.Detail'
@@ -4918,7 +4918,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_observability_datasource.ListResponse'
@@ -4943,7 +4943,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_observability_datasource.Detail'
@@ -4965,7 +4965,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Delete observability data source
@@ -4983,7 +4983,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_observability_datasource.Detail'
@@ -5013,7 +5013,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_observability_datasource.Detail'
@@ -5041,7 +5041,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   items:
@@ -5066,7 +5066,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   items:
@@ -5091,7 +5091,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_observability_datasource.TestResponse'
@@ -5117,7 +5117,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_observability_query.BatchResult'
@@ -5143,7 +5143,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   $ref: '#/definitions/internal_modules_observability_query.BatchResult'
@@ -5160,7 +5160,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
             - properties:
                 data:
                   items:
@@ -5180,15 +5180,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: List permissions
@@ -5202,15 +5202,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: List roles
@@ -5232,23 +5232,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Create role
@@ -5268,19 +5268,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Delete role
@@ -5299,19 +5299,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Get role
@@ -5338,23 +5338,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Update role
@@ -5382,23 +5382,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Set role permissions
@@ -5429,15 +5429,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: List users
@@ -5459,23 +5459,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Create user
@@ -5495,19 +5495,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Delete user
@@ -5526,19 +5526,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Get user
@@ -5565,23 +5565,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Update user
@@ -5609,23 +5609,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Set user password
@@ -5653,23 +5653,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Set user roles
@@ -5697,23 +5697,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope'
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
       summary: Set user status

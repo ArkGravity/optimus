@@ -4,7 +4,7 @@ import (
 	"context"
 	"math"
 
-	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
 )
 
 type listRepository interface {

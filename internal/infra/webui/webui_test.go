@@ -16,7 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 
-	"github.com/logic3579/optimus/internal/infra/webui"
+	"github.com/ArkGravity/optimus/internal/infra/webui"
 )
 
 const indexHTML = `<!doctype html><div id="app"></div>`

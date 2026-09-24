@@ -13,14 +13,14 @@ import (
 	"github.com/stretchr/testify/require"
 	"golang.org/x/crypto/ssh"
 
-	"github.com/logic3579/optimus/internal/infra/db"
-	"github.com/logic3579/optimus/internal/modules/audit"
-	"github.com/logic3579/optimus/internal/modules/credentials"
-	"github.com/logic3579/optimus/internal/modules/credentials/cloudkey"
-	"github.com/logic3579/optimus/internal/modules/credentials/httpcredential"
-	"github.com/logic3579/optimus/internal/modules/credentials/kubeconfig"
-	"github.com/logic3579/optimus/internal/modules/credentials/sshkey"
-	"github.com/logic3579/optimus/internal/modules/credentials/vault"
+	"github.com/ArkGravity/optimus/internal/infra/db"
+	"github.com/ArkGravity/optimus/internal/modules/audit"
+	"github.com/ArkGravity/optimus/internal/modules/credentials"
+	"github.com/ArkGravity/optimus/internal/modules/credentials/cloudkey"
+	"github.com/ArkGravity/optimus/internal/modules/credentials/httpcredential"
+	"github.com/ArkGravity/optimus/internal/modules/credentials/kubeconfig"
+	"github.com/ArkGravity/optimus/internal/modules/credentials/sshkey"
+	"github.com/ArkGravity/optimus/internal/modules/credentials/vault"
 )
 
 const validKubeconfigYAML = `apiVersion: v1

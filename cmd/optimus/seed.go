@@ -5,11 +5,11 @@ import (
 	"flag"
 	"path/filepath"
 
-	"github.com/logic3579/optimus/internal/infra/config"
-	"github.com/logic3579/optimus/internal/infra/db"
-	"github.com/logic3579/optimus/internal/infra/log"
-	"github.com/logic3579/optimus/internal/infra/permissions"
-	"github.com/logic3579/optimus/internal/seed"
+	"github.com/ArkGravity/optimus/internal/infra/config"
+	"github.com/ArkGravity/optimus/internal/infra/db"
+	"github.com/ArkGravity/optimus/internal/infra/log"
+	"github.com/ArkGravity/optimus/internal/infra/permissions"
+	"github.com/ArkGravity/optimus/internal/seed"
 )
 
 // runSeed registers permission codes and creates the builtin RBAC graph. The

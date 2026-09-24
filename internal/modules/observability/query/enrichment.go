@@ -6,7 +6,7 @@ import (
 	"net/netip"
 	"sort"
 
-	"github.com/logic3579/optimus/internal/modules/assets"
+	"github.com/ArkGravity/optimus/internal/modules/assets"
 )
 
 var enrichmentLabels = []string{"private_ip", "instance_ip", "node_ip"}

@@ -12,7 +12,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/logic3579/optimus/internal/modules/apps/release"
+	"github.com/ArkGravity/optimus/internal/modules/apps/release"
 )
 
 // The verifier is the only production DeliveryUpgrade/capability API. The file

@@ -20,9 +20,9 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
 
-	apperr "github.com/logic3579/optimus/internal/infra/errors"
-	"github.com/logic3579/optimus/internal/infra/response"
-	k8serrs "github.com/logic3579/optimus/internal/modules/k8s/apierr"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	"github.com/ArkGravity/optimus/internal/infra/response"
+	k8serrs "github.com/ArkGravity/optimus/internal/modules/k8s/apierr"
 )
 
 // StreamClientsetter is the narrow surface this handler needs from

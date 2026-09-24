@@ -22,17 +22,17 @@ import (
 
 	"helm.sh/helm/v3/pkg/chart"
 
-	apperr "github.com/logic3579/optimus/internal/infra/errors"
-	"github.com/logic3579/optimus/internal/infra/middleware"
-	"github.com/logic3579/optimus/internal/models"
-	"github.com/logic3579/optimus/internal/modules/apps/application"
-	"github.com/logic3579/optimus/internal/modules/apps/release"
-	apprepo "github.com/logic3579/optimus/internal/modules/apps/repo"
-	"github.com/logic3579/optimus/internal/modules/delivery/orchestrator"
-	"github.com/logic3579/optimus/internal/modules/delivery/pipeline"
-	"github.com/logic3579/optimus/internal/modules/delivery/project"
-	"github.com/logic3579/optimus/internal/modules/delivery/run"
-	"github.com/logic3579/optimus/internal/modules/rbac"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	"github.com/ArkGravity/optimus/internal/infra/middleware"
+	"github.com/ArkGravity/optimus/internal/models"
+	"github.com/ArkGravity/optimus/internal/modules/apps/application"
+	"github.com/ArkGravity/optimus/internal/modules/apps/release"
+	apprepo "github.com/ArkGravity/optimus/internal/modules/apps/repo"
+	"github.com/ArkGravity/optimus/internal/modules/delivery/orchestrator"
+	"github.com/ArkGravity/optimus/internal/modules/delivery/pipeline"
+	"github.com/ArkGravity/optimus/internal/modules/delivery/project"
+	"github.com/ArkGravity/optimus/internal/modules/delivery/run"
+	"github.com/ArkGravity/optimus/internal/modules/rbac"
 )
 
 // Module bundles every apps sub-service + handler so cmd/optimus/server.go only

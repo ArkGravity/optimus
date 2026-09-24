@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/logic3579/optimus/internal/models"
+	"github.com/ArkGravity/optimus/internal/models"
 
 	"gorm.io/gorm"
 )

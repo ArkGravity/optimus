@@ -10,7 +10,7 @@ import (
 	"net/netip"
 	"strings"
 
-	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
 
 	"gorm.io/gorm"
 )

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/logic3579/optimus/internal/models"
+	"github.com/ArkGravity/optimus/internal/models"
 )
 
 // ErrFetcherNotConfigured prevents a missing component from being mistaken

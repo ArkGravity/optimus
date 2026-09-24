@@ -1,6 +1,6 @@
 package errs
 
-import infraerrors "github.com/logic3579/optimus/internal/infra/errors"
+import infraerrors "github.com/ArkGravity/optimus/internal/infra/errors"
 
 const (
 	// Project, environment, and pipeline errors.

@@ -9,8 +9,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	apperr "github.com/logic3579/optimus/internal/infra/errors"
-	"github.com/logic3579/optimus/internal/infra/response"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	"github.com/ArkGravity/optimus/internal/infra/response"
 )
 
 func TestHandlerListSuccessEnvelope(t *testing.T) {

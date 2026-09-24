@@ -5,9 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/logic3579/optimus/internal/infra/crypto"
-	apperr "github.com/logic3579/optimus/internal/infra/errors"
-	"github.com/logic3579/optimus/internal/infra/response"
+	"github.com/ArkGravity/optimus/internal/infra/crypto"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	"github.com/ArkGravity/optimus/internal/infra/response"
 )
 
 // JWTAuth validates the Authorization: Bearer <token> header. On success, sets

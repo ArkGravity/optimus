@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 
-	"github.com/logic3579/optimus/internal/infra/middleware"
+	"github.com/ArkGravity/optimus/internal/infra/middleware"
 )
 
 type fakeHandlerService struct {

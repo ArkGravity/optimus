@@ -15,7 +15,7 @@ package workload
 import (
 	"time"
 
-	"github.com/logic3579/optimus/internal/modules/k8s/clusterscoped"
+	"github.com/ArkGravity/optimus/internal/modules/k8s/clusterscoped"
 )
 
 // DeploymentSummary is the JSON projection of an appsv1.Deployment.

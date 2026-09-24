@@ -10,9 +10,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/logic3579/optimus/internal/infra/db"
-	"github.com/logic3579/optimus/internal/infra/pagination"
-	"github.com/logic3579/optimus/internal/modules/audit"
+	"github.com/ArkGravity/optimus/internal/infra/db"
+	"github.com/ArkGravity/optimus/internal/infra/pagination"
+	"github.com/ArkGravity/optimus/internal/modules/audit"
 )
 
 func TestService_List_FiltersByAction(t *testing.T) {

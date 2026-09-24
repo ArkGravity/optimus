@@ -21,15 +21,15 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
-	"github.com/logic3579/optimus/internal/infra/db"
-	"github.com/logic3579/optimus/internal/infra/middleware"
-	"github.com/logic3579/optimus/internal/models"
-	"github.com/logic3579/optimus/internal/modules/audit"
-	"github.com/logic3579/optimus/internal/modules/credentials"
-	"github.com/logic3579/optimus/internal/modules/credentials/httpcredential"
-	"github.com/logic3579/optimus/internal/modules/credentials/vault"
-	"github.com/logic3579/optimus/internal/modules/observability/prometheus"
-	"github.com/logic3579/optimus/internal/modules/observability/query"
+	"github.com/ArkGravity/optimus/internal/infra/db"
+	"github.com/ArkGravity/optimus/internal/infra/middleware"
+	"github.com/ArkGravity/optimus/internal/models"
+	"github.com/ArkGravity/optimus/internal/modules/audit"
+	"github.com/ArkGravity/optimus/internal/modules/credentials"
+	"github.com/ArkGravity/optimus/internal/modules/credentials/httpcredential"
+	"github.com/ArkGravity/optimus/internal/modules/credentials/vault"
+	"github.com/ArkGravity/optimus/internal/modules/observability/prometheus"
+	"github.com/ArkGravity/optimus/internal/modules/observability/query"
 )
 
 type fixedResolver struct{ address netip.Addr }

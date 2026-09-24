@@ -10,10 +10,10 @@ import (
 	"gorm.io/gorm"
 	"k8s.io/client-go/tools/clientcmd"
 
-	apperr "github.com/logic3579/optimus/internal/infra/errors"
-	"github.com/logic3579/optimus/internal/models"
-	"github.com/logic3579/optimus/internal/modules/audit"
-	"github.com/logic3579/optimus/internal/modules/k8s/cluster/inuse"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	"github.com/ArkGravity/optimus/internal/models"
+	"github.com/ArkGravity/optimus/internal/modules/audit"
+	"github.com/ArkGravity/optimus/internal/modules/k8s/cluster/inuse"
 )
 
 // Cipher is the subset of vault.Cipher the service depends on.

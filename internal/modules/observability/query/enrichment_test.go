@@ -8,8 +8,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/logic3579/optimus/internal/modules/assets"
-	"github.com/logic3579/optimus/internal/modules/observability/prometheus"
+	"github.com/ArkGravity/optimus/internal/modules/assets"
+	"github.com/ArkGravity/optimus/internal/modules/observability/prometheus"
 )
 
 type fakeAssets struct {

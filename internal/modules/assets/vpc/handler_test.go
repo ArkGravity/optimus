@@ -10,9 +10,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
-	apperr "github.com/logic3579/optimus/internal/infra/errors"
-	"github.com/logic3579/optimus/internal/infra/response"
-	"github.com/logic3579/optimus/internal/models"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	"github.com/ArkGravity/optimus/internal/infra/response"
+	"github.com/ArkGravity/optimus/internal/models"
 )
 
 func TestHandlerMountRoutesWithResourceReadPermission(t *testing.T) {

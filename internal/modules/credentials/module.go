@@ -4,14 +4,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
-	"github.com/logic3579/optimus/internal/infra/middleware"
-	"github.com/logic3579/optimus/internal/modules/audit"
-	"github.com/logic3579/optimus/internal/modules/credentials/cloudkey"
-	"github.com/logic3579/optimus/internal/modules/credentials/httpcredential"
-	"github.com/logic3579/optimus/internal/modules/credentials/kubeconfig"
-	"github.com/logic3579/optimus/internal/modules/credentials/sshkey"
-	"github.com/logic3579/optimus/internal/modules/credentials/vault"
-	"github.com/logic3579/optimus/internal/modules/rbac"
+	"github.com/ArkGravity/optimus/internal/infra/middleware"
+	"github.com/ArkGravity/optimus/internal/modules/audit"
+	"github.com/ArkGravity/optimus/internal/modules/credentials/cloudkey"
+	"github.com/ArkGravity/optimus/internal/modules/credentials/httpcredential"
+	"github.com/ArkGravity/optimus/internal/modules/credentials/kubeconfig"
+	"github.com/ArkGravity/optimus/internal/modules/credentials/sshkey"
+	"github.com/ArkGravity/optimus/internal/modules/credentials/vault"
+	"github.com/ArkGravity/optimus/internal/modules/rbac"
 )
 
 // Module bundles the three feature services and exposes a Consumer for

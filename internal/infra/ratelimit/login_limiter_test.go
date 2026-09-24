@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/logic3579/optimus/internal/infra/ratelimit"
+	"github.com/ArkGravity/optimus/internal/infra/ratelimit"
 )
 
 func TestLoginLimiter_AllowsUnderQuota(t *testing.T) {

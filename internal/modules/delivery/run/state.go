@@ -1,6 +1,6 @@
 package run
 
-import "github.com/logic3579/optimus/internal/models"
+import "github.com/ArkGravity/optimus/internal/models"
 
 var runTransitions = map[models.DeliveryRunState]map[models.DeliveryRunState]struct{}{
 	models.DeliveryRunQueued: {

@@ -14,7 +14,7 @@ import (
 	"github.com/ory/dockertest/v3/docker"
 	"github.com/stretchr/testify/require"
 
-	testdb "github.com/logic3579/optimus/internal/infra/db"
+	testdb "github.com/ArkGravity/optimus/internal/infra/db"
 )
 
 func TestRunGoose_UpAppliesAllMigrations(t *testing.T) {

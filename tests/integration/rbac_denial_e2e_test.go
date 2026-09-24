@@ -9,8 +9,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/logic3579/optimus/internal/infra/crypto"
-	"github.com/logic3579/optimus/internal/models"
+	"github.com/ArkGravity/optimus/internal/infra/crypto"
+	"github.com/ArkGravity/optimus/internal/models"
 )
 
 // TestE2E_ViewerCannotAccessSystemAdministration asserts the per-route RBAC

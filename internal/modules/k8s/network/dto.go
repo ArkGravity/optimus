@@ -14,7 +14,7 @@ package network
 import (
 	"time"
 
-	"github.com/logic3579/optimus/internal/modules/k8s/clusterscoped"
+	"github.com/ArkGravity/optimus/internal/modules/k8s/clusterscoped"
 )
 
 // ServiceSummary is the JSON projection of a corev1.Service.

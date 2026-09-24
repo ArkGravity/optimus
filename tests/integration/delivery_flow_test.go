@@ -11,15 +11,15 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apperr "github.com/logic3579/optimus/internal/infra/errors"
-	"github.com/logic3579/optimus/internal/models"
-	appsapplication "github.com/logic3579/optimus/internal/modules/apps/application"
-	"github.com/logic3579/optimus/internal/modules/delivery/approval"
-	"github.com/logic3579/optimus/internal/modules/delivery/orchestrator"
-	"github.com/logic3579/optimus/internal/modules/delivery/pipeline"
-	"github.com/logic3579/optimus/internal/modules/delivery/project"
-	deliveryrun "github.com/logic3579/optimus/internal/modules/delivery/run"
-	"github.com/logic3579/optimus/tests/dbtest"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	"github.com/ArkGravity/optimus/internal/models"
+	appsapplication "github.com/ArkGravity/optimus/internal/modules/apps/application"
+	"github.com/ArkGravity/optimus/internal/modules/delivery/approval"
+	"github.com/ArkGravity/optimus/internal/modules/delivery/orchestrator"
+	"github.com/ArkGravity/optimus/internal/modules/delivery/pipeline"
+	"github.com/ArkGravity/optimus/internal/modules/delivery/project"
+	deliveryrun "github.com/ArkGravity/optimus/internal/modules/delivery/run"
+	"github.com/ArkGravity/optimus/tests/dbtest"
 )
 
 func TestDeliveryFlowPromotesImmutableArtifactWithApproval(t *testing.T) {

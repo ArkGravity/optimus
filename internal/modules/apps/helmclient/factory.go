@@ -15,9 +15,9 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 
-	"github.com/logic3579/optimus/internal/modules/apps"
-	"github.com/logic3579/optimus/internal/modules/credentials"
-	"github.com/logic3579/optimus/internal/modules/k8s/cluster"
+	"github.com/ArkGravity/optimus/internal/modules/apps"
+	"github.com/ArkGravity/optimus/internal/modules/credentials"
+	"github.com/ArkGravity/optimus/internal/modules/k8s/cluster"
 )
 
 // ClusterLookup is the narrow seam Factory needs to resolve a cluster ID into

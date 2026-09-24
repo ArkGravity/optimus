@@ -11,7 +11,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/logic3579/optimus/internal/infra/permissions"
+	"github.com/ArkGravity/optimus/internal/infra/permissions"
 )
 
 func main() {

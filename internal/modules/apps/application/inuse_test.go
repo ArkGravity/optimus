@@ -1,7 +1,7 @@
 package application_test
 
 import (
-	"github.com/logic3579/optimus/internal/modules/apps/application"
+	"github.com/ArkGravity/optimus/internal/modules/apps/application"
 )
 
 // This file's primary value is the compile-time conformance check that

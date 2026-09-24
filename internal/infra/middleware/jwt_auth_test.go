@@ -9,8 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 
-	"github.com/logic3579/optimus/internal/infra/crypto"
-	"github.com/logic3579/optimus/internal/infra/middleware"
+	"github.com/ArkGravity/optimus/internal/infra/crypto"
+	"github.com/ArkGravity/optimus/internal/infra/middleware"
 )
 
 const mwTestSecret = "test_secret_must_be_at_least_32_bytes_!!"

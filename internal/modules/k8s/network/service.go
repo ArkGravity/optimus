@@ -7,8 +7,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 
-	apperr "github.com/logic3579/optimus/internal/infra/errors"
-	k8serrs "github.com/logic3579/optimus/internal/modules/k8s/apierr"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	k8serrs "github.com/ArkGravity/optimus/internal/modules/k8s/apierr"
 )
 
 // Clientsetter returns a fresh kubernetes.Interface for the given cluster.

@@ -7,10 +7,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	apperr "github.com/logic3579/optimus/internal/infra/errors"
-	"github.com/logic3579/optimus/internal/infra/middleware"
-	"github.com/logic3579/optimus/internal/infra/response"
-	"github.com/logic3579/optimus/internal/modules/delivery/errs"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	"github.com/ArkGravity/optimus/internal/infra/middleware"
+	"github.com/ArkGravity/optimus/internal/infra/response"
+	"github.com/ArkGravity/optimus/internal/modules/delivery/errs"
 )
 
 const maxRequestBodyBytes int64 = 1 << 20

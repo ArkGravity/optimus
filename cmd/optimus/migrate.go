@@ -9,9 +9,9 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
 
-	"github.com/logic3579/optimus/internal/infra/config"
-	"github.com/logic3579/optimus/internal/infra/log"
-	"github.com/logic3579/optimus/migrations"
+	"github.com/ArkGravity/optimus/internal/infra/config"
+	"github.com/ArkGravity/optimus/internal/infra/log"
+	"github.com/ArkGravity/optimus/migrations"
 )
 
 // runMigrate applies the Goose SQL migrations embedded into the binary against

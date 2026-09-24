@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 
-	"github.com/logic3579/optimus/internal/modules/assets/errs"
+	"github.com/ArkGravity/optimus/internal/modules/assets/errs"
 )
 
 func TestHandler_Create_UnsupportedProviderUsesDomainError(t *testing.T) {

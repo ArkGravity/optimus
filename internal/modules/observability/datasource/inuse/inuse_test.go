@@ -4,9 +4,9 @@ package inuse
 
 import (
 	"context"
-	"github.com/logic3579/optimus/internal/infra/db"
-	"github.com/logic3579/optimus/internal/models"
-	"github.com/logic3579/optimus/tests/dbtest"
+	"github.com/ArkGravity/optimus/internal/infra/db"
+	"github.com/ArkGravity/optimus/internal/models"
+	"github.com/ArkGravity/optimus/tests/dbtest"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 	"path/filepath"

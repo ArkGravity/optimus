@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	"github.com/logic3579/optimus/internal/infra/config"
+	"github.com/ArkGravity/optimus/internal/infra/config"
 )
 
 func Open(cfg config.DatabaseConfig) (*gorm.DB, error) {

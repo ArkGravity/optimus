@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 
-	yamlmod "github.com/logic3579/optimus/internal/modules/k8s/yaml"
+	yamlmod "github.com/ArkGravity/optimus/internal/modules/k8s/yaml"
 )
 
 func init() {

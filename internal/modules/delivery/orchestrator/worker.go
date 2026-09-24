@@ -12,10 +12,10 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	apperr "github.com/logic3579/optimus/internal/infra/errors"
-	"github.com/logic3579/optimus/internal/models"
-	"github.com/logic3579/optimus/internal/modules/delivery/errs"
-	deliveryrun "github.com/logic3579/optimus/internal/modules/delivery/run"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	"github.com/ArkGravity/optimus/internal/models"
+	"github.com/ArkGravity/optimus/internal/modules/delivery/errs"
+	deliveryrun "github.com/ArkGravity/optimus/internal/modules/delivery/run"
 )
 
 type Config struct {
