@@ -1,13 +1,14 @@
 name: ${COMPOSE_PROJECT_NAME:-optimus-dev}
 
-x-optimus-backend: &optimus-backend
-  image: ${IMAGE_REPOSITORY:-local}/optimus-be:${BACKEND_VERSION:-dev}
+# One image serves the API and embedded web UI; migrate and seed run the same
+# binary's subcommands before the server starts.
+x-optimus: &optimus
+  image: ${IMAGE_REPOSITORY:-local}/optimus:${OPTIMUS_VERSION:-dev}
   build:
     context: .
     dockerfile: Dockerfile
-    target: backend
     args:
-      VERSION: ${BACKEND_VERSION:-dev}
+      VERSION: ${OPTIMUS_VERSION:-dev}
 
 services:
   postgres:
@@ -28,8 +29,7 @@ services:
       retries: 10
 
   migrate:
-    <<: *optimus-backend
-    entrypoint: ["/usr/local/bin/optimus"]
+    <<: *optimus
     command: ["migrate", "-config", "/etc/optimus/config.yaml", "-dir", "up"]
     restart: "no"
     depends_on:
@@ -41,8 +41,7 @@ services:
       OPTIMUS_LOG_FORMAT: ${OPTIMUS_LOG_FORMAT:-json}
 
   seed:
-    <<: *optimus-backend
-    entrypoint: ["/usr/local/bin/optimus"]
+    <<: *optimus
     command: ["seed", "-config", "/etc/optimus/config.yaml"]
     restart: "no"
     depends_on:
@@ -59,9 +58,8 @@ services:
       OPTIMUS_LOG_LEVEL: ${OPTIMUS_LOG_LEVEL:-debug}
       OPTIMUS_LOG_FORMAT: ${OPTIMUS_LOG_FORMAT:-json}
 
-  optimus-be:
-    <<: *optimus-backend
-    entrypoint: ["/usr/local/bin/optimus"]
+  optimus:
+    <<: *optimus
     command: ["server", "-config", "/etc/optimus/config.yaml"]
     restart: unless-stopped
     depends_on:
@@ -86,7 +84,7 @@ services:
       OPTIMUS_AUTH_LOGIN_RATE_LIMIT_BLOCK: ${OPTIMUS_AUTH_LOGIN_RATE_LIMIT_BLOCK:-1m}
       OPTIMUS_VAULT_MASTER_KEY: ${OPTIMUS_VAULT_MASTER_KEY:-MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=}
       OPTIMUS_VAULT_MASTER_KEY_FILE: ${OPTIMUS_VAULT_MASTER_KEY_FILE:-}
-      OPTIMUS_CORS_ALLOWED_ORIGINS: ${OPTIMUS_CORS_ALLOWED_ORIGINS:-http://localhost:5173,http://127.0.0.1:8080}
+      OPTIMUS_CORS_ALLOWED_ORIGINS: ${OPTIMUS_CORS_ALLOWED_ORIGINS:-http://localhost:5173}
       OPTIMUS_CORS_ALLOWED_METHODS: ${OPTIMUS_CORS_ALLOWED_METHODS:-GET,POST,PUT,DELETE,OPTIONS}
       OPTIMUS_CORS_ALLOW_CREDENTIALS: ${OPTIMUS_CORS_ALLOW_CREDENTIALS:-false}
       OPTIMUS_I18N_DEFAULT_LANG: ${OPTIMUS_I18N_DEFAULT_LANG:-zh-CN}
@@ -94,6 +92,7 @@ services:
       OPTIMUS_SERVER_READ_TIMEOUT: ${OPTIMUS_SERVER_READ_TIMEOUT:-15s}
       OPTIMUS_SERVER_WRITE_TIMEOUT: ${OPTIMUS_SERVER_WRITE_TIMEOUT:-15s}
       OPTIMUS_SERVER_SHUTDOWN_TIMEOUT: ${OPTIMUS_SERVER_SHUTDOWN_TIMEOUT:-20s}
+      OPTIMUS_SERVER_TRUSTED_PROXIES: ${OPTIMUS_SERVER_TRUSTED_PROXIES:-}
       OPTIMUS_LOG_LEVEL: ${OPTIMUS_LOG_LEVEL:-debug}
       OPTIMUS_LOG_FORMAT: ${OPTIMUS_LOG_FORMAT:-json}
       OPTIMUS_ASSETS_SYNC_CRON: ${OPTIMUS_ASSETS_SYNC_CRON:-*/15 * * * *}
@@ -119,31 +118,14 @@ services:
       OPTIMUS_DELIVERY_EVENT_RETENTION_DAYS: ${OPTIMUS_DELIVERY_EVENT_RETENTION_DAYS:-30}
       OPTIMUS_DELIVERY_SSE_HEARTBEAT: ${OPTIMUS_DELIVERY_SSE_HEARTBEAT:-20s}
       OPTIMUS_DELIVERY_SSE_MAX_CONNECTIONS: ${OPTIMUS_DELIVERY_SSE_MAX_CONNECTIONS:-50}
+    ports:
+      - "${HTTP_BIND:-127.0.0.1}:${HTTP_PORT:-8080}:8080"
     healthcheck:
       test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8080/api/v1/health"]
       interval: 10s
       timeout: 3s
       retries: 5
       start_period: 10s
-
-  optimus-fe:
-    environment:
-      BACKEND_URL: http://optimus-be:8080
-    image: ${FRONTEND_IMAGE:-local/optimus-fe}:${FRONTEND_VERSION:-dev}
-    build:
-      context: ${FRONTEND_BUILD_CONTEXT:-../optimus-fe}
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    depends_on:
-      optimus-be:
-        condition: service_healthy
-    ports:
-      - "${HTTP_BIND:-127.0.0.1}:${HTTP_PORT:-8080}:80"
-    healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost/"]
-      interval: 10s
-      timeout: 3s
-      retries: 5
 
 volumes:
   pgdata:

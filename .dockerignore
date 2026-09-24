@@ -6,12 +6,15 @@
 .omo
 .serena
 .worktrees
+.cloudflare
 .mcp.json
 .idea
 .vscode
 .DS_Store
 **/.env
 **/.env.*
+!web/.env.development
+!web/.env.production
 **/*.pem
 **/*.key
 **/*.log
@@ -25,3 +28,7 @@ coverage
 postgres-data
 **/*.test
 **/*.out
+web/node_modules
+web/dist
+web/coverage
+**/*.tsbuildinfo
