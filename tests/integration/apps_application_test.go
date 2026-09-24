@@ -10,8 +10,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/apps/application"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/apps/application"
 )
 
 // fakeHelmInstalled is a tiny stand-in for application.HelmInstalledChecker;

@@ -15,7 +15,7 @@ import (
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 
-	apperr "optimus-be/internal/infra/errors"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
 )
 
 // MapAPIError converts apiserver / network errors into Optimus BizErrors.

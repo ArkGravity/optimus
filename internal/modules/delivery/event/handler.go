@@ -11,8 +11,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/infra/response"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/infra/response"
 )
 
 const readPermission = "delivery:run:read"

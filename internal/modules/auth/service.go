@@ -12,9 +12,9 @@ import (
 
 	"gorm.io/gorm"
 
-	"optimus-be/internal/infra/crypto"
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/infra/ratelimit"
+	"github.com/logic3579/optimus/internal/infra/crypto"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/infra/ratelimit"
 )
 
 type ServiceOptions struct {

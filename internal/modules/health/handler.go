@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
-	"optimus-be/internal/infra/db"
+	"github.com/logic3579/optimus/internal/infra/db"
 )
 
 type Handler struct {

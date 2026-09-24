@@ -5,8 +5,8 @@ import (
 
 	"gorm.io/gorm"
 
-	"optimus-be/internal/infra/pagination"
-	"optimus-be/internal/models"
+	"github.com/logic3579/optimus/internal/infra/pagination"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 type Repo struct {

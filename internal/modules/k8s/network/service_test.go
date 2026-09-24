@@ -11,8 +11,8 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/fake"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/modules/k8s/network"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/modules/k8s/network"
 )
 
 // fakeCS satisfies network.Clientsetter by returning a preloaded in-memory

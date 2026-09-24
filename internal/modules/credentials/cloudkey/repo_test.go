@@ -11,9 +11,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/credentials/cloudkey"
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/credentials/cloudkey"
 )
 
 func newRepo(t *testing.T) (*cloudkey.Repo, func()) {

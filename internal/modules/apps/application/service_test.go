@@ -10,11 +10,11 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/apps/application"
-	"optimus-be/internal/modules/audit"
-	deliveryproject "optimus-be/internal/modules/delivery/project"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/apps/application"
+	"github.com/logic3579/optimus/internal/modules/audit"
+	deliveryproject "github.com/logic3579/optimus/internal/modules/delivery/project"
 )
 
 // setupSvc returns a Service + Repo + (clusterID, chartRepoID) for use by

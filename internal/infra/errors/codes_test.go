@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apperr "optimus-be/internal/infra/errors"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
 )
 
 func TestAuthCodesAreStable(t *testing.T) {

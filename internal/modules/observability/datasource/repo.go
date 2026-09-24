@@ -10,8 +10,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 type Repo struct{ db *gorm.DB }

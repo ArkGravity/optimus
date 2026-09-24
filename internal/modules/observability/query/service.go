@@ -9,10 +9,10 @@ import (
 
 	"golang.org/x/sync/errgroup"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/modules/assets"
-	"optimus-be/internal/modules/credentials"
-	"optimus-be/internal/modules/observability/prometheus"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/modules/assets"
+	"github.com/logic3579/optimus/internal/modules/credentials"
+	"github.com/logic3579/optimus/internal/modules/observability/prometheus"
 )
 
 type Datasource struct {

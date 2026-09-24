@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	"optimus-be/internal/models"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 const (

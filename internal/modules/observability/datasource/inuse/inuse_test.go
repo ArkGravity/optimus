@@ -4,11 +4,11 @@ package inuse
 
 import (
 	"context"
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/tests/dbtest"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/models"
-	"optimus-be/tests/dbtest"
 	"path/filepath"
 	"testing"
 )

@@ -12,9 +12,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/infra/permissions"
-	"optimus-be/internal/modules/permission"
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/infra/permissions"
+	"github.com/logic3579/optimus/internal/modules/permission"
 )
 
 func TestHandler_List(t *testing.T) {

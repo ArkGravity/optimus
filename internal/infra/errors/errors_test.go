@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apperr "optimus-be/internal/infra/errors"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
 )
 
 func TestNew_HasCodeAndMessageKey(t *testing.T) {

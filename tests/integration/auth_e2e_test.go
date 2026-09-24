@@ -10,8 +10,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/infra/crypto"
-	"optimus-be/internal/models"
+	"github.com/logic3579/optimus/internal/infra/crypto"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 func TestE2E_LoginRefreshReplayLogout(t *testing.T) {

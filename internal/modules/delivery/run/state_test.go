@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/models"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 func TestRunTransitionsMatchApprovedStateMachine(t *testing.T) {

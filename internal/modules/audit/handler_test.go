@@ -12,8 +12,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/modules/audit"
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/modules/audit"
 )
 
 func TestHandler_List(t *testing.T) {

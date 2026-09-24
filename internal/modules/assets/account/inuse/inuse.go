@@ -7,7 +7,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"optimus-be/internal/models"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 type Counter interface {

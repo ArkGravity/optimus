@@ -22,17 +22,17 @@ import (
 
 	"helm.sh/helm/v3/pkg/chart"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/infra/middleware"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/apps/application"
-	"optimus-be/internal/modules/apps/release"
-	apprepo "optimus-be/internal/modules/apps/repo"
-	"optimus-be/internal/modules/delivery/orchestrator"
-	"optimus-be/internal/modules/delivery/pipeline"
-	"optimus-be/internal/modules/delivery/project"
-	"optimus-be/internal/modules/delivery/run"
-	"optimus-be/internal/modules/rbac"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/infra/middleware"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/apps/application"
+	"github.com/logic3579/optimus/internal/modules/apps/release"
+	apprepo "github.com/logic3579/optimus/internal/modules/apps/repo"
+	"github.com/logic3579/optimus/internal/modules/delivery/orchestrator"
+	"github.com/logic3579/optimus/internal/modules/delivery/pipeline"
+	"github.com/logic3579/optimus/internal/modules/delivery/project"
+	"github.com/logic3579/optimus/internal/modules/delivery/run"
+	"github.com/logic3579/optimus/internal/modules/rbac"
 )
 
 // Module bundles every apps sub-service + handler so cmd/server/main.go only

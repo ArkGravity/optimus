@@ -8,7 +8,7 @@ import (
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 
-	"optimus-be/internal/models"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 func TestToSummaryMapsAllFieldsAndKeepsTagsNonNil(t *testing.T) {

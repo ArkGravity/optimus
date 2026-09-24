@@ -10,9 +10,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/infra/permissions"
-	"optimus-be/internal/models"
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/infra/permissions"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 func TestP5PermissionRegistry(t *testing.T) {

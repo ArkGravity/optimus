@@ -9,9 +9,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/apps/repo"
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/apps/repo"
 )
 
 // migrationsPath is the relative path from this test package to the

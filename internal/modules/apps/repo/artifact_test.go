@@ -16,8 +16,8 @@ import (
 	"github.com/stretchr/testify/require"
 	"helm.sh/helm/v3/pkg/registry"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 type artifactRoundTripFunc func(*http.Request) (*http.Response, error)

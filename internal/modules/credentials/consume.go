@@ -12,10 +12,10 @@ package credentials
 import (
 	"context"
 
-	"optimus-be/internal/modules/credentials/cloudkey"
-	"optimus-be/internal/modules/credentials/httpcredential"
-	"optimus-be/internal/modules/credentials/kubeconfig"
-	"optimus-be/internal/modules/credentials/sshkey"
+	"github.com/logic3579/optimus/internal/modules/credentials/cloudkey"
+	"github.com/logic3579/optimus/internal/modules/credentials/httpcredential"
+	"github.com/logic3579/optimus/internal/modules/credentials/kubeconfig"
+	"github.com/logic3579/optimus/internal/modules/credentials/sshkey"
 )
 
 // ctxKey is a private type used as a context.Context key so the value cannot

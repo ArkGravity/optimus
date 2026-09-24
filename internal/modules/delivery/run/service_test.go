@@ -16,10 +16,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/audit"
-	"optimus-be/internal/modules/delivery/errs"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/audit"
+	"github.com/logic3579/optimus/internal/modules/delivery/errs"
 )
 
 func TestCanonicalFingerprintUsesOnlyImmutableRunIdentity(t *testing.T) {
@@ -55,7 +55,7 @@ func TestRunPackageOwnsArtifactSeam(t *testing.T) {
 	for _, parsed := range packages {
 		for filename, file := range parsed.Files {
 			for _, imported := range file.Imports {
-				require.NotEqual(t, `"optimus-be/internal/modules/apps/repo"`, imported.Path.Value, filename)
+				require.NotEqual(t, `"github.com/logic3579/optimus/internal/modules/apps/repo"`, imported.Path.Value, filename)
 			}
 		}
 	}

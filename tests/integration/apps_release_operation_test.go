@@ -11,10 +11,10 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/apps/release"
-	"optimus-be/tests/dbtest"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/apps/release"
+	"github.com/logic3579/optimus/tests/dbtest"
 )
 
 func TestAppsReleaseOperationConcurrency(t *testing.T) {

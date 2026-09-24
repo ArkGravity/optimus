@@ -14,7 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/models"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 type handlerStub struct {

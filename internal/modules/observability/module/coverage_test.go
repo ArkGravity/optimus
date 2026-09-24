@@ -6,9 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/modules/observability/datasource"
-	"optimus-be/internal/modules/observability/prometheus"
-	"optimus-be/internal/modules/observability/query"
+	"github.com/logic3579/optimus/internal/modules/observability/datasource"
+	"github.com/logic3579/optimus/internal/modules/observability/prometheus"
+	"github.com/logic3579/optimus/internal/modules/observability/query"
 )
 
 func TestClientFactoryRejectsMalformedBaseURLAcrossAdapters(t *testing.T) {

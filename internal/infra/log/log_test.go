@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/infra/log"
+	"github.com/logic3579/optimus/internal/infra/log"
 )
 
 func TestNew_JSONFormat(t *testing.T) {

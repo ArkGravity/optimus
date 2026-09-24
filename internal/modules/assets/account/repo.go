@@ -11,9 +11,9 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/assets/errs"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/assets/errs"
 )
 
 type Repo struct {

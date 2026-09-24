@@ -10,10 +10,10 @@ import (
 	"testing"
 	"time"
 
-	"optimus-be/internal/infra/db"
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
-	"optimus-be/tests/dbtest"
+	"github.com/logic3579/optimus/internal/infra/db"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/tests/dbtest"
 
 	"github.com/stretchr/testify/require"
 )

@@ -19,9 +19,9 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
 
-	"optimus-be/internal/infra/config"
-	"optimus-be/internal/infra/log"
-	"optimus-be/migrations"
+	"github.com/logic3579/optimus/internal/infra/config"
+	"github.com/logic3579/optimus/internal/infra/log"
+	"github.com/logic3579/optimus/migrations"
 )
 
 func main() {

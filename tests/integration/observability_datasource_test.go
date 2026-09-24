@@ -9,15 +9,15 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/audit"
-	"optimus-be/internal/modules/credentials/httpcredential"
-	"optimus-be/internal/modules/credentials/vault"
-	"optimus-be/internal/modules/k8s/cluster"
-	"optimus-be/internal/modules/observability/datasource"
-	dsinuse "optimus-be/internal/modules/observability/datasource/inuse"
-	"optimus-be/tests/dbtest"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/audit"
+	"github.com/logic3579/optimus/internal/modules/credentials/httpcredential"
+	"github.com/logic3579/optimus/internal/modules/credentials/vault"
+	"github.com/logic3579/optimus/internal/modules/k8s/cluster"
+	"github.com/logic3579/optimus/internal/modules/observability/datasource"
+	dsinuse "github.com/logic3579/optimus/internal/modules/observability/datasource/inuse"
+	"github.com/logic3579/optimus/tests/dbtest"
 )
 
 func TestObservabilityDatasourceIntegration(t *testing.T) {

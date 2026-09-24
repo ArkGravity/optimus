@@ -9,9 +9,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/menu"
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/menu"
 )
 
 func newRepo(t *testing.T) (*menu.Repo, func()) {

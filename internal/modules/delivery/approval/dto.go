@@ -3,7 +3,7 @@ package approval
 import (
 	"time"
 
-	"optimus-be/internal/models"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 // PendingApproval is the safe actionable-queue projection. Approval comments

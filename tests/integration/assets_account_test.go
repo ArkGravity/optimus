@@ -11,10 +11,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
-	asseterrs "optimus-be/internal/modules/assets/errs"
-	"optimus-be/tests/dbtest"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
+	asseterrs "github.com/logic3579/optimus/internal/modules/assets/errs"
+	"github.com/logic3579/optimus/tests/dbtest"
 )
 
 func assetsRequest(t *testing.T, r http.Handler, token, method, path string, body any) *httptest.ResponseRecorder {

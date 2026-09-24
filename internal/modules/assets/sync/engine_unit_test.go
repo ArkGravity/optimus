@@ -10,9 +10,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/modules/assets/errs"
-	"optimus-be/internal/modules/credentials"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/modules/assets/errs"
+	"github.com/logic3579/optimus/internal/modules/credentials"
 )
 
 type recordingConsumer struct {

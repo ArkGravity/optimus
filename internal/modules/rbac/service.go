@@ -5,7 +5,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"optimus-be/internal/models"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 // UserWriter is the seam MeService uses to mutate user records on behalf of

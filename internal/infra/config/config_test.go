@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/infra/config"
+	"github.com/logic3579/optimus/internal/infra/config"
 )
 
 var deliveryEnvKeys = []string{

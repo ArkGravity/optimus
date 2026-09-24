@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"optimus-be/internal/models"
+	"github.com/logic3579/optimus/internal/models"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/rds"

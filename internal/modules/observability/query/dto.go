@@ -7,7 +7,7 @@ import (
 	"io"
 	"time"
 
-	"optimus-be/internal/modules/observability/prometheus"
+	"github.com/logic3579/optimus/internal/modules/observability/prometheus"
 )
 
 type Query struct {

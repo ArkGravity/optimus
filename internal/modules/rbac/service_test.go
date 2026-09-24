@@ -11,14 +11,14 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
-	"optimus-be/internal/infra/db"
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/infra/permissions"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/audit"
-	"optimus-be/internal/modules/rbac"
-	"optimus-be/internal/modules/user"
-	"optimus-be/internal/seed"
+	"github.com/logic3579/optimus/internal/infra/db"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/infra/permissions"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/audit"
+	"github.com/logic3579/optimus/internal/modules/rbac"
+	"github.com/logic3579/optimus/internal/modules/user"
+	"github.com/logic3579/optimus/internal/seed"
 )
 
 // nopUserWriter satisfies UserWriter for tests that don't exercise writes.

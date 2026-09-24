@@ -9,9 +9,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/k8s/cluster/inuse"
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/k8s/cluster/inuse"
 )
 
 func TestCountByKubeconfigID(t *testing.T) {

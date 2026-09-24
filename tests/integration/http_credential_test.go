@@ -13,13 +13,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/audit"
-	"optimus-be/internal/modules/credentials"
-	"optimus-be/internal/modules/credentials/httpcredential"
-	"optimus-be/internal/modules/credentials/vault"
-	dsinuse "optimus-be/internal/modules/observability/datasource/inuse"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/audit"
+	"github.com/logic3579/optimus/internal/modules/credentials"
+	"github.com/logic3579/optimus/internal/modules/credentials/httpcredential"
+	"github.com/logic3579/optimus/internal/modules/credentials/vault"
+	dsinuse "github.com/logic3579/optimus/internal/modules/observability/datasource/inuse"
 )
 
 func TestHTTPCredentialHTTPIntegration(t *testing.T) {

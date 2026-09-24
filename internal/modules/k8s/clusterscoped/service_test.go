@@ -11,7 +11,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/fake"
 
-	"optimus-be/internal/modules/k8s/clusterscoped"
+	"github.com/logic3579/optimus/internal/modules/k8s/clusterscoped"
 )
 
 // fakeCS satisfies clusterscoped.Clientsetter by returning a preloaded

@@ -13,11 +13,11 @@ import (
 	"github.com/robfig/cron/v3"
 	"github.com/stretchr/testify/require"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/infra/middleware"
-	"optimus-be/internal/infra/response"
-	"optimus-be/internal/modules/assets/account"
-	asseterrs "optimus-be/internal/modules/assets/errs"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/infra/middleware"
+	"github.com/logic3579/optimus/internal/infra/response"
+	"github.com/logic3579/optimus/internal/modules/assets/account"
+	asseterrs "github.com/logic3579/optimus/internal/modules/assets/errs"
 )
 
 type fakeAccountSyncService struct {

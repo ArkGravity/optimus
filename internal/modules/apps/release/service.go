@@ -10,10 +10,10 @@ import (
 	"helm.sh/helm/v3/pkg/release"
 	"sigs.k8s.io/yaml"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/apps"
-	"optimus-be/internal/modules/audit"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/apps"
+	"github.com/logic3579/optimus/internal/modules/audit"
 )
 
 // Factory is the narrow seam release.Service needs to build a per-request

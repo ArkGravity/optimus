@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/tests/dbtest"
+	"github.com/logic3579/optimus/tests/dbtest"
 )
 
 func TestP5SchemaConstraints(t *testing.T) {

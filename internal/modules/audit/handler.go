@@ -6,9 +6,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/infra/pagination"
-	"optimus-be/internal/infra/response"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/infra/pagination"
+	"github.com/logic3579/optimus/internal/infra/response"
 )
 
 type Handler struct {

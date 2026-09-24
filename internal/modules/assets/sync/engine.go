@@ -10,12 +10,12 @@ import (
 
 	"gorm.io/gorm"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/assets/awsclient"
-	"optimus-be/internal/modules/assets/errs"
-	"optimus-be/internal/modules/assets/sync/runs"
-	"optimus-be/internal/modules/credentials"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/assets/awsclient"
+	"github.com/logic3579/optimus/internal/modules/assets/errs"
+	"github.com/logic3579/optimus/internal/modules/assets/sync/runs"
+	"github.com/logic3579/optimus/internal/modules/credentials"
 )
 
 type Clients = awsclient.Clients

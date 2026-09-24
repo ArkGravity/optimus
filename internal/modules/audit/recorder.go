@@ -6,7 +6,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"optimus-be/internal/models"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 // Event is the in-memory shape callers build before persisting.

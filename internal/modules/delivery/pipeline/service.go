@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"time"
 
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/audit"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/audit"
 )
 
 type repository interface {

@@ -11,7 +11,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/fake"
 
-	"optimus-be/internal/modules/k8s/secret"
+	"github.com/logic3579/optimus/internal/modules/k8s/secret"
 )
 
 // fakeCS satisfies secret.Clientsetter by returning a preloaded in-memory

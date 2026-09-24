@@ -7,11 +7,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"optimus-be/internal/infra/config"
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/infra/log"
-	"optimus-be/internal/infra/permissions"
-	"optimus-be/internal/seed"
+	"github.com/logic3579/optimus/internal/infra/config"
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/infra/log"
+	"github.com/logic3579/optimus/internal/infra/permissions"
+	"github.com/logic3579/optimus/internal/seed"
 )
 
 func main() {

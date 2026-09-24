@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/infra/middleware"
+	"github.com/logic3579/optimus/internal/infra/middleware"
 )
 
 func TestLogger_EmitsStructuredEntry(t *testing.T) {

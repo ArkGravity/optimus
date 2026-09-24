@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"optimus-be/internal/infra/config"
+	"github.com/logic3579/optimus/internal/infra/config"
 )
 
 func I18n(cfg config.I18nConfig) gin.HandlerFunc {

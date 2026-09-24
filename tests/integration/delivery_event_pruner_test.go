@@ -13,8 +13,8 @@ import (
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 
-	"optimus-be/internal/models"
-	deliveryevent "optimus-be/internal/modules/delivery/event"
+	"github.com/logic3579/optimus/internal/models"
+	deliveryevent "github.com/logic3579/optimus/internal/modules/delivery/event"
 )
 
 func TestDeliveryEventPrunerBatchesAndRetainsSummaries(t *testing.T) {

@@ -18,9 +18,9 @@ import (
 	helmrepo "helm.sh/helm/v3/pkg/repo"
 	"sigs.k8s.io/yaml"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/apps"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/apps"
 )
 
 // ListCharts returns chart names available in the upstream repo. For HTTP

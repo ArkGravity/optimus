@@ -17,12 +17,12 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/infra/middleware"
-	"optimus-be/internal/infra/permissions"
-	"optimus-be/internal/modules/audit"
-	"optimus-be/internal/modules/credentials/sshkey"
-	"optimus-be/internal/seed"
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/infra/middleware"
+	"github.com/logic3579/optimus/internal/infra/permissions"
+	"github.com/logic3579/optimus/internal/modules/audit"
+	"github.com/logic3579/optimus/internal/modules/credentials/sshkey"
+	"github.com/logic3579/optimus/internal/seed"
 )
 
 func newHandlerRouter(t *testing.T) (*gin.Engine, *gorm.DB) {

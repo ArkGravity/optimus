@@ -7,7 +7,7 @@ import (
 	"io"
 	"strings"
 
-	apperr "optimus-be/internal/infra/errors"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
 )
 
 // readValuesFromTgz returns the content of the file at <root>/values.yaml

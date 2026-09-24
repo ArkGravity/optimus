@@ -11,12 +11,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/modules/delivery/approval"
-	"optimus-be/internal/modules/delivery/event"
-	"optimus-be/internal/modules/delivery/pipeline"
-	"optimus-be/internal/modules/delivery/project"
-	"optimus-be/internal/modules/delivery/run"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/modules/delivery/approval"
+	"github.com/logic3579/optimus/internal/modules/delivery/event"
+	"github.com/logic3579/optimus/internal/modules/delivery/pipeline"
+	"github.com/logic3579/optimus/internal/modules/delivery/project"
+	"github.com/logic3579/optimus/internal/modules/delivery/run"
 )
 
 type projectEnvironmentStub struct {

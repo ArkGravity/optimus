@@ -1,6 +1,6 @@
 # P0 Permissions Registry
 
-Auto-generated from `optimus-be/internal/infra/permissions/codes.go`. Run `make dump-perms` to refresh. CI fails if this is stale.
+Auto-generated from `internal/infra/permissions/codes.go`. Run `make dump-perms` to refresh. CI fails if this is stale.
 
 ## apps
 

@@ -13,11 +13,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/modules/audit"
-	"optimus-be/internal/modules/credentials"
-	"optimus-be/internal/modules/k8s"
-	"optimus-be/internal/modules/rbac"
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/modules/audit"
+	"github.com/logic3579/optimus/internal/modules/credentials"
+	"github.com/logic3579/optimus/internal/modules/k8s"
+	"github.com/logic3579/optimus/internal/modules/rbac"
 )
 
 // TestMountRoutes_Snapshot guards the 21-route surface of /api/v1/k8s

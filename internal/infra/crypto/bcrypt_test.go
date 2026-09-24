@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/infra/crypto"
+	"github.com/logic3579/optimus/internal/infra/crypto"
 )
 
 func TestHashPassword_VerifiesWithCompare(t *testing.T) {

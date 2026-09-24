@@ -7,8 +7,8 @@ import (
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 
-	"optimus-be/internal/infra/advisorylock"
-	"optimus-be/internal/models"
+	"github.com/logic3579/optimus/internal/infra/advisorylock"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 // Repo is the GORM data-access layer for apps_applications.

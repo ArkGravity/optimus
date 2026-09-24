@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/infra/pagination"
+	"github.com/logic3579/optimus/internal/infra/pagination"
 )
 
 func TestParse_Defaults(t *testing.T) {

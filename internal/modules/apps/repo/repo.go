@@ -6,7 +6,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"optimus-be/internal/models"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 // Repo is the GORM data-access layer for apps_chart_repos.

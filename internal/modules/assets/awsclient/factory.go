@@ -13,9 +13,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/rds"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/modules/assets/errs"
-	"optimus-be/internal/modules/credentials"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/modules/assets/errs"
+	"github.com/logic3579/optimus/internal/modules/credentials"
 )
 
 const defaultRequestTimeout = 30 * time.Second

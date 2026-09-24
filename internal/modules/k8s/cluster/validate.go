@@ -5,7 +5,7 @@ import (
 
 	"k8s.io/client-go/tools/clientcmd"
 
-	apperr "optimus-be/internal/infra/errors"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
 )
 
 // ValidateContextAndAuth parses a kubeconfig YAML and rejects it if:

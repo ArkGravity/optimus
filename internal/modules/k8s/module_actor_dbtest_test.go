@@ -15,17 +15,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/infra/middleware"
-	"optimus-be/internal/infra/permissions"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/audit"
-	"optimus-be/internal/modules/credentials"
-	"optimus-be/internal/modules/credentials/kubeconfig"
-	"optimus-be/internal/modules/credentials/vault"
-	"optimus-be/internal/modules/k8s"
-	"optimus-be/internal/modules/rbac"
-	"optimus-be/internal/seed"
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/infra/middleware"
+	"github.com/logic3579/optimus/internal/infra/permissions"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/audit"
+	"github.com/logic3579/optimus/internal/modules/credentials"
+	"github.com/logic3579/optimus/internal/modules/credentials/kubeconfig"
+	"github.com/logic3579/optimus/internal/modules/credentials/vault"
+	"github.com/logic3579/optimus/internal/modules/k8s"
+	"github.com/logic3579/optimus/internal/modules/rbac"
+	"github.com/logic3579/optimus/internal/seed"
 )
 
 const actorBridgeKubeconfig = `apiVersion: v1

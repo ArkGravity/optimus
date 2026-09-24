@@ -15,12 +15,12 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/models"
-	assetsync "optimus-be/internal/modules/assets/sync"
-	"optimus-be/internal/modules/assets/sync/runs"
-	"optimus-be/internal/modules/credentials"
-	"optimus-be/tests/dbtest"
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/models"
+	assetsync "github.com/logic3579/optimus/internal/modules/assets/sync"
+	"github.com/logic3579/optimus/internal/modules/assets/sync/runs"
+	"github.com/logic3579/optimus/internal/modules/credentials"
+	"github.com/logic3579/optimus/tests/dbtest"
 )
 
 type integrationFetcher struct {

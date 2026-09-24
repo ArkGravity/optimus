@@ -8,8 +8,8 @@ import (
 
 	"gorm.io/gorm"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 var errSecretDB = errors.New("postgres password=do-not-leak")

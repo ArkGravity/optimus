@@ -8,7 +8,7 @@ package config
 import (
 	"time"
 
-	"optimus-be/internal/modules/k8s/clusterscoped"
+	"github.com/logic3579/optimus/internal/modules/k8s/clusterscoped"
 )
 
 // MapSummary is the row projection returned by List. DataKeys and DataCount

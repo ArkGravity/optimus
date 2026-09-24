@@ -18,9 +18,9 @@ import (
 	"helm.sh/helm/v3/pkg/chart"
 	helmrelease "helm.sh/helm/v3/pkg/release"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
-	apprepo "optimus-be/internal/modules/apps/repo"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
+	apprepo "github.com/logic3579/optimus/internal/modules/apps/repo"
 )
 
 const (

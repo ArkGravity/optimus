@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	apperr "optimus-be/internal/infra/errors"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
 )
 
 const (

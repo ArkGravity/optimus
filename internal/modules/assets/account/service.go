@@ -10,11 +10,11 @@ import (
 
 	"gorm.io/gorm"
 
-	"optimus-be/internal/infra/advisorylock"
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/assets/errs"
-	"optimus-be/internal/modules/audit"
+	"github.com/logic3579/optimus/internal/infra/advisorylock"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/assets/errs"
+	"github.com/logic3579/optimus/internal/modules/audit"
 )
 
 var regionRegex = regexp.MustCompile(`^[a-z]{2}-[a-z]+-\d$`)

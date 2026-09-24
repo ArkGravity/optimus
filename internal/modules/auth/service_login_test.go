@@ -11,12 +11,12 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
-	"optimus-be/internal/infra/crypto"
-	"optimus-be/internal/infra/db"
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/infra/ratelimit"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/auth"
+	"github.com/logic3579/optimus/internal/infra/crypto"
+	"github.com/logic3579/optimus/internal/infra/db"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/infra/ratelimit"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/auth"
 )
 
 func mkSvc(t *testing.T, gdb *gorm.DB) *auth.Service {

@@ -11,13 +11,13 @@ import (
 	"sort"
 	"strings"
 
-	"optimus-be/internal/infra/permissions"
+	"github.com/logic3579/optimus/internal/infra/permissions"
 )
 
 func main() {
 	out := strings.Builder{}
 	out.WriteString("# P0 Permissions Registry\n\n")
-	out.WriteString("Auto-generated from `optimus-be/internal/infra/permissions/codes.go`. ")
+	out.WriteString("Auto-generated from `internal/infra/permissions/codes.go`. ")
 	out.WriteString("Run `make dump-perms` to refresh. CI fails if this is stale.\n\n")
 
 	byCat := map[string][]permissions.Permission{}

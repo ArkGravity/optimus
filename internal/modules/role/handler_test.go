@@ -16,13 +16,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/infra/middleware"
-	"optimus-be/internal/infra/permissions"
-	"optimus-be/internal/modules/audit"
-	"optimus-be/internal/modules/rbac"
-	"optimus-be/internal/modules/role"
-	"optimus-be/internal/seed"
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/infra/middleware"
+	"github.com/logic3579/optimus/internal/infra/permissions"
+	"github.com/logic3579/optimus/internal/modules/audit"
+	"github.com/logic3579/optimus/internal/modules/rbac"
+	"github.com/logic3579/optimus/internal/modules/role"
+	"github.com/logic3579/optimus/internal/seed"
 )
 
 func newHandlerRouter(t *testing.T) *gin.Engine {

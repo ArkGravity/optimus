@@ -8,8 +8,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/models"
-	"optimus-be/tests/dbtest"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/tests/dbtest"
 )
 
 func TestDeliverySchemaConstraints(t *testing.T) {

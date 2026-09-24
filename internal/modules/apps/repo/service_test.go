@@ -11,11 +11,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/infra/db"
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/modules/apps/repo"
-	"optimus-be/internal/modules/audit"
-	"optimus-be/internal/modules/credentials/vault"
+	"github.com/logic3579/optimus/internal/infra/db"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/modules/apps/repo"
+	"github.com/logic3579/optimus/internal/modules/audit"
+	"github.com/logic3579/optimus/internal/modules/credentials/vault"
 )
 
 // setupSvc returns a Service backed by a fresh dockertest Postgres and a real

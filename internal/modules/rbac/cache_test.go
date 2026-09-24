@@ -12,10 +12,10 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/infra/permissions"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/rbac"
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/infra/permissions"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/rbac"
 )
 
 func seedUserWithRole(t *testing.T, gdb *gorm.DB, username, roleCode string) uint64 {

@@ -10,10 +10,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/infra/pagination"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/user"
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/infra/pagination"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/user"
 )
 
 func newRepo(t *testing.T) (*user.Repo, func()) {

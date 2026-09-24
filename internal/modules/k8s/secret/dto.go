@@ -8,7 +8,7 @@ package secret
 import (
 	"time"
 
-	"optimus-be/internal/modules/k8s/clusterscoped"
+	"github.com/logic3579/optimus/internal/modules/k8s/clusterscoped"
 )
 
 // Summary is the row projection used by both List and Get. It deliberately

@@ -3,7 +3,7 @@ package run
 import (
 	"time"
 
-	"optimus-be/internal/models"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 // CreateRequest selects one immutable artifact. RetryOfRunID is set only by

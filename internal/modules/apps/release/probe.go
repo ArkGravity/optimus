@@ -10,9 +10,9 @@ import (
 
 	"helm.sh/helm/v3/pkg/action"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/apps"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/apps"
 )
 
 // DeliveryInspection is the narrow, safe live-release evidence exposed to P6.

@@ -11,7 +11,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/fake"
 
-	"optimus-be/internal/modules/k8s/config"
+	"github.com/logic3579/optimus/internal/modules/k8s/config"
 )
 
 func init() { gin.SetMode(gin.TestMode) }

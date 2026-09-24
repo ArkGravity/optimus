@@ -5,9 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/infra/response"
-	"optimus-be/internal/modules/rbac"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/infra/response"
+	"github.com/logic3579/optimus/internal/modules/rbac"
 )
 
 // RequirePermission rejects requests whose authenticated user lacks the given permission code.

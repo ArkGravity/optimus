@@ -24,9 +24,9 @@ import (
 	"helm.sh/helm/v3/pkg/storage"
 	"helm.sh/helm/v3/pkg/storage/driver"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
-	apprepo "optimus-be/internal/modules/apps/repo"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
+	apprepo "github.com/logic3579/optimus/internal/modules/apps/repo"
 )
 
 const deliveryDigest = "sha256:abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"

@@ -12,7 +12,7 @@ import (
 
 	"helm.sh/helm/v3/pkg/storage/driver"
 
-	apperr "optimus-be/internal/infra/errors"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
 )
 
 // MapError normalises an upstream error from helm SDK / OCI registry / chart

@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
-	"optimus-be/internal/models"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 func SeedCloudKey(t *testing.T, db *gorm.DB, name string) *models.CredentialCloudKey {

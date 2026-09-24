@@ -12,7 +12,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"optimus-be/internal/models"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 // CountByKubeconfigID returns the number of LIVE (non-soft-deleted) clusters

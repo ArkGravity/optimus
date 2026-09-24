@@ -12,10 +12,10 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/delivery/orchestrator"
-	"optimus-be/tests/dbtest"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/delivery/orchestrator"
+	"github.com/logic3579/optimus/tests/dbtest"
 )
 
 func TestDeliveryWorkersClaimOnce(t *testing.T) {

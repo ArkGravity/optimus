@@ -18,33 +18,33 @@ import (
 	// Blank import registers the generated OpenAPI spec with swag at init time
 	// so /swagger/* serves it. Regenerate via `make swag` whenever annotations
 	// change — CI's `make swagger-diff` will catch drift otherwise.
-	_ "optimus-be/api/docs"
-	"optimus-be/internal/infra/config"
-	"optimus-be/internal/infra/crypto"
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/infra/log"
-	"optimus-be/internal/infra/middleware"
-	"optimus-be/internal/infra/permissions"
-	"optimus-be/internal/infra/ratelimit"
-	"optimus-be/internal/modules/apps/application"
-	"optimus-be/internal/modules/apps/helmclient"
-	appsmodule "optimus-be/internal/modules/apps/module"
-	"optimus-be/internal/modules/apps/release"
-	apprepo "optimus-be/internal/modules/apps/repo"
-	assetsmodule "optimus-be/internal/modules/assets/module"
-	"optimus-be/internal/modules/audit"
-	"optimus-be/internal/modules/auth"
-	"optimus-be/internal/modules/credentials"
-	"optimus-be/internal/modules/credentials/vault"
-	deliverymodule "optimus-be/internal/modules/delivery/module"
-	"optimus-be/internal/modules/health"
-	"optimus-be/internal/modules/k8s"
-	"optimus-be/internal/modules/menu"
-	observabilitymodule "optimus-be/internal/modules/observability/module"
-	"optimus-be/internal/modules/permission"
-	"optimus-be/internal/modules/rbac"
-	"optimus-be/internal/modules/role"
-	"optimus-be/internal/modules/user"
+	_ "github.com/logic3579/optimus/api/docs"
+	"github.com/logic3579/optimus/internal/infra/config"
+	"github.com/logic3579/optimus/internal/infra/crypto"
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/infra/log"
+	"github.com/logic3579/optimus/internal/infra/middleware"
+	"github.com/logic3579/optimus/internal/infra/permissions"
+	"github.com/logic3579/optimus/internal/infra/ratelimit"
+	"github.com/logic3579/optimus/internal/modules/apps/application"
+	"github.com/logic3579/optimus/internal/modules/apps/helmclient"
+	appsmodule "github.com/logic3579/optimus/internal/modules/apps/module"
+	"github.com/logic3579/optimus/internal/modules/apps/release"
+	apprepo "github.com/logic3579/optimus/internal/modules/apps/repo"
+	assetsmodule "github.com/logic3579/optimus/internal/modules/assets/module"
+	"github.com/logic3579/optimus/internal/modules/audit"
+	"github.com/logic3579/optimus/internal/modules/auth"
+	"github.com/logic3579/optimus/internal/modules/credentials"
+	"github.com/logic3579/optimus/internal/modules/credentials/vault"
+	deliverymodule "github.com/logic3579/optimus/internal/modules/delivery/module"
+	"github.com/logic3579/optimus/internal/modules/health"
+	"github.com/logic3579/optimus/internal/modules/k8s"
+	"github.com/logic3579/optimus/internal/modules/menu"
+	observabilitymodule "github.com/logic3579/optimus/internal/modules/observability/module"
+	"github.com/logic3579/optimus/internal/modules/permission"
+	"github.com/logic3579/optimus/internal/modules/rbac"
+	"github.com/logic3579/optimus/internal/modules/role"
+	"github.com/logic3579/optimus/internal/modules/user"
 )
 
 var Version = "dev"
@@ -93,7 +93,7 @@ func main() {
 	}
 
 	logger := log.New(log.Options{Level: cfg.Log.Level, Format: cfg.Log.Format})
-	logger.Info("optimus-be starting", "version", Version)
+	logger.Info("optimus starting", "version", Version)
 
 	gdb, err := db.Open(cfg.Database)
 	if err != nil {
@@ -146,7 +146,7 @@ func main() {
 	r.Use(middleware.I18n(cfg.I18n))
 
 	// Swagger UI: served at /swagger/index.html. The spec is bundled via the
-	// blank import of optimus-be/api/docs above.
+	// blank import of github.com/logic3579/optimus/api/docs above.
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	api := r.Group("/api/v1")

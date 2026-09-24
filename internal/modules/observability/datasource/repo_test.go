@@ -9,13 +9,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/audit"
+	"github.com/logic3579/optimus/internal/modules/credentials"
+	"github.com/logic3579/optimus/internal/modules/credentials/httpcredential"
+	"github.com/logic3579/optimus/tests/dbtest"
 	"github.com/stretchr/testify/require"
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/audit"
-	"optimus-be/internal/modules/credentials"
-	"optimus-be/internal/modules/credentials/httpcredential"
-	"optimus-be/tests/dbtest"
 )
 
 type passthroughCipher struct{}

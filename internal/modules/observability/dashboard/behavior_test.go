@@ -13,9 +13,9 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/gorm"
 
-	"optimus-be/internal/infra/middleware"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/audit"
+	"github.com/logic3579/optimus/internal/infra/middleware"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/audit"
 )
 
 type dashboardServiceStub struct {

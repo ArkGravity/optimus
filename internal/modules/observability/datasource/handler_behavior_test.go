@@ -12,8 +12,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgconn"
 
-	"optimus-be/internal/infra/middleware"
-	"optimus-be/internal/models"
+	"github.com/logic3579/optimus/internal/infra/middleware"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 type datasourceHandlerStub struct {

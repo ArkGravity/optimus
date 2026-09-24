@@ -12,8 +12,8 @@ import (
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chart/loader"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 // ErrArtifactDigestMismatch is intentionally stable and contains no upstream

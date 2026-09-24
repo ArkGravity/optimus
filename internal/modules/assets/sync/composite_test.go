@@ -5,7 +5,7 @@ import (
 	"errors"
 	"testing"
 
-	"optimus-be/internal/models"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 type instanceFetcherFunc func(context.Context, *Clients) ([]models.AWSInstance, error)

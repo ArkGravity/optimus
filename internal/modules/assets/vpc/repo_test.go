@@ -11,9 +11,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/datatypes"
 
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/models"
-	"optimus-be/tests/dbtest"
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/tests/dbtest"
 )
 
 func TestRepoListFiltersMapsOrdersAndIncludesDeleted(t *testing.T) {

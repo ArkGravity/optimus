@@ -12,8 +12,8 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/datatypes"
 
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/delivery/errs"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/delivery/errs"
 )
 
 type reconcileMemoryStore struct {

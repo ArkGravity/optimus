@@ -77,7 +77,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -113,7 +113,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -146,7 +146,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -189,7 +189,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -220,7 +220,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -253,7 +253,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -298,7 +298,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -343,7 +343,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -376,7 +376,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -420,7 +420,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -465,7 +465,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -515,7 +515,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -551,7 +551,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -584,7 +584,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -627,7 +627,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -658,7 +658,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -691,7 +691,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -731,7 +731,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -778,7 +778,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -844,7 +844,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -860,25 +860,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -916,7 +916,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -932,31 +932,31 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -991,7 +991,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -1007,31 +1007,31 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -1076,7 +1076,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -1092,37 +1092,37 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -1153,37 +1153,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -1216,55 +1216,55 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "501": {
                         "description": "Not Implemented",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -1343,7 +1343,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -1359,25 +1359,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -1457,7 +1457,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -1473,25 +1473,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -1558,7 +1558,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -1574,25 +1574,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -1659,7 +1659,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -1675,25 +1675,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -1755,7 +1755,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -1771,31 +1771,31 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -1857,25 +1857,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -1908,25 +1908,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -1959,7 +1959,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -1992,19 +1992,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -2054,7 +2054,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -2090,7 +2090,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -2123,7 +2123,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -2166,7 +2166,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -2197,7 +2197,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -2249,7 +2249,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -2265,19 +2265,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -2315,7 +2315,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -2331,25 +2331,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -2384,7 +2384,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -2400,25 +2400,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -2463,7 +2463,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -2479,31 +2479,31 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -2534,37 +2534,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -2614,7 +2614,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -2650,7 +2650,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -2683,7 +2683,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -2726,7 +2726,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -2757,7 +2757,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -2807,19 +2807,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -2855,31 +2855,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -2912,25 +2912,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -2973,37 +2973,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -3034,25 +3034,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -3075,7 +3075,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -3133,7 +3133,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -3178,7 +3178,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -3220,7 +3220,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -3272,7 +3272,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -3310,7 +3310,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -3342,7 +3342,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -3399,7 +3399,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -3441,7 +3441,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -3496,7 +3496,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -3557,7 +3557,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -3602,7 +3602,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -3634,7 +3634,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -3686,7 +3686,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -3742,7 +3742,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -3801,7 +3801,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -3855,7 +3855,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -3909,7 +3909,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -3951,7 +3951,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -3993,7 +3993,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -4080,7 +4080,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -4129,7 +4129,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -4226,7 +4226,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -4262,7 +4262,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -4295,7 +4295,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -4338,7 +4338,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -4369,7 +4369,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -4402,7 +4402,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -4426,19 +4426,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -4474,19 +4474,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -4510,13 +4510,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -4554,19 +4554,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -4590,13 +4590,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -4620,19 +4620,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -4668,25 +4668,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -4731,31 +4731,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -4786,25 +4786,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -4827,7 +4827,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -4872,7 +4872,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -4927,7 +4927,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -4972,7 +4972,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -5014,7 +5014,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -5066,7 +5066,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -5104,7 +5104,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -5161,7 +5161,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -5206,7 +5206,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -5248,7 +5248,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -5300,7 +5300,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -5338,7 +5338,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -5377,7 +5377,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -5422,7 +5422,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -5467,7 +5467,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -5514,7 +5514,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -5561,7 +5561,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -5594,7 +5594,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                                 },
                                 {
                                     "type": "object",
@@ -5631,19 +5631,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -5667,19 +5667,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -5715,31 +5715,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -5772,25 +5772,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -5833,31 +5833,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -5888,25 +5888,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -5951,31 +5951,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -6025,19 +6025,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -6073,31 +6073,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -6130,25 +6130,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -6191,31 +6191,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -6246,25 +6246,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -6309,31 +6309,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -6378,31 +6378,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -6447,31 +6447,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/optimus-be_internal_infra_response.Envelope"
+                            "$ref": "#/definitions/github_com_logic3579_optimus_internal_infra_response.Envelope"
                         }
                     }
                 }
@@ -6479,6 +6479,155 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "github_com_logic3579_optimus_internal_infra_response.Envelope": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {},
+                "message": {
+                    "type": "string"
+                },
+                "message_key": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_logic3579_optimus_internal_models.DeliveryApprovalDecision": {
+            "type": "string",
+            "enum": [
+                "pending",
+                "approved",
+                "rejected"
+            ],
+            "x-enum-varnames": [
+                "DeliveryApprovalPending",
+                "DeliveryApprovalApproved",
+                "DeliveryApprovalRejected"
+            ]
+        },
+        "github_com_logic3579_optimus_internal_models.DeliveryExecutor": {
+            "type": "string",
+            "enum": [
+                "helm_upgrade_existing_release"
+            ],
+            "x-enum-varnames": [
+                "DeliveryExecutorHelmUpgradeExistingRelease"
+            ]
+        },
+        "github_com_logic3579_optimus_internal_models.DeliveryRunState": {
+            "type": "string",
+            "enum": [
+                "queued",
+                "running",
+                "waiting_approval",
+                "cancel_requested",
+                "reconciling",
+                "succeeded",
+                "failed",
+                "rejected",
+                "canceled",
+                "timed_out",
+                "outcome_unknown"
+            ],
+            "x-enum-varnames": [
+                "DeliveryRunQueued",
+                "DeliveryRunRunning",
+                "DeliveryRunWaitingApproval",
+                "DeliveryRunCancelRequested",
+                "DeliveryRunReconciling",
+                "DeliveryRunSucceeded",
+                "DeliveryRunFailed",
+                "DeliveryRunRejected",
+                "DeliveryRunCanceled",
+                "DeliveryRunTimedOut",
+                "DeliveryRunOutcomeUnknown"
+            ]
+        },
+        "github_com_logic3579_optimus_internal_models.DeliveryStageState": {
+            "type": "string",
+            "enum": [
+                "pending",
+                "waiting_approval",
+                "queued",
+                "running",
+                "reconciling",
+                "succeeded",
+                "failed",
+                "rejected",
+                "canceled",
+                "timed_out",
+                "outcome_unknown"
+            ],
+            "x-enum-varnames": [
+                "DeliveryStagePending",
+                "DeliveryStageWaitingApproval",
+                "DeliveryStageQueued",
+                "DeliveryStageRunning",
+                "DeliveryStageReconciling",
+                "DeliveryStageSucceeded",
+                "DeliveryStageFailed",
+                "DeliveryStageRejected",
+                "DeliveryStageCanceled",
+                "DeliveryStageTimedOut",
+                "DeliveryStageOutcomeUnknown"
+            ]
+        },
+        "github_com_logic3579_optimus_internal_modules_observability_prometheus.Result": {
+            "type": "object",
+            "properties": {
+                "result_type": {
+                    "type": "string"
+                },
+                "scalar": {
+                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_modules_observability_prometheus.Sample"
+                },
+                "series": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_logic3579_optimus_internal_modules_observability_prometheus.Series"
+                    }
+                },
+                "text": {
+                    "type": "string"
+                },
+                "warnings": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "github_com_logic3579_optimus_internal_modules_observability_prometheus.Sample": {
+            "type": "object",
+            "properties": {
+                "timestamp": {
+                    "type": "number"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_logic3579_optimus_internal_modules_observability_prometheus.Series": {
+            "type": "object",
+            "properties": {
+                "labels": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "samples": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_logic3579_optimus_internal_modules_observability_prometheus.Sample"
+                    }
+                }
+            }
+        },
         "internal_modules_apps_application.CreateRequest": {
             "type": "object",
             "required": [
@@ -7483,7 +7632,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "decision": {
-                    "$ref": "#/definitions/optimus-be_internal_models.DeliveryApprovalDecision"
+                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_models.DeliveryApprovalDecision"
                 },
                 "id": {
                     "type": "integer"
@@ -7992,7 +8141,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "state": {
-                    "$ref": "#/definitions/optimus-be_internal_models.DeliveryRunState"
+                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_models.DeliveryRunState"
                 },
                 "updated_at": {
                     "type": "string"
@@ -8030,7 +8179,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "executor": {
-                    "$ref": "#/definitions/optimus-be_internal_models.DeliveryExecutor"
+                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_models.DeliveryExecutor"
                 },
                 "finished_at": {
                     "type": "string"
@@ -8057,7 +8206,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "state": {
-                    "$ref": "#/definitions/optimus-be_internal_models.DeliveryStageState"
+                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_models.DeliveryStageState"
                 },
                 "timeout": {
                     "type": "string",
@@ -8700,7 +8849,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "result": {
-                    "$ref": "#/definitions/optimus-be_internal_modules_observability_prometheus.Result"
+                    "$ref": "#/definitions/github_com_logic3579_optimus_internal_modules_observability_prometheus.Result"
                 }
             }
         },
@@ -8931,155 +9080,6 @@ const docTemplate = `{
                 "email": {
                     "type": "string",
                     "maxLength": 128
-                }
-            }
-        },
-        "optimus-be_internal_infra_response.Envelope": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {},
-                "message": {
-                    "type": "string"
-                },
-                "message_key": {
-                    "type": "string"
-                }
-            }
-        },
-        "optimus-be_internal_models.DeliveryApprovalDecision": {
-            "type": "string",
-            "enum": [
-                "pending",
-                "approved",
-                "rejected"
-            ],
-            "x-enum-varnames": [
-                "DeliveryApprovalPending",
-                "DeliveryApprovalApproved",
-                "DeliveryApprovalRejected"
-            ]
-        },
-        "optimus-be_internal_models.DeliveryExecutor": {
-            "type": "string",
-            "enum": [
-                "helm_upgrade_existing_release"
-            ],
-            "x-enum-varnames": [
-                "DeliveryExecutorHelmUpgradeExistingRelease"
-            ]
-        },
-        "optimus-be_internal_models.DeliveryRunState": {
-            "type": "string",
-            "enum": [
-                "queued",
-                "running",
-                "waiting_approval",
-                "cancel_requested",
-                "reconciling",
-                "succeeded",
-                "failed",
-                "rejected",
-                "canceled",
-                "timed_out",
-                "outcome_unknown"
-            ],
-            "x-enum-varnames": [
-                "DeliveryRunQueued",
-                "DeliveryRunRunning",
-                "DeliveryRunWaitingApproval",
-                "DeliveryRunCancelRequested",
-                "DeliveryRunReconciling",
-                "DeliveryRunSucceeded",
-                "DeliveryRunFailed",
-                "DeliveryRunRejected",
-                "DeliveryRunCanceled",
-                "DeliveryRunTimedOut",
-                "DeliveryRunOutcomeUnknown"
-            ]
-        },
-        "optimus-be_internal_models.DeliveryStageState": {
-            "type": "string",
-            "enum": [
-                "pending",
-                "waiting_approval",
-                "queued",
-                "running",
-                "reconciling",
-                "succeeded",
-                "failed",
-                "rejected",
-                "canceled",
-                "timed_out",
-                "outcome_unknown"
-            ],
-            "x-enum-varnames": [
-                "DeliveryStagePending",
-                "DeliveryStageWaitingApproval",
-                "DeliveryStageQueued",
-                "DeliveryStageRunning",
-                "DeliveryStageReconciling",
-                "DeliveryStageSucceeded",
-                "DeliveryStageFailed",
-                "DeliveryStageRejected",
-                "DeliveryStageCanceled",
-                "DeliveryStageTimedOut",
-                "DeliveryStageOutcomeUnknown"
-            ]
-        },
-        "optimus-be_internal_modules_observability_prometheus.Result": {
-            "type": "object",
-            "properties": {
-                "result_type": {
-                    "type": "string"
-                },
-                "scalar": {
-                    "$ref": "#/definitions/optimus-be_internal_modules_observability_prometheus.Sample"
-                },
-                "series": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/optimus-be_internal_modules_observability_prometheus.Series"
-                    }
-                },
-                "text": {
-                    "type": "string"
-                },
-                "warnings": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "optimus-be_internal_modules_observability_prometheus.Sample": {
-            "type": "object",
-            "properties": {
-                "timestamp": {
-                    "type": "number"
-                },
-                "value": {
-                    "type": "string"
-                }
-            }
-        },
-        "optimus-be_internal_modules_observability_prometheus.Series": {
-            "type": "object",
-            "properties": {
-                "labels": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                },
-                "samples": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/optimus-be_internal_modules_observability_prometheus.Sample"
-                    }
                 }
             }
         }

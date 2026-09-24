@@ -25,11 +25,11 @@ import (
 	"k8s.io/client-go/kubernetes"
 	sigsyaml "sigs.k8s.io/yaml"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/infra/middleware"
-	"optimus-be/internal/infra/response"
-	k8serrs "optimus-be/internal/modules/k8s/apierr"
-	"optimus-be/internal/modules/rbac"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/infra/middleware"
+	"github.com/logic3579/optimus/internal/infra/response"
+	k8serrs "github.com/logic3579/optimus/internal/modules/k8s/apierr"
+	"github.com/logic3579/optimus/internal/modules/rbac"
 )
 
 // KindPerm maps supported ?kind= values to the permission code required.

@@ -8,8 +8,8 @@ import (
 
 	"helm.sh/helm/v3/pkg/storage/driver"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/modules/apps"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/modules/apps"
 )
 
 // netErr is a synthetic net.Error used to exercise the network branch of

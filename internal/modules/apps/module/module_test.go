@@ -16,17 +16,17 @@ import (
 	"github.com/stretchr/testify/require"
 	"helm.sh/helm/v3/pkg/action"
 
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/apps/application"
-	"optimus-be/internal/modules/apps/release"
-	apprepo "optimus-be/internal/modules/apps/repo"
-	"optimus-be/internal/modules/audit"
-	"optimus-be/internal/modules/delivery/orchestrator"
-	"optimus-be/internal/modules/delivery/pipeline"
-	"optimus-be/internal/modules/delivery/project"
-	"optimus-be/internal/modules/delivery/run"
-	"optimus-be/internal/modules/rbac"
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/apps/application"
+	"github.com/logic3579/optimus/internal/modules/apps/release"
+	apprepo "github.com/logic3579/optimus/internal/modules/apps/repo"
+	"github.com/logic3579/optimus/internal/modules/audit"
+	"github.com/logic3579/optimus/internal/modules/delivery/orchestrator"
+	"github.com/logic3579/optimus/internal/modules/delivery/pipeline"
+	"github.com/logic3579/optimus/internal/modules/delivery/project"
+	"github.com/logic3579/optimus/internal/modules/delivery/run"
+	"github.com/logic3579/optimus/internal/modules/rbac"
 )
 
 // nopCipher is a never-called Cipher stub — the snapshot test exercises

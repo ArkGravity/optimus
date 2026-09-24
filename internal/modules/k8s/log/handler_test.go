@@ -16,7 +16,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/fake"
 
-	logh "optimus-be/internal/modules/k8s/log"
+	logh "github.com/logic3579/optimus/internal/modules/k8s/log"
 )
 
 // fakeCS adapts a kubernetes.Interface to the StreamClientsetter interface

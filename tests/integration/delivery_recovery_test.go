@@ -16,12 +16,12 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/delivery/errs"
-	"optimus-be/internal/modules/delivery/orchestrator"
-	deliveryrun "optimus-be/internal/modules/delivery/run"
-	"optimus-be/tests/dbtest"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/delivery/errs"
+	"github.com/logic3579/optimus/internal/modules/delivery/orchestrator"
+	deliveryrun "github.com/logic3579/optimus/internal/modules/delivery/run"
+	"github.com/logic3579/optimus/tests/dbtest"
 )
 
 func TestDeliveryReconcilerRecoversOnlyExpiredRunningLeaseOnce(t *testing.T) {

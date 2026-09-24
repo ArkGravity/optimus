@@ -4,8 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
-	"optimus-be/internal/infra/response"
-	"optimus-be/internal/models"
+	"github.com/logic3579/optimus/internal/infra/response"
+	"github.com/logic3579/optimus/internal/models"
 )
 
 type Handler struct {

@@ -11,8 +11,8 @@ import (
 	"github.com/aws/smithy-go"
 	"github.com/stretchr/testify/require"
 
-	apperr "optimus-be/internal/infra/errors"
-	"optimus-be/internal/modules/assets/errs"
+	apperr "github.com/logic3579/optimus/internal/infra/errors"
+	"github.com/logic3579/optimus/internal/modules/assets/errs"
 )
 
 type timeoutError struct{}

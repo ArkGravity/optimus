@@ -17,12 +17,12 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/fake"
 
-	"optimus-be/internal/infra/db"
-	"optimus-be/internal/infra/middleware"
-	"optimus-be/internal/infra/permissions"
-	"optimus-be/internal/models"
-	"optimus-be/internal/modules/k8s/yaml"
-	"optimus-be/internal/modules/rbac"
+	"github.com/logic3579/optimus/internal/infra/db"
+	"github.com/logic3579/optimus/internal/infra/middleware"
+	"github.com/logic3579/optimus/internal/infra/permissions"
+	"github.com/logic3579/optimus/internal/models"
+	"github.com/logic3579/optimus/internal/modules/k8s/yaml"
+	"github.com/logic3579/optimus/internal/modules/rbac"
 )
 
 // fakeCS satisfies yaml.Clientsetter for the in-memory client-go fake.
