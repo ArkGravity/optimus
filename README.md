@@ -171,7 +171,7 @@ AGENTS.md, or Markdown under docs/ and scripts/ skip database execution and imag
 build/publication. Quality and unit checks still run. Manual dispatch and unknown
 change history always run the full checks.
 
-The database job starts one disposable PostgreSQL 16 instance and sets
+The database job starts one disposable PostgreSQL 17 instance and sets
 `OPTIMUS_TEST_POSTGRES_DSN`. Each test creates a randomly named database, runs all
 migrations, and drops only its own database during cleanup. This connection must
 point to a dedicated test server with CREATE DATABASE privileges, never a shared

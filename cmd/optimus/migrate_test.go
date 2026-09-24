@@ -69,7 +69,7 @@ func startRawPostgres(t *testing.T) (*sql.DB, func()) {
 
 	res, err := pool.RunWithOptions(&dockertest.RunOptions{
 		Repository: "postgres",
-		Tag:        "16-alpine",
+		Tag:        "17-alpine",
 		Env: []string{
 			"POSTGRES_USER=test",
 			"POSTGRES_PASSWORD=test",

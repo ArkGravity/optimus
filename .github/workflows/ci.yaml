@@ -104,7 +104,7 @@ jobs:
       - name: Start shared test PostgreSQL
         if: steps.changes.outputs.run == 'true'
         run: |
-          docker run -d --name optimus-ci-postgres -p 127.0.0.1:5432:5432 -e POSTGRES_USER=test -e POSTGRES_PASSWORD=test -e POSTGRES_DB=test postgres:16-alpine
+          docker run -d --name optimus-ci-postgres -p 127.0.0.1:5432:5432 -e POSTGRES_USER=test -e POSTGRES_PASSWORD=test -e POSTGRES_DB=test postgres:17-alpine
           for attempt in {1..60}; do
             if docker exec optimus-ci-postgres pg_isready -h 127.0.0.1 -U test -d test; then exit 0; fi
             sleep 1
