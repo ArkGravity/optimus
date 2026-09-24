@@ -2,7 +2,10 @@ module github.com/logic3579/optimus
 
 go 1.25.0
 
-ignore ./web/node_modules
+ignore (
+	./tmp
+	./web/node_modules
+)
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.42.1
