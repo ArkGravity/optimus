@@ -10,7 +10,7 @@ Each task is one commit.
   `web/Dockerfile`, `web/nginx.conf`, `web/.dockerignore` and `web/.gitignore`;
   merge ignore/editorconfig rules at the root; union `.codex/config.toml`;
   rename the web package to `optimus-web` (package.json and bun.lock).
-- [x] **Rename the Go module** to `github.com/logic3579/optimus`, add
+- [x] **Rename the Go module** to `github.com/ArkGravity/optimus`, add
   `ignore ./web/node_modules`, regenerate Swagger and the permission catalog.
 - [x] **Single binary.** Move the four entrypoints into `cmd/optimus` with
   subcommands; update Makefile, air, Dockerfile and Compose.
@@ -35,5 +35,5 @@ Each task is one commit.
 - [ ] **mem0.** Replace the `optimus-be`/`optimus-fe` memories with one
   `optimus` checkpoint.
 
-Out of scope: pushing to `logic3579/optimus`, registry secrets, production
-acceptance, release tagging and running the image as a non-root user.
+Out of scope: production acceptance, release tagging and running the image as
+a non-root user.

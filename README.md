@@ -5,12 +5,12 @@ Kubernetes inspection, Helm applications, AWS assets, Prometheus metrics and
 immutable application delivery. The Go backend and the Vue 3 web UI ship as one
 `optimus` binary with the UI embedded.
 
-- Repository: https://github.com/logic3579/optimus
+- Repository: https://github.com/ArkGravity/optimus
 - [Conventions](AGENTS.md) · [Documentation](docs/README.md)
 
 ## Layout
 
-- Repository root: Go module `github.com/logic3579/optimus` (`cmd/`,
+- Repository root: Go module `github.com/ArkGravity/optimus` (`cmd/`,
   `internal/`, `migrations/`, `configs/`, `tests/`).
 - `web/`: Vue 3, TypeScript, Ant Design Vue, Pinia, vue-router and vue-i18n,
   built with Bun. `web/embed.go` embeds the Vite output `web/dist`.
@@ -102,7 +102,7 @@ For host development, start only the database with `docker compose up -d postgre
 then run the server and the Vite dev server separately.
 
 For Production copy `.env.example` to `.env` and replace development credentials.
-Set `COMPOSE_PROJECT_NAME=optimus-prod`, `IMAGE_REPOSITORY=ghcr.io/logic3579`
+Set `COMPOSE_PROJECT_NAME=optimus-prod`, `IMAGE_REPOSITORY=ghcr.io/arkgravity`
 (or `docker.io/logic3579`) and `OPTIMUS_VERSION=main-<short-sha>`. Set the HTTPS
 origin, trusted proxies of the external TLS proxy, capacities and retention
 values. Published-image deployments do not need a source checkout:
@@ -154,16 +154,16 @@ database tests, and a Docker build. Pull requests and dev pushes build without
 publishing. Main pushes and manual main runs publish the same build to both
 registries once every job passes:
 
-- `ghcr.io/logic3579/optimus:main-<short-sha>`
+- `ghcr.io/arkgravity/optimus:main-<short-sha>`
 - `docker.io/logic3579/optimus:main-<short-sha>`
 
 Configure Actions settings for the repository:
 
 | Type | Name | Value |
 | --- | --- | --- |
-| Variable | `DOCKERHUB_USERNAME` | Docker Hub login with write access to logic3579 |
-| Variable | `DOCKERHUB_NAMESPACE` | `logic3579` |
-| Secret | `DOCKERHUB_TOKEN` | Docker Hub access token with write permission |
+| Secret | `DOCKERHUB_TOKEN` | Docker Hub access token with write permission (required) |
+| Variable | `DOCKERHUB_USERNAME` | Docker Hub login; optional, defaults to `logic3579` |
+| Variable | `DOCKERHUB_NAMESPACE` | Docker Hub namespace; optional, defaults to `logic3579` |
 
 GHCR uses `GITHUB_TOKEN` with `packages: write`. Check package visibility
 separately for anonymous pulls. Missing credentials fail the main publishing job

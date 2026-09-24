@@ -32,7 +32,7 @@ them with this mapping:
   the root `Dockerfile` and `docker-compose.yml`; the binary serves the UI.
 - `cmd/server`, `cmd/migrate`, `cmd/seed` and `cmd/vault-keygen` are
   subcommands of `cmd/optimus` (`optimus server|migrate|seed|vault-keygen`).
-- The Go module is `github.com/logic3579/optimus` (formerly `optimus-be`).
+- The Go module is `github.com/ArkGravity/optimus` (formerly `optimus-be`).
 - Pre-split commit IDs refer to the deleted original `logic3579/optimus`
   monorepo and do not resolve here. Split-era backend and frontend history is
   preserved in this repository.

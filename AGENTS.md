@@ -43,7 +43,7 @@ observability dashboards are implemented.
 
 ## Repository Layout
 
-- Repository root: Go module `github.com/logic3579/optimus` — `cmd/optimus`
+- Repository root: Go module `github.com/ArkGravity/optimus` — `cmd/optimus`
   (single binary), `cmd/dump-permissions` (dev tool), `internal/`,
   `migrations/`, `configs/`, `api/docs/`, `tests/`.
 - `web/`: Vue 3 SPA built with Bun and Vite. `web/embed.go` embeds `web/dist`.
@@ -343,13 +343,13 @@ write/manage APIs in P4.
 
 ## Repository and Delivery
 
-- GitHub: https://github.com/logic3579/optimus
+- GitHub: https://github.com/ArkGravity/optimus
 - `Dockerfile` builds `web/` with Bun and the single `optimus` binary with the
   UI embedded. `docker-compose.yml` and `.env.example` own the deployment stack:
   `postgres`, one-shot `migrate` and `seed`, and `optimus`, all from one image
   versioned by `OPTIMUS_VERSION`.
 - `.github/workflows/ci.yaml` runs web, backend quality, unit, database and
-  Docker build gates; only main publishes to `ghcr.io/logic3579/optimus` and
+  Docker build gates; only main publishes to `ghcr.io/arkgravity/optimus` and
   `docker.io/logic3579/optimus`, tagged `main-<short-sha>`, after every gate
   passes. CI uses one disposable PostgreSQL 17 instance via
   `OPTIMUS_TEST_POSTGRES_DSN`, with a separate migrated database per test.

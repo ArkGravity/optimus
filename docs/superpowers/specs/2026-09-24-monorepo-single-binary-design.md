@@ -5,7 +5,7 @@ Date: 2026-09-24. Status: implemented (Dev acceptance pending).
 ## Goal
 
 Recombine the split `optimus-be` and `optimus-fe` repositories into one
-repository, `github.com/logic3579/optimus`, and ship the web UI inside the Go
+repository, `github.com/ArkGravity/optimus`, and ship the web UI inside the Go
 binary instead of a separate nginx image, following the Casdoor model of one
 server process serving both API and frontend.
 
@@ -16,7 +16,7 @@ server process serving both API and frontend.
   and the frontend history is subtree-merged under `web/`. The GitHub split
   repositories and the original monorepo were deleted, so pre-split commit IDs
   no longer resolve.
-- **Module path.** `optimus-be` becomes `github.com/logic3579/optimus`.
+- **Module path.** `optimus-be` becomes `github.com/ArkGravity/optimus`.
   `go.mod` ignores `./web/node_modules` because npm packages can ship Go files
   (for example `flatted`) that would otherwise join `./...`.
 - **One binary.** `cmd/optimus` replaces `cmd/server`, `cmd/migrate`,
@@ -74,7 +74,7 @@ Mounted as Gin's `NoRoute` handler, so API routes always win.
   server publishes `HTTP_BIND:HTTP_PORT` directly. `OPTIMUS_VERSION` replaces
   `BACKEND_VERSION` and the `FRONTEND_*` variables.
 - One CI workflow runs web checks, backend quality/unit/database jobs and a
-  Docker build, then publishes `ghcr.io/logic3579/optimus` and
+  Docker build, then publishes `ghcr.io/arkgravity/optimus` and
   `docker.io/logic3579/optimus` as `main-<short-sha>`.
 
 ## Contract changes
