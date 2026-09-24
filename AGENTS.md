@@ -25,15 +25,19 @@ split GitHub repositories and the original monorepo were deleted, so pre-split
 commit IDs do not resolve. Design:
 `docs/superpowers/specs/2026-09-24-monorepo-single-binary-design.md`.
 
-Merge verification (2026-09-24, local): Go lint (Go 1.25 toolchain),
+Merge verification (2026-09-24): locally, Go lint (Go 1.25 toolchain),
 `swagger-diff`, `perm-check`, Go unit tests with race, the `dbtest` suite on
 PostgreSQL 17, web lint/typecheck/i18n/298 tests/build and `make build` passed.
-A host-binary smoke against Compose PostgreSQL 17 passed migrate, seed, embedded
-UI serving (SPA fallback, immutable gzip assets, ETag 304, stale-chunk 404),
-JSON 404 for unknown API paths, Swagger, admin login, per-IP rate limiting with
-forged `X-Forwarded-For`, and trusted-proxy client IPs. Not yet verified: the
-Docker image build (the 2 GiB Colima VM ran out of memory), browser visual
-acceptance, end-to-end SSE streams and the first CI run (not pushed yet).
+A host-binary smoke passed per-IP login rate limiting with forged
+`X-Forwarded-For` and trusted-proxy client IPs. The Docker image built on
+Colima (4 CPU / 8 GiB), and an isolated Compose smoke of that image passed
+PostgreSQL 17, migrate, seed, embedded UI serving (SPA fallback, immutable gzip
+assets, stale-chunk 404), JSON 404 for unknown API paths, Swagger, admin login,
+authenticated API calls and pod-log SSE streaming from Colima k3s. CI run
+`36048083419` on `ArkGravity/optimus` (`e0d7c58`) passed every job and
+published `ghcr.io/arkgravity/optimus` and `docker.io/logic3579/optimus` as
+`main-e0d7c58` (linux/amd64 only). The GHCR package is private until its
+visibility is changed. Browser visual acceptance remains unverified.
 
 Latest frontend UI work (2026-09-17: Ant Design theme tokens, dark sidebar,
 compact workspace and menu tabs) passed lint, typecheck, i18n, unit tests and
@@ -323,8 +327,12 @@ write/manage APIs in P4.
   MTU per server; recreate existing networks without deleting data volumes.
 - The image build runs the Vite build and a large Go build. On 2026-09-24 a
   2 GiB Colima VM (with k3s) ran out of memory during the Vite stage; the OOM
-  killer also broke Colima's Docker socket forward. Give Colima more memory
-  before local image builds.
+  killer also broke Colima's Docker socket forward. 4 CPU / 8 GiB builds fine.
+- Published images are linux/amd64 only. On arm64 hosts (Apple silicon Colima)
+  pull with `--platform linux/amd64` or build locally.
+- Colima's k3s API listens on the VM port shown in the `colima` kubeconfig
+  (not 6443). Containers reach it via their network gateway IP with
+  `tls-server-name: kubernetes`.
 - `golangci-lint` v1.64.8 cannot read Go 1.27+ export data. When the local Go
   is newer than CI's 1.25, run `GOTOOLCHAIN=go1.25.0 make lint`.
 - Container health checks use GET; keep `/api/v1/health` registered for GET.

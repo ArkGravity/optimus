@@ -114,6 +114,8 @@ docker compose ps -a
 docker compose logs seed
 ```
 
+Published images are linux/amd64 only; on arm64 hosts add
+`--platform linux/amd64` or build locally with `docker compose up -d --build`.
 PostgreSQL and optimus should be healthy; migrate/seed exit 0. Preserve the
 Compose project name and `pgdata` volume when upgrading an existing stack. Back
 up the database and vault key; never use `docker compose down -v` on persistent

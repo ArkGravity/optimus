@@ -30,8 +30,12 @@ Each task is one commit.
   host-binary smoke against isolated Compose PostgreSQL 17 (health, SPA deep
   link, asset caching and gzip, ETag, Swagger, JSON 404, login, forged
   `X-Forwarded-For`, trusted proxy). Also ignore `./tmp` in `go.mod`, where
-  `make swagger-diff` writes generated Go. Outstanding: local Docker image
-  build (Colima VM out of memory at 2 GiB), end-to-end SSE and the first CI run.
+  `make swagger-diff` writes generated Go. After resizing Colima to 8 GiB: the
+  image built, an isolated Compose smoke of the image passed (including pod-log
+  SSE from Colima k3s), and CI run `36048083419` published `main-e0d7c58`.
+- [x] **Repository move.** The repository is `github.com/ArkGravity/optimus`:
+  rename the module accordingly, publish GHCR as `ghcr.io/arkgravity/optimus`,
+  and default `DOCKERHUB_USERNAME` to `logic3579`.
 - [ ] **mem0.** Replace the `optimus-be`/`optimus-fe` memories with one
   `optimus` checkpoint.
 
