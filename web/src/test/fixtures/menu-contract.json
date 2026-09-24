@@ -1,5 +1,5 @@
 {
-  "source": "https://github.com/logic3579/optimus/blob/17a3862/optimus-be/internal/seed/seed.go",
+  "source": "internal/seed/seed.go",
   "menus": [
     {
       "component": "dashboard/Index",

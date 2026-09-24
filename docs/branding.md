@@ -1,6 +1,6 @@
 # Optimus brand mark
 
-`public/optimus-logo.png` is the shared transparent PNG mark used in the sidebar,
+`web/public/optimus-logo.png` is the shared transparent PNG mark used in the sidebar,
 login page and browser favicon. The interlocking blue and cyan O represents
 coordinated infrastructure. Keep the same mark across these surfaces.
 

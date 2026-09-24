@@ -2,7 +2,7 @@
 
 Implementation scope approved on 2026-09-17: compact content spacing and
 application tabs for menu navigation. This uses existing backend routes and
-permissions; no API/menu-contract change or backend checkout is required.
+permissions; no API or menu-contract change is required.
 
 - The viewport contains the header, horizontally scrollable menu tabs and one
   scrolling content surface. Outer spacing is 8px; first-level cards use 16px

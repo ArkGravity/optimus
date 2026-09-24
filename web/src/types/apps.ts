@@ -1,4 +1,4 @@
-// Hand-written DTOs mirroring optimus-be apps/{repo,application,release}/dto.go.
+// Hand-written DTOs mirroring internal/modules/apps/{repo,application,release}/dto.go.
 // Naming convention matches user.Summary / user.Detail used by P0.
 // Source of truth: docs/api/swagger.json + internal/modules/apps/*/dto.go.
 // When BE contracts change, update this file in the same PR.

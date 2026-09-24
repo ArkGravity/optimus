@@ -10,9 +10,9 @@
 ## 1. Prerequisites and isolated workspace
 
 Required commands: `colima`, `docker`, `kubectl`, `helm`, `curl`, `jq`,
-`openssl`, `go`, and `make`. Start from `optimus-be/` with Colima running with
-the Docker runtime and Kubernetes enabled, plus the normal disposable backend
-configuration and migrations available.
+`openssl`, `go`, `bun`, and `make`. Start from the repository root with Colima
+running with the Docker runtime and Kubernetes enabled, plus the normal
+disposable backend configuration and migrations available.
 
 ```bash
 export P6_SMOKE_DIR="$(mktemp -d /tmp/optimus-p6-smoke.XXXXXX)"
@@ -42,7 +42,7 @@ make migrate-up
 make seed
 make build
 umask 077
-./bin/optimus-be >"$P6_SMOKE_DIR/server.log" 2>&1 &
+./bin/optimus >"$P6_SMOKE_DIR/server.log" 2>&1 &
 export P6_SERVER_PID=$!
 until curl --fail --silent http://127.0.0.1:8080/api/v1/health >/dev/null; do sleep 1; done
 ```
@@ -144,7 +144,7 @@ export P6_STAGE_ID="$(curl --fail --silent "${p6_approver[@]}" "$P6_API/delivery
 curl --fail --silent "${p6_approver[@]}" -d '{"comment":"approved by disposable P6 smoke"}' "$P6_API/delivery/run-stages/$P6_STAGE_ID/approve" | jq -e '.data.decision=="approved"'
 kill -TERM "$P6_SERVER_PID"
 wait "$P6_SERVER_PID"
-./bin/optimus-be >"$P6_SMOKE_DIR/server-restarted.log" 2>&1 &
+./bin/optimus >"$P6_SMOKE_DIR/server-restarted.log" 2>&1 &
 export P6_SERVER_PID=$!
 until curl --fail --silent http://127.0.0.1:8080/api/v1/health >/dev/null; do sleep 1; done
 until curl --fail --silent "${p6_initiator[@]}" "$P6_API/delivery/runs/$P6_RUN_ID" | jq -e '.data.state=="succeeded" and ([.data.stages[]|.result_revision>0 and (.result_digest|test("^sha256:[0-9a-f]{64}$"))]|all)'; do sleep 2; done

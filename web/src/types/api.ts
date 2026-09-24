@@ -1,4 +1,4 @@
-// Hand-written DTOs mirroring optimus-be /api/v1 contracts.
+// Hand-written DTOs mirroring the backend /api/v1 contracts.
 // Source of truth: docs/api/swagger.json + internal/modules/*/dto.go.
 // When BE contracts change, update this file in the same PR.
 
@@ -300,7 +300,7 @@ export interface CloudKeyListQuery {
 }
 
 // ─── K8s (P2) ───────────────────────────────────────────────────────────────
-// Cluster CRUD (mirrors optimus-be/internal/modules/k8s/cluster/dto.go).
+// Cluster CRUD (mirrors internal/modules/k8s/cluster/dto.go).
 export interface Cluster {
   id: number
   name: string

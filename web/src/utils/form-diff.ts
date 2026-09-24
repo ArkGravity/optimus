@@ -2,7 +2,7 @@
 // Returns a Partial<T> containing only the keys whose values changed.
 //
 // Used to compose PATCH/PUT bodies where the backend treats missing keys as
-// "unchanged" (matches optimus-be Update DTOs which use *T pointer fields).
+// "unchanged" (matches backend Update DTOs which use *T pointer fields).
 //
 // Pure shallow: nested objects/arrays compared by reference via Object.is.
 // Callers MUST keep their form models flat (matches all BE Update DTOs).
