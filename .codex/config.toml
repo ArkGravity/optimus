@@ -18,3 +18,6 @@ args = ["start-mcp-server", "--project-from-cwd", "--context=codex"]
 
 [plugins."superpowers@openai-curated"]
 enabled = true
+
+[plugins."build-web-apps@openai-curated"]
+enabled = true

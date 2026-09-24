@@ -2,6 +2,8 @@
 .env
 .env.*
 !.env.example
+!web/.env.development
+!web/.env.production
 *.pem
 *.key
 
@@ -32,3 +34,11 @@ Thumbs.db
 *.out
 /coverage/
 /postgres-data/
+
+# Web (Bun / Vite / test output). web/dist is embedded by go:embed; the
+# placeholder keeps backend-only builds compiling without a frontend build.
+web/node_modules/
+web/dist/*
+!web/dist/.gitkeep
+web/coverage/
+*.tsbuildinfo

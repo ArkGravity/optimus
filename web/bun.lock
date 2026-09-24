@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "optimus-fe",
+      "name": "optimus-web",
       "dependencies": {
         "@ant-design/icons-vue": "^7.0.1",
         "@codemirror/lang-yaml": "^6.1.3",
