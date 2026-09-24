@@ -1,19 +1,9 @@
-// Package main is the optimus-migrate binary: it applies pending Goose
-// SQL migrations embedded into the binary against the Postgres instance
-// configured by configs/config.yaml (overridable via OPTIMUS_* env vars).
-//
-// Exit codes:
-//
-//	0 — migrations applied successfully (including the no-op case where
-//	    the DB is already at head)
-//	1 — any failure (config invalid, DB unreachable, migration error)
 package main
 
 import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"os"
 	"path/filepath"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -24,36 +14,40 @@ import (
 	"github.com/logic3579/optimus/migrations"
 )
 
-func main() {
-	cfgPath := flag.String("config", "configs/config.yaml", "path to config")
-	direction := flag.String("dir", "up", "up | down | status")
-	flag.Parse()
+// runMigrate applies the Goose SQL migrations embedded into the binary against
+// the configured Postgres instance. It exits 0 on success (including when the
+// database is already at head) and 1 on any failure.
+func runMigrate(args []string) {
+	fs := flag.NewFlagSet("migrate", flag.ExitOnError)
+	cfgPath := fs.String("config", defaultConfigPath, "path to config")
+	direction := fs.String("dir", "up", "up | down | status")
+	_ = fs.Parse(args)
 
 	abs, err := filepath.Abs(*cfgPath)
 	if err != nil {
-		die("resolve config path", err)
+		fail("resolve config path", err)
 	}
 	cfg, err := config.Load(abs)
 	if err != nil {
-		die("load config", err)
+		fail("load config", err)
 	}
 	if err := cfg.ValidateForMigrate(); err != nil {
-		die("validate config", err)
+		fail("validate config", err)
 	}
 
 	logger := log.New(log.Options{Level: cfg.Log.Level, Format: cfg.Log.Format})
-	logger.Info("optimus-migrate starting", "direction", *direction)
+	logger.Info("optimus migrate starting", "direction", *direction)
 
 	db, err := sql.Open("pgx", cfg.Database.DSN)
 	if err != nil {
-		die("open db", err)
+		fail("open db", err)
 	}
 	defer db.Close()
 
 	if err := runGoose(db, *direction); err != nil {
-		die("migrate "+*direction, err)
+		fail("migrate "+*direction, err)
 	}
-	logger.Info("optimus-migrate done")
+	logger.Info("optimus migrate done")
 }
 
 func runGoose(db *sql.DB, direction string) error {
@@ -71,13 +65,4 @@ func runGoose(db *sql.DB, direction string) error {
 	default:
 		return fmt.Errorf("unknown direction: %s", direction)
 	}
-}
-
-func die(msg string, err error) {
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "fatal: %s: %v\n", msg, err)
-	} else {
-		fmt.Fprintf(os.Stderr, "fatal: %s\n", msg)
-	}
-	os.Exit(1)
 }

@@ -10,7 +10,7 @@
 //
 // Cross-package seams (apps/repo.InUseCounter, application.HelmStatusProbe,
 // application.HelmInstalledChecker, k8s/cluster.AppsApplicationCounter) are
-// wired post-construction in cmd/server/main.go to keep this package free
+// wired post-construction in cmd/optimus/server.go to keep this package free
 // of cycles and free of any direct k8s import.
 package module
 
@@ -35,7 +35,7 @@ import (
 	"github.com/logic3579/optimus/internal/modules/rbac"
 )
 
-// Module bundles every apps sub-service + handler so cmd/server/main.go only
+// Module bundles every apps sub-service + handler so cmd/optimus/server.go only
 // needs to call New + MountRoutes. The Repo/Application/Release fields stay
 // exported so main.go (or tests) can finish post-construction wiring.
 type Module struct {
@@ -233,7 +233,7 @@ func (l *HelmChartLoader) LoadVerifiedChart(ctx context.Context, artifact apprep
 // MountRoutes registers every /apps route under `protected` (which must
 // already be JWT-gated). Permission gating is per-route via nested sub-groups
 // with middleware.RequirePermission — matching the pattern used by the k8s
-// and credentials modules. See cmd/server/main.go's mountUserRoutes for the
+// and credentials modules. See cmd/optimus/server.go's mountUserRoutes for the
 // rationale (variadic args to GET/POST do NOT guarantee middleware ordering
 // when handlers are registered separately; only Group("", mw) does).
 func (m *Module) MountRoutes(protected *gin.RouterGroup, cache *rbac.PermissionCache) {

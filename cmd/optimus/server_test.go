@@ -10,10 +10,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Composition belongs in main; this guard prevents delivery from silently
+// Composition belongs in server.go; this guard prevents delivery from silently
 // reaching private P1/P3 repositories or losing its shared lifecycle context.
 func TestDeliveryCompositionContract(t *testing.T) {
-	source, err := os.ReadFile("main.go")
+	source, err := os.ReadFile("server.go")
 	require.NoError(t, err)
 	text := string(source)
 	for _, required := range []string{

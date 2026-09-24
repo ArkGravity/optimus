@@ -48,7 +48,7 @@ func (a repoAdapter) Get(ctx context.Context, id uint64) (*ClusterMeta, error) {
 }
 
 // NewRepoAdapter wraps a cluster.Repo for use by Factory. Composition root
-// (cmd/server/main.go) calls this to bridge the two seams.
+// (cmd/optimus/server.go) calls this to bridge the two seams.
 func NewRepoAdapter(r *cluster.Repo) ReadRepo { return repoAdapter{inner: r} }
 
 // Factory builds per-request rest.Config + kubernetes.Interface from a

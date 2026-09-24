@@ -60,7 +60,7 @@ type crudHandler interface {
 }
 
 // MountRoutes wires all three CRUD surfaces under /credentials with per-route
-// RBAC gates per spec §5.1. Call from cmd/server/main.go inside the protected
+// RBAC gates per spec §5.1. Call from cmd/optimus/server.go inside the protected
 // router group (after JWTAuth middleware).
 func (m *Module) MountRoutes(protected *gin.RouterGroup, cache *rbac.PermissionCache) {
 	mount := func(path, resource string, h crudHandler) {

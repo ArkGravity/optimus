@@ -14,7 +14,7 @@ import (
 // Clientsetter returns a fresh kubernetes.Interface for the given cluster.
 // Defined locally (rather than importing client.Factory) so this package
 // stays decoupled from the real wiring — tests inject an in-memory fake,
-// the composition root in cmd/server/main.go injects *client.Factory.
+// the composition root in cmd/optimus/server.go injects *client.Factory.
 type Clientsetter interface {
 	Clientset(ctx context.Context, clusterID uint64, purpose string) (kubernetes.Interface, error)
 }

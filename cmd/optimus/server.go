@@ -47,8 +47,6 @@ import (
 	"github.com/logic3579/optimus/internal/modules/user"
 )
 
-var Version = "dev"
-
 // @title           Optimus Admin API
 // @version         1.0
 // @description     P0 admin backend for Optimus — auth, RBAC, users, roles, permissions, menus, audit.
@@ -61,10 +59,11 @@ var Version = "dev"
 // @in   header
 // @name Authorization
 // @description Type "Bearer" followed by a space and the JWT access token.
-func main() {
-	cfgPath := flag.String("config", "configs/config.yaml", "path to config")
-	checkPerms := flag.Bool("check-permissions", false, "register permission codes and exit")
-	flag.Parse()
+func runServer(args []string) {
+	fs := flag.NewFlagSet("server", flag.ExitOnError)
+	cfgPath := fs.String("config", defaultConfigPath, "path to config")
+	checkPerms := fs.Bool("check-permissions", false, "register permission codes and exit")
+	_ = fs.Parse(args)
 
 	abs, err := filepath.Abs(*cfgPath)
 	if err != nil {
@@ -349,11 +348,6 @@ func (p permissionChecker) Has(ctx context.Context, userID uint64, code string) 
 		}
 	}
 	return false, nil
-}
-
-func fail(stage string, err error) {
-	fmt.Fprintf(os.Stderr, "fatal: %s: %v\n", stage, err)
-	os.Exit(1)
 }
 
 // mountUserRoutes mounts /users with per-route RBAC gates per spec §7.2.

@@ -37,7 +37,7 @@ import (
 )
 
 // setupAppsServer boots a fresh Postgres + the full /apps surface wired in the
-// same way cmd/server/main.go does, with a real vault.Cipher (random key) and
+// same way cmd/optimus/server.go does, with a real vault.Cipher (random key) and
 // the in-memory helm test factory. Returns the engine, the *gorm.DB, the apps
 // Module (so individual tests can patch the HelmInstalledChecker seam), and
 // the in-memory helm factory whose action.Configuration backs every release

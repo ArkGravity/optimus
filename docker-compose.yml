@@ -29,8 +29,8 @@ services:
 
   migrate:
     <<: *optimus-backend
-    entrypoint: ["/usr/local/bin/optimus-migrate"]
-    command: ["-config", "/etc/optimus/config.yaml", "-dir", "up"]
+    entrypoint: ["/usr/local/bin/optimus"]
+    command: ["migrate", "-config", "/etc/optimus/config.yaml", "-dir", "up"]
     restart: "no"
     depends_on:
       postgres:
@@ -42,8 +42,8 @@ services:
 
   seed:
     <<: *optimus-backend
-    entrypoint: ["/usr/local/bin/optimus-seed"]
-    command: ["-config", "/etc/optimus/config.yaml"]
+    entrypoint: ["/usr/local/bin/optimus"]
+    command: ["seed", "-config", "/etc/optimus/config.yaml"]
     restart: "no"
     depends_on:
       postgres:
@@ -61,8 +61,8 @@ services:
 
   optimus-be:
     <<: *optimus-backend
-    entrypoint: ["/usr/local/bin/optimus-be"]
-    command: ["-config", "/etc/optimus/config.yaml"]
+    entrypoint: ["/usr/local/bin/optimus"]
+    command: ["server", "-config", "/etc/optimus/config.yaml"]
     restart: unless-stopped
     depends_on:
       postgres:

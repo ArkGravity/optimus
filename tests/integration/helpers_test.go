@@ -6,7 +6,7 @@
 //   - setupServer: start a real Postgres via dockertest, run migrations, seed
 //     builtin roles/permissions/menus and an "admin" user with a known password.
 //     The returned engine has the full middleware chain plus every module
-//     mounted under per-route RequirePermission gates that mirror cmd/server.
+//     mounted under per-route RequirePermission gates that mirror cmd/optimus.
 //   - login: small helper that POSTs /auth/login and returns the access token.
 //   - mountXxx helpers: extracted from main.go so the e2e tests stay in sync
 //     with the production routing table.
@@ -71,7 +71,7 @@ func bodyMap(t *testing.T, r *httptest.ResponseRecorder) map[string]any {
 }
 
 // setupServer boots a fresh Postgres (dockertest), runs migrations, seeds the
-// builtin RBAC graph, and returns a gin engine wired up exactly like cmd/server
+// builtin RBAC graph, and returns a gin engine wired up exactly like cmd/optimus
 // does (auth + /me + user + role + permission + menu + audit) so e2e tests
 // touch the same middleware chain the real server uses.
 //
@@ -193,7 +193,7 @@ func login(t *testing.T, r *gin.Engine, username, password string) string {
 	return bodyMap(t, rec)["data"].(map[string]any)["access_token"].(string)
 }
 
-// The mount* helpers below mirror cmd/server/main.go. Keep them in sync.
+// The mount* helpers below mirror cmd/optimus/server.go. Keep them in sync.
 
 func mountUser(protected *gin.RouterGroup, h *user.Handler, cache *rbac.PermissionCache) {
 	g := protected.Group("/users")

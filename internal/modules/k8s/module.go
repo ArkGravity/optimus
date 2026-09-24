@@ -26,7 +26,7 @@ import (
 	"github.com/logic3579/optimus/internal/modules/rbac"
 )
 
-// Module bundles every k8s sub-service + handler so cmd/server/main.go only
+// Module bundles every k8s sub-service + handler so cmd/optimus/server.go only
 // needs to call New + MountRoutes. Exported fields (Cluster) are the Go-only
 // seams used by tests or future sub-projects (the rest stay unexported).
 type Module struct {
@@ -95,7 +95,7 @@ func (m *Module) SetObservabilityCounter(c cluster.ObservabilityDatasourceCounte
 
 // MountRoutes registers all 21 k8s routes under `protected` (which must
 // already be JWT-gated). Permission gating happens via nested sub-groups
-// with middleware.RequirePermission — see cmd/server/main.go's
+// with middleware.RequirePermission — see cmd/optimus/server.go's
 // mountUserRoutes for the rationale (variadic args to GET/POST do NOT
 // guarantee middleware-before-handler ordering when handlers are
 // registered separately; only Group("", mw) does).

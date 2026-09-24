@@ -17,7 +17,7 @@ run:
 	air
 
 build:
-	go build -o bin/optimus-be ./cmd/server
+	go build -o bin/optimus ./cmd/optimus
 
 test:
 	go test ./... -race -cover
@@ -29,11 +29,11 @@ lint:
 	golangci-lint run
 
 swag:
-	swag init -g cmd/server/main.go -o api/docs --parseDependency --parseInternal
+	swag init -g cmd/optimus/server.go -o api/docs --parseDependency --parseInternal
 	cp api/docs/swagger.json docs/api/swagger.json
 
 swagger-diff:
-	@swag init -g cmd/server/main.go -o "$(SWAG_DIFF_TMP)" --parseDependency --parseInternal >/dev/null
+	@swag init -g cmd/optimus/server.go -o "$(SWAG_DIFF_TMP)" --parseDependency --parseInternal >/dev/null
 	@diff -q "$(SWAG_DIFF_TMP)/swagger.json" api/docs/swagger.json || \
 	  (echo "embedded swagger.json is stale — run 'make swag' and commit"; exit 1)
 	@diff -q "$(SWAG_DIFF_TMP)/swagger.json" docs/api/swagger.json || \
@@ -53,7 +53,7 @@ migrate-new:
 	goose -dir migrations create $(name) sql
 
 seed:
-	go run ./cmd/seed
+	go run ./cmd/optimus seed
 
 dump-perms:
 	go run ./cmd/dump-permissions > docs/permissions.md
@@ -64,7 +64,7 @@ perm-check:
 	  (echo "permissions.md is stale — run 'make dump-perms' and commit"; exit 1)
 
 perm-db-check:
-	go run ./cmd/server -check-permissions
+	go run ./cmd/optimus server -check-permissions
 
 tools:
 	go install github.com/air-verse/air@v1.52.3

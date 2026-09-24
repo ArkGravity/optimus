@@ -3,8 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
-	"os"
 	"path/filepath"
 
 	"github.com/logic3579/optimus/internal/infra/config"
@@ -14,30 +12,33 @@ import (
 	"github.com/logic3579/optimus/internal/seed"
 )
 
-func main() {
-	cfgPath := flag.String("config", "configs/config.yaml", "path to config")
-	flag.Parse()
+// runSeed registers permission codes and creates the builtin RBAC graph. The
+// initial administrator password is printed exactly once.
+func runSeed(args []string) {
+	fs := flag.NewFlagSet("seed", flag.ExitOnError)
+	cfgPath := fs.String("config", defaultConfigPath, "path to config")
+	_ = fs.Parse(args)
 
 	abs, err := filepath.Abs(*cfgPath)
 	if err != nil {
-		die("resolve config path", err)
+		fail("resolve config path", err)
 	}
 	cfg, err := config.Load(abs)
 	if err != nil {
-		die("load config", err)
+		fail("load config", err)
 	}
 	if err := cfg.ValidateStrict(); err != nil {
-		die("validate config", err)
+		fail("validate config", err)
 	}
 	logger := log.New(log.Options{Level: cfg.Log.Level, Format: cfg.Log.Format})
 
 	gdb, err := db.Open(cfg.Database)
 	if err != nil {
-		die("open db", err)
+		fail("open db", err)
 	}
 
 	if r, err := permissions.Register(context.Background(), gdb, permissions.All); err != nil {
-		die("register permissions", err)
+		fail("register permissions", err)
 	} else {
 		logger.Info("permissions registered", "inserted", r.Inserted, "updated", r.Updated, "stale", r.Stale)
 	}
@@ -48,7 +49,7 @@ func main() {
 		BcryptCost:    cfg.Auth.BcryptCost,
 	})
 	if err != nil {
-		die("seed", err)
+		fail("seed", err)
 	}
 
 	if res.AdminInitialPassword != "" {
@@ -60,9 +61,4 @@ func main() {
 	} else {
 		logger.Info("admin user already exists; no password generated")
 	}
-}
-
-func die(stage string, err error) {
-	fmt.Fprintf(os.Stderr, "fatal: %s: %v\n", stage, err)
-	os.Exit(1)
 }
