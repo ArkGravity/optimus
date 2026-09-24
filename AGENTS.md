@@ -25,6 +25,16 @@ split GitHub repositories and the original monorepo were deleted, so pre-split
 commit IDs do not resolve. Design:
 `docs/superpowers/specs/2026-09-24-monorepo-single-binary-design.md`.
 
+Merge verification (2026-09-24, local): Go lint (Go 1.25 toolchain),
+`swagger-diff`, `perm-check`, Go unit tests with race, the `dbtest` suite on
+PostgreSQL 17, web lint/typecheck/i18n/298 tests/build and `make build` passed.
+A host-binary smoke against Compose PostgreSQL 17 passed migrate, seed, embedded
+UI serving (SPA fallback, immutable gzip assets, ETag 304, stale-chunk 404),
+JSON 404 for unknown API paths, Swagger, admin login, per-IP rate limiting with
+forged `X-Forwarded-For`, and trusted-proxy client IPs. Not yet verified: the
+Docker image build (the 2 GiB Colima VM ran out of memory), browser visual
+acceptance, end-to-end SSE streams and the first CI run (not pushed yet).
+
 Latest frontend UI work (2026-09-17: Ant Design theme tokens, dark sidebar,
 compact workspace and menu tabs) passed lint, typecheck, i18n, unit tests and
 build; browser visual and backend-integration acceptance remain unverified.

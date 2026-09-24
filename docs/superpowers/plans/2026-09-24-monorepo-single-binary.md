@@ -25,10 +25,13 @@ Each task is one commit.
 - [x] **Docs.** Merge frontend docs and superpowers plans/specs into `docs/`,
   write the docs index with the historical path mapping, merge the README.
 - [x] **AGENTS.md.** One operating contract for the monorepo.
-- [ ] **Verification.** `make lint test swagger-diff perm-check`,
-  `make test-int` on PostgreSQL 17, `make web-check` and web build, and an
-  isolated Compose smoke (health, SPA deep link, asset caching, Swagger, JSON
-  404, login, SSE, forged `X-Forwarded-For`).
+- [x] **Verification.** `make lint test swagger-diff perm-check`,
+  `make test-int` on PostgreSQL 17, `make web-check`, `make build`, and a
+  host-binary smoke against isolated Compose PostgreSQL 17 (health, SPA deep
+  link, asset caching and gzip, ETag, Swagger, JSON 404, login, forged
+  `X-Forwarded-For`, trusted proxy). Also ignore `./tmp` in `go.mod`, where
+  `make swagger-diff` writes generated Go. Outstanding: local Docker image
+  build (Colima VM out of memory at 2 GiB), end-to-end SSE and the first CI run.
 - [ ] **mem0.** Replace the `optimus-be`/`optimus-fe` memories with one
   `optimus` checkpoint.
 
