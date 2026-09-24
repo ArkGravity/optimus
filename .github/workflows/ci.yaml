@@ -17,6 +17,30 @@ env:
   GOLANGCI_LINT_CACHE: ${{ github.workspace }}/tmp/golangci-lint-cache
 
 jobs:
+  web:
+    name: Web checks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.x
+      - name: Install
+        run: bun install --frozen-lockfile
+      - name: Lint
+        run: bun run lint
+      - name: Typecheck
+        run: bun run typecheck
+      - name: i18n keys
+        run: bun run i18n:check
+      - name: Unit tests
+        run: bun run test
+      - name: Build
+        run: bun run build
+
   backend-quality:
     name: Backend quality
     runs-on: ubuntu-latest
@@ -169,7 +193,7 @@ jobs:
     name: Publish image to GHCR and Docker Hub
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && needs.backend-dbtest.outputs.run == 'true'
     runs-on: ubuntu-latest
-    needs: [backend-quality, backend-unit, backend-dbtest, image-build]
+    needs: [web, backend-quality, backend-unit, backend-dbtest, image-build]
     permissions:
       contents: read
       packages: write
@@ -207,7 +231,7 @@ jobs:
         with:
           images: |
             ghcr.io/${{ github.repository }}
-            name=docker.io/${{ env.DOCKERHUB_NAMESPACE }}/optimus-be,enable=${{ env.PUBLISH == 'true' }}
+            name=docker.io/${{ env.DOCKERHUB_NAMESPACE }}/optimus,enable=${{ env.PUBLISH == 'true' }}
           tags: type=sha,prefix=${{ github.ref_name }}-,format=short
       - name: Build image (publish main to both registries)
         uses: docker/build-push-action@v6
