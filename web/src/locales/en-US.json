@@ -1,0 +1,808 @@
+{
+  "workspace": {
+    "tabs": "Open pages",
+    "actions": "Tab actions",
+    "close_others": "Close other tabs",
+    "close_all": "Close all tabs",
+    "select_menu": "Select a page from the sidebar to get started",
+    "unsaved": "You have unsaved changes. Leave this page and discard them?"
+  },
+  "common": {
+    "expand_sidebar": "Expand sidebar",
+    "collapse_sidebar": "Collapse sidebar",
+    "ok": "OK",
+    "cancel": "Cancel",
+    "save": "Save",
+    "create": "Create", "view": "View", "edit": "Edit", "delete": "Delete", "test": "Test", "up": "Up", "down": "Down", "remove": "Remove",
+    "submit": "Submit",
+    "reset": "Reset",
+    "refresh": "Refresh",
+    "loading": "Loading…",
+    "logout": "Log out",
+    "profile": "Profile",
+    "language": "Language",
+    "theme": "Theme",
+    "theme_light": "Light",
+    "theme_dark": "Dark",
+    "actions": "Actions", "error": "Error", "created_at": "Created", "search": "Search",
+    "button": {
+      "back": "Back",
+      "next": "Next",
+      "previous": "Previous"
+    },
+    "message": {
+      "done": "Done",
+      "installed": "Install succeeded",
+      "upgraded": "Upgrade succeeded"
+    }
+  },
+  "placeholder": {
+    "coming_soon": "Coming soon"
+  },
+  "auth": {
+    "login_title": "Sign in to Optimus",
+    "username": "Username",
+    "password": "Password",
+    "login": "Sign in",
+    "invalid_credentials": "Invalid username or password",
+    "account_disabled": "This account is disabled. Contact an administrator."
+  },
+  "profile": {
+    "title": "Profile",
+    "display_name": "Display name",
+    "email": "Email",
+    "avatar_url": "Avatar URL",
+    "old_password": "Current password",
+    "new_password": "New password",
+    "confirm_password": "Confirm new password",
+    "password_mismatch": "Passwords do not match",
+    "update_ok": "Profile updated",
+    "password_changed": "Password changed",
+    "change_password": "Change password"
+  },
+  "errors": {
+    "403_title": "Forbidden",
+    "404_title": "Not found",
+    "500_title": "Server error",
+    "back_home": "Back to home"
+  },
+  "error": {
+    "42001": "Application still has an installed release. Uninstall it before deleting.",
+    "42002": "Chart repository is still referenced by one or more applications.",
+    "42003": "A release with the same name already exists in this namespace.",
+    "42004": "The referenced cluster has been deleted.",
+    "42101": "Cannot reach chart repository.",
+    "42102": "Chart repository authentication failed.",
+    "42103": "Chart or version not found.",
+    "42104": "Failed to parse the chart repository index.",
+    "42105": "OCI registry error.",
+    "42199": "Chart repository error.",
+    "42201": "Release already exists.",
+    "42202": "Release not found.",
+    "42203": "Target rollback revision does not exist.",
+    "42204": "Release is still installed. Uninstall first.",
+    "42205": "Invalid values YAML.",
+    "42299": "Helm error.",
+    "43001": "Cloud key is referenced by a cloud account; delete blocked",
+    "43002": "Cloud account not found",
+    "43003": "Cloud account name already exists",
+    "43004": "Invalid region format",
+    "43005": "Cloud provider not supported",
+    "43006": "Cloud account is disabled; cannot trigger sync",
+    "43008": "Referenced cloud key not found",
+    "43009": "VPC not found",
+    "43101": "Sync already in progress for this account",
+    "43102": "AWS credentials invalid or expired",
+    "43103": "AWS API access denied (insufficient IAM permissions)",
+    "43104": "Cannot reach the AWS API",
+    "43105": "AWS API throttled",
+    "43106": "AWS API call failed",
+    "43107": "AWS SDK config load failed",
+    "44001": "Data source not found.",
+    "44002": "A data source with this name already exists.",
+    "44003": "This data source is still used by a dashboard.",
+    "44004": "The data source URL is invalid.",
+    "44005": "The selected credential does not match the authentication type.",
+    "44006": "The data source TLS configuration is invalid.",
+    "44101": "The data source destination is not allowed.",
+    "44102": "The metrics service could not be reached.",
+    "44103": "The metrics service did not respond in time.",
+    "44104": "The metrics service rejected the request.",
+    "44105": "The metrics service returned an invalid response.",
+    "44106": "The metric query exceeds the allowed limits.",
+    "44107": "The metric query request is invalid.",
+    "44201": "Dashboard not found.",
+    "44202": "A dashboard with this name already exists.",
+    "44203": "The dashboard contains an invalid panel.",
+    "44204": "Built-in dashboard not found."
+  },
+  "network": {
+    "error": "Network error, please try again later"
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "system_group": "System Management",
+    "credentials_group": "Credential Management",
+    "k8s_group": "Kubernetes",
+    "system": {
+      "users": "Users",
+      "roles": "Roles",
+      "permissions": "Permissions",
+      "menus": "Menus",
+      "audit_logs": "Audit logs"
+    },
+    "credentials": {
+      "ssh_keys": "SSH keys",
+      "kubeconfigs": "Kubeconfigs",
+      "cloud_keys": "Cloud keys",
+      "http_credentials": "HTTP credentials"
+    },
+    "k8s": {
+      "clusters": "Clusters",
+      "workloads": "Workloads",
+      "network": "Network",
+      "config": "Config & Secrets",
+      "cluster_resources": "Cluster Resources"
+    },
+    "apps_group": "Application Management",
+    "apps": {
+      "applications": "Applications",
+      "chart_repos": "Chart repos"
+    },
+    "assets_group": "Assets Management",
+    "assets": {
+      "cloud_accounts": "Cloud Accounts",
+      "instances": "EC2 Instances",
+      "vpcs": "VPCs",
+      "databases": "RDS Databases",
+      "sync_runs": "Sync Runs"
+    },
+    "delivery_group": "Delivery Management",
+    "delivery": {
+      "projects": "Delivery Projects",
+      "approvals": "Approval Queue"
+    },
+    "observability_group": "Observability Center",
+    "observability": { "kubernetes": "Kubernetes monitoring", "dashboards": "Dashboards", "datasources": "Data sources" }
+  },
+  "perm": {
+    "system": {
+      "user": { "read": "Read users", "write": "Create/update users", "delete": "Delete users", "reset_pass": "Reset user password" },
+      "role": { "read": "Read roles", "write": "Create/update roles + bind perms", "delete": "Delete roles" },
+      "permission": { "read": "Read permission registry" },
+      "menu": { "read": "Read menus", "write": "Create/update menus", "delete": "Delete menus" },
+      "audit": { "read": "Read audit logs" }
+    },
+    "credentials": {
+      "ssh_key":    { "read": "View SSH credentials", "write": "Create/update SSH credentials", "delete": "Delete SSH credentials", "use": "Use SSH credentials" },
+      "kubeconfig": { "read": "View kubeconfigs", "write": "Create/update kubeconfigs", "delete": "Delete kubeconfigs", "use": "Use kubeconfigs" },
+      "cloud_key":  { "read": "View cloud keys", "write": "Create/update cloud keys", "delete": "Delete cloud keys", "use": "Use cloud keys" },
+      "http":       { "read": "View HTTP credentials", "write": "Create/update HTTP credentials", "delete": "Delete HTTP credentials", "use": "Use HTTP credentials" }
+    },
+    "k8s": {
+      "cluster":          { "read": "Read clusters", "write": "Manage clusters" },
+      "workload":         { "read": "Read workloads" },
+      "network":          { "read": "Read network resources" },
+      "config":           { "read": "Read config maps" },
+      "secret":           { "read": "Read secrets (metadata only)", "reveal": "Reveal secret values" },
+      "cluster_resource": { "read": "Read cluster-scoped resources" },
+      "log":              { "read": "Stream pod logs" }
+    },
+    "apps": {
+      "application": { "read": "View applications", "write": "Manage application metadata", "delete": "Delete applications" },
+      "release":     { "install": "Install release", "upgrade": "Upgrade release", "rollback": "Rollback release", "uninstall": "Uninstall release" },
+      "repo":        { "read": "View chart repositories", "write": "Manage chart repositories", "delete": "Delete chart repositories" }
+    },
+    "assets": {
+      "account": { "read": "View cloud accounts", "write": "Manage cloud accounts", "delete": "Delete cloud accounts" },
+      "resource": { "read": "View cloud resources" },
+      "sync": { "read": "View sync runs" }
+    },
+    "observability": {
+      "datasource": { "read": "View data sources", "write": "Create/update data sources", "delete": "Delete data sources" },
+      "metric": { "read": "Query metrics" },
+      "dashboard": { "read": "View dashboards", "write": "Create/update dashboards", "delete": "Delete dashboards" }
+    },
+    "delivery": {
+      "project": { "read": "View delivery projects and environments", "write": "Create/update delivery projects and environments", "delete": "Delete delivery projects" },
+      "pipeline": { "read": "View delivery pipelines", "write": "Publish delivery pipeline versions" },
+      "run": { "read": "View delivery runs and events", "create": "Create, reconcile, and retry delivery runs", "cancel": "Cancel delivery runs" },
+      "approval": { "read": "View delivery approvals", "decide": "Approve or reject delivery stages" }
+    },
+    "category": {
+      "system": "System",
+      "credentials": "Credential Management",
+      "k8s": "Kubernetes",
+      "apps": "Application Management",
+      "assets": "Assets",
+      "delivery": "Delivery Management",
+      "observability": "Observability Center",
+      "cicd": "CI/CD",
+      "applications": "Applications"
+    }
+  },
+  "assets": {
+    "menu": {
+      "cloud_accounts": "Cloud Accounts",
+      "instances": "EC2 Instances",
+      "vpcs": "VPCs",
+      "databases": "RDS Databases",
+      "sync_runs": "Sync Runs"
+    },
+    "account": {
+      "title": "Cloud Accounts",
+      "name": "Name",
+      "provider": "Cloud provider",
+      "cloudkey": "Cloud key",
+      "regions": "Regions",
+      "enabled": "Enabled",
+      "description": "Description",
+      "last_sync_at": "Last sync",
+      "last_sync_status": "Last status",
+      "actions": {
+        "create": "New cloud account",
+        "edit": "Edit",
+        "delete": "Delete",
+        "sync_now": "Sync now"
+      },
+      "sync_queued": "Added to the sync queue",
+      "delete_confirm": "Delete cloud account \"{name}\"? This cascades soft-delete to all discovered resources under it.",
+      "cascaded_resources": "Cascade soft-deleted {count} resource row(s)"
+    },
+    "resource": {
+      "instance": {
+        "title": "EC2 Instances",
+        "instance_id": "Instance ID",
+        "name": "Name",
+        "type": "Instance type",
+        "state": "State",
+        "private_ip": "Private IP",
+        "public_ip": "Public IP",
+        "vpc": "VPC",
+        "subnet": "Subnet",
+        "az": "Availability zone",
+        "launch_time": "Launch time",
+        "tags": "Tags"
+      },
+      "vpc": {
+        "title": "VPCs",
+        "vpc_id": "VPC ID",
+        "name": "Name",
+        "cidr": "CIDR",
+        "is_default": "Default",
+        "state": "State",
+        "subnet_count": "Subnets",
+        "view_subnets": "View subnets"
+      },
+      "subnet": {
+        "title": "Subnets",
+        "subnet_id": "Subnet ID",
+        "cidr": "CIDR",
+        "az": "Availability zone"
+      },
+      "database": {
+        "title": "RDS Databases",
+        "db_instance_id": "DB instance ID",
+        "engine": "Engine",
+        "version": "Version",
+        "class": "Instance class",
+        "status": "Status",
+        "endpoint": "Endpoint",
+        "port": "Port",
+        "multi_az": "Multi-AZ",
+        "publicly_accessible": "Publicly accessible",
+        "storage_gb": "Storage (GB)"
+      },
+      "common": {
+        "include_deleted": "Include deleted",
+        "deleted_badge": "Deleted",
+        "tags": "Tags",
+        "last_seen_at": "Last seen",
+        "no_data": "No data"
+      }
+    },
+    "sync": {
+      "title": "Sync Runs",
+      "started_at": "Started",
+      "finished_at": "Finished",
+      "duration": "Duration",
+      "resource_type": "Resource type",
+      "status": "Status",
+      "items_seen": "Items seen",
+      "items_softdeleted": "Items soft-deleted",
+      "error": "Error",
+      "trigger": "Trigger",
+      "triggered_by": "Triggered by",
+      "filter": {
+        "started_after": "Started after",
+        "account": "Cloud account",
+        "resource_type": "Resource type",
+        "status": "Status"
+      },
+      "run_status": {
+        "running": "Running",
+        "success": "Success",
+        "failed": "Failed",
+        "skipped": "Skipped"
+      },
+      "resource_types": {
+        "instance": "Instance",
+        "network": "Network",
+        "database": "Database"
+      },
+      "triggers": {
+        "cron": "Scheduled",
+        "manual": "Manual",
+        "test": "Test"
+      }
+    }
+  },
+  "form": {
+    "required": "Required",
+    "invalid_email": "Invalid email format",
+    "min_length": "At least {n} characters",
+    "max_length": "At most {n} characters"
+  },
+  "confirm": {
+    "delete_title": "Delete?",
+    "delete_desc": "This action cannot be undone.",
+    "disable_user": "Disable this user?",
+    "enable_user": "Enable this user?"
+  },
+  "system": {
+    "users": {
+      "title": "Users",
+      "create": "New user",
+      "edit": "Edit user",
+      "search_placeholder": "Search username or email",
+      "filter_status": "Status",
+      "filter_status_all": "All",
+      "col_username": "Username",
+      "col_email": "Email",
+      "col_display_name": "Display name",
+      "col_status": "Status",
+      "col_last_login": "Last login",
+      "col_created_at": "Created",
+      "col_actions": "Actions",
+      "action_edit": "Edit",
+      "action_roles": "Roles",
+      "action_reset_password": "Reset password",
+      "action_disable": "Disable",
+      "action_enable": "Enable",
+      "action_delete": "Delete",
+      "status_enabled": "Enabled",
+      "status_disabled": "Disabled",
+      "form_username": "Username",
+      "form_email": "Email",
+      "form_password": "Password",
+      "form_display_name": "Display name",
+      "form_avatar_url": "Avatar URL",
+      "form_roles": "Roles",
+      "roles_modal_title": "Assign roles",
+      "reset_password_title": "Reset password",
+      "reset_password_new": "New password",
+      "create_ok": "Created",
+      "update_ok": "Saved",
+      "delete_ok": "Deleted",
+      "status_ok": "Status updated",
+      "roles_ok": "Roles updated",
+      "password_ok": "Password reset"
+    },
+    "roles": {
+      "title": "Roles",
+      "create": "New role",
+      "edit": "Edit role",
+      "col_code": "Code",
+      "col_name": "Name",
+      "col_description": "Description",
+      "col_is_builtin": "Built-in",
+      "col_created_at": "Created",
+      "col_actions": "Actions",
+      "action_edit": "Edit",
+      "action_permissions": "Permissions",
+      "action_delete": "Delete",
+      "builtin_yes": "Yes",
+      "builtin_no": "No",
+      "form_code": "Code",
+      "form_name": "Name",
+      "form_description": "Description",
+      "permissions_modal_title": "Bind permissions",
+      "create_ok": "Created",
+      "update_ok": "Saved",
+      "delete_ok": "Deleted",
+      "permissions_ok": "Permissions updated"
+    },
+    "menus": {
+      "title": "Menus",
+      "create_root": "New root",
+      "create_child": "New child",
+      "edit": "Edit menu",
+      "action_edit": "Edit",
+      "action_add_child": "Add child",
+      "action_delete": "Delete",
+      "form_parent": "Parent",
+      "form_parent_root": "(root)",
+      "form_code": "Code",
+      "form_name": "Name (i18n key)",
+      "form_path": "Path",
+      "form_component": "Component",
+      "form_icon": "Icon",
+      "form_permission_code": "Permission code",
+      "form_sort_order": "Sort order",
+      "form_hidden": "Hidden",
+      "create_ok": "Created",
+      "update_ok": "Saved",
+      "delete_ok": "Deleted",
+      "drop_ok": "Moved",
+      "drop_invalid": "Cannot drop a node onto its own descendant"
+    },
+    "permissions": {
+      "title": "Permissions",
+      "filter_placeholder": "Search code or name"
+    },
+    "audit_logs": {
+      "title": "Audit logs",
+      "filter_action": "Action",
+      "filter_user_id": "User ID",
+      "filter_range": "Time range",
+      "filter_search": "Search",
+      "filter_reset": "Reset",
+      "col_created_at": "Time",
+      "col_action": "Action",
+      "col_user_id": "User ID",
+      "col_target_type": "Target type",
+      "col_target_id": "Target ID",
+      "col_ip": "IP",
+      "payload_title": "Payload"
+    }
+  },
+  "credentials": {
+    "filter_all": "All",
+    "auth": { "basic": "Basic", "bearer": "Bearer" },
+    "search_placeholder": "Search by name or description",
+    "filter_username": "Username",
+    "filter_namespace": "Default namespace",
+    "filter_provider": "Provider",
+    "filter_provider_all": "All",
+    "field": {
+      "name": "Name",
+      "description": "Description",
+      "username": "Username",
+      "private_key": "Private key",
+      "passphrase": "Passphrase",
+      "default_namespace": "Default namespace",
+      "kubeconfig": "Kubeconfig YAML",
+      "provider": "Provider",
+      "region": "Region",
+      "access_key_id": "Access Key ID",
+      "secret_access_key": "Secret Access Key"
+      ,"auth_type": "Authentication type", "updated_at": "Updated"
+    },
+    "placeholder": {
+      "unchanged": "••••• (unchanged)"
+    },
+    "action": {
+      "create": "Create",
+      "edit": "Edit",
+      "delete": "Delete",
+      "confirm_delete": "Delete this credential? This cannot be undone."
+    },
+    "toast": {
+      "created": "Credential created",
+      "updated": "Credential updated",
+      "deleted": "Credential deleted"
+    },
+    "ssh_keys": {
+      "title": "SSH keys",
+      "col_username": "Username"
+    },
+    "kubeconfigs": {
+      "title": "Kubeconfigs",
+      "col_default_namespace": "Default namespace"
+    },
+    "cloud_keys": {
+      "title": "Cloud keys",
+      "col_provider": "Provider",
+      "col_region": "Region"
+    },
+    "not_found": "Credential not found",
+    "name_taken": "Credential name already exists",
+    "invalid_key_format": "Invalid credential format",
+    "invalid_provider": "Provider must be aws / gcp / azure",
+    "invalid_purpose": "A purpose must be supplied for consume",
+    "system_purpose_required": "System consume requires purpose prefix system:",
+    "crypto_seal_failed": "Encryption failed",
+    "crypto_open_failed": "Decryption or integrity check failed",
+    "kubeconfig": {
+      "exec_forbidden": "Kubeconfig user uses an exec auth plugin, which is not supported.",
+      "authprovider_forbidden": "Kubeconfig user uses an auth-provider plugin, which is not supported.",
+      "in_use": "Kubeconfig is referenced by clusters; remove the clusters first."
+    }
+  },
+  "k8s": {
+    "cluster": {
+      "title": "Clusters",
+      "name": "Name",
+      "kubeconfig": "Kubeconfig",
+      "context": "Context",
+      "description": "Description",
+      "tags": "Tags",
+      "tags_placeholder": "Press Enter to add a tag",
+      "context_hint": "As defined in your kubeconfig.",
+      "ping": "Test connection",
+      "refresh_all_health": "Refresh all health",
+      "no_cluster_selected": "Select a cluster to continue.",
+      "no_clusters": "No clusters available.",
+      "referenced_by_n": "Referenced by {n} cluster(s)",
+      "not_found": "Cluster not found.",
+      "name_taken": "Cluster name is already in use.",
+      "unreachable": "Cluster apiserver is unreachable.",
+      "search_placeholder": "Search by name or description",
+      "filter_tag": "Filter by tag",
+      "col_health": "Health",
+      "col_created_at": "Created at",
+      "namespace": "Namespace",
+      "namespace_all": "All namespaces",
+      "action": {
+        "create": "Create cluster",
+        "edit": "Edit",
+        "view": "View",
+        "delete": "Delete",
+        "confirm_delete": "Delete this cluster? This cannot be undone."
+      },
+      "toast": {
+        "created": "Cluster created",
+        "updated": "Cluster updated",
+        "deleted": "Cluster deleted",
+        "ping_ok": "Cluster reachable ({version})",
+        "ping_fail": "Ping failed",
+        "refresh_all_done": "Refresh complete"
+      },
+      "health": {
+        "ok": "Healthy",
+        "fail": "Unreachable",
+        "unknown": "Unknown"
+      }
+    },
+    "kubeconfig": {
+      "invalid": "Kubeconfig is invalid.",
+      "exec_forbidden": "Kubeconfig uses an exec auth plugin; not supported.",
+      "authprovider_forbidden": "Kubeconfig uses an auth-provider plugin; not supported.",
+      "context_not_found": "Context not found in kubeconfig."
+    },
+    "apiserver": {
+      "not_found": "Resource not found.",
+      "forbidden": "Cluster RBAC denied the request.",
+      "unauthorized": "Kubeconfig credentials expired or invalid.",
+      "other": "Apiserver returned an error."
+    },
+    "yaml": {
+      "unsupported_kind": "Unsupported resource kind."
+    },
+    "log": {
+      "unavailable": "Pod log is unavailable (container not yet running).",
+      "connect": "Connect",
+      "reconnect": "Reconnect",
+      "disconnect": "Disconnect",
+      "follow": "Follow",
+      "previous": "Previous",
+      "tail_lines": "Tail lines",
+      "container": "Container",
+      "idle": "Idle",
+      "connecting": "Connecting…",
+      "open": "Live",
+      "closed": "Disconnected",
+      "error": "Stream error"
+    },
+    "workload": {
+      "deployment": "Deployment",
+      "statefulset": "StatefulSet",
+      "daemonset": "DaemonSet",
+      "job": "Job",
+      "cronjob": "CronJob",
+      "replicaset": "ReplicaSet",
+      "pod": "Pod"
+    },
+    "network": {
+      "service": "Service",
+      "ingress": "Ingress"
+    },
+    "config": {
+      "configmap": "ConfigMap",
+      "secret": "Secret"
+    },
+    "cluster_resource": {
+      "namespace": "Namespace",
+      "node": "Node",
+      "event": "Event"
+    },
+    "tab": {
+      "overview": "Overview",
+      "yaml": "YAML",
+      "events": "Events",
+      "logs": "Logs"
+    },
+    "secret": {
+      "reveal": "Reveal",
+      "hide": "Hide",
+      "yaml_warning": "Secret YAML shows base64-encoded data. Use Reveal to decode.",
+      "binary_b64": "Binary base64"
+    },
+    "list": {
+      "truncated": "Showing first {limit}; narrow by namespace or search to see more."
+    }
+  },
+  "observability": {
+    "datasource": { "deleted": "Data source deleted", "read_required": "Data-source read permission is required" },
+    "errors": { "load": "Failed to load monitoring data", "query": "Metric query failed", "datasource_read_required": "Data-source read permission is required" },
+    "panel_state": { "loading": "Loading", "empty": "No data", "unsupported": "Unsupported result", "partial": "Partial result", "error": "Query failed" },
+    "builtin": { "kubernetes_cluster": "Kubernetes cluster", "kubernetes_nodes": "Kubernetes nodes", "kubernetes_workloads": "Kubernetes workloads", "asset_enrichment": "Asset enrichment", "node": "Node", "namespace": "Namespace", "workload": "Workload" },
+    "panel": { "cluster_cpu": "Cluster CPU", "cluster_memory": "Cluster memory", "nodes_ready": "Ready nodes", "pods_phase": "Pods by phase", "restart_rate": "Restart rate", "node_cpu": "Node CPU", "node_memory": "Node memory", "node_ready": "Node readiness", "workload_cpu": "Workload CPU", "workload_memory": "Workload memory", "workload_restarts": "Workload restarts" }
+  },
+  "observability_ui": {
+    "forms": { "name": "Name", "description": "Description", "base_url": "Base URL", "cluster": "Cluster", "tls": "TLS warning", "panel_title": "Panel title", "panel_type": "Panel type", "unit": "Unit", "cluster_optional": "Cluster (optional)", "existing_ca": "Existing custom CA", "custom_ca": "Custom CA (public PEM)", "skip_tls": "Skip TLS verification", "data_source": "Data source", "refresh": "Refresh interval", "time_range": "Time range", "promql": "PromQL", "legend": "Legend", "width": "Width" },
+    "ca": { "keep": "Keep", "replace": "Replace", "clear": "Clear" },
+    "dashboard": { "create": "Create dashboard", "edit": "Edit dashboard", "detail": "Dashboard detail", "add_panel": "Add panel", "default_panel": "Panel" },
+    "panel_type": { "time_series": "Time series", "stat": "Stat", "table": "Table" },
+    "test": { "reachable": "Reachable", "unreachable": "Unreachable" },
+    "tls_danger": "Danger: TLS verification disabled",
+    "panel_state": { "loading": "Loading", "empty": "No data", "unsupported": "Unsupported result", "partial": "Partial result", "error": "Query failed" },
+    "units": { "none": "None", "percent": "Percent", "bytes": "Bytes", "bytes_per_second": "Bytes/s", "cores": "CPU cores", "seconds": "Seconds", "requests_per_second": "Requests/s" },
+    "errors": { "load": "Failed to load monitoring data", "save": "Failed to save", "query": "Metric query failed", "invalid_dashboard": "Dashboard form is invalid", "renderer_required": "Complete all required variables", "renderer_unsafe": "A variable contains unsupported characters", "renderer_unknown": "The dashboard contains an unknown variable", "renderer_unresolved": "The dashboard contains an unresolved variable" },
+    "tls_warning": "TLS certificate verification is disabled",
+    "builtin": { "kubernetes": "Kubernetes", "namespace": "Namespace", "workload": "Workload", "asset_enrichment": "Asset enrichment" },
+    "credentials": { "auth_type": "Authentication type", "basic": "Basic", "bearer": "Bearer", "secret_unchanged": "Leave blank to keep the existing secret" }
+  },
+  "delivery": {
+    "project": { "title": "Delivery projects", "name": "Name", "description": "Description", "owner": "Owner", "environment_count": "Environments", "not_found": "Delivery project not found", "name_conflict": "A project with this name already exists" },
+    "environment": { "title": "Environments", "create": "Bind environment", "key": "Environment key", "name": "Display name", "application": "Application", "duplicate": "This application is already bound", "not_installed": "The application must have an installed release", "not_found": "Environment not found", "in_use": "Environment is used by an active run" },
+    "pipeline": { "title": "Pipeline", "approval_required": "Approval required", "publish_version": "Publish version {version}", "publish_confirm": "Publish immutable pipeline version {version}?", "empty": "Add at least one stage", "timeout_invalid": "Timeout must be between 1 minute and 24 hours", "missing": "No pipeline has been published", "invalid": "Pipeline configuration is invalid", "version_conflict": "The pipeline changed; reload and try again" },
+    "run": { "title": "Promotion run", "history": "Run history", "create": "Create run", "confirm": "Confirm immutable promotion", "cancel": "Cancel", "reconcile": "Reconcile", "retry": "Retry", "state": "State", "version": "Version", "digest": "Digest", "revision": "Revision", "artifact": "Artifact", "initiator": "Initiator", "p3_recovery": "Open application recovery", "not_found": "Run not found", "active": "A promotion is already active", "idempotency_conflict": "This request key was already used for different input", "idempotency_missing": "The request key is missing", "invalid_state": "The run is not in a valid state for this action", "cancel_conflict": "The run can no longer be canceled", "retry_unavailable": "This run cannot be retried" },
+    "approval": { "title": "My approvals", "required": "Approval required", "approve": "Approve", "reject": "Reject", "approve_confirm": "Approve this promotion stage?", "reject_confirm": "Reject this promotion stage?", "requested_at": "Requested", "comment_required": "A comment of at most 512 characters is required", "not_found": "Approval not found", "self_approval": "You cannot approve your own run", "already_decided": "This approval was already decided", "decision_conflict": "This approval has a conflicting decision", "comment_invalid": "Approval comment is invalid" },
+    "state": { "pending": "Pending", "queued": "Queued", "running": "Running", "waiting_approval": "Waiting for approval", "cancel_requested": "Cancellation requested", "reconciling": "Reconciling", "succeeded": "Succeeded", "failed": "Failed", "rejected": "Rejected", "canceled": "Canceled", "timed_out": "Timed out", "outcome_unknown": "Outcome unknown" },
+    "execution": { "unavailable": "Delivery execution is temporarily unavailable", "operation_busy": "The application has another operation in progress", "artifact_drift": "The deployed artifact differs from the immutable target", "reconciliation_required": "Reconciliation is required", "outcome_unknown": "The operation outcome is unknown", "timeout": "The operation timed out" },
+    "chart": { "identity_mismatch": "The chart identity does not match the delivery project" },
+    "application": { "already_bound": "The application is already bound", "unavailable": "The application is unavailable" },
+    "event": { "transition": "State changed from {old} to {new}", "approved": "Stage approved", "rejected": "Stage rejected" }
+  },
+  "apps": {
+    "title": "Applications",
+    "application": {
+      "list": {
+        "title": "Applications",
+        "search_placeholder": "Search by name",
+        "showLiveStatus": "Live status",
+        "col": {
+          "name": "Name",
+          "cluster": "Cluster",
+          "namespace": "Namespace",
+          "release": "Release",
+          "chart": "Chart",
+          "chart_version": "Chart version",
+          "app_version": "App version",
+          "owner": "Owner",
+          "actions": "Actions"
+        },
+        "action": {
+          "detail": "Detail",
+          "upgrade": "Upgrade",
+          "uninstall": "Uninstall",
+          "installNew": "Install new"
+        },
+        "confirm": {
+          "uninstall": "Uninstall this release? The application metadata is kept."
+        }
+      },
+      "field": {
+        "tags": "Tags",
+        "description": "Description"
+      },
+      "detail": {
+        "title": "Application detail",
+        "section": {
+          "basic": "Basics",
+          "history": "Revision history"
+        },
+        "btn": {
+          "rollback": "Rollback to this revision"
+        },
+        "confirm": {
+          "rollback": "Roll back to this revision?"
+        }
+      },
+      "history": {
+        "col": {
+          "status": "Status",
+          "chart_version": "Chart version",
+          "app_version": "App version",
+          "updated_at": "Updated",
+          "description": "Description",
+          "actions": "Actions"
+        }
+      }
+    },
+    "repo": {
+      "list": {
+        "title": "Chart repositories"
+      },
+      "search_placeholder": "Search by name",
+      "field": {
+        "name": "Name",
+        "description": "Description",
+        "updated_at": "Updated",
+        "actions": "Actions"
+      },
+      "action": {
+        "create": "Create repository",
+        "edit": "Edit",
+        "delete": "Delete",
+        "confirm_delete": "Delete this chart repository? Applications referencing it will fail to install/upgrade."
+      },
+      "toast": {
+        "created": "Chart repository created",
+        "updated": "Chart repository updated",
+        "deleted": "Chart repository deleted"
+      },
+      "form": {
+        "title": {
+          "create": "Create chart repository",
+          "edit": "Edit chart repository"
+        },
+        "field": {
+          "type": "Type",
+          "url": "URL",
+          "username": "Username",
+          "password": "Password / Token",
+          "hasPassword": "Password set"
+        },
+        "placeholder": {
+          "passwordEdit": "Leave blank to keep the existing password"
+        },
+        "btn": {
+          "clearPassword": "Clear stored password",
+          "clearPasswordHint": "Will clear the stored password on save."
+        }
+      }
+    },
+    "install": {
+      "title": "Install new application",
+      "step": {
+        "basic": "Basics",
+        "chart": "Choose chart",
+        "basicChart": "Basics & chart",
+        "values": "Values"
+      },
+      "section": {
+        "basics": "Basics",
+        "chart": "Chart"
+      },
+      "field": {
+        "repo": "Chart repository",
+        "chart": "Chart",
+        "version": "Version"
+      },
+      "btn": {
+        "submit": "Install",
+        "loadDefaults": "Load default values",
+        "format": "Format"
+      },
+      "msg": {
+        "pickChartFirst": "Select a chart and version first.",
+        "valuesNotMap": "Values must be a YAML mapping (object)."
+      },
+      "confirm": {
+        "loadDefaults": {
+          "title": "Load chart default values?",
+          "body": "This will overwrite the values you have edited."
+        }
+      }
+    },
+    "upgrade": {
+      "title": "Upgrade — {name}",
+      "currentVersion": "Current chart version",
+      "btn": {
+        "submit": "Upgrade"
+      }
+    }
+  }
+}

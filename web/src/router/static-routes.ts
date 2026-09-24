@@ -1,0 +1,96 @@
+import type { RouteRecordRaw } from 'vue-router'
+import WorkspaceView from '@/components/layout/WorkspaceView.vue'
+
+// The root renders child pages in isolated sessions while App.vue selects
+// the surrounding layout. Sessions retain approved controls, not components.
+const RouterViewPassthrough = WorkspaceView
+
+export const staticRoutes: RouteRecordRaw[] = [
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/views/auth/Login.vue'),
+    meta: { public: true, layout: 'blank' }
+  },
+  {
+    path: '/403',
+    name: 'forbidden',
+    component: () => import('@/views/errors/403.vue'),
+    meta: { public: true, layout: 'blank' }
+  },
+  {
+    path: '/404',
+    name: 'notfound',
+    component: () => import('@/views/errors/404.vue'),
+    meta: { public: true, layout: 'blank' }
+  },
+  {
+    path: '/500',
+    name: 'serverError',
+    component: () => import('@/views/errors/500.vue'),
+    meta: { public: true, layout: 'blank' }
+  },
+  {
+    path: '/',
+    name: 'root',
+    component: RouterViewPassthrough,
+    redirect: '/dashboard',
+    children: [
+      {
+        path: 'workspace',
+        name: 'workspace',
+        component: () => import('@/components/layout/WorkspaceEmpty.vue')
+      },
+      {
+        path: 'profile',
+        name: 'profile',
+        component: () => import('@/views/profile/Index.vue')
+      },
+      // P3 application sub-routes — Detail/Install/Upgrade are reachable from
+      // the list page but are not menu nodes themselves. Registered here so
+      // their perm meta gates the route guard the same way menu routes do.
+      {
+        path: 'apps/applications/new',
+        name: 'apps.applications.new',
+        component: () => import('@/views/apps/applications/Install.vue'),
+        meta: { permission: 'apps:application:write' }
+      },
+      {
+        path: 'apps/applications/:id(\\d+)',
+        name: 'apps.applications.detail',
+        component: () => import('@/views/apps/applications/Detail.vue'),
+        meta: { permission: 'apps:application:read' }
+      },
+      {
+        path: 'apps/applications/:id(\\d+)/upgrade',
+        name: 'apps.applications.upgrade',
+        component: () => import('@/views/apps/applications/Upgrade.vue'),
+        meta: { permission: 'apps:release:upgrade' }
+      },
+      {
+        path: 'assets/vpcs/:id(\\d+)',
+        name: 'assets.vpcs.detail',
+        component: () => import('@/views/assets/vpcs/Detail.vue'),
+        meta: { permission: 'assets:resource:read' }
+      },
+      {
+        path: 'delivery/projects/:id(\\d+)',
+        name: 'delivery.projects.detail',
+        component: () => import('@/views/delivery/projects/Detail.vue'),
+        meta: { permission: 'delivery:project:read' }
+      },
+      {
+        path: 'delivery/runs/:id(\\d+)',
+        name: 'delivery.runs.detail',
+        component: () => import('@/views/delivery/runs/Detail.vue'),
+        meta: { permission: 'delivery:run:read' }
+      }
+    ]
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'catchall',
+    component: () => import('@/views/errors/404.vue'),
+    meta: { layout: 'blank' }
+  }
+]

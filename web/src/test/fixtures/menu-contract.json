@@ -1,0 +1,140 @@
+{
+  "source": "https://github.com/logic3579/optimus/blob/17a3862/optimus-be/internal/seed/seed.go",
+  "menus": [
+    {
+      "component": "dashboard/Index",
+      "path": "/dashboard",
+      "permission": ""
+    },
+    {
+      "component": "assets/cloud-accounts/List",
+      "path": "/assets/cloud-accounts",
+      "permission": "assets:account:read"
+    },
+    {
+      "component": "assets/instances/List",
+      "path": "/assets/instances",
+      "permission": "assets:resource:read"
+    },
+    {
+      "component": "assets/vpcs/List",
+      "path": "/assets/vpcs",
+      "permission": "assets:resource:read"
+    },
+    {
+      "component": "assets/databases/List",
+      "path": "/assets/databases",
+      "permission": "assets:resource:read"
+    },
+    {
+      "component": "assets/sync-runs/List",
+      "path": "/assets/sync-runs",
+      "permission": "assets:sync:read"
+    },
+    {
+      "component": "k8s/clusters/List",
+      "path": "/k8s/clusters",
+      "permission": "k8s:cluster:read"
+    },
+    {
+      "component": "k8s/workloads/List",
+      "path": "/k8s/workloads",
+      "permission": "k8s:workload:read"
+    },
+    {
+      "component": "k8s/network/List",
+      "path": "/k8s/network",
+      "permission": "k8s:network:read"
+    },
+    {
+      "component": "k8s/config/List",
+      "path": "/k8s/config",
+      "permission": "k8s:config:read"
+    },
+    {
+      "component": "k8s/cluster-resources/List",
+      "path": "/k8s/cluster-resources",
+      "permission": "k8s:cluster_resource:read"
+    },
+    {
+      "component": "apps/applications/List",
+      "path": "/apps/applications",
+      "permission": "apps:application:read"
+    },
+    {
+      "component": "apps/chart-repos/List",
+      "path": "/apps/chart-repos",
+      "permission": "apps:repo:read"
+    },
+    {
+      "component": "delivery/projects/List",
+      "path": "/delivery/projects",
+      "permission": "delivery:project:read"
+    },
+    {
+      "component": "delivery/approvals/List",
+      "path": "/delivery/approvals",
+      "permission": "delivery:approval:read"
+    },
+    {
+      "component": "observability/kubernetes/Index",
+      "path": "/observability/kubernetes",
+      "permission": "observability:metric:read"
+    },
+    {
+      "component": "observability/dashboards/List",
+      "path": "/observability/dashboards",
+      "permission": "observability:dashboard:read"
+    },
+    {
+      "component": "observability/datasources/List",
+      "path": "/observability/datasources",
+      "permission": "observability:datasource:read"
+    },
+    {
+      "component": "credentials/ssh-keys/List",
+      "path": "/credentials/ssh-keys",
+      "permission": "credentials:ssh_key:read"
+    },
+    {
+      "component": "credentials/kubeconfigs/List",
+      "path": "/credentials/kubeconfigs",
+      "permission": "credentials:kubeconfig:read"
+    },
+    {
+      "component": "credentials/cloud-keys/List",
+      "path": "/credentials/cloud-keys",
+      "permission": "credentials:cloud_key:read"
+    },
+    {
+      "component": "credentials/http-credentials/List",
+      "path": "/credentials/http-credentials",
+      "permission": "credentials:http:read"
+    },
+    {
+      "component": "system/users/List",
+      "path": "/system/users",
+      "permission": "system:user:read"
+    },
+    {
+      "component": "system/roles/List",
+      "path": "/system/roles",
+      "permission": "system:role:read"
+    },
+    {
+      "component": "system/permissions/List",
+      "path": "/system/permissions",
+      "permission": "system:permission:read"
+    },
+    {
+      "component": "system/menus/List",
+      "path": "/system/menus",
+      "permission": "system:menu:read"
+    },
+    {
+      "component": "system/audit-logs/List",
+      "path": "/system/audit-logs",
+      "permission": "system:audit:read"
+    }
+  ]
+}
