@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 
@@ -26,6 +27,7 @@ import (
 	"github.com/logic3579/optimus/internal/infra/middleware"
 	"github.com/logic3579/optimus/internal/infra/permissions"
 	"github.com/logic3579/optimus/internal/infra/ratelimit"
+	"github.com/logic3579/optimus/internal/infra/webui"
 	"github.com/logic3579/optimus/internal/modules/apps/application"
 	"github.com/logic3579/optimus/internal/modules/apps/helmclient"
 	appsmodule "github.com/logic3579/optimus/internal/modules/apps/module"
@@ -45,6 +47,7 @@ import (
 	"github.com/logic3579/optimus/internal/modules/rbac"
 	"github.com/logic3579/optimus/internal/modules/role"
 	"github.com/logic3579/optimus/internal/modules/user"
+	"github.com/logic3579/optimus/web"
 )
 
 // @title           Optimus Admin API
@@ -138,11 +141,24 @@ func runServer(args []string) {
 
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
+	if err := r.SetTrustedProxies(trimmed(cfg.Server.TrustedProxies)); err != nil {
+		fail("set trusted proxies", err)
+	}
 	r.Use(middleware.RequestID())
 	r.Use(middleware.Logger(logger))
 	r.Use(middleware.Recover(logger))
+	r.Use(middleware.SecurityHeaders())
 	r.Use(middleware.CORS(cfg.CORS))
 	r.Use(middleware.I18n(cfg.I18n))
+
+	ui, err := webui.New(cfg.Server.WebDir, web.Dist())
+	if err != nil {
+		fail("load web ui", err)
+	}
+	if !ui.Built() {
+		logger.Warn("web UI is not embedded; run `make web` before building or set server.web_dir")
+	}
+	r.NoRoute(ui.Handle)
 
 	// Swagger UI: served at /swagger/index.html. The spec is bundled via the
 	// blank import of github.com/logic3579/optimus/api/docs above.
@@ -324,6 +340,16 @@ func closeDBIfDrained(deliveryErr, assetsErr error, closeFn func() error) bool {
 }
 
 type permissionChecker struct{ cache *rbac.PermissionCache }
+
+func trimmed(values []string) []string {
+	out := make([]string, 0, len(values))
+	for _, v := range values {
+		if v = strings.TrimSpace(v); v != "" {
+			out = append(out, v)
+		}
+	}
+	return out
+}
 
 func deliveryWorkerOwner() string {
 	hostname, err := os.Hostname()

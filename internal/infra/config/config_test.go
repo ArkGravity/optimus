@@ -140,6 +140,32 @@ func TestLoad_AssetsEnvOverride(t *testing.T) {
 	require.Equal(t, 45*time.Second, cfg.Assets.AWSRequestTimeout)
 }
 
+func TestLoad_ServerProxyAndWebDirDefaults(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "config.yaml")
+	require.NoError(t, os.WriteFile(path, []byte("server:\n  port: 8080\n"), 0o600))
+	cfg, err := config.Load(path)
+	require.NoError(t, err)
+	require.Empty(t, cfg.Server.TrustedProxies)
+	require.Empty(t, cfg.Server.WebDir)
+}
+
+func TestLoad_ServerProxyAndWebDirEnvOverride(t *testing.T) {
+	t.Setenv("OPTIMUS_SERVER_TRUSTED_PROXIES", "10.0.0.0/8,192.168.1.10")
+	t.Setenv("OPTIMUS_SERVER_WEB_DIR", "/srv/optimus/web")
+	cfg, err := config.Load(filepath.Join("..", "..", "..", "configs", "config.yaml"))
+	require.NoError(t, err)
+	require.Equal(t, []string{"10.0.0.0/8", "192.168.1.10"}, cfg.Server.TrustedProxies)
+	require.Equal(t, "/srv/optimus/web", cfg.Server.WebDir)
+}
+
+func TestValidateStrict_TrustedProxies(t *testing.T) {
+	cfg := validStrictConfig()
+	cfg.Server.TrustedProxies = []string{"10.0.0.0/8", " 127.0.0.1 ", "::1"}
+	require.NoError(t, cfg.ValidateStrict())
+	cfg.Server.TrustedProxies = []string{"not-an-ip"}
+	require.ErrorContains(t, cfg.ValidateStrict(), "server.trusted_proxies")
+}
+
 func TestLoad_RejectsShortJWTSecretWhenProvided(t *testing.T) {
 	t.Setenv("OPTIMUS_JWT_SECRET", "tooshort")
 	_, err := config.Load(filepath.Join("..", "..", "..", "configs", "config.yaml"))

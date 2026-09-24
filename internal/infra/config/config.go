@@ -32,6 +32,11 @@ type ServerConfig struct {
 	ReadTimeout     time.Duration `mapstructure:"read_timeout"`
 	WriteTimeout    time.Duration `mapstructure:"write_timeout"`
 	ShutdownTimeout time.Duration `mapstructure:"shutdown_timeout"`
+	// TrustedProxies lists proxy IPs/CIDRs whose X-Forwarded-For is honored
+	// for client IPs (login rate limit, audit). Empty trusts no proxy.
+	TrustedProxies []string `mapstructure:"trusted_proxies"`
+	// WebDir serves the web UI from disk instead of the embedded build.
+	WebDir string `mapstructure:"web_dir"`
 }
 
 type DatabaseConfig struct {
@@ -151,6 +156,8 @@ func Load(path string) (*Config, error) {
 	v.SetEnvPrefix("OPTIMUS")
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	v.AutomaticEnv()
+	v.SetDefault("server.trusted_proxies", []string{})
+	v.SetDefault("server.web_dir", "")
 	v.SetDefault("assets.sync_cron", "*/15 * * * *")
 	v.SetDefault("assets.sync_startup_delay", 30*time.Second)
 	v.SetDefault("assets.sync_run_retention_days", 90)
@@ -199,6 +206,11 @@ func (c *Config) ValidateStrict() error {
 	if c.Database.DSN == "" {
 		return errors.New("database.dsn is required")
 	}
+	for _, raw := range c.Server.TrustedProxies {
+		if !validIPOrCIDR(strings.TrimSpace(raw)) {
+			return fmt.Errorf("server.trusted_proxies contains invalid IP or CIDR %q", raw)
+		}
+	}
 	if strings.TrimSpace(c.Assets.SyncCron) == "" {
 		return errors.New("assets.sync_cron is required")
 	}
@@ -221,6 +233,14 @@ func (c *Config) ValidateStrict() error {
 		return err
 	}
 	return nil
+}
+
+func validIPOrCIDR(s string) bool {
+	if _, err := netip.ParseAddr(s); err == nil {
+		return true
+	}
+	_, err := netip.ParsePrefix(s)
+	return err == nil
 }
 
 func (c *Config) validateObservability() error {

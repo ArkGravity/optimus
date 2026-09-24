@@ -1,6 +1,7 @@
-.PHONY: run build test test-int lint swag swagger-diff migrate-up migrate-down migrate-status migrate-new seed dump-perms perm-check perm-db-check air-install goose-install tools backend-cache
+.PHONY: run build test test-int lint swag swagger-diff migrate-up migrate-down migrate-status migrate-new seed dump-perms perm-check perm-db-check tools backend-cache web web-install web-dev web-check
 
 DSN ?= host=localhost port=5432 user=optimus password=optimus dbname=optimus sslmode=disable
+VERSION ?= $(shell git describe --always --dirty 2>/dev/null || echo dev)
 BACKEND_TMP ?= $(CURDIR)/tmp
 export TMPDIR := $(BACKEND_TMP)/work
 export GOCACHE := $(BACKEND_TMP)/go-cache
@@ -16,8 +17,20 @@ run build test test-int lint swag swagger-diff migrate-up migrate-down migrate-s
 run:
 	air
 
-build:
-	go build -o bin/optimus ./cmd/optimus
+build: web
+	go build -ldflags "-s -w -X main.Version=$(VERSION)" -o bin/optimus ./cmd/optimus
+
+web-install:
+	cd web && bun install --frozen-lockfile
+
+web: web-install
+	cd web && bun run build
+
+web-dev:
+	cd web && bun run dev
+
+web-check:
+	cd web && bun run lint && bun run typecheck && bun run i18n:check && bun run test
 
 test:
 	go test ./... -race -cover
