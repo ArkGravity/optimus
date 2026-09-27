@@ -13,9 +13,11 @@ and `metadata = {"project": "optimus", "app_id": "optimus"}`; filter reads by
 
 ## Status
 
-P0-P6 are implemented. The project is in Dev acceptance and has not been used
-in production. Dev and Production are the selected environments; UAT is
-skipped. Production acceptance and release tagging remain outstanding.
+P0-P6 are implemented. Dev acceptance closed on 2026-09-25 (local host
+development, remote Linux Docker Compose, and the P3–P6 runtime checklists).
+Production is deployed. The operator is accepting the existing P0–P6 features
+on that environment. Dev and Production are the selected environments; UAT is
+skipped. Production acceptance sign-off and release tagging remain outstanding.
 
 2026-09-24 monorepo merge: the `optimus-be` and `optimus-fe` repositories (split
 on 2026-09-14 from the original `logic3579/optimus` monorepo) were merged back
@@ -37,13 +39,18 @@ authenticated API calls and pod-log SSE streaming from Colima k3s. CI run
 `36048083419` on `ArkGravity/optimus` (`e0d7c58`) passed every job and
 published `ghcr.io/arkgravity/optimus` and `docker.io/logic3579/optimus` as
 `main-e0d7c58` (linux/amd64 only). The GHCR package is private until its
-visibility is changed. Browser visual acceptance remains unverified.
+visibility is changed.
 
-Latest frontend UI work (2026-09-17: Ant Design theme tokens, dark sidebar,
-compact workspace and menu tabs) passed lint, typecheck, i18n, unit tests and
-build; browser visual and backend-integration acceptance remain unverified.
-The general `/dashboard` page is still a coming-soon placeholder; P5
-observability dashboards are implemented.
+2026-09-25 Dev close: the operator completed the P3 applications, P4 assets,
+P5 observability and P6 delivery smoke checklists on Dev, and confirmed the
+embedded UI on local host development and a remote Linux Compose stack. The
+2026-09-17 frontend UI work (Ant Design theme tokens, dark sidebar, compact
+workspace and menu tabs) is included in that Dev close.
+
+2026-09-27 Production: the published Compose stack is deployed. Acceptance of
+already-implemented features is in progress on that environment. The general
+`/dashboard` page is still a coming-soon placeholder; P5 observability
+dashboards are implemented.
 
 ## Repository Layout
 

@@ -1,6 +1,7 @@
 # Monorepo merge and single-binary delivery — design
 
-Date: 2026-09-24. Status: implemented (Dev acceptance pending).
+Date: 2026-09-24. Status: implemented (Dev acceptance closed 2026-09-25;
+production deployed 2026-09-27, acceptance in progress).
 
 ## Goal
 

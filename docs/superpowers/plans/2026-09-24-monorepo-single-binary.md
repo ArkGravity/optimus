@@ -36,7 +36,7 @@ Each task is one commit.
 - [x] **Repository move.** The repository is `github.com/ArkGravity/optimus`:
   rename the module accordingly, publish GHCR as `ghcr.io/arkgravity/optimus`,
   and default `DOCKERHUB_USERNAME` to `logic3579`.
-- [ ] **mem0.** Replace the `optimus-be`/`optimus-fe` memories with one
+- [x] **mem0.** Replaced the `optimus-be`/`optimus-fe` memories with one
   `optimus` checkpoint.
 
 Out of scope: production acceptance, release tagging and running the image as

@@ -135,11 +135,16 @@ Compose project name and data volumes, and never use `down -v` for this repair.
 
 ### Release acceptance
 
-Runtime checklists: [P3 applications](scripts/p3-smoke.md),
+Dev close (2026-09-25): local host development, remote Linux Docker Compose,
+and the P3–P6 runtime checklists all passed. Production (2026-09-27): the
+published Compose stack is deployed; acceptance of existing features is in
+progress. Production acceptance sign-off and release tagging remain outstanding.
+
+Runtime checklists (Dev / disposable resources only):
+[P3 applications](scripts/p3-smoke.md),
 [P4 assets](scripts/p4-smoke.md), [P5 observability](scripts/p5-smoke.md) and
-[P6 delivery](scripts/p6-smoke.md). The project is in Dev acceptance and not yet
-used in production. Production acceptance and release tagging remain
-outstanding.
+[P6 delivery](scripts/p6-smoke.md). Do not point those checklists at production
+credentials, clusters, or Prometheus.
 
 ## Documentation
 
