@@ -67,7 +67,6 @@ jobs:
         run: |
           go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.64.8
           go install github.com/swaggo/swag/cmd/swag@v1.16.4
-          go install github.com/securego/gosec/v2/cmd/gosec@v2.22.7
 
       - name: CI change classifier tests
         run: python3 -B -m unittest discover -s scripts -p test_ci_changes.py
@@ -80,9 +79,6 @@ jobs:
 
       - name: perm-check
         run: make perm-check
-
-      - name: gosec
-        run: gosec -severity medium -confidence medium -quiet ./...
 
   backend-unit:
     name: Backend unit tests

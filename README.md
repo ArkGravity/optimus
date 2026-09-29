@@ -27,11 +27,10 @@ colima start --runtime docker --kubernetes
 docker context use colima
 docker compose version
 docker compose up -d postgres
-make tools
-make web-install
+make deps
 make migrate-up
 make seed
-make run        # API on http://localhost:8080 with air hot reload
+make run        # API on http://localhost:8080 via go run
 make web-dev    # Vite on http://localhost:5173, proxies /api/v1 to :8080
 ```
 
@@ -60,7 +59,7 @@ make perm-check
 Go temporary files and build/lint caches stay under ignored `tmp/`. Keep Go
 1.25, Kubernetes v0.30.14 and Helm v3.15.4 pinned. Permission codes originate in
 `internal/infra/permissions/codes.go`. Use Bun only for web dependencies.
-CI also runs gosec and integration tests.
+CI also runs integration tests.
 
 ## Single binary
 

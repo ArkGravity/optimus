@@ -67,8 +67,9 @@ dashboards are implemented.
 
 Run from the repository root:
 
-- `make tools`
-- `make run` (air, API on :8080) and `make web-dev` (Vite on :5173)
+- `make help`
+- `make deps` (frontend lockfile install, `go mod download`, pinned goose/swag/golangci-lint)
+- `make run` (`go run`, API on :8080) and `make web-dev` (Vite on :5173)
 - `make build` (web build, then `bin/optimus` with the UI embedded)
 - `make test` / `make test-int`
 - `make lint`
