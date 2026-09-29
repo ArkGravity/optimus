@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "mem0": {
+      "url": "https://mcp.mem0.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:MEM0_API_KEY}"
+      }
+    },
+    "context7": {
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "${env:CONTEXT7_API_KEY}"
+      }
+    }
+  }
+}
