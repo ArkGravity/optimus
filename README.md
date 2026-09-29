@@ -29,22 +29,21 @@ docker compose version
 docker compose up -d postgres
 make tools
 make web-install
-export OPTIMUS_JWT_SECRET="$(openssl rand -base64 48)"
-export OPTIMUS_VAULT_MASTER_KEY="$(go run ./cmd/optimus vault-keygen)"
 make migrate-up
 make seed
 make run        # API on http://localhost:8080 with air hot reload
 make web-dev    # Vite on http://localhost:5173, proxies /api/v1 to :8080
 ```
 
-Save the vault key securely and reuse it for the same database. Seed prints the
-initial administrator password once. Use the Vite server for UI development;
-`GET /api/v1/health` returns the raw health probe.
+Seed prints the initial administrator password once. Use the Vite server for UI
+development; `GET /api/v1/health` returns the raw health probe.
 
 Defaults live in `configs/config.yaml`, overridden by `OPTIMUS_*` environment
-variables. JWT needs 32+ bytes; a vault master key or key file is required.
-Compose reads `.env`; host commands use exported variables. The Compose DSN
-uses `postgres`, while host development uses `localhost`.
+variables. The checked-in JWT secret and vault master key match the Compose
+development defaults, so host `make run` and `make seed` start without extra
+exports. Replace both before any shared or production database, and keep the
+vault key stable for that database. Compose reads `.env` when present. The
+Compose DSN uses `postgres`, while host development uses `localhost`.
 
 ```bash
 make build        # web build, then bin/optimus with the UI embedded

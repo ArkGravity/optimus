@@ -44,6 +44,7 @@ func TestLoad_DefaultsFromYAML(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, 8080, cfg.Server.Port)
 	require.Equal(t, 15*time.Second, cfg.Server.ReadTimeout)
+	require.Equal(t, "dev-only-jwt-secret-at-least-32-bytes", cfg.JWT.Secret)
 	require.Equal(t, "info", cfg.Log.Level)
 	require.Equal(t, []string{"zh-CN", "en-US"}, cfg.I18n.Supported)
 	require.Equal(t, "*/15 * * * *", cfg.Assets.SyncCron)
@@ -372,10 +373,10 @@ func TestValidateForMigrate_AcceptsDSNOnly(t *testing.T) {
 	require.NoError(t, cfg.ValidateForMigrate())
 }
 
-func TestLoad_VaultDefaultsEmpty(t *testing.T) {
+func TestLoad_VaultDefaultsFromYAML(t *testing.T) {
 	cfg, err := config.Load(filepath.Join("..", "..", "..", "configs", "config.yaml"))
 	require.NoError(t, err)
-	require.Equal(t, "", cfg.Vault.MasterKey)
+	require.Equal(t, "MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=", cfg.Vault.MasterKey)
 	require.Equal(t, "", cfg.Vault.MasterKeyFile)
 }
 

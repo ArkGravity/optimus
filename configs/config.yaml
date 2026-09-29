@@ -17,7 +17,9 @@ database:
   conn_max_lifetime: 1h
 
 jwt:
-  secret: ""
+  # Local development only; same value as docker-compose.yml.
+  # Set OPTIMUS_JWT_SECRET to a unique 32+ byte secret outside local Dev.
+  secret: "dev-only-jwt-secret-at-least-32-bytes"
   access_ttl: 15m
   refresh_ttl: 168h
 
@@ -48,7 +50,10 @@ bootstrap:
   admin_email: admin@example.com
 
 vault:
-  master_key: ""
+  # Local development only; base64 of 32 bytes, same value as docker-compose.yml.
+  # Set OPTIMUS_VAULT_MASTER_KEY (or OPTIMUS_VAULT_MASTER_KEY_FILE) to a unique
+  # backed-up key outside local Dev. Losing it makes encrypted credentials unrecoverable.
+  master_key: "MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY="
   master_key_file: ""
 
 assets:
