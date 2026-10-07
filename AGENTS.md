@@ -52,6 +52,13 @@ already-implemented features is in progress on that environment. The general
 `/dashboard` page is still a coming-soon placeholder; P5 observability
 dashboards are implemented.
 
+2026-10-07 image delivery: CI is configured to build and publish both
+`linux/amd64` and `linux/arm64` under the same version tag in both registries.
+Go cross-compiles on the builder's native platform; QEMU handles runtime
+package installation. Previously published tags remain amd64-only. Validation
+and publication status are tracked in
+`docs/superpowers/plans/2026-10-07-dual-platform-images.md`.
+
 ## Repository Layout
 
 - Repository root: Go module `github.com/ArkGravity/optimus` — `cmd/optimus`
@@ -336,8 +343,10 @@ write/manage APIs in P4.
 - The image build runs the Vite build and a large Go build. On 2026-09-24 a
   2 GiB Colima VM (with k3s) ran out of memory during the Vite stage; the OOM
   killer also broke Colima's Docker socket forward. 4 CPU / 8 GiB builds fine.
-- Published images are linux/amd64 only. On arm64 hosts (Apple silicon Colima)
-  pull with `--platform linux/amd64` or build locally.
+- New CI image tags include linux/amd64 and linux/arm64; Docker selects the
+  daemon's architecture automatically. Older amd64-only tags still require
+  emulation on arm64 hosts or a local build. Provenance entries marked
+  unknown/unknown are metadata, not additional runnable architectures.
 - Colima's k3s API listens on the VM port shown in the `colima` kubeconfig
   (not 6443). Containers reach it via their network gateway IP with
   `tls-server-name: kubernetes`.
@@ -367,7 +376,9 @@ write/manage APIs in P4.
 - `.github/workflows/ci.yaml` runs web, backend quality, unit, database and
   Docker build gates; only main publishes to `ghcr.io/arkgravity/optimus` and
   `docker.io/logic3579/optimus`, tagged `main-<short-sha>`, after every gate
-  passes. CI uses one disposable PostgreSQL 17 instance via
+  passes. Both Docker jobs build linux/amd64 and linux/arm64. Keep QEMU setup
+  before Buildx; compile Go on BUILDPLATFORM with TARGETOS/TARGETARCH and
+  CGO_ENABLED=0. CI uses one disposable PostgreSQL 17 instance via
   `OPTIMUS_TEST_POSTGRES_DSN`, with a separate migrated database per test.
   Never point this variable at an application server. Local tests default to
   dockertest. Keep `-race -count=1`. Cache `tmp/go-cache` per job. Prose-only

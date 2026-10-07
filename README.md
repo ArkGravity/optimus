@@ -112,8 +112,15 @@ docker compose ps -a
 docker compose logs seed
 ```
 
-Published images are linux/amd64 only; on arm64 hosts add
-`--platform linux/amd64` or build locally with `docker compose up -d --build`.
+New CI image tags include `linux/amd64` and `linux/arm64` under the same tag in
+both registries. Docker automatically selects the platform matching its daemon;
+Apple Silicon Macs using an ARM64 Colima VM use `linux/arm64`. Older tags
+published before dual-platform support remain `linux/amd64` only.
+CI builds both platforms before publishing. Bun builds the shared web assets
+on the builder's native platform, Go cross-compiles with CGO disabled, and QEMU
+handles foreign-platform runtime package installation. Build provenance may
+appear as additional `unknown/unknown` entries; these are metadata, not runnable
+platforms.
 PostgreSQL and optimus should be healthy; migrate/seed exit 0. Preserve the
 Compose project name and `pgdata` volume when upgrading an existing stack. Back
 up the database and vault key; never use `docker compose down -v` on persistent

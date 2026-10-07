@@ -173,6 +173,10 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: python3 scripts/ci-changes.py
+      - uses: docker/setup-qemu-action@v3
+        if: steps.changes.outputs.run == 'true'
+        with:
+          platforms: arm64
       - uses: docker/setup-buildx-action@v3
         if: steps.changes.outputs.run == 'true'
       - uses: docker/build-push-action@v6
@@ -180,6 +184,7 @@ jobs:
         with:
           context: .
           file: Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: false
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -199,6 +204,9 @@ jobs:
       DOCKERHUB_NAMESPACE: ${{ vars.DOCKERHUB_NAMESPACE || 'logic3579' }}
     steps:
       - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
       - uses: docker/setup-buildx-action@v3
       - name: Check publishing configuration
         if: env.PUBLISH == 'true'
@@ -234,6 +242,7 @@ jobs:
         with:
           context: .
           file: Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: ${{ env.PUBLISH == 'true' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
