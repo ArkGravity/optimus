@@ -17,7 +17,9 @@ Date: 2026-10-07. Extends the delivery configuration in
   multi-platform tags from existing amd64-only tags.
 - [x] Validate workflow syntax with actionlint v1.7.7, CI change classification
   with all five existing tests, and patch whitespace with `git diff --check`.
-- [ ] Validate both platform builds in GitHub CI.
+- [x] Validate both platform builds in GitHub CI: run `37597470933` passed
+  all five gates for implementation commit `64af14b`. Docker build logs confirm
+  `GOARCH=amd64` and `GOARCH=arm64`, with both runtime images assembled.
 - Local Colima runtime smoke (version, migrations, seed, health, embedded UI)
   is deferred at the operator's request on 2026-10-07.
 - [ ] After merge to main, confirm the new tag in both registries contains
@@ -34,6 +36,10 @@ static check also encountered a Docker Hub TLS handshake timeout.
 
 On 2026-10-07 the operator requested stopping Colima validation and proceeding
 to the next step. Continue build verification through a pull request's GitHub
-CI. Publication remains pending merge to main; no registry tag has been changed
-by this work. The Colima Kubernetes API was unavailable and no Kubernetes
-resources were changed.
+CI. [PR #1](https://github.com/ArkGravity/optimus/pull/1) contains the change;
+[CI run 37597470933](https://github.com/ArkGravity/optimus/actions/runs/37597470933)
+passed web, backend quality, backend unit, backend database, and dual-platform
+Docker build checks. The publishing job was correctly skipped for the PR.
+Publication remains pending merge to main; no registry tag has been changed by
+this work. The Colima Kubernetes API was unavailable and no Kubernetes resources
+were changed.

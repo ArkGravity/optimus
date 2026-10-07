@@ -58,6 +58,9 @@ Go cross-compiles on the builder's native platform; QEMU handles runtime
 package installation. Previously published tags remain amd64-only. Validation
 and publication status are tracked in
 `docs/superpowers/plans/2026-10-07-dual-platform-images.md`.
+PR #1 implementation commit `64af14b` passed all five CI gates in run
+`37597470933`, including both platform builds. Local Colima smoke was deferred
+at the operator's request. Registry publication remains pending merge to main.
 
 ## Repository Layout
 
