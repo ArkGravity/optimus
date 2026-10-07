@@ -161,7 +161,7 @@ current layout.
 
 ## CI and image publishing
 
-[ci.yaml](.github/workflows/ci.yaml) runs web checks, backend quality, unit and
+[ci.yml](.github/workflows/ci.yml) runs web checks, backend quality, unit and
 database tests, and a Docker build. Pull requests and dev pushes build without
 publishing. Main pushes and manual main runs publish the same build to both
 registries once every job passes:

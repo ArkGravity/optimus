@@ -376,7 +376,7 @@ write/manage APIs in P4.
   UI embedded. `docker-compose.yml` and `.env.example` own the deployment stack:
   `postgres`, one-shot `migrate` and `seed`, and `optimus`, all from one image
   versioned by `OPTIMUS_VERSION`.
-- `.github/workflows/ci.yaml` runs web, backend quality, unit, database and
+- `.github/workflows/ci.yml` runs web, backend quality, unit, database and
   Docker build gates; only main publishes to `ghcr.io/arkgravity/optimus` and
   `docker.io/logic3579/optimus`, tagged `main-<short-sha>`, after every gate
   passes. Both Docker jobs build linux/amd64 and linux/arm64. Keep QEMU setup

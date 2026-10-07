@@ -13,6 +13,8 @@ Date: 2026-10-07. Extends the delivery configuration in
   platform.
 - [x] Preserve the existing main-only publication gates, registries, version
   tags, documentation change filtering, and provenance attestations.
+- [x] Rename the workflow to `.github/workflows/ci.yml` and update project
+  references and the CI change classifier test path.
 - [x] Update deployment and project instructions, distinguishing new
   multi-platform tags from existing amd64-only tags.
 - [x] Validate workflow syntax with actionlint v1.7.7, CI change classification
