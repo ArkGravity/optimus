@@ -60,7 +60,11 @@ and publication status are tracked in
 `docs/superpowers/plans/2026-10-07-dual-platform-images.md`.
 PR #1 implementation commit `64af14b` passed all five CI gates in run
 `37597470933`, including both platform builds. Local Colima smoke was deferred
-at the operator's request. Registry publication remains pending merge to main.
+at the operator's request. PR #1 was merged as `5d63bef`; main CI run
+`37601159022` passed all six jobs and published `main-5d63bef` to both
+registries. Direct manifest inspection confirmed linux/amd64 and linux/arm64,
+two provenance records, and identical image indexes in both registries.
+The workflow is now `.github/workflows/ci.yml`.
 
 ## Repository Layout
 
