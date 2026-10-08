@@ -8,7 +8,7 @@ export type SupportedLocale = 'zh-CN' | 'en-US'
 
 export const i18n = createI18n({
   legacy: false,
-  locale: 'zh-CN',
+  locale: 'en-US',
   fallbackLocale: 'en-US',
   messages: {
     'zh-CN': zhCN,

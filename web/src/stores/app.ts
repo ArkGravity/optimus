@@ -5,8 +5,8 @@ import type { SupportedLocale } from '@/locales'
 export type Theme = 'light' | 'dark'
 
 export const useAppStore = defineStore('app', () => {
-  const locale = ref<SupportedLocale>('zh-CN')
-  const theme = ref<Theme>('light')
+  const locale = ref<SupportedLocale>('en-US')
+  const theme = ref<Theme>('dark')
   const sidebarCollapsed = ref(false)
 
   function setLocale(l: SupportedLocale) {

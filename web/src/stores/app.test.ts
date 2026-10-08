@@ -5,20 +5,20 @@ import { useAppStore } from './app'
 describe('useAppStore', () => {
   beforeEach(() => setActivePinia(createPinia()))
 
-  it('defaults locale=zh-CN, theme=light, sidebarCollapsed=false', () => {
+  it('defaults locale=en-US, theme=dark, sidebarCollapsed=false', () => {
     const s = useAppStore()
-    expect(s.locale).toBe('zh-CN')
-    expect(s.theme).toBe('light')
+    expect(s.locale).toBe('en-US')
+    expect(s.theme).toBe('dark')
     expect(s.sidebarCollapsed).toBe(false)
   })
 
   it('mutators flip values', () => {
     const s = useAppStore()
-    s.setLocale('en-US')
-    s.setTheme('dark')
+    s.setLocale('zh-CN')
+    s.setTheme('light')
     s.toggleSidebar()
-    expect(s.locale).toBe('en-US')
-    expect(s.theme).toBe('dark')
+    expect(s.locale).toBe('zh-CN')
+    expect(s.theme).toBe('light')
     expect(s.sidebarCollapsed).toBe(true)
   })
 })

@@ -66,6 +66,11 @@ registries. Direct manifest inspection confirmed linux/amd64 and linux/arm64,
 two provenance records, and identical image indexes in both registries.
 The workflow is now `.github/workflows/ci.yml`.
 
+2026-10-08 first-visit preferences: new browser sessions without saved app
+preferences default to dark theme and English (`en-US`). Saved localStorage
+preferences continue to take precedence. Frontend lint, typecheck, locale
+parity, all 298 tests, and the production build passed locally.
+
 ## Repository Layout
 
 - Repository root: Go module `github.com/ArkGravity/optimus` — `cmd/optimus`
