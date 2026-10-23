@@ -48,10 +48,6 @@ func (f *fakeConsumer) GetCloudKey(context.Context, uint64, string) (*credential
 	return nil, errors.New("not used in this test")
 }
 
-func (f *fakeConsumer) GetHTTPCredential(context.Context, uint64, string) (*credentials.HTTPCredential, error) {
-	return nil, errors.New("k8s client: fakeConsumer.GetHTTPCredential called unexpectedly")
-}
-
 const validYAML = `apiVersion: v1
 kind: Config
 clusters:

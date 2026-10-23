@@ -48,12 +48,6 @@ type AppsApplicationCounter interface {
 type appsApplicationTxCounter interface {
 	CountByClusterIDTx(context.Context, *gorm.DB, uint64) (int, error)
 }
-type ObservabilityDatasourceCounter interface {
-	CountByClusterID(context.Context, uint64) (int64, error)
-}
-type observabilityDatasourceTxCounter interface {
-	CountByClusterIDTx(context.Context, *gorm.DB, uint64) (int64, error)
-}
 
 // DiscoveryFunc is a tiny adapter so anonymous closures satisfy Prober.
 type DiscoveryFunc func(ctx context.Context, clusterID uint64, purpose string) (VersionProbe, error)
@@ -64,12 +58,11 @@ func (f DiscoveryFunc) Discover(ctx context.Context, id uint64, purpose string) 
 }
 
 type Service struct {
-	repo                 *Repo
-	consumer             credentials.Consumer // used by Create/Update to fetch + validate the kubeconfig YAML
-	prober               Prober               // nil-safe: Ping returns ok=false with message if nil
-	audit                *audit.Recorder
-	appsCounter          AppsApplicationCounter // nil-safe: Delete skips the pre-check if unwired
-	observabilityCounter ObservabilityDatasourceCounter
+	repo        *Repo
+	consumer    credentials.Consumer // used by Create/Update to fetch + validate the kubeconfig YAML
+	prober      Prober               // nil-safe: Ping returns ok=false with message if nil
+	audit       *audit.Recorder
+	appsCounter AppsApplicationCounter // nil-safe: Delete skips the pre-check if unwired
 }
 
 func NewService(repo *Repo, consumer credentials.Consumer, prober Prober, rec *audit.Recorder) *Service {
@@ -80,9 +73,6 @@ func NewService(repo *Repo, consumer credentials.Consumer, prober Prober, rec *a
 // allowed (the Delete pre-check is then skipped) so the k8s module can be
 // brought up before apps/application is constructed in main.go.
 func (s *Service) SetAppsCounter(c AppsApplicationCounter) { s.appsCounter = c }
-func (s *Service) SetObservabilityCounter(c ObservabilityDatasourceCounter) {
-	s.observabilityCounter = c
-}
 
 // Repo lets callers (P1 inuse helper, tests) reach the underlying DB.
 func (s *Service) Repo() *Repo { return s.repo }
@@ -252,21 +242,6 @@ func (s *Service) Delete(ctx context.Context, actorID uint64, ip, ua string, id 
 			}
 			if n > 0 {
 				return apperr.New(apperr.CodeAppsApplicationInUse, "k8s.cluster.in_use_by_apps", fmt.Sprintf("%d application(s) still reference this cluster", n))
-			}
-		}
-		if s.observabilityCounter != nil {
-			var n int64
-			var e error
-			if c, ok := s.observabilityCounter.(observabilityDatasourceTxCounter); ok {
-				n, e = c.CountByClusterIDTx(ctx, tx, id)
-			} else {
-				n, e = s.observabilityCounter.CountByClusterID(ctx, id)
-			}
-			if e != nil {
-				return e
-			}
-			if n > 0 {
-				return apperr.New(apperr.CodeConflict, "k8s.cluster.in_use_by_observability", "observability data sources still reference this cluster")
 			}
 		}
 		if err = s.repo.DeleteTx(ctx, tx, id); err != nil {

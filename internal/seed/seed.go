@@ -180,19 +180,15 @@ func ensureInitialMenus(ctx context.Context, tx *gorm.DB) error {
 			{Code: "apps.chart_repos", Name: "menu.apps.chart_repos", Path: "/apps/chart-repos", Component: "apps/chart-repos/List", PermissionCode: sp("apps:repo:read")},
 		}},
 		{Code: "delivery", Name: "menu.delivery_group", Path: "/delivery", Component: "", Icon: "deployment-unit", Children: []spec{
-			{Code: "delivery.projects", Name: "menu.delivery.projects", Path: "/delivery/projects", Component: "delivery/projects/List", PermissionCode: sp("delivery:project:read")},
-			{Code: "delivery.approvals", Name: "menu.delivery.approvals", Path: "/delivery/approvals", Component: "delivery/approvals/List", PermissionCode: sp("delivery:approval:read")},
+			{Code: "delivery.overview", Name: "menu.delivery.overview", Path: "/delivery/overview", Component: "delivery/overview/Index"},
 		}},
 		{Code: "observability", Name: "menu.observability_group", Path: "/observability", Component: "", Icon: "line-chart", Children: []spec{
-			{Code: "observability.kubernetes", Name: "menu.observability.kubernetes", Path: "/observability/kubernetes", Component: "observability/kubernetes/Index", PermissionCode: sp("observability:metric:read")},
-			{Code: "observability.dashboards", Name: "menu.observability.dashboards", Path: "/observability/dashboards", Component: "observability/dashboards/List", PermissionCode: sp("observability:dashboard:read")},
-			{Code: "observability.datasources", Name: "menu.observability.datasources", Path: "/observability/datasources", Component: "observability/datasources/List", PermissionCode: sp("observability:datasource:read")},
+			{Code: "observability.overview", Name: "menu.observability.overview", Path: "/observability/overview", Component: "observability/overview/Index"},
 		}},
 		{Code: "credentials", Name: "menu.credentials_group", Path: "/credentials", Component: "", Icon: "key", Children: []spec{
 			{Code: "credentials.ssh_keys", Name: "menu.credentials.ssh_keys", Path: "/credentials/ssh-keys", Component: "credentials/ssh-keys/List", PermissionCode: sp("credentials:ssh_key:read")},
 			{Code: "credentials.kubeconfigs", Name: "menu.credentials.kubeconfigs", Path: "/credentials/kubeconfigs", Component: "credentials/kubeconfigs/List", PermissionCode: sp("credentials:kubeconfig:read")},
 			{Code: "credentials.cloud_keys", Name: "menu.credentials.cloud_keys", Path: "/credentials/cloud-keys", Component: "credentials/cloud-keys/List", PermissionCode: sp("credentials:cloud_key:read")},
-			{Code: "credentials.http_credentials", Name: "menu.credentials.http_credentials", Path: "/credentials/http-credentials", Component: "credentials/http-credentials/List", PermissionCode: sp("credentials:http:read")},
 		}},
 		{Code: "system", Name: "menu.system_group", Path: "/system", Component: "", Icon: "setting", Children: []spec{
 			{Code: "system.users", Name: "menu.system.users", Path: "/system/users", Component: "system/users/List", PermissionCode: sp("system:user:read")},

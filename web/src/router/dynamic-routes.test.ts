@@ -46,9 +46,9 @@ describe('flattenMenusToRoutes', () => {
   })
 
   it.each([
-    ['delivery/projects/List', '/delivery/projects', 'delivery:project:read'],
-    ['delivery/approvals/List', '/delivery/approvals', 'delivery:approval:read'],
-  ])('resolves seeded Linux-cased delivery component %s', (component, path, permission) => {
+    ['delivery/overview/Index', '/delivery/overview', undefined],
+    ['observability/overview/Index', '/observability/overview', undefined],
+  ])('resolves seeded Linux-cased reserved component %s', (component, path, permission) => {
     const node = { id: 9, code: component, name: component, path, component, icon: '', permission_code: permission, sort_order: 0, hidden: false }
     const routes = flattenMenusToRoutes([node], value => value === component ? async () => ({ default: {} }) : undefined)
     expect(routes[0]?.path).toBe(path)

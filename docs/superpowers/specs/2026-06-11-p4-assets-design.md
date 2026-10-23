@@ -4,7 +4,7 @@
 **Date**: 2026-06-11
 **Owner**: P4 sub-project
 **Depends on**: P0 platform-skeleton (merged), P1 credentials-vault (merged)
-**Downstream**: P5 observability, P6 cicd (both consume via the §7 Go seam)
+**Downstream**: Internal consumers via the §7 Go seam
 
 ---
 
@@ -25,7 +25,7 @@ P4 is a **read-only cloud-asset discovery console**: a background worker consume
 7. Five permission codes (`assets:account:{read,write,delete}` + `assets:resource:read` + `assets:sync:read`); built-in `admin`/`viewer` roles pick up via existing wildcard/LIKE grants.
 8. Fifteen new error codes in segment 43xxx (cloud-account domain 43001-43099 — 8 codes; sync/AWS 43100-43199 — 7 codes).
 9. Five FE pages (cloud-accounts + 3 resource lists + sync-runs) reusing P3 components/hooks.
-10. Internal `assets.Consumer` Go seam (no HTTP) for P5/P6 to look up instances by IP, by ID, by VPC.
+10. Internal `assets.Consumer` Go seam (no HTTP) for downstream modules to look up instances by IP, by ID, by VPC.
 11. P1 patch: `credentials/cloudkey.Service.Delete` refuses while a `CloudAccount` references the key (mirrors P1/P2 `kubeconfig.Delete` ↔ `k8s.cluster.inuse` pattern).
 
 **Out of scope** (deferred to P4.x or other sub-projects):
@@ -76,7 +76,7 @@ P4 is a **read-only cloud-asset discovery console**: a background worker consume
    │             ▼                                                    │
    │   credentials.Consumer.GetCloudKey()  ← P1 seam（唯一获取凭证路径）│
    │                                                                  │
-   │   assets.Consumer (new seam)  →  P5/P6 import to query assets    │
+   │   assets.Consumer (new seam)  →  downstream modules import to query assets    │
    └──────────────────────────────────────────────────────────────────┘
                                  │
    ┌─────────────────────────────┴────────────────────────────────────┐
@@ -133,7 +133,7 @@ optimus-be/internal/modules/assets/
     └── wire.go                 # Mount routes, register cron entries, build Consumer
 ```
 
-The composition root remains `cmd/server/main.go`. `assets.module.Wire(...)` is called after P3's wiring; it receives `*gorm.DB`, `credentials.Consumer`, `*audit.Recorder`, the cron scheduler, and config, and returns the `assets.Consumer` (currently unused — P5/P6 will inject later).
+The composition root remains `cmd/server/main.go`. `assets.module.Wire(...)` is called after P3's wiring; it receives `*gorm.DB`, `credentials.Consumer`, `*audit.Recorder`, the cron scheduler, and config, and returns the `assets.Consumer` (currently unused — downstream modules will inject later).
 
 ---
 
@@ -528,7 +528,7 @@ Tag extraction helpers live in `sync/tags.go`:
 
 ## 6. assets.Consumer Go seam
 
-Mirrors `credentials.Consumer` but **no `purpose` parameter, no per-call audit** (resource lookups are not security-sensitive, called per-request by P5/P6; auditing them would explode log volume).
+Mirrors `credentials.Consumer` but **no `purpose` parameter, no per-call audit** (resource lookups are not security-sensitive, called per-request by downstream modules; auditing them would explode log volume).
 
 ### 6.1 Types
 
@@ -562,7 +562,7 @@ type Consumer interface {
 - All lookups exclude soft-deleted rows (`deleted_at IS NULL`).
 - `LookupInstanceByPrivateIP` returns `ErrAssetsInstanceNotFound` (sentinel error in `assets/errs/`) when no row matches; ambiguous match (multiple accounts share the same private IP — possible across VPCs) returns the first by `last_seen_at DESC`. Callers needing strict uniqueness should pass account+region.
 - Implementation joins `aws_instances` to `cloud_accounts` to populate `AccountName`.
-- No HTTP endpoint. Constructed once in `cmd/server/main.go` and provided to downstream (P5/P6) modules at wire time.
+- No HTTP endpoint. Constructed once in `cmd/server/main.go` and available to downstream modules at wire time.
 
 ### 6.3 Smoke test
 

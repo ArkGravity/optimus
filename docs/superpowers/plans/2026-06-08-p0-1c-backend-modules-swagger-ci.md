@@ -4098,7 +4098,7 @@ If a step fails for non-test reasons (e.g., golangci-lint version drift), fix in
 ```markdown
 # optimus
 
-Internal DevOps platform — auth, RBAC, K8s, applications, observability. Monorepo: `optimus-be` (Go/Gin/Postgres), `optimus-fe` (Vue3/AntdV — not yet present, comes in P0 Plan 2).
+Internal DevOps platform — auth, RBAC, K8s, applications, assets. Monorepo: `optimus-be` (Go/Gin/Postgres), `optimus-fe` (Vue3/AntdV — not yet present, comes in P0 Plan 2).
 
 ## Repository layout
 

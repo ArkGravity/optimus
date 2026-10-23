@@ -33,7 +33,6 @@ func TestModule_New_BuildsAllServices(t *testing.T) {
 	require.NotNil(t, m.SSH)
 	require.NotNil(t, m.Kubeconfig)
 	require.NotNil(t, m.CloudKey)
-	require.NotNil(t, m.HTTP)
 	require.NotNil(t, m.Consumer)
 }
 
@@ -75,11 +74,6 @@ func TestModule_MountRoutes_RegistersExactCredentialMethodsAndPaths(t *testing.T
 		{"GET", "/api/v1/credentials/cloud-keys/1"},
 		{"PUT", "/api/v1/credentials/cloud-keys/1"},
 		{"DELETE", "/api/v1/credentials/cloud-keys/1"},
-		{"GET", "/api/v1/credentials/http-credentials"},
-		{"POST", "/api/v1/credentials/http-credentials"},
-		{"GET", "/api/v1/credentials/http-credentials/1"},
-		{"PUT", "/api/v1/credentials/http-credentials/1"},
-		{"DELETE", "/api/v1/credentials/http-credentials/1"},
 	}
 	for _, r2 := range routes {
 		w := httptest.NewRecorder()

@@ -834,8 +834,6 @@ Insert these top-level groups (alongside existing ones, before the closing `}`):
       "system": "系统管理",
       "k8s": "Kubernetes",
       "assets": "资产管理",
-      "observability": "可观测性",
-      "cicd": "CI/CD",
       "applications": "应用管理"
     }
   },
@@ -970,8 +968,6 @@ Same key structure, English values:
       "system": "System",
       "k8s": "Kubernetes",
       "assets": "Assets",
-      "observability": "Observability",
-      "cicd": "CI/CD",
       "applications": "Applications"
     }
   },

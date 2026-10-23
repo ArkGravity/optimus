@@ -338,6 +338,13 @@ type contextRoundTripper struct {
 	base http.RoundTripper
 }
 
+// wipeChartBytes minimizes the lifetime of downloaded chart material.
+func wipeChartBytes(tgz []byte) {
+	for i := range tgz {
+		tgz[i] = 0
+	}
+}
+
 func (t contextRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 	if err := t.ctx.Err(); err != nil {
 		return nil, err

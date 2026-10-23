@@ -67,29 +67,14 @@
       "permission": "apps:repo:read"
     },
     {
-      "component": "delivery/projects/List",
-      "path": "/delivery/projects",
-      "permission": "delivery:project:read"
+      "component": "delivery/overview/Index",
+      "path": "/delivery/overview",
+      "permission": ""
     },
     {
-      "component": "delivery/approvals/List",
-      "path": "/delivery/approvals",
-      "permission": "delivery:approval:read"
-    },
-    {
-      "component": "observability/kubernetes/Index",
-      "path": "/observability/kubernetes",
-      "permission": "observability:metric:read"
-    },
-    {
-      "component": "observability/dashboards/List",
-      "path": "/observability/dashboards",
-      "permission": "observability:dashboard:read"
-    },
-    {
-      "component": "observability/datasources/List",
-      "path": "/observability/datasources",
-      "permission": "observability:datasource:read"
+      "component": "observability/overview/Index",
+      "path": "/observability/overview",
+      "permission": ""
     },
     {
       "component": "credentials/ssh-keys/List",
@@ -105,11 +90,6 @@
       "component": "credentials/cloud-keys/List",
       "path": "/credentials/cloud-keys",
       "permission": "credentials:cloud_key:read"
-    },
-    {
-      "component": "credentials/http-credentials/List",
-      "path": "/credentials/http-credentials",
-      "permission": "credentials:http:read"
     },
     {
       "component": "system/users/List",

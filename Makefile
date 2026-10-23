@@ -81,7 +81,7 @@ migrate-status: ## Show migration status
 
 migrate-new: ## Create a new SQL migration (name=<snake_case>)
 	@test -n "$(name)" || (echo "usage: make migrate-new name=<name>"; exit 1)
-	goose -dir migrations create $(name) sql
+	goose -s -dir migrations create $(name) sql
 
 seed: ## Seed permissions and the initial administrator
 	$(GO) run ./cmd/optimus seed

@@ -1,8 +1,7 @@
 # optimus
 
 Optimus infrastructure console: authentication/RBAC, credential vault,
-Kubernetes inspection, Helm applications, AWS assets, Prometheus metrics and
-immutable application delivery. The Go backend and the Vue 3 web UI ship as one
+Kubernetes inspection, Helm applications, and AWS assets. The Go backend and the Vue 3 web UI ship as one
 `optimus` binary with the UI embedded.
 
 - Repository: https://github.com/ArkGravity/optimus
@@ -19,7 +18,7 @@ immutable application delivery. The Go backend and the Vue 3 web UI ship as one
 ## Development
 
 Requirements: Go 1.25, Bun 1.3.x, Make, Colima, Docker CLI/Compose.
-Kubernetes/Helm are required for delivery smoke tests. Run commands from the
+Kubernetes/Helm are required for application smoke tests. Run commands from the
 repository root.
 
 ```bash
@@ -140,21 +139,45 @@ Compose project name and data volumes, and never use `down -v` for this repair.
 
 ### Release acceptance
 
-Dev close (2026-09-25): local host development, remote Linux Docker Compose,
-and the P3–P6 runtime checklists all passed. Production (2026-09-27): the
-published Compose stack is deployed; acceptance of existing features is in
-progress. Production acceptance sign-off and release tagging remain outstanding.
+The supported production feature scope is P0–P4: platform administration,
+credential vault, Kubernetes inspection, Helm application management, and AWS
+assets. Production was deployed but remains unused. Functional acceptance
+sign-off and release tagging are outstanding.
+
+Observability Center and Delivery Management each retain one Coming Soon
+navigation entry. Their business functions are unavailable and excluded from
+production functional acceptance. Reconsider implementation after the other
+Optimus functions mature.
 
 Runtime checklists (Dev / disposable resources only):
-[P3 applications](scripts/p3-smoke.md),
-[P4 assets](scripts/p4-smoke.md), [P5 observability](scripts/p5-smoke.md) and
-[P6 delivery](scripts/p6-smoke.md). Do not point those checklists at production
-credentials, clusters, or Prometheus.
+[P3 applications](scripts/p3-smoke.md) and [P4 assets](scripts/p4-smoke.md).
+Do not point those checklists at production credentials or clusters.
+
+### Database reset for the current baseline
+
+This release requires a fresh application database. It does not support an
+in-place upgrade from the previous schema. Stop the old application before
+resetting the database, then use the new image for `migrate`, `seed`, and the
+server. Recreate only the Optimus application database; leave unrelated
+databases and Kubernetes releases intact.
+
+A container rebuild/recreation alone is insufficient: Compose retains its
+`pgdata` volume. If PostgreSQL is dedicated entirely to this unused Optimus
+stack, the stack's PostgreSQL volume may instead be recreated. The reset
+removes all application data, including users, roles, credentials, menus and
+Goose version records. Do not restore the previous schema dump into the new
+database. Run the updated seed, save the newly generated administrator
+password, and configure the application again.
+
+Existing local development databases need the same reset. The retained SQL
+migration sequence ends at `00021`; the next new migration is `00022_xxx.sql`,
+then `00023_xxx.sql`. `make migrate-new name=<snake_case>` uses sequential
+numbering.
 
 ## Documentation
 
 The repository owns the generated [API specification](docs/api/swagger.json),
-[permission catalog](docs/permissions.md), and the P0-P6
+[permission catalog](docs/permissions.md), and the P0–P4
 [specifications](docs/superpowers/specs/) and [plans](docs/superpowers/plans/).
 See [docs/README.md](docs/README.md) for how historical documents map to the
 current layout.

@@ -4,7 +4,7 @@
 **Date**: 2026-06-10
 **Owner**: P3 sub-project
 **Depends on**: P0 platform-skeleton (merged on `main`), P1 credentials-vault (merged on `main`), P2 k8s-mgmt (merged `2353378` on `main`, 2026-06-10)
-**Downstream**: none in current DAG (P3 is a leaf of the DAG; P4/P5/P6 are siblings of P2 and independent of P3)
+**Downstream**: none in current DAG (P3 is a leaf of the DAG; P4/downstream modules are siblings of P2 and independent of P3)
 
 ---
 

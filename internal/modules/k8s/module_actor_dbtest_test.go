@@ -73,7 +73,7 @@ func TestMountRoutes_PingPropagatesActorToRealCredentialConsumer(t *testing.T) {
 
 	recorder := audit.NewRecorder(gdb)
 	kcService := kubeconfig.NewService(kubeconfig.NewRepo(gdb), cipher, recorder)
-	consumer := credentials.NewConsumer(nil, kcService, nil, nil)
+	consumer := credentials.NewConsumer(nil, kcService, nil)
 	cache := rbac.NewPermissionCache(gdb, time.Minute)
 	module := k8s.New(gdb, consumer, recorder, cache)
 

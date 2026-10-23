@@ -25,8 +25,8 @@ P0 platform-skeleton has shipped: BE (Go 1.25 + Gin + GORM + Postgres) and FE (V
 - Kubernetes manifests (P2 dogfood)
 - TLS termination (handled by external LB / cloudflare in real prod)
 - Content-Security-Policy header (P1+)
-- Multi-instance scaling, load balancing, blue/green (P5+)
-- Sentry / OpenTelemetry / APM (P5)
+- Multi-instance scaling, load balancing, blue/green (outside the current scope)
+- Sentry / OpenTelemetry / APM (outside the current scope)
 
 This spec covers exactly the artifacts needed for a single-machine demo: `cd deploy && docker compose up -d --build` lands a working stack.
 
@@ -763,7 +763,7 @@ Add `optimus-be/cmd/migrate/main_test.go` using the existing dockertest pattern:
 
 **Non-goals (explicit)**:
 
-- No multi-instance support. Only one BE container; no leader election; no shared session store. Refresh tokens are stored in DB so a stateless restart works, but horizontal scale is P5.
+- No multi-instance support. Only one BE container; no leader election; no shared session store. Refresh tokens are stored in DB so a stateless restart works, but horizontal scale is outside the current scope.
 - No TLS in this stack. Operators terminate TLS in front (cloudflare / nginx / ALB).
 - No image push or registry credentials in CI. P2+ adds this when there's a release process.
 - No K8s manifests. P2 dogfood owns that.

@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Land an encrypted credential vault on top of P0 — three credential types (SSH key, kubeconfig, cloud access key) with full CRUD over HTTP, AES-256-GCM application-layer encryption, an internal Go `Consumer` seam for downstream P2/P4/P5/P6, and 12 permission codes wired into P0's RBAC.
+**Goal:** Land an encrypted credential vault on top of P0 — three credential types (SSH key, kubeconfig, cloud access key) with full CRUD over HTTP, AES-256-GCM application-layer encryption, an internal Go `Consumer` seam for downstream P2/P3/P4, and 12 permission codes wired into P0's RBAC.
 
 **Architecture:** New BE module `internal/modules/credentials/` with one crypto sub-package (`vault`) and three feature sub-packages (`sshkey`, `kubeconfig`, `cloudkey`). Each feature package mirrors P0's `role`/`user` shape (model + repo + service + handler + routes). Three new FE pages re-use P0 Plan 2b's CRUD shape. A new `cmd/vault-keygen` CLI mints the master key for first deploy. No schema change to `audit_logs` — denormalized snapshot lives in the existing `payload` jsonb column.
 
@@ -2429,7 +2429,7 @@ git commit -m "feat(be/credentials/cloudkey): full CRUD vertical for aws/gcp/azu
 Create `optimus-be/internal/modules/credentials/consume.go`:
 
 ```go
-// Package credentials is the entry point for downstream sub-projects (P2/P4/P5/P6)
+// Package credentials is the entry point for downstream sub-projects (P2/P3/P4)
 // that need to read decrypted credential material. The exported Consumer interface
 // is the SOLE public API — downstream callers must not import the sshkey /
 // kubeconfig / cloudkey sub-packages directly.
@@ -4070,7 +4070,7 @@ git push -u origin dev
 gh pr create --base main --head dev --title "feat: P1 credentials-vault" --body "$(cat <<'EOF'
 ## Summary
 
-Implements P1 (credentials-vault) — encrypted storage for SSH keys, kubeconfigs, and cloud access keys with full CRUD over HTTP, AES-256-GCM application-layer encryption, and an internal Go `Consumer` seam for downstream P2/P4/P5/P6.
+Implements P1 (credentials-vault) — encrypted storage for SSH keys, kubeconfigs, and cloud access keys with full CRUD over HTTP, AES-256-GCM application-layer encryption, and an internal Go `Consumer` seam for downstream P2/P3/P4.
 
 Design: `docs/superpowers/specs/2026-06-10-p1-credentials-vault-design.md`
 Plan:   `docs/superpowers/plans/2026-06-10-p1-credentials-vault.md`

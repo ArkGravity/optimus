@@ -37,8 +37,8 @@ import (
 	"github.com/ArkGravity/optimus/internal/models"
 	"github.com/ArkGravity/optimus/internal/modules/apps/application"
 	appsmodule "github.com/ArkGravity/optimus/internal/modules/apps/module"
-	apprepo "github.com/ArkGravity/optimus/internal/modules/apps/repo"
 	"github.com/ArkGravity/optimus/internal/modules/apps/release"
+	apprepo "github.com/ArkGravity/optimus/internal/modules/apps/repo"
 	"github.com/ArkGravity/optimus/internal/modules/audit"
 	"github.com/ArkGravity/optimus/internal/modules/auth"
 	"github.com/ArkGravity/optimus/internal/modules/credentials/vault"
@@ -378,4 +378,3 @@ func TestE2E_AppsRelease_InstallDuplicate(t *testing.T) {
 	body := bodyMap(t, rec)
 	require.EqualValues(t, 42201, body["code"], "expected CodeAppsReleaseAlreadyExists, body=%s", rec.Body.String())
 }
-

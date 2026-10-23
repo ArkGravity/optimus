@@ -21,7 +21,7 @@ optimus 是一个面向内部小团队（< 50 人，单租户）的 DevOps 平�
        │
        ├──────────┬─────────────┬──────────────┐
        ▼          ▼             ▼              ▼
-[P2] k8s-mgmt  [P4] assets  [P5] observability  [P6] cicd
+[P2] k8s-mgmt  [P4] assets
        │
        ▼
 [P3] applications
@@ -763,7 +763,7 @@ jobs:
 
 - 结构化 JSON 日志，含 `request_id` / `user_id` / `latency_ms` / `status`
 - 5xx 自动 log 完整 stack trace
-- 不接入 Sentry / 链路追踪 → P5
+- 不接入 Sentry / 链路追踪（不在当前范围）
 - `GET /health` 返回 `{ db: ok, version: <sha> }`
 
 ---

@@ -53,7 +53,7 @@ func fixtureName(prefix, testName string) string {
 }
 
 func TestFixtureName_BoundedDeterministicAndDistinct(t *testing.T) {
-	longTestName := strings.Repeat("TestService_DeleteAndDeliveryBindSerializeWithoutDanglingBinding/", 2)
+	longTestName := strings.Repeat("TestApplicationLifecycleLock/", 2)
 
 	got := fixtureName("cl", longTestName)
 	require.Len(t, got, fixtureNameMaxBytes)

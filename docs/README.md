@@ -13,8 +13,7 @@ Optimus is one repository: the Go backend at the root and the Vue web UI in
   retention and lifecycle rules for the compact workspace.
 - [Brand mark](branding.md): the shared logo asset.
 - Runtime smoke checklists: [P3](../scripts/p3-smoke.md),
-  [P4](../scripts/p4-smoke.md), [P5](../scripts/p5-smoke.md) and
-  [P6](../scripts/p6-smoke.md).
+  [P4](../scripts/p4-smoke.md).
 
 ## Designs and plans
 
@@ -47,3 +46,10 @@ supported backend menu components, paths and permissions. It is test data, not
 the runtime menu source. When backend menus change (`internal/seed`,
 `/api/v1/me/menus`), update the fixture in the same change and run the web
 tests.
+
+## Current feature scope
+
+Production use and functional acceptance cover P0–P4. Observability Center and
+Delivery Management are static navigation placeholders. The approved
+[scope reset](superpowers/plans/2026-10-23-feature-scope-reset.md) requires a
+fresh application database; see the README database reset procedure.

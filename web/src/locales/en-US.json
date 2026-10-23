@@ -13,7 +13,14 @@
     "ok": "OK",
     "cancel": "Cancel",
     "save": "Save",
-    "create": "Create", "view": "View", "edit": "Edit", "delete": "Delete", "test": "Test", "up": "Up", "down": "Down", "remove": "Remove",
+    "create": "Create",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "test": "Test",
+    "up": "Up",
+    "down": "Down",
+    "remove": "Remove",
     "submit": "Submit",
     "reset": "Reset",
     "refresh": "Refresh",
@@ -24,7 +31,10 @@
     "theme": "Theme",
     "theme_light": "Light",
     "theme_dark": "Dark",
-    "actions": "Actions", "error": "Error", "created_at": "Created", "search": "Search",
+    "actions": "Actions",
+    "error": "Error",
+    "created_at": "Created",
+    "search": "Search",
     "button": {
       "back": "Back",
       "next": "Next",
@@ -37,7 +47,8 @@
     }
   },
   "placeholder": {
-    "coming_soon": "Coming soon"
+    "coming_soon": "Coming soon",
+    "reserved": "Reserved for future development. This feature is not available yet."
   },
   "auth": {
     "login_title": "Sign in to Optimus",
@@ -97,24 +108,7 @@
     "43104": "Cannot reach the AWS API",
     "43105": "AWS API throttled",
     "43106": "AWS API call failed",
-    "43107": "AWS SDK config load failed",
-    "44001": "Data source not found.",
-    "44002": "A data source with this name already exists.",
-    "44003": "This data source is still used by a dashboard.",
-    "44004": "The data source URL is invalid.",
-    "44005": "The selected credential does not match the authentication type.",
-    "44006": "The data source TLS configuration is invalid.",
-    "44101": "The data source destination is not allowed.",
-    "44102": "The metrics service could not be reached.",
-    "44103": "The metrics service did not respond in time.",
-    "44104": "The metrics service rejected the request.",
-    "44105": "The metrics service returned an invalid response.",
-    "44106": "The metric query exceeds the allowed limits.",
-    "44107": "The metric query request is invalid.",
-    "44201": "Dashboard not found.",
-    "44202": "A dashboard with this name already exists.",
-    "44203": "The dashboard contains an invalid panel.",
-    "44204": "Built-in dashboard not found."
+    "43107": "AWS SDK config load failed"
   },
   "network": {
     "error": "Network error, please try again later"
@@ -134,8 +128,7 @@
     "credentials": {
       "ssh_keys": "SSH keys",
       "kubeconfigs": "Kubeconfigs",
-      "cloud_keys": "Cloud keys",
-      "http_credentials": "HTTP credentials"
+      "cloud_keys": "Cloud keys"
     },
     "k8s": {
       "clusters": "Clusters",
@@ -159,55 +152,113 @@
     },
     "delivery_group": "Delivery Management",
     "delivery": {
-      "projects": "Delivery Projects",
-      "approvals": "Approval Queue"
+      "overview": "Coming Soon"
     },
     "observability_group": "Observability Center",
-    "observability": { "kubernetes": "Kubernetes monitoring", "dashboards": "Dashboards", "datasources": "Data sources" }
+    "observability": {
+      "overview": "Coming Soon"
+    }
   },
   "perm": {
     "system": {
-      "user": { "read": "Read users", "write": "Create/update users", "delete": "Delete users", "reset_pass": "Reset user password" },
-      "role": { "read": "Read roles", "write": "Create/update roles + bind perms", "delete": "Delete roles" },
-      "permission": { "read": "Read permission registry" },
-      "menu": { "read": "Read menus", "write": "Create/update menus", "delete": "Delete menus" },
-      "audit": { "read": "Read audit logs" }
+      "user": {
+        "read": "Read users",
+        "write": "Create/update users",
+        "delete": "Delete users",
+        "reset_pass": "Reset user password"
+      },
+      "role": {
+        "read": "Read roles",
+        "write": "Create/update roles + bind perms",
+        "delete": "Delete roles"
+      },
+      "permission": {
+        "read": "Read permission registry"
+      },
+      "menu": {
+        "read": "Read menus",
+        "write": "Create/update menus",
+        "delete": "Delete menus"
+      },
+      "audit": {
+        "read": "Read audit logs"
+      }
     },
     "credentials": {
-      "ssh_key":    { "read": "View SSH credentials", "write": "Create/update SSH credentials", "delete": "Delete SSH credentials", "use": "Use SSH credentials" },
-      "kubeconfig": { "read": "View kubeconfigs", "write": "Create/update kubeconfigs", "delete": "Delete kubeconfigs", "use": "Use kubeconfigs" },
-      "cloud_key":  { "read": "View cloud keys", "write": "Create/update cloud keys", "delete": "Delete cloud keys", "use": "Use cloud keys" },
-      "http":       { "read": "View HTTP credentials", "write": "Create/update HTTP credentials", "delete": "Delete HTTP credentials", "use": "Use HTTP credentials" }
+      "ssh_key": {
+        "read": "View SSH credentials",
+        "write": "Create/update SSH credentials",
+        "delete": "Delete SSH credentials",
+        "use": "Use SSH credentials"
+      },
+      "kubeconfig": {
+        "read": "View kubeconfigs",
+        "write": "Create/update kubeconfigs",
+        "delete": "Delete kubeconfigs",
+        "use": "Use kubeconfigs"
+      },
+      "cloud_key": {
+        "read": "View cloud keys",
+        "write": "Create/update cloud keys",
+        "delete": "Delete cloud keys",
+        "use": "Use cloud keys"
+      }
     },
     "k8s": {
-      "cluster":          { "read": "Read clusters", "write": "Manage clusters" },
-      "workload":         { "read": "Read workloads" },
-      "network":          { "read": "Read network resources" },
-      "config":           { "read": "Read config maps" },
-      "secret":           { "read": "Read secrets (metadata only)", "reveal": "Reveal secret values" },
-      "cluster_resource": { "read": "Read cluster-scoped resources" },
-      "log":              { "read": "Stream pod logs" }
+      "cluster": {
+        "read": "Read clusters",
+        "write": "Manage clusters"
+      },
+      "workload": {
+        "read": "Read workloads"
+      },
+      "network": {
+        "read": "Read network resources"
+      },
+      "config": {
+        "read": "Read config maps"
+      },
+      "secret": {
+        "read": "Read secrets (metadata only)",
+        "reveal": "Reveal secret values"
+      },
+      "cluster_resource": {
+        "read": "Read cluster-scoped resources"
+      },
+      "log": {
+        "read": "Stream pod logs"
+      }
     },
     "apps": {
-      "application": { "read": "View applications", "write": "Manage application metadata", "delete": "Delete applications" },
-      "release":     { "install": "Install release", "upgrade": "Upgrade release", "rollback": "Rollback release", "uninstall": "Uninstall release" },
-      "repo":        { "read": "View chart repositories", "write": "Manage chart repositories", "delete": "Delete chart repositories" }
+      "application": {
+        "read": "View applications",
+        "write": "Manage application metadata",
+        "delete": "Delete applications"
+      },
+      "release": {
+        "install": "Install release",
+        "upgrade": "Upgrade release",
+        "rollback": "Rollback release",
+        "uninstall": "Uninstall release"
+      },
+      "repo": {
+        "read": "View chart repositories",
+        "write": "Manage chart repositories",
+        "delete": "Delete chart repositories"
+      }
     },
     "assets": {
-      "account": { "read": "View cloud accounts", "write": "Manage cloud accounts", "delete": "Delete cloud accounts" },
-      "resource": { "read": "View cloud resources" },
-      "sync": { "read": "View sync runs" }
-    },
-    "observability": {
-      "datasource": { "read": "View data sources", "write": "Create/update data sources", "delete": "Delete data sources" },
-      "metric": { "read": "Query metrics" },
-      "dashboard": { "read": "View dashboards", "write": "Create/update dashboards", "delete": "Delete dashboards" }
-    },
-    "delivery": {
-      "project": { "read": "View delivery projects and environments", "write": "Create/update delivery projects and environments", "delete": "Delete delivery projects" },
-      "pipeline": { "read": "View delivery pipelines", "write": "Publish delivery pipeline versions" },
-      "run": { "read": "View delivery runs and events", "create": "Create, reconcile, and retry delivery runs", "cancel": "Cancel delivery runs" },
-      "approval": { "read": "View delivery approvals", "decide": "Approve or reject delivery stages" }
+      "account": {
+        "read": "View cloud accounts",
+        "write": "Manage cloud accounts",
+        "delete": "Delete cloud accounts"
+      },
+      "resource": {
+        "read": "View cloud resources"
+      },
+      "sync": {
+        "read": "View sync runs"
+      }
     },
     "category": {
       "system": "System",
@@ -215,9 +266,6 @@
       "k8s": "Kubernetes",
       "apps": "Application Management",
       "assets": "Assets",
-      "delivery": "Delivery Management",
-      "observability": "Observability Center",
-      "cicd": "CI/CD",
       "applications": "Applications"
     }
   },
@@ -458,7 +506,10 @@
   },
   "credentials": {
     "filter_all": "All",
-    "auth": { "basic": "Basic", "bearer": "Bearer" },
+    "auth": {
+      "basic": "Basic",
+      "bearer": "Bearer"
+    },
     "search_placeholder": "Search by name or description",
     "filter_username": "Username",
     "filter_namespace": "Default namespace",
@@ -475,8 +526,9 @@
       "provider": "Provider",
       "region": "Region",
       "access_key_id": "Access Key ID",
-      "secret_access_key": "Secret Access Key"
-      ,"auth_type": "Authentication type", "updated_at": "Updated"
+      "secret_access_key": "Secret Access Key",
+      "auth_type": "Authentication type",
+      "updated_at": "Updated"
     },
     "placeholder": {
       "unchanged": "••••• (unchanged)"
@@ -632,39 +684,6 @@
       "truncated": "Showing first {limit}; narrow by namespace or search to see more."
     }
   },
-  "observability": {
-    "datasource": { "deleted": "Data source deleted", "read_required": "Data-source read permission is required" },
-    "errors": { "load": "Failed to load monitoring data", "query": "Metric query failed", "datasource_read_required": "Data-source read permission is required" },
-    "panel_state": { "loading": "Loading", "empty": "No data", "unsupported": "Unsupported result", "partial": "Partial result", "error": "Query failed" },
-    "builtin": { "kubernetes_cluster": "Kubernetes cluster", "kubernetes_nodes": "Kubernetes nodes", "kubernetes_workloads": "Kubernetes workloads", "asset_enrichment": "Asset enrichment", "node": "Node", "namespace": "Namespace", "workload": "Workload" },
-    "panel": { "cluster_cpu": "Cluster CPU", "cluster_memory": "Cluster memory", "nodes_ready": "Ready nodes", "pods_phase": "Pods by phase", "restart_rate": "Restart rate", "node_cpu": "Node CPU", "node_memory": "Node memory", "node_ready": "Node readiness", "workload_cpu": "Workload CPU", "workload_memory": "Workload memory", "workload_restarts": "Workload restarts" }
-  },
-  "observability_ui": {
-    "forms": { "name": "Name", "description": "Description", "base_url": "Base URL", "cluster": "Cluster", "tls": "TLS warning", "panel_title": "Panel title", "panel_type": "Panel type", "unit": "Unit", "cluster_optional": "Cluster (optional)", "existing_ca": "Existing custom CA", "custom_ca": "Custom CA (public PEM)", "skip_tls": "Skip TLS verification", "data_source": "Data source", "refresh": "Refresh interval", "time_range": "Time range", "promql": "PromQL", "legend": "Legend", "width": "Width" },
-    "ca": { "keep": "Keep", "replace": "Replace", "clear": "Clear" },
-    "dashboard": { "create": "Create dashboard", "edit": "Edit dashboard", "detail": "Dashboard detail", "add_panel": "Add panel", "default_panel": "Panel" },
-    "panel_type": { "time_series": "Time series", "stat": "Stat", "table": "Table" },
-    "test": { "reachable": "Reachable", "unreachable": "Unreachable" },
-    "tls_danger": "Danger: TLS verification disabled",
-    "panel_state": { "loading": "Loading", "empty": "No data", "unsupported": "Unsupported result", "partial": "Partial result", "error": "Query failed" },
-    "units": { "none": "None", "percent": "Percent", "bytes": "Bytes", "bytes_per_second": "Bytes/s", "cores": "CPU cores", "seconds": "Seconds", "requests_per_second": "Requests/s" },
-    "errors": { "load": "Failed to load monitoring data", "save": "Failed to save", "query": "Metric query failed", "invalid_dashboard": "Dashboard form is invalid", "renderer_required": "Complete all required variables", "renderer_unsafe": "A variable contains unsupported characters", "renderer_unknown": "The dashboard contains an unknown variable", "renderer_unresolved": "The dashboard contains an unresolved variable" },
-    "tls_warning": "TLS certificate verification is disabled",
-    "builtin": { "kubernetes": "Kubernetes", "namespace": "Namespace", "workload": "Workload", "asset_enrichment": "Asset enrichment" },
-    "credentials": { "auth_type": "Authentication type", "basic": "Basic", "bearer": "Bearer", "secret_unchanged": "Leave blank to keep the existing secret" }
-  },
-  "delivery": {
-    "project": { "title": "Delivery projects", "name": "Name", "description": "Description", "owner": "Owner", "environment_count": "Environments", "not_found": "Delivery project not found", "name_conflict": "A project with this name already exists" },
-    "environment": { "title": "Environments", "create": "Bind environment", "key": "Environment key", "name": "Display name", "application": "Application", "duplicate": "This application is already bound", "not_installed": "The application must have an installed release", "not_found": "Environment not found", "in_use": "Environment is used by an active run" },
-    "pipeline": { "title": "Pipeline", "approval_required": "Approval required", "publish_version": "Publish version {version}", "publish_confirm": "Publish immutable pipeline version {version}?", "empty": "Add at least one stage", "timeout_invalid": "Timeout must be between 1 minute and 24 hours", "missing": "No pipeline has been published", "invalid": "Pipeline configuration is invalid", "version_conflict": "The pipeline changed; reload and try again" },
-    "run": { "title": "Promotion run", "history": "Run history", "create": "Create run", "confirm": "Confirm immutable promotion", "cancel": "Cancel", "reconcile": "Reconcile", "retry": "Retry", "state": "State", "version": "Version", "digest": "Digest", "revision": "Revision", "artifact": "Artifact", "initiator": "Initiator", "p3_recovery": "Open application recovery", "not_found": "Run not found", "active": "A promotion is already active", "idempotency_conflict": "This request key was already used for different input", "idempotency_missing": "The request key is missing", "invalid_state": "The run is not in a valid state for this action", "cancel_conflict": "The run can no longer be canceled", "retry_unavailable": "This run cannot be retried" },
-    "approval": { "title": "My approvals", "required": "Approval required", "approve": "Approve", "reject": "Reject", "approve_confirm": "Approve this promotion stage?", "reject_confirm": "Reject this promotion stage?", "requested_at": "Requested", "comment_required": "A comment of at most 512 characters is required", "not_found": "Approval not found", "self_approval": "You cannot approve your own run", "already_decided": "This approval was already decided", "decision_conflict": "This approval has a conflicting decision", "comment_invalid": "Approval comment is invalid" },
-    "state": { "pending": "Pending", "queued": "Queued", "running": "Running", "waiting_approval": "Waiting for approval", "cancel_requested": "Cancellation requested", "reconciling": "Reconciling", "succeeded": "Succeeded", "failed": "Failed", "rejected": "Rejected", "canceled": "Canceled", "timed_out": "Timed out", "outcome_unknown": "Outcome unknown" },
-    "execution": { "unavailable": "Delivery execution is temporarily unavailable", "operation_busy": "The application has another operation in progress", "artifact_drift": "The deployed artifact differs from the immutable target", "reconciliation_required": "Reconciliation is required", "outcome_unknown": "The operation outcome is unknown", "timeout": "The operation timed out" },
-    "chart": { "identity_mismatch": "The chart identity does not match the delivery project" },
-    "application": { "already_bound": "The application is already bound", "unavailable": "The application is unavailable" },
-    "event": { "transition": "State changed from {old} to {new}", "approved": "Stage approved", "rejected": "Stage rejected" }
-  },
   "apps": {
     "title": "Applications",
     "application": {
@@ -719,7 +738,8 @@
           "description": "Description",
           "actions": "Actions"
         }
-      }
+      },
+      "busy": "Another application operation is in progress. Try again shortly."
     },
     "repo": {
       "list": {

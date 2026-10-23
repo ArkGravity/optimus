@@ -26,18 +26,25 @@ func TestRunGoose_UpAppliesAllMigrations(t *testing.T) {
 	var maxVersion int64
 	require.NoError(t,
 		db.QueryRow("SELECT MAX(version_id) FROM goose_db_version").Scan(&maxVersion))
-	require.GreaterOrEqual(t, maxVersion, int64(11),
-		"expected at least 11 migrations to be applied")
+	require.Equal(t, int64(21), maxVersion, "fresh baseline must end at 00021")
 
-	var tableCount int
-	require.NoError(t, db.QueryRow(`
-		SELECT count(*) FROM information_schema.tables
-		WHERE table_schema = 'public' AND table_name IN (
-			'users','roles','permissions','user_roles','role_permissions',
-			'menus','refresh_tokens','audit_logs'
-		)
-	`).Scan(&tableCount))
-	require.Equal(t, 8, tableCount, "all 8 business tables should exist")
+	rows, err := db.Query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name")
+	require.NoError(t, err)
+	defer rows.Close()
+	var tables []string
+	for rows.Next() {
+		var name string
+		require.NoError(t, rows.Scan(&name))
+		tables = append(tables, name)
+	}
+	require.NoError(t, rows.Err())
+	require.ElementsMatch(t, []string{
+		"users", "roles", "permissions", "user_roles", "role_permissions", "menus", "refresh_tokens", "audit_logs",
+		"credentials_ssh_keys", "credentials_kubeconfigs", "credentials_cloud_keys", "clusters",
+		"apps_chart_repos", "apps_applications", "goose_db_version",
+		"cloud_accounts", "aws_instances", "aws_vpcs", "aws_subnets", "aws_databases", "assets_sync_runs",
+	}, tables)
+
 }
 
 func TestRunGoose_UpIsIdempotent(t *testing.T) {

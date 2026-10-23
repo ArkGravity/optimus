@@ -30,6 +30,7 @@ type Factory interface {
 type AppLookup interface {
 	GetModel(ctx context.Context, id uint64) (*models.AppsApplication, error)
 	SetChartRepo(ctx context.Context, id, newRepoID uint64) error
+	WithLifecycleLock(ctx context.Context, id uint64, fn func() error) error
 }
 
 // ChartLoader is the seam that fetches a chart .tgz from a chart repo and
@@ -50,12 +51,10 @@ type Recorder interface {
 // action.Configuration. Safe to share across goroutines: every helm action
 // is built from a fresh per-request *action.Configuration.
 type Service struct {
-	factory    Factory
-	apps       AppLookup
-	loader     ChartLoader
-	rec        Recorder
-	governance Governance
-	delivery   deliveryRuntimeState
+	factory Factory
+	apps    AppLookup
+	loader  ChartLoader
+	rec     Recorder
 }
 
 // NewService returns a release.Service. All four seams are required.
@@ -78,22 +77,11 @@ func NewService(factory Factory, apps AppLookup, loader ChartLoader, rec Recorde
 		panic("release: NewService: rec is nil")
 	}
 	return &Service{
-		factory:    factory,
-		apps:       apps,
-		loader:     loader,
-		rec:        rec,
-		governance: unboundGovernance{},
+		factory: factory,
+		apps:    apps,
+		loader:  loader,
+		rec:     rec,
 	}
-}
-
-// SetGovernance wires the delivery governance provider at composition time.
-// nil resets the permissive unbound provider for legacy/test constructions.
-func (s *Service) SetGovernance(governance Governance) {
-	if governance == nil {
-		s.governance = unboundGovernance{}
-		return
-	}
-	s.governance = governance
 }
 
 // --- queries ---------------------------------------------------------------
@@ -146,9 +134,12 @@ func (s *Service) History(ctx context.Context, appID uint64) ([]RevisionRow, err
 // CodeAppsReleaseAlreadyExists (42201) if the release is already installed
 // (helm storage driver sentinel).
 func (s *Service) Install(ctx context.Context, actorID uint64, ip, ua string, appID uint64, req InstallRequest) (*InstallResult, error) {
-	if err := s.authorizeMutation(ctx, appID, MutationActionInstall); err != nil {
-		return nil, err
-	}
+	return withApplicationLock(ctx, s.apps, appID, func() (*InstallResult, error) {
+		return s.install(ctx, actorID, ip, ua, appID, req)
+	})
+}
+
+func (s *Service) install(ctx context.Context, actorID uint64, ip, ua string, appID uint64, req InstallRequest) (*InstallResult, error) {
 	app, err := s.appsGet(ctx, appID)
 	if err != nil {
 		return nil, err
@@ -191,9 +182,12 @@ func (s *Service) Install(ctx context.Context, actorID uint64, ip, ua string, ap
 // before the helm action runs — the chart load also goes against the new
 // repo so a values.yaml drift surfaces immediately.
 func (s *Service) Upgrade(ctx context.Context, actorID uint64, ip, ua string, appID uint64, req UpgradeRequest) (*UpgradeResult, error) {
-	if err := s.authorizeMutation(ctx, appID, MutationActionUpgrade); err != nil {
-		return nil, err
-	}
+	return withApplicationLock(ctx, s.apps, appID, func() (*UpgradeResult, error) {
+		return s.upgrade(ctx, actorID, ip, ua, appID, req)
+	})
+}
+
+func (s *Service) upgrade(ctx context.Context, actorID uint64, ip, ua string, appID uint64, req UpgradeRequest) (*UpgradeResult, error) {
 	app, err := s.appsGet(ctx, appID)
 	if err != nil {
 		return nil, err
@@ -240,9 +234,12 @@ func (s *Service) Upgrade(ctx context.Context, actorID uint64, ip, ua string, ap
 // surface 42203 CodeAppsReleaseHistoryTooShort. The new revision is read
 // back via Status (helm's Rollback.Run is void on success).
 func (s *Service) Rollback(ctx context.Context, actorID uint64, ip, ua string, appID uint64, req RollbackRequest) (*RollbackResult, error) {
-	if err := s.authorizeMutation(ctx, appID, MutationActionRollback); err != nil {
-		return nil, err
-	}
+	return withApplicationLock(ctx, s.apps, appID, func() (*RollbackResult, error) {
+		return s.rollback(ctx, actorID, ip, ua, appID, req)
+	})
+}
+
+func (s *Service) rollback(ctx context.Context, actorID uint64, ip, ua string, appID uint64, req RollbackRequest) (*RollbackResult, error) {
 	app, err := s.appsGet(ctx, appID)
 	if err != nil {
 		return nil, err
@@ -294,9 +291,12 @@ func (s *Service) Rollback(ctx context.Context, actorID uint64, ip, ua string, a
 // so a future rollback is possible. The Optimus application row is NOT
 // deleted by this call — that's a separate DELETE /apps/applications/:id.
 func (s *Service) Uninstall(ctx context.Context, actorID uint64, ip, ua string, appID uint64, req UninstallRequest) error {
-	if err := s.authorizeMutation(ctx, appID, MutationActionUninstall); err != nil {
-		return err
-	}
+	return s.apps.WithLifecycleLock(ctx, appID, func() error {
+		return s.uninstall(ctx, actorID, ip, ua, appID, req)
+	})
+}
+
+func (s *Service) uninstall(ctx context.Context, actorID uint64, ip, ua string, appID uint64, req UninstallRequest) error {
 	app, err := s.appsGet(ctx, appID)
 	if err != nil {
 		return err
@@ -423,4 +423,15 @@ func chartAppVersion(r *release.Release) string {
 		return ""
 	}
 	return r.Chart.Metadata.AppVersion
+}
+
+// withApplicationLock serializes Helm mutations with application deletion.
+func withApplicationLock[T any](ctx context.Context, applications AppLookup, id uint64, fn func() (*T, error)) (*T, error) {
+	var result *T
+	err := applications.WithLifecycleLock(ctx, id, func() error {
+		var err error
+		result, err = fn()
+		return err
+	})
+	return result, err
 }

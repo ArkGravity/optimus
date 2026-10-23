@@ -26,19 +26,12 @@ type HelmInstalledChecker interface {
 	IsReleaseInstalled(ctx context.Context, app *models.AppsApplication) (bool, error)
 }
 
-// DeliveryApplicationCounter reports active delivery environment bindings for
-// an application. It is wired by the delivery module at composition time.
-type DeliveryApplicationCounter interface {
-	CountByApplicationID(ctx context.Context, applicationID uint64) (int64, error)
-}
-
 // Service owns audit emission and the optional helm seams.
 type Service struct {
-	repo            *Repo
-	audit           *audit.Recorder
-	probe           HelmStatusProbe
-	checker         HelmInstalledChecker
-	deliveryCounter DeliveryApplicationCounter
+	repo    *Repo
+	audit   *audit.Recorder
+	probe   HelmStatusProbe
+	checker HelmInstalledChecker
 }
 
 // NewService returns a Service bound to a repo + audit recorder. The helm
@@ -56,12 +49,6 @@ func (s *Service) SetHelmStatusProbe(p HelmStatusProbe) { s.probe = p }
 
 // SetHelmInstalledChecker wires the delete pre-check.
 func (s *Service) SetHelmInstalledChecker(c HelmInstalledChecker) { s.checker = c }
-
-// SetDeliveryApplicationCounter wires the delivery binding pre-delete check.
-// nil is safe and preserves existing behavior when delivery is not composed.
-func (s *Service) SetDeliveryApplicationCounter(counter DeliveryApplicationCounter) {
-	s.deliveryCounter = counter
-}
 
 // --- queries ---------------------------------------------------------------
 
@@ -228,7 +215,7 @@ func (s *Service) Update(ctx context.Context, actorID uint64, ip, ua string, id 
 // if the HelmInstalledChecker seam reports the underlying helm release is still
 // installed on the cluster.
 func (s *Service) Delete(ctx context.Context, actorID uint64, ip, ua string, id uint64) error {
-	m, err := deleteApplication(ctx, s.repo, s.deliveryCounter, s.checker, id)
+	m, err := deleteApplication(ctx, s.repo, s.checker, id)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return apperr.New(apperr.CodeNotFound, "apps.application.not_found", "application not found")
@@ -254,27 +241,9 @@ type applicationDeletionRepository interface {
 func deleteApplication(
 	ctx context.Context,
 	repo applicationDeletionRepository,
-	counter DeliveryApplicationCounter,
 	checker HelmInstalledChecker,
 	id uint64,
 ) (*models.AppsApplication, error) {
-	if checker != nil {
-		application, err := repo.Get(ctx, id)
-		if err != nil {
-			return nil, err
-		}
-		installed, err := checker.IsReleaseInstalled(ctx, application)
-		if err != nil {
-			return nil, err
-		}
-		if installed {
-			return nil, apperr.New(
-				apperr.CodeAppsReleaseStillPresent,
-				"apps.application.release_still_installed",
-				"helm release still installed; uninstall before deleting the application record",
-			)
-		}
-	}
 
 	var application *models.AppsApplication
 	err := repo.transaction(ctx, func(tx applicationDeletionRepository) error {
@@ -286,35 +255,23 @@ func deleteApplication(
 		if err != nil {
 			return err
 		}
-		if err := checkDeliveryApplicationUse(ctx, counter, id); err != nil {
-			return err
+		if checker != nil {
+			installed, err := checker.IsReleaseInstalled(ctx, application)
+			if err != nil {
+				return err
+			}
+			if installed {
+				return apperr.New(
+					apperr.CodeAppsReleaseStillPresent,
+					"apps.application.release_still_installed",
+					"helm release still installed; uninstall before deleting the application record",
+				)
+			}
 		}
+
 		return tx.Delete(ctx, id)
 	})
 	return application, err
-}
-
-func checkDeliveryApplicationUse(ctx context.Context, counter DeliveryApplicationCounter, id uint64) error {
-	if counter == nil {
-		return nil
-	}
-	count, err := counter.CountByApplicationID(ctx, id)
-	if err != nil {
-		return apperr.Wrap(
-			err,
-			apperr.CodeDeliveryApplicationUnavailable,
-			"delivery.application.unavailable",
-			"delivery application binding lookup is unavailable",
-		)
-	}
-	if count != 0 {
-		return apperr.New(
-			apperr.CodeDeliveryEnvironmentInUse,
-			"delivery.environment.in_use",
-			"application is bound to an active delivery environment",
-		)
-	}
-	return nil
 }
 
 // SetChartRepo is the narrow back-door release.Service.Upgrade uses to atomically
@@ -377,4 +334,15 @@ func toDetail(m *models.AppsApplication) *Detail {
 		}
 	}
 	return d
+}
+
+// WithLifecycleLock holds the shared application lock for one Helm mutation.
+// The callback must finish before the transaction releases the lock.
+func (s *Service) WithLifecycleLock(ctx context.Context, id uint64, fn func() error) error {
+	return s.repo.transaction(ctx, func(tx applicationDeletionRepository) error {
+		if err := tx.lockApplication(ctx, id); err != nil {
+			return err
+		}
+		return fn()
+	})
 }

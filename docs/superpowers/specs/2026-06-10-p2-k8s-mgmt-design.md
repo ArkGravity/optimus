@@ -34,7 +34,7 @@ What P2 does **not** ship (§11):
 - Background health polling
 - CRDs / custom resources (only typed core APIs)
 - Storage (PV / PVC / StorageClass), RBAC (Role / RoleBinding / SA), NetworkPolicy, HPA, PDB
-- Metrics (CPU / mem) — defer to P5 observability
+- Metrics (CPU / mem) — outside the current feature scope
 - Helm — defer to P3 applications
 - SSE auto-reconnect, log replay, `--since=<duration>`
 
@@ -703,7 +703,7 @@ The decision in §5.6 means `k8s:secret:read` exposes base64 data via `/yaml?kin
 PV, PVC, StorageClass, NetworkPolicy, HPA, PDB, Role, RoleBinding, ClusterRole, ClusterRoleBinding, ServiceAccount, CRD-defined kinds. Add a kind = a new Summary/Detail DTO + one route registration + perm-map entry + DTO mapper test.
 
 ### 11.7 Observability
-Workload CPU / memory / network metrics. Belongs in P5 observability.
+Workload CPU / memory / network metrics. Outside the current feature scope.
 
 ### 11.8 Cluster lifecycle
 Cluster provisioning (kops / kubeadm / cloud-managed), auto-discovery, federation. Out of platform scope.

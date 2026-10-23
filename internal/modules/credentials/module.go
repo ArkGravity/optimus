@@ -7,7 +7,6 @@ import (
 	"github.com/ArkGravity/optimus/internal/infra/middleware"
 	"github.com/ArkGravity/optimus/internal/modules/audit"
 	"github.com/ArkGravity/optimus/internal/modules/credentials/cloudkey"
-	"github.com/ArkGravity/optimus/internal/modules/credentials/httpcredential"
 	"github.com/ArkGravity/optimus/internal/modules/credentials/kubeconfig"
 	"github.com/ArkGravity/optimus/internal/modules/credentials/sshkey"
 	"github.com/ArkGravity/optimus/internal/modules/credentials/vault"
@@ -20,13 +19,11 @@ type Module struct {
 	SSH        *sshkey.Service
 	Kubeconfig *kubeconfig.Service
 	CloudKey   *cloudkey.Service
-	HTTP       *httpcredential.Service
 	Consumer   Consumer
 
-	sshHandler  *sshkey.Handler
-	kcHandler   *kubeconfig.Handler
-	ckHandler   *cloudkey.Handler
-	httpHandler *httpcredential.Handler
+	sshHandler *sshkey.Handler
+	kcHandler  *kubeconfig.Handler
+	ckHandler  *cloudkey.Handler
 }
 
 // New constructs the module. cipher must be a real *vault.Cipher (or test fake).
@@ -34,17 +31,14 @@ func New(db *gorm.DB, cipher *vault.Cipher, rec *audit.Recorder) *Module {
 	ssvc := sshkey.NewService(sshkey.NewRepo(db), cipher, rec)
 	ksvc := kubeconfig.NewService(kubeconfig.NewRepo(db), cipher, rec)
 	csvc := cloudkey.NewService(cloudkey.NewRepo(db), cipher, rec)
-	hsvc := httpcredential.NewService(httpcredential.NewRepo(db), cipher, rec)
 	return &Module{
-		SSH:         ssvc,
-		Kubeconfig:  ksvc,
-		CloudKey:    csvc,
-		HTTP:        hsvc,
-		Consumer:    NewConsumer(ssvc, ksvc, csvc, hsvc),
-		sshHandler:  sshkey.NewHandler(ssvc),
-		kcHandler:   kubeconfig.NewHandler(ksvc),
-		ckHandler:   cloudkey.NewHandler(csvc),
-		httpHandler: httpcredential.NewHandler(hsvc),
+		SSH:        ssvc,
+		Kubeconfig: ksvc,
+		CloudKey:   csvc,
+		Consumer:   NewConsumer(ssvc, ksvc, csvc),
+		sshHandler: sshkey.NewHandler(ssvc),
+		kcHandler:  kubeconfig.NewHandler(ksvc),
+		ckHandler:  cloudkey.NewHandler(csvc),
 	}
 }
 
@@ -80,7 +74,4 @@ func (m *Module) MountRoutes(protected *gin.RouterGroup, cache *rbac.PermissionC
 	mount("ssh-keys", "ssh_key", m.sshHandler)
 	mount("kubeconfigs", "kubeconfig", m.kcHandler)
 	mount("cloud-keys", "cloud_key", m.ckHandler)
-	m.httpHandler.Mount(protected.Group("/credentials/http-credentials"), func(code string) gin.HandlerFunc {
-		return middleware.RequirePermission(cache, code)
-	})
 }

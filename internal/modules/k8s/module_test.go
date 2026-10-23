@@ -85,6 +85,3 @@ func (nopConsumer) GetKubeconfig(context.Context, uint64, string) (*credentials.
 func (nopConsumer) GetCloudKey(context.Context, uint64, string) (*credentials.CloudKey, error) {
 	return nil, nil
 }
-func (nopConsumer) GetHTTPCredential(context.Context, uint64, string) (*credentials.HTTPCredential, error) {
-	return nil, nil
-}

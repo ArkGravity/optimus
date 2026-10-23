@@ -38,11 +38,9 @@ import (
 	"github.com/ArkGravity/optimus/internal/modules/auth"
 	"github.com/ArkGravity/optimus/internal/modules/credentials"
 	"github.com/ArkGravity/optimus/internal/modules/credentials/vault"
-	deliverymodule "github.com/ArkGravity/optimus/internal/modules/delivery/module"
 	"github.com/ArkGravity/optimus/internal/modules/health"
 	"github.com/ArkGravity/optimus/internal/modules/k8s"
 	"github.com/ArkGravity/optimus/internal/modules/menu"
-	observabilitymodule "github.com/ArkGravity/optimus/internal/modules/observability/module"
 	"github.com/ArkGravity/optimus/internal/modules/permission"
 	"github.com/ArkGravity/optimus/internal/modules/rbac"
 	"github.com/ArkGravity/optimus/internal/modules/role"
@@ -236,33 +234,13 @@ func runServer(args []string) {
 
 	helmFactory := helmclient.NewFactory(credsModule.Consumer, k8sModule.Cluster)
 	appsRelSvc := release.NewService(helmFactory, appsAppSvc, &appsmodule.HelmChartLoader{Repo: appsRepoSvc}, auditRec)
-	appsCoordinator := release.NewCoordinator(gdb)
-	workerOwner := deliveryWorkerOwner()
-	appsRelSvc.SetDeliveryCoordinator(appsCoordinator, workerOwner, cfg.Delivery.LeaseDuration)
 	appsAppSvc.SetHelmStatusProbe(appsRelSvc)
 	appsAppSvc.SetHelmInstalledChecker(appsRelSvc)
 
 	appsModule := appsmodule.New(appsRepoSvc, appsAppSvc, appsRelSvc)
 	appsModule.MountRoutes(protected, permCache)
-	appsDelivery := appsModule.DeliveryAdapters(appsCoordinator)
-	deliveryModule, err := deliverymodule.Wire(deliverymodule.Input{
-		DB: gdb, Audit: auditRec, Config: cfg.Delivery,
-		ProjectApplications: appsDelivery.ProjectApplications,
-		RunApplications:     appsDelivery.RunApplications,
-		Artifacts:           appsDelivery.Artifacts, ArtifactVersions: appsDelivery.ArtifactVersions,
-		ApprovalPermissions: permissionChecker{cache: permCache},
-		Executor:            appsDelivery.Executor, Inspector: appsDelivery.Inspector,
-		WorkerOwner: workerOwner, Logger: logger,
-	})
-	if err != nil {
-		fail("wire delivery", err)
-	}
-	appsModule.SetDeliveryGovernance(deliveryModule.Governance)
-	appsAppSvc.SetDeliveryApplicationCounter(deliveryModule.ApplicationCounter)
-	deliveryModule.MountRoutes(protected, permCache)
-
 	// P4 assets: cloud-account CRUD, AWS discovery, read-only inventory,
-	// sync-run history, scheduler, and the Go-only Consumer seam for P5/P6.
+	// sync-run history, scheduler, and the Go-only Consumer seam.
 	assetsCtx, cancelAssets := context.WithCancel(context.Background())
 	assetsModule := assetsmodule.Wire(assetsCtx, assetsmodule.Input{
 		DB:                  gdb,
@@ -274,13 +252,6 @@ func runServer(args []string) {
 	})
 	credsModule.CloudKey.SetAccountsInUseCounter(assetsModule.InUseCounter)
 	assetsModule.MountRoutes(protected, permCache)
-	observabilityModule, err := observabilitymodule.Wire(observabilitymodule.Input{DB: gdb, Credentials: credsModule.Consumer, Audit: auditRec, Config: cfg.Observability, Assets: assetsModule.Consumer})
-	if err != nil {
-		fail("wire observability", err)
-	}
-	credsModule.HTTP.SetInUseCounter(observabilityModule.CredentialUsage)
-	k8sModule.SetObservabilityCounter(observabilityModule.ClusterUsage)
-	observabilityModule.MountRoutes(protected, permCache)
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port),
@@ -288,8 +259,6 @@ func runServer(args []string) {
 		ReadTimeout:  cfg.Server.ReadTimeout,
 		WriteTimeout: cfg.Server.WriteTimeout,
 	}
-	deliveryCtx, cancelDelivery := context.WithCancel(context.Background())
-	deliveryModule.Start(deliveryCtx, cfg.Delivery.ReconcileInterval, logger)
 
 	go func() {
 		logger.Info("listening", "addr", srv.Addr)
@@ -303,18 +272,11 @@ func runServer(args []string) {
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
 	<-stop
 	logger.Info("shutting down")
-	cancelDelivery()
 	httpShutdownCtx, cancelHTTPShutdown := context.WithTimeout(context.Background(), cfg.Server.ShutdownTimeout)
 	if err := srv.Shutdown(httpShutdownCtx); err != nil {
 		logger.Error("shutdown", "err", err)
 	}
 	cancelHTTPShutdown()
-	deliveryShutdownCtx, cancelDeliveryShutdown := context.WithTimeout(context.Background(), cfg.Server.ShutdownTimeout)
-	deliveryShutdownErr := deliveryModule.Shutdown(deliveryShutdownCtx)
-	if deliveryShutdownErr != nil {
-		logger.Error("delivery shutdown", "err", deliveryShutdownErr)
-	}
-	cancelDeliveryShutdown()
 
 	cancelAssets()
 	assetsShutdownCtx, cancelAssetsShutdown := context.WithTimeout(context.Background(), cfg.Server.ShutdownTimeout)
@@ -326,20 +288,18 @@ func runServer(args []string) {
 		logger.Error("assets shutdown", "err", assetsShutdownErr)
 	}
 	if sqlDB, _ := gdb.DB(); sqlDB != nil {
-		closeDBIfDrained(deliveryShutdownErr, assetsShutdownErr, sqlDB.Close)
+		closeDBIfDrained(assetsShutdownErr, sqlDB.Close)
 	}
 	logger.Info("stopped")
 }
 
-func closeDBIfDrained(deliveryErr, assetsErr error, closeFn func() error) bool {
-	if deliveryErr != nil || assetsErr != nil || closeFn == nil {
+func closeDBIfDrained(assetsErr error, closeFn func() error) bool {
+	if assetsErr != nil || closeFn == nil {
 		return false
 	}
 	_ = closeFn()
 	return true
 }
-
-type permissionChecker struct{ cache *rbac.PermissionCache }
 
 func trimmed(values []string) []string {
 	out := make([]string, 0, len(values))
@@ -349,31 +309,6 @@ func trimmed(values []string) []string {
 		}
 	}
 	return out
-}
-
-func deliveryWorkerOwner() string {
-	hostname, err := os.Hostname()
-	if err != nil || hostname == "" {
-		hostname = "optimus"
-	}
-	owner := fmt.Sprintf("%s-%d", hostname, os.Getpid())
-	if len(owner) > 128 {
-		owner = owner[len(owner)-128:]
-	}
-	return owner
-}
-
-func (p permissionChecker) Has(ctx context.Context, userID uint64, code string) (bool, error) {
-	codes, err := p.cache.Get(ctx, userID)
-	if err != nil {
-		return false, err
-	}
-	for _, candidate := range codes {
-		if candidate == code {
-			return true, nil
-		}
-	}
-	return false, nil
 }
 
 // mountUserRoutes mounts /users with per-route RBAC gates per spec §7.2.

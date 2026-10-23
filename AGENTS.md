@@ -13,11 +13,28 @@ and `metadata = {"project": "optimus", "app_id": "optimus"}`; filter reads by
 
 ## Status
 
-P0-P6 are implemented. Dev acceptance closed on 2026-09-25 (local host
-development, remote Linux Docker Compose, and the P3–P6 runtime checklists).
-Production is deployed. The operator is accepting the existing P0–P6 features
-on that environment. Dev and Production are the selected environments; UAT is
-skipped. Production acceptance sign-off and release tagging remain outstanding.
+P0–P4 are the supported feature scope. Production has been deployed but has
+not been used. Production functional acceptance covers P0–P4 only; sign-off
+and release tagging remain outstanding. Dev and Production are selected; UAT
+is skipped.
+
+2026-10-23 scope reset: Observability Center and Delivery Management contain
+only one authenticated Coming Soon child each. Their business implementations
+and the exclusive HTTP credential extension are removed. Reconsider them after
+other Optimus functions mature. See
+`docs/superpowers/plans/2026-10-23-feature-scope-reset.md`.
+
+Local verification passed Go lint (Go 1.25.0), all Go race/database tests on
+disposable PostgreSQL 17, frontend lint/typecheck/locale parity/158 tests/build,
+embedded binary build, generated-artifact checks, and real P2/P3 Colima smoke.
+Production rollout and database recreation remain outstanding. An additional
+existing kubeconfig deletion/soft-deleted-cluster FK issue is recorded in the
+scope-reset plan; the P1 deletion path was not changed in this work.
+
+The database baseline ends at migration 00021. Existing application databases
+must be recreated and initialized with migrate + seed; an in-place upgrade is
+not supported for this reset. The next migration starts at 00022, then 00023
+and subsequent numbers. Recreating containers alone retains PostgreSQL data.
 
 2026-09-24 monorepo merge: the `optimus-be` and `optimus-fe` repositories (split
 on 2026-09-14 from the original `logic3579/optimus` monorepo) were merged back
@@ -41,16 +58,14 @@ published `ghcr.io/arkgravity/optimus` and `docker.io/logic3579/optimus` as
 `main-e0d7c58` (linux/amd64 only). The GHCR package is private until its
 visibility is changed.
 
-2026-09-25 Dev close: the operator completed the P3 applications, P4 assets,
-P5 observability and P6 delivery smoke checklists on Dev, and confirmed the
+2026-09-25 Dev close: the operator completed the P3 applications and P4 assets
+smoke checklists on Dev, and confirmed the
 embedded UI on local host development and a remote Linux Compose stack. The
 2026-09-17 frontend UI work (Ant Design theme tokens, dark sidebar, compact
 workspace and menu tabs) is included in that Dev close.
 
-2026-09-27 Production: the published Compose stack is deployed. Acceptance of
-already-implemented features is in progress on that environment. The general
-`/dashboard` page is still a coming-soon placeholder; P5 observability
-dashboards are implemented.
+2026-09-27 Production: the published Compose stack is deployed. The environment is unused and will be rebuilt for the current scope. The
+general `/dashboard` page remains a coming-soon placeholder.
 
 2026-10-07 image delivery: CI is configured to build and publish both
 `linux/amd64` and `linux/arm64` under the same version tag in both registries.
@@ -79,7 +94,7 @@ parity, all 298 tests, and the production build passed locally.
 - `web/`: Vue 3 SPA built with Bun and Vite. `web/embed.go` embeds `web/dist`.
 - `docs/`: generated API spec and permission catalog, UI notes, and
   `superpowers/specs|plans`.
-- `scripts/`: CI change classifier and P3-P6 smoke checklists;
+- `scripts/`: CI change classifier and P3/P4 smoke checklists;
   `web/scripts/`: i18n key parity checker.
 
 ## Commands
@@ -96,7 +111,7 @@ Run from the repository root:
 - `make swag` / `make swagger-diff`
 - `make dump-perms` / `make perm-check`
 - `make migrate-up` / `make migrate-down`
-- `make migrate-new name=<snake_case>`
+- `make migrate-new name=<snake_case>` (sequential numbering, next is 00022)
 - `make seed`
 
 Frontend commands run from `web/`: `bun install`, `bun run dev`,
@@ -117,7 +132,7 @@ Integration variants require Colima Docker and the `dbtest` build tag.
   and kube contexts.
 - Verify readiness with `colima status`, `docker info`, and
   `kubectl cluster-info` before Docker-backed integration or smoke tests.
-- Run Docker Compose, dockertest, `make test-int`, and P5 containers on Colima's
+- Run Docker Compose, dockertest, `make test-int`, and smoke containers on Colima's
   Docker runtime. Do not silently use Docker Desktop or a host system Docker
   daemon instead.
 - Run the full stack with `docker compose up -d --build`; it builds the single
@@ -132,10 +147,9 @@ Integration variants require Colima Docker and the `dbtest` build tag.
 - For tools that ignore Docker contexts, use the socket reported by
   `colima status` through `DOCKER_HOST`; never hardcode a macOS `/Users/...`
   path or assume `/var/run/docker.sock`.
-- Use Colima's built-in Kubernetes for routine P2/P3 local development and P6
-  release smoke. P6 must use the `colima` kube context and isolate resources in
-  its disposable namespace; never stop or delete the shared Colima cluster
-  during teardown.
+- Use Colima's built-in Kubernetes for routine P2/P3 local development and
+  application smoke tests. Use the `colima` kube context and a disposable
+  namespace; never stop or delete the shared cluster during teardown.
 - Linux/WSL2 without `/dev/kvm` may use slower QEMU software virtualization.
   This local-runtime policy does not apply to CI runners.
 - Keep Go `TMPDIR`, `GOCACHE`, and `GOLANGCI_LINT_CACHE` under the ignored
@@ -166,7 +180,7 @@ Integration variants require Colima Docker and the `dbtest` build tag.
   Handlers bind and validate input, services own business logic and audit/cache
   effects, repositories own GORM access, and business JSON handlers return the
   fixed `{code,data,message,message_key?}` envelope. `GET /api/v1/health`
-  returns a raw `{db,version}` probe; pod logs and delivery events use SSE.
+  returns a raw `{db,version}` probe; pod logs use SSE.
 - `cmd/optimus/server.go` is the only composition root. It loads configuration,
   registers all in-code permissions, creates the shared RBAC cache and audit
   recorder, wires credential consumers, and mounts routes. `cmd/optimus/main.go`
@@ -182,6 +196,9 @@ Integration variants require Colima Docker and the `dbtest` build tag.
 - Access tokens expire after 15 minutes and refresh tokens after 168 hours.
   Refresh tokens are persisted and rotated; replay is rejected. Login is
   rate-limited per IP.
+- P3 Helm mutations and application deletion share the transaction-scoped
+  application advisory lock. Keep the installed-release deletion check inside
+  that lock.
 - Goose migrations live in `migrations/` and are embedded; `optimus migrate`
   and `make migrate-*` use the same files. Models live in `internal/models/`;
   database integration tests use dockertest and `dbtest`.
@@ -206,8 +223,8 @@ Integration variants require Colima Docker and the `dbtest` build tag.
 
 - Bootstrap order is Pinia, Ant Design Vue, i18n, API client, provided module
   APIs, router guards, then mount.
-- Static routes contain login/error/profile pages and application, asset and
-  delivery detail/action sub-routes. On the first authenticated navigation,
+- Static routes contain login/error/profile pages and application and asset
+  detail/action sub-routes. On the first authenticated navigation,
   fetch `/me`, menus, and permissions in parallel, register dynamic routes,
   then replace-navigate to the original destination.
 - Permission enforcement has two synchronized layers: route
@@ -298,51 +315,6 @@ The most important rules are:
 P4's manual release checklist is `scripts/p4-smoke.md`. Use it against a
 disposable read-only AWS credential before production sign-off; do not add AWS
 write/manage APIs in P4.
-
-## P5 Observability Rules
-
-- P5 is metrics display only: no alerts, rules, notifications, CloudWatch,
-  metric sample storage, logs, traces, or APM.
-- Consume P1 HTTP credentials only through `credentials.Consumer`; never
-  expose, log or audit secrets, authorization headers, custom CA PEM, or full
-  PromQL.
-- Private Prometheus targets require a narrow CIDR. Metadata and mixed DNS
-  answers stay denied even under broad ranges. Never follow redirects or
-  cache clients.
-- Keep query count, concurrency, PromQL bytes, range, step, points, series,
-  response, timeout, and enrichment limits enforced.
-- Metric-only operators use the minimal query-source endpoint; built-ins must
-  not call the administrative data-source list.
-- Data-source, dashboard, and metric permissions remain independent; every
-  API call and concrete UI control uses its exact gate.
-- Preserve abort generations so stale definition/query responses cannot
-  commit.
-- Run `scripts/p5-smoke.md` with disposable local Prometheus; no
-  production credential or Kubernetes cluster is needed.
-
-## P6 Application Delivery Rules
-
-- P6 promotes immutable chart artifacts through ordered environments bound to
-  existing P3 applications; it does not accept arbitrary commands, scripts,
-  manifests, values, container images, or credentials. The UI offers no raw
-  command, manifest, values or image editors and shows frozen artifacts, exact
-  action permissions and safe errors.
-- Direct P3 upgrade/uninstall of a delivery-managed application stays denied;
-  only the closed in-process delivery capability may perform an upgrade.
-- Resolve and persist the chart digest before run creation. Every stage must
-  use the frozen repository, chart name, version, digest, application, cluster,
-  namespace, release name, executor, approval policy, and timeout.
-- Initiators cannot approve their own run. Project, pipeline, run, and approval
-  permissions remain independent and every UI control uses its exact gate.
-- Workers use database leases and stable operation IDs. Ambiguous outcomes go
-  through reconciliation; never guess success or blindly replay Helm.
-- System kubeconfig consumption must use a `system:` purpose. The production
-  Helm loader must preserve `LoadVerifiedChart` digest verification.
-- SSE and audit projections must never expose values, kubeconfigs, auth
-  headers, manifests, Helm notes, or raw executor errors.
-- Run `scripts/p6-smoke.md` only against disposable PostgreSQL, an
-  isolated namespace in Colima Kubernetes, and disposable chart-repository
-  resources.
 
 ## Local Gotchas
 

@@ -82,9 +82,6 @@ func (f *fakeConsumer) GetKubeconfig(_ context.Context, _ uint64, _ string) (*cr
 func (f *fakeConsumer) GetCloudKey(context.Context, uint64, string) (*credentials.CloudKey, error) {
 	return nil, errors.New("not used")
 }
-func (f *fakeConsumer) GetHTTPCredential(context.Context, uint64, string) (*credentials.HTTPCredential, error) {
-	return nil, errors.New("unused")
-}
 
 // fakeVersionProbe satisfies cluster.VersionProbe.
 type fakeVersionProbe struct {
@@ -291,37 +288,6 @@ func TestService_Delete_RefusedWhenAppsReference(t *testing.T) {
 	require.NoError(t, svc.Delete(ctx, 0, "", "", det.ID))
 	require.Equal(t, 1, allowed.txCalls)
 	require.Zero(t, allowed.calls)
-}
-
-type fakeObservabilityCounter struct {
-	n       int64
-	err     error
-	txCalls int
-}
-
-func (f *fakeObservabilityCounter) CountByClusterIDTx(context.Context, *gorm.DB, uint64) (int64, error) {
-	f.txCalls++
-	return f.n, f.err
-}
-
-func (f *fakeObservabilityCounter) CountByClusterID(context.Context, uint64) (int64, error) {
-	return f.n, f.err
-}
-
-func TestService_Delete_RefusedWhenObservabilityReferences(t *testing.T) {
-	svc, kcID, td := newSvc(t, []byte(goodYAML), nil)
-	defer td()
-	det, err := svc.Create(t.Context(), 0, "", "", cluster.CreateRequest{Name: "metrics", KubeconfigID: kcID, Context: "ctx"})
-	require.NoError(t, err)
-	counter := &fakeObservabilityCounter{n: 1}
-	svc.SetObservabilityCounter(counter)
-	err = svc.Delete(t.Context(), 0, "", "", det.ID)
-	require.Error(t, err)
-	be, ok := apperr.AsBiz(err)
-	require.True(t, ok)
-	require.Equal(t, apperr.CodeConflict, be.Code)
-	require.Equal(t, "k8s.cluster.in_use_by_observability", be.MessageKey)
-	require.Equal(t, 1, counter.txCalls)
 }
 
 func TestService_Delete(t *testing.T) {

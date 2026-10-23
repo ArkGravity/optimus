@@ -4,9 +4,7 @@ package module
 
 import (
 	"context"
-	"errors"
 	"path/filepath"
-	"reflect"
 	"sort"
 	"strings"
 	"testing"
@@ -17,15 +15,10 @@ import (
 	"helm.sh/helm/v3/pkg/action"
 
 	"github.com/ArkGravity/optimus/internal/infra/db"
-	"github.com/ArkGravity/optimus/internal/models"
 	"github.com/ArkGravity/optimus/internal/modules/apps/application"
 	"github.com/ArkGravity/optimus/internal/modules/apps/release"
 	apprepo "github.com/ArkGravity/optimus/internal/modules/apps/repo"
 	"github.com/ArkGravity/optimus/internal/modules/audit"
-	"github.com/ArkGravity/optimus/internal/modules/delivery/orchestrator"
-	"github.com/ArkGravity/optimus/internal/modules/delivery/pipeline"
-	"github.com/ArkGravity/optimus/internal/modules/delivery/project"
-	"github.com/ArkGravity/optimus/internal/modules/delivery/run"
 	"github.com/ArkGravity/optimus/internal/modules/rbac"
 )
 
@@ -43,73 +36,6 @@ type nopFactory struct{}
 
 func (nopFactory) NewForCluster(context.Context, uint64, string, string) (*action.Configuration, error) {
 	return nil, nil
-}
-
-type operationInspectorStub struct {
-	operation *release.Operation
-	err       error
-}
-
-func (s operationInspectorStub) Inspect(context.Context, string) (*release.Operation, error) {
-	return s.operation, s.err
-}
-
-type applicationLookupStub struct {
-	application *models.AppsApplication
-	err         error
-}
-
-func (s applicationLookupStub) GetModel(context.Context, uint64) (*models.AppsApplication, error) {
-	return s.application, s.err
-}
-
-type releaseInspectorStub struct {
-	evidence release.DeliveryInspection
-	err      error
-}
-
-func (s releaseInspectorStub) InspectDeliveryRelease(context.Context, *models.AppsApplication) (release.DeliveryInspection, error) {
-	return s.evidence, s.err
-}
-
-func TestDeliveryInspectorUsesOnlyCoordinatorOrLiveP3Evidence(t *testing.T) {
-	now := time.Now().UTC()
-	digest := "sha256:" + strings.Repeat("a", 64)
-	app := &models.AppsApplication{ID: 7}
-	t.Run("definite coordinator result", func(t *testing.T) {
-		revision := int64(3)
-		d := digest
-		a := deliveryInspectorAdapter{coordinator: operationInspectorStub{operation: &release.Operation{ApplicationID: 7, State: models.AppsReleaseOperationSucceeded, ResultRevision: &revision, ResultDigest: &d}}, applications: applicationLookupStub{err: errors.New("must not call")}, releases: releaseInspectorStub{err: errors.New("must not call")}}
-		got, err := a.Inspect(context.Background(), 7, "op")
-		require.NoError(t, err)
-		require.Equal(t, orchestrator.Inspection{Revision: 3, Digest: digest}, got)
-	})
-	t.Run("live target and conservative prior proof", func(t *testing.T) {
-		for _, tc := range []struct {
-			name     string
-			observed time.Time
-			created  time.Time
-			prior    bool
-		}{{"target", now.Add(time.Second), now, false}, {"prior", now.Add(-time.Second), now, true}, {"boundary", now, now, false}, {"zero operation time", now.Add(-time.Second), time.Time{}, false}} {
-			t.Run(tc.name, func(t *testing.T) {
-				a := deliveryInspectorAdapter{coordinator: operationInspectorStub{operation: &release.Operation{ApplicationID: 7, CreatedAt: tc.created}}, applications: applicationLookupStub{application: app}, releases: releaseInspectorStub{evidence: release.DeliveryInspection{Revision: 4, Digest: digest, ObservedAt: tc.observed}}}
-				got, err := a.Inspect(context.Background(), 7, "op")
-				require.NoError(t, err)
-				require.Equal(t, tc.prior, got.PreviousDigestProven)
-			})
-		}
-	})
-	t.Run("mismatch and provider errors stay redacted", func(t *testing.T) {
-		for _, a := range []deliveryInspectorAdapter{
-			{coordinator: operationInspectorStub{operation: &release.Operation{ApplicationID: 8}}},
-			{coordinator: operationInspectorStub{operation: &release.Operation{ApplicationID: 7}}, applications: applicationLookupStub{err: errors.New("authorization=secret")}},
-			{coordinator: operationInspectorStub{operation: &release.Operation{ApplicationID: 7}}, applications: applicationLookupStub{application: app}, releases: releaseInspectorStub{err: errors.New("kubeconfig=secret")}},
-		} {
-			_, err := a.Inspect(context.Background(), 7, "op")
-			require.Error(t, err)
-			require.NotContains(t, err.Error(), "secret")
-		}
-	})
 }
 
 // TestMountRoutes_Snapshot guards the /apps surface against silent drift.
@@ -166,21 +92,4 @@ func TestMountRoutes_Snapshot(t *testing.T) {
 		"PUT /api/v1/apps/repos/:id",
 	}
 	require.Equal(t, want, paths, "route surface drifted:\n  got: %s", strings.Join(paths, "\n       "))
-}
-
-func TestDeliveryAdaptersExposeOnlyConsumerOwnedContracts(t *testing.T) {
-	typ := reflect.TypeOf(DeliveryAdapters{})
-	contracts := map[string]reflect.Type{
-		"ProjectApplications": reflect.TypeOf((*project.ApplicationReader)(nil)).Elem(),
-		"RunApplications":     reflect.TypeOf((*run.ApplicationReader)(nil)).Elem(),
-		"Artifacts":           reflect.TypeOf((*run.ArtifactResolver)(nil)).Elem(),
-		"ArtifactVersions":    reflect.TypeOf((*pipeline.VersionLister)(nil)).Elem(),
-		"Executor":            reflect.TypeOf((*orchestrator.Executor)(nil)).Elem(),
-		"Inspector":           reflect.TypeOf((*orchestrator.Inspector)(nil)).Elem(),
-	}
-	for name, contract := range contracts {
-		field, ok := typ.FieldByName(name)
-		require.True(t, ok)
-		require.Equal(t, contract, field.Type)
-	}
 }

@@ -2,8 +2,6 @@ export const permissionCategoryOrder = [
   'assets',
   'k8s',
   'apps',
-  'delivery',
-  'observability',
   'credentials',
   'system'
 ] as const

@@ -14,7 +14,7 @@ spec.loader.exec_module(changes)
 
 class ChangeTests(unittest.TestCase):
     def test_prose(self):
-        self.assertTrue(changes.prose_only(["README.md", "AGENTS.md", "docs/guide.md", "scripts/p6-smoke.md"]))
+        self.assertTrue(changes.prose_only(["README.md", "AGENTS.md", "docs/guide.md", "scripts/p4-smoke.md"]))
 
     def test_runtime_and_unknown_files(self):
         for path in ["docs/api/swagger.json", "api/docs/docs.go", "go.sum", ".env.example", ".github/workflows/ci.yml", "internal/example.md", "scripts/ci-changes.py"]:

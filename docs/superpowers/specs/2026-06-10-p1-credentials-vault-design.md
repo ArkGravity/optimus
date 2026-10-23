@@ -4,7 +4,7 @@
 **Date**: 2026-06-10
 **Owner**: P1 sub-project
 **Depends on**: P0 platform-skeleton (merged 2026-06-09 on `main`)
-**Downstream**: P2 k8s-mgmt, P4 assets, P5 observability, P6 cicd (all consume via the §6 Go seam)
+**Downstream**: P2 k8s-mgmt, P3 applications, P4 assets (all consume via the §6 Go seam)
 
 ---
 
@@ -12,9 +12,9 @@
 
 P0 shipped the platform-skeleton: auth/RBAC/users/roles/menus/audit/i18n/CRUD UI/deploy. P1 builds on top of P0 the **credentials vault** — encrypted storage for the three credential types every downstream sub-project will need to operate on real infrastructure:
 
-1. **SSH keys** — private key + optional passphrase + username, used by P2 (k8s exec/debug pods) and P6 (cicd remote deploys)
+1. **SSH keys** — private key + optional passphrase + username, used by P2 (k8s exec/debug pods)
 2. **kubeconfigs** — full YAML, used by P2 (cluster control plane access)
-3. **Cloud access keys** — AWS / GCP / Azure access-key-id + secret-access-key, used by P4 (asset discovery) and P5 (cloud metric ingestion)
+3. **Cloud access keys** — AWS / GCP / Azure access-key-id + secret-access-key, used by P4 (asset discovery)
 
 What P1 ships:
 
@@ -71,7 +71,7 @@ What P1 ships:
                 │ Go imports (no HTTP)
                 │
    ┌────────────┴──────────────────────────────────┐
-   │  P2 k8s-mgmt / P4 assets / P5 obs / P6 cicd   │
+   │  P2 k8s-mgmt / P3 apps / P4 assets   │
    │  (each calls Consumer.GetXxx with purpose)    │
    └───────────────────────────────────────────────┘
 ```
@@ -377,7 +377,7 @@ All errors use P0's envelope shape. Top-level new keys:
 
 ## 6. Internal Go consume seam
 
-This is the API downstream sub-projects (P2/P4/P5/P6) import. It is intentionally **separate from the HTTP surface** so that:
+This is the API downstream sub-projects (P2/P3/P4) import. It is intentionally **separate from the HTTP surface** so that:
 
 - downstream packages don't pay an HTTP round-trip per consume,
 - the seam can be used in background jobs and cron tasks without forging fake HTTP contexts,

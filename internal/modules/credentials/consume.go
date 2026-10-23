@@ -1,4 +1,4 @@
-// Package credentials is the entry point for downstream sub-projects (P2/P4/P5/P6)
+// Package credentials is the entry point for downstream sub-projects (P2/P3/P4)
 // that need to read decrypted credential material. The exported Consumer interface
 // is the SOLE public API — downstream callers must not import the sshkey /
 // kubeconfig / cloudkey sub-packages directly.
@@ -13,7 +13,6 @@ import (
 	"context"
 
 	"github.com/ArkGravity/optimus/internal/modules/credentials/cloudkey"
-	"github.com/ArkGravity/optimus/internal/modules/credentials/httpcredential"
 	"github.com/ArkGravity/optimus/internal/modules/credentials/kubeconfig"
 	"github.com/ArkGravity/optimus/internal/modules/credentials/sshkey"
 )
@@ -49,23 +48,6 @@ type CloudKey struct {
 	AccessKeyID     string
 	SecretAccessKey string
 }
-type HTTPCredential struct {
-	Name     string
-	AuthType string
-	Username string
-	Secret   []byte
-}
-
-// WipeHTTPCredential performs best-effort zeroization of decrypted secret bytes.
-func WipeHTTPCredential(c *HTTPCredential) {
-	if c == nil {
-		return
-	}
-	for i := range c.Secret {
-		c.Secret[i] = 0
-	}
-	c.Secret = nil
-}
 
 // Wipe minimizes the reachable lifetime of decrypted cloud-key material.
 // Go strings and AWS credential providers may retain copies until garbage
@@ -87,28 +69,18 @@ type Consumer interface {
 	GetSSHKey(ctx context.Context, id uint64, purpose string) (*SSHKey, error)
 	GetKubeconfig(ctx context.Context, id uint64, purpose string) (*Kubeconfig, error)
 	GetCloudKey(ctx context.Context, id uint64, purpose string) (*CloudKey, error)
-	GetHTTPCredential(ctx context.Context, id uint64, purpose string) (*HTTPCredential, error)
 }
 
 // NewConsumer wires a Consumer over the three feature services. Callers obtain
 // services from credentials.New (see module.go).
-func NewConsumer(ssh *sshkey.Service, kc *kubeconfig.Service, ck *cloudkey.Service, http *httpcredential.Service) Consumer {
-	return &consumer{ssh: ssh, kc: kc, ck: ck, http: http}
+func NewConsumer(ssh *sshkey.Service, kc *kubeconfig.Service, ck *cloudkey.Service) Consumer {
+	return &consumer{ssh: ssh, kc: kc, ck: ck}
 }
 
 type consumer struct {
-	ssh  *sshkey.Service
-	kc   *kubeconfig.Service
-	ck   *cloudkey.Service
-	http *httpcredential.Service
-}
-
-func (c *consumer) GetHTTPCredential(ctx context.Context, id uint64, purpose string) (*HTTPCredential, error) {
-	r, e := c.http.Consume(ctx, actorFromCtx(ctx), id, purpose)
-	if e != nil {
-		return nil, e
-	}
-	return &HTTPCredential{Name: r.Name, AuthType: r.AuthType, Username: r.Username, Secret: r.Secret}, nil
+	ssh *sshkey.Service
+	kc  *kubeconfig.Service
+	ck  *cloudkey.Service
 }
 
 func (c *consumer) GetSSHKey(ctx context.Context, id uint64, purpose string) (*SSHKey, error) {
