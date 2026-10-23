@@ -2,7 +2,7 @@
 CREATE TABLE clusters (
     id              BIGSERIAL    PRIMARY KEY,
     name            VARCHAR(64)  NOT NULL,
-    kubeconfig_id   BIGINT       NOT NULL
+    kubeconfig_id   BIGINT
                     REFERENCES credentials_kubeconfigs(id) ON DELETE RESTRICT,
     context         VARCHAR(128) NOT NULL,
     description     TEXT         NOT NULL DEFAULT '',
@@ -13,6 +13,8 @@ CREATE TABLE clusters (
     created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
     deleted_at      TIMESTAMPTZ,
+    CONSTRAINT clusters_live_kubeconfig_required
+        CHECK (deleted_at IS NOT NULL OR kubeconfig_id IS NOT NULL),
     CONSTRAINT clusters_tags_is_array
         CHECK (jsonb_typeof(tags) = 'array')
 );

@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/ArkGravity/optimus/internal/models"
 )
@@ -16,6 +17,29 @@ type Repo struct {
 func NewRepo(db *gorm.DB) *Repo { return &Repo{db: db} }
 
 func (r *Repo) DB() *gorm.DB { return r.db }
+
+func (r *Repo) Transaction(ctx context.Context, fn func(*gorm.DB) error) error {
+	return r.db.WithContext(ctx).Transaction(fn)
+}
+
+func (r *Repo) GetForUpdate(ctx context.Context, tx *gorm.DB, id uint64) (*models.CredentialKubeconfig, error) {
+	var m models.CredentialKubeconfig
+	if err := tx.WithContext(ctx).Clauses(clause.Locking{Strength: "UPDATE"}).First(&m, id).Error; err != nil {
+		return nil, err
+	}
+	return &m, nil
+}
+
+func (r *Repo) DeleteTx(ctx context.Context, tx *gorm.DB, id uint64) error {
+	result := tx.WithContext(ctx).Delete(&models.CredentialKubeconfig{}, id)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected != 1 {
+		return gorm.ErrRecordNotFound
+	}
+	return nil
+}
 
 func (r *Repo) Create(ctx context.Context, m *models.CredentialKubeconfig) error {
 	return r.db.WithContext(ctx).Create(m).Error

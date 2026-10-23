@@ -1,6 +1,6 @@
 // Package inuse is the one-way dependency surface from P1 (credentials) into
-// P2 (k8s). It exposes nothing but a single counter so the kubeconfig delete
-// path can refuse deletes while clusters still reference the kubeconfig.
+// P2 (k8s). It counts live references and detaches deleted-cluster references
+// during credential deletion without exposing the cluster service.
 //
 // The helper lives in its own tiny sub-package (no transitive k8s deps) so
 // P1's credentials/kubeconfig can import it without dragging the rest of the
@@ -27,4 +27,12 @@ func CountByKubeconfigID(ctx context.Context, db *gorm.DB, kubeconfigID uint64) 
 		Where("kubeconfig_id = ?", kubeconfigID).
 		Count(&n).Error
 	return n, err
+}
+
+// DetachDeletedByKubeconfigID clears only historical references. Call after
+// locking the credential and checking live references in the same transaction.
+func DetachDeletedByKubeconfigID(ctx context.Context, tx *gorm.DB, kubeconfigID uint64) error {
+	return tx.WithContext(ctx).Unscoped().Model(&models.Cluster{}).
+		Where("kubeconfig_id = ? AND deleted_at IS NOT NULL", kubeconfigID).
+		Update("kubeconfig_id", nil).Error
 }

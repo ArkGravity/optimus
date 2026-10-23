@@ -169,10 +169,13 @@ Goose version records. Do not restore the previous schema dump into the new
 database. Run the updated seed, save the newly generated administrator
 password, and configure the application again.
 
-Existing local development databases need the same reset. The retained SQL
-migration sequence ends at `00021`; the next new migration is `00022_xxx.sql`,
-then `00023_xxx.sql`. `make migrate-new name=<snake_case>` uses sequential
-numbering.
+Dev and Production are both unused and still in functional acceptance, and
+both may be rebuilt. Existing local development databases need the same reset.
+The kubeconfig lifecycle fix is included directly in
+`00015_create_clusters.sql`, preserving historical clusters and live-reference
+protection. The retained SQL sequence ends at `00021`; `00022_xxx.sql` remains
+available for the next new requirement or issue.
+`make migrate-new name=<snake_case>` uses sequential numbering.
 
 ## Documentation
 

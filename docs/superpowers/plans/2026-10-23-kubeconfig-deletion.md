@@ -1,0 +1,53 @@
+# Kubeconfig deletion after cluster removal
+
+Status: Implemented and locally verified against the revised fresh-schema
+baseline.
+Requested by the operator on 2026-10-23 after committing the feature scope reset
+as `b58bdc3`. Do not commit this fix without explicit user authorization.
+
+## Behavior
+
+Keep credential deletion denied while any live cluster references it. When
+only soft-deleted clusters remain, detach their credential references and
+physically delete the credential in one transaction. Preserve cluster history,
+application history, and the shared audit trail; retain no deleted secret.
+
+The operator clarified that both Dev and Production are unused, are still in
+functional acceptance, and may be rebuilt. Modify the existing
+`00015_create_clusters.sql` directly: permit a NULL `clusters.kubeconfig_id`
+only on deleted rows, enforced by a check constraint. Keep the restrictive
+foreign key. Do not add a migration for this fix. The sequence ends at 00021;
+00022 remains available for future requirements or other issues. Recreate
+existing application databases and initialize them with migrate + seed.
+
+Lock the credential row before checking references. Count, detach, delete and
+audit share that transaction. PostgreSQL FK locking serializes concurrent
+cluster references with credential deletion; map a missing-credential FK error
+on cluster create/update to the existing safe not-found business error.
+
+## Validation
+
+Cover live-reference denial, deletion after soft deletion, preserved tombstone
+rows, physical credential removal, one successful audit event, rollback on a
+failed delete, required live references, and concurrent cluster reference races.
+Run the Go race/database suite with temporary Colima PostgreSQL 17, backend
+lint, build, and a live API/Helm smoke including final kubeconfig deletion.
+
+## Results
+
+- Go 1.25.0 lint and the complete race/database suite passed on disposable
+  Colima PostgreSQL 17 (`-tags=dbtest -race -count=1 -timeout=20m`).
+- Regression coverage passed for live-reference denial, tombstone retention,
+  physical secret-row deletion, atomic audit, rollback after a forced delete
+  or audit failure, a live-row NULL prohibition, and concurrent FK references.
+- Fresh-schema initialization passed with the corrected 00015 migration and
+  head version 00021; no new migration number is consumed. Sequential migration
+  generation on a disposable SQL copy produced 00022 as the next version.
+- The Go 1.25.0 embedded binary build and live Colima API/Helm smoke passed.
+  After uninstalling and deleting the application, cluster deletion followed
+  by kubeconfig deletion succeeded. The credential returned 404 afterward;
+  SQL confirmed that the deleted cluster row survived with a NULL reference.
+- The smoke also rechecked reserved menus, the retired API 404 responses,
+  P2 live reads, P3 lifecycle, and application/cluster deletion guards. All
+  disposable containers, servers and Kubernetes namespace were cleaned.
+- `git diff --check` passed. No production database or deployment was changed.

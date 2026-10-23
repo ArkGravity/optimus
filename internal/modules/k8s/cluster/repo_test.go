@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/ArkGravity/optimus/internal/infra/db"
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
 	"github.com/ArkGravity/optimus/internal/models"
 	"github.com/ArkGravity/optimus/internal/modules/k8s/cluster"
 )
@@ -49,6 +50,27 @@ func TestRepo_CreateAndGet(t *testing.T) {
 	require.Equal(t, []string{"prod", "us-east-1"}, []string(got.Tags))
 	require.NotNil(t, got.Kubeconfig)
 	require.Equal(t, kcID, got.Kubeconfig.ID)
+}
+
+func TestRepo_MissingCredentialReferencesReturnSafeNotFound(t *testing.T) {
+	repo, cleanup := newRepo(t)
+	t.Cleanup(cleanup)
+	id := setupKubeconfigRow(t, repo)
+	err := repo.Create(t.Context(), &models.Cluster{Name: "missing", KubeconfigID: id + 100, Context: "missing"})
+	be, ok := apperr.AsBiz(err)
+	require.True(t, ok)
+	require.Equal(t, apperr.CodeNotFound, be.Code)
+	require.Equal(t, "credential not found", be.Message)
+	live := &models.Cluster{Name: "live", KubeconfigID: id, Context: "live"}
+	require.NoError(t, repo.Create(t.Context(), live))
+	err = repo.Update(t.Context(), live.ID, map[string]any{"kubeconfig_id": id + 100})
+	be, ok = apperr.AsBiz(err)
+	require.True(t, ok)
+	require.Equal(t, apperr.CodeNotFound, be.Code)
+	require.Error(t, repo.DB().Model(&models.Cluster{}).Where("id = ?", live.ID).Update("kubeconfig_id", nil).Error)
+	got, err := repo.Get(t.Context(), live.ID)
+	require.NoError(t, err)
+	require.Equal(t, id, got.KubeconfigID)
 }
 
 func TestRepo_NameUniquePartial(t *testing.T) {

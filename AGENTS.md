@@ -27,14 +27,20 @@ other Optimus functions mature. See
 Local verification passed Go lint (Go 1.25.0), all Go race/database tests on
 disposable PostgreSQL 17, frontend lint/typecheck/locale parity/158 tests/build,
 embedded binary build, generated-artifact checks, and real P2/P3 Colima smoke.
-Production rollout and database recreation remain outstanding. An additional
-existing kubeconfig deletion/soft-deleted-cluster FK issue is recorded in the
-scope-reset plan; the P1 deletion path was not changed in this work.
+Production rollout and database recreation remain outstanding. The kubeconfig
+deletion issue discovered during that smoke is fixed by the follow-up in
+`docs/superpowers/plans/2026-10-23-kubeconfig-deletion.md`: live references deny
+deletion; historical references are detached in the same transaction as the
+physical credential deletion and shared audit event.
 
-The database baseline ends at migration 00021. Existing application databases
-must be recreated and initialized with migrate + seed; an in-place upgrade is
-not supported for this reset. The next migration starts at 00022, then 00023
-and subsequent numbers. Recreating containers alone retains PostgreSQL data.
+Dev and Production are both unused and still in functional acceptance; the
+operator permits rebuilding both. The kubeconfig lifecycle fix is included
+directly in `00015_create_clusters.sql`. The migration sequence ends at 00021;
+00022 is available for the next new requirement or issue. Existing application
+databases must be recreated and initialized with migrate + seed; no in-place
+upgrade path is maintained for this reset. Recreating containers alone retains
+PostgreSQL data. Do not commit work without explicit user authorization for
+that specific change.
 
 2026-09-24 monorepo merge: the `optimus-be` and `optimus-fe` repositories (split
 on 2026-09-14 from the original `logic3579/optimus` monorepo) were merged back
@@ -266,6 +272,10 @@ Integration variants require Colima Docker and the `dbtest` build tag.
 - `credentials.Consumer` is the sole downstream Go API for credentials. Never
   bypass it with HTTP or a second cipher. Use `credentials.WithActor` for
   non-HTTP actors. Kubeconfigs reject `exec` and `auth-provider` plugins.
+- Active clusters require a kubeconfig reference. Credential deletion locks
+  that credential, refuses live references, detaches only deleted-cluster
+  references, and physically deletes the credential with its audit event in
+  one transaction. Keep the restrictive FK and live-row check constraint.
 - P2 Kubernetes endpoints are read-only: do not add exec, apply, write verbs,
   or watch without reopening the P2 design. Build and discard a fresh client
   per request. Normalize API-server failures through `k8s/apierr`.

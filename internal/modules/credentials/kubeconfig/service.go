@@ -172,28 +172,43 @@ func (s *Service) Update(ctx context.Context, actorID uint64, ip, ua string, id 
 }
 
 func (s *Service) Delete(ctx context.Context, actorID uint64, ip, ua string, id uint64) error {
-	m, err := s.repo.Get(ctx, id)
+	err := s.repo.Transaction(ctx, func(tx *gorm.DB) error {
+		m, err := s.repo.GetForUpdate(ctx, tx, id)
+		if err != nil {
+			return err
+		}
+		n, err := inuse.CountByKubeconfigID(ctx, tx, id)
+		if err != nil {
+			return err
+		}
+		if n > 0 {
+			return apperr.New(apperr.CodeConflict, "credentials.kubeconfig.in_use",
+				fmt.Sprintf("kubeconfig is referenced by %d cluster(s)", n))
+		}
+		if err := inuse.DetachDeletedByKubeconfigID(ctx, tx, id); err != nil {
+			return err
+		}
+		if err := s.repo.DeleteTx(ctx, tx, id); err != nil {
+			return err
+		}
+		if s.audit != nil {
+			return s.audit.WithTx(tx).Record(ctx, audit.Event{
+				UserID: ptrIfNonZero(actorID), Action: "credentials.delete",
+				TargetType: "credentials.kubeconfig", TargetID: strconv.FormatUint(id, 10),
+				Payload: map[string]any{"name": m.Name}, IP: ip, UserAgent: ua,
+			})
+		}
+		return nil
+	})
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return apperr.New(apperr.CodeNotFound, "credentials.not_found", "credential not found")
 		}
-		return err
+		if _, ok := apperr.AsBiz(err); ok {
+			return err
+		}
+		return apperr.Wrap(err, apperr.CodeDBError, "common.database_error", "database operation failed")
 	}
-	// P2 gate: refuse if any live clusters reference this kubeconfig.
-	n, err := inuse.CountByKubeconfigID(ctx, s.repo.DB(), id)
-	if err != nil {
-		return err
-	}
-	if n > 0 {
-		return apperr.New(apperr.CodeConflict, "credentials.kubeconfig.in_use",
-			fmt.Sprintf("kubeconfig is referenced by %d cluster(s)", n))
-	}
-	if err := s.repo.Delete(ctx, id); err != nil {
-		return err
-	}
-	s.writeAudit(ctx, ptrIfNonZero(actorID), "credentials.delete", id, ip, ua, map[string]any{
-		"name": m.Name,
-	})
 	return nil
 }
 

@@ -2,13 +2,16 @@ package cluster
 
 import (
 	"context"
+	"errors"
 	"strings"
 	"time"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
 	"github.com/ArkGravity/optimus/internal/models"
 )
 
@@ -32,7 +35,7 @@ func (r *Repo) DeleteTx(ctx context.Context, tx *gorm.DB, id uint64) error {
 }
 
 func (r *Repo) Create(ctx context.Context, m *models.Cluster) error {
-	return r.db.WithContext(ctx).Create(m).Error
+	return mapCredentialReferenceError(r.db.WithContext(ctx).Create(m).Error)
 }
 
 func (r *Repo) Get(ctx context.Context, id uint64) (*models.Cluster, error) {
@@ -91,10 +94,19 @@ func (r *Repo) Update(ctx context.Context, id uint64, fields map[string]any) err
 	if len(fields) == 0 {
 		return nil
 	}
-	return r.db.WithContext(ctx).
+	return mapCredentialReferenceError(r.db.WithContext(ctx).
 		Model(&models.Cluster{}).
 		Where("id = ?", id).
-		Updates(fields).Error
+		Updates(fields).Error)
+}
+
+// A credential can disappear after service validation but before the FK write.
+func mapCredentialReferenceError(err error) error {
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) && pgErr.Code == "23503" && pgErr.ConstraintName == "clusters_kubeconfig_id_fkey" {
+		return apperr.Wrap(err, apperr.CodeNotFound, "credentials.not_found", "credential not found")
+	}
+	return err
 }
 
 func (r *Repo) Delete(ctx context.Context, id uint64) error {

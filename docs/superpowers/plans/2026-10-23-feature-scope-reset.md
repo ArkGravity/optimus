@@ -20,10 +20,17 @@ routes return 404; removed API paths use the existing JSON 404 envelope.
 ## Database and deployment
 
 Production has been deployed but has never been used; the operator permits
-rebuilding its application database. Delete SQL migrations 00022 and 00023
-without a retirement migration or an in-place upgrade path. Retain existing
+rebuilding its application database. Delete the former SQL migrations
+`00022_p5_observability.sql` and `00023_p6_delivery.sql` without a retirement
+migration or an in-place upgrade path. Retain existing
 migration numbers through 00021. The next new migration starts at 00022,
 followed by 00023 and subsequent numbers; no numbers are reserved.
+
+The subsequent [kubeconfig lifecycle fix](2026-10-23-kubeconfig-deletion.md)
+is included directly in the existing 00015 migration because both Dev and
+Production are unused acceptance environments and may be rebuilt. The sequence
+still ends at 00021; the next new migration starts at 00022. The verification
+below records the original scope-reset commit `b58bdc3`.
 
 Existing development and production application databases must be recreated,
 including the Goose version table, then initialized with the remaining
@@ -73,6 +80,6 @@ frontend lint/typecheck/locale parity/tests/build, and the embedded binary.
 An extra cleanup check found that deleting a kubeconfig after its cluster has
 been soft-deleted returns the generic error envelope (10001). The live-cluster
 usage check permits deletion, but the retained cluster row still has a database
-foreign key to the physically deleted credential. The unchanged P1 kubeconfig
-deletion path needs a separate lifecycle fix. This issue is outside this scope
-reset; disposable smoke credentials were removed with the test database.
+foreign key to the physically deleted credential. This was fixed separately
+after the scope-reset commit; see the linked kubeconfig lifecycle plan. The
+original smoke credentials were removed with the test database.

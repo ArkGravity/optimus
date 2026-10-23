@@ -8,9 +8,10 @@ import (
 )
 
 type Cluster struct {
-	ID            uint64                      `gorm:"primaryKey"`
-	Name          string                      `gorm:"size:64;not null"`
-	KubeconfigID  uint64                      `gorm:"column:kubeconfig_id;not null"`
+	ID   uint64 `gorm:"primaryKey"`
+	Name string `gorm:"size:64;not null"`
+	// Only deleted rows may have a NULL reference, represented as zero here.
+	KubeconfigID  uint64                      `gorm:"column:kubeconfig_id"`
 	Context       string                      `gorm:"size:128;not null"`
 	Description   string                      `gorm:"type:text;not null;default:''"`
 	Tags          datatypes.JSONSlice[string] `gorm:"type:jsonb;not null;default:'[]'"`
