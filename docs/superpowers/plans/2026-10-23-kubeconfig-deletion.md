@@ -2,8 +2,8 @@
 
 Status: Implemented and locally verified against the revised fresh-schema
 baseline.
-Requested by the operator on 2026-10-23 after committing the feature scope reset
-as `b58bdc3`. Do not commit this fix without explicit user authorization.
+Requested by the operator on 2026-10-23. Do not commit this fix without explicit
+user authorization.
 
 ## Behavior
 
@@ -47,7 +47,7 @@ lint, build, and a live API/Helm smoke including final kubeconfig deletion.
   After uninstalling and deleting the application, cluster deletion followed
   by kubeconfig deletion succeeded. The credential returned 404 afterward;
   SQL confirmed that the deleted cluster row survived with a NULL reference.
-- The smoke also rechecked reserved menus, the retired API 404 responses,
-  P2 live reads, P3 lifecycle, and application/cluster deletion guards. All
-  disposable containers, servers and Kubernetes namespace were cleaned.
+- The smoke also rechecked P2 live reads, P3 lifecycle, and application/cluster
+  deletion guards. All disposable containers, servers and Kubernetes namespace
+  were cleaned.
 - `git diff --check` passed. No production database or deployment was changed.

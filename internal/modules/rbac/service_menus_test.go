@@ -50,7 +50,7 @@ func TestMeService_ListMenus_ViewerSeesOnlyPermittedNodes(t *testing.T) {
 	require.True(t, foundDashboard)
 	require.False(t, foundSystem)
 	require.False(t, foundCredentials)
-	require.Equal(t, []string{"dashboard", "assets", "k8s", "apps", "delivery", "observability"}, codes(tree))
+	require.Equal(t, []string{"dashboard", "assets", "k8s", "apps", "observability"}, codes(tree))
 }
 
 func codes(nodes []rbac.MeMenuNode) []string {

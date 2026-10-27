@@ -144,10 +144,9 @@ credential vault, Kubernetes inspection, Helm application management, and AWS
 assets. Production was deployed but remains unused. Functional acceptance
 sign-off and release tagging are outstanding.
 
-Observability Center and Delivery Management each retain one Coming Soon
-navigation entry. Their business functions are unavailable and excluded from
-production functional acceptance. Reconsider implementation after the other
-Optimus functions mature.
+Observability Center retains one Coming Soon navigation entry. Its business
+functions are unavailable and excluded from production functional acceptance.
+Reconsider implementation after the other Optimus functions mature.
 
 Runtime checklists (Dev / disposable resources only):
 [P3 applications](scripts/p3-smoke.md) and [P4 assets](scripts/p4-smoke.md).

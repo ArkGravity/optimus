@@ -150,10 +150,6 @@
       "databases": "RDS Databases",
       "sync_runs": "Sync Runs"
     },
-    "delivery_group": "Delivery Management",
-    "delivery": {
-      "overview": "Coming Soon"
-    },
     "observability_group": "Observability Center",
     "observability": {
       "overview": "Coming Soon"

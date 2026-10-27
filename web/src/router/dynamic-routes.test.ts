@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { flattenMenusToRoutes } from './dynamic-routes'
+import { buildViewResolver, flattenMenusToRoutes } from './dynamic-routes'
 import type { MeMenuNode } from '@/types/api'
 
 const tree: MeMenuNode[] = [
@@ -45,13 +45,12 @@ describe('flattenMenusToRoutes', () => {
     expect(warns.some(w => w.includes('system/users/List'))).toBe(true)
   })
 
-  it.each([
-    ['delivery/overview/Index', '/delivery/overview', undefined],
-    ['observability/overview/Index', '/observability/overview', undefined],
-  ])('resolves seeded Linux-cased reserved component %s', (component, path, permission) => {
-    const node = { id: 9, code: component, name: component, path, component, icon: '', permission_code: permission, sort_order: 0, hidden: false }
-    const routes = flattenMenusToRoutes([node], value => value === component ? async () => ({ default: {} }) : undefined)
+  it('resolves the seeded Linux-cased observability component', () => {
+    const component = 'observability/overview/Index'
+    const path = '/observability/overview'
+    const node = { id: 9, code: component, name: component, path, component, icon: '', sort_order: 0, hidden: false }
+    const routes = flattenMenusToRoutes([node], buildViewResolver())
     expect(routes[0]?.path).toBe(path)
-    expect(routes[0]?.meta?.permission).toBe(permission)
+    expect(routes[0]?.meta?.permission).toBeUndefined()
   })
 })

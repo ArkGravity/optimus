@@ -49,10 +49,9 @@ tests.
 
 ## Current feature scope
 
-Production use and functional acceptance cover P0–P4. Observability Center and
-Delivery Management are static navigation placeholders. The approved
-[scope reset](superpowers/plans/2026-10-23-feature-scope-reset.md) requires a
-fresh application database; see the README database reset procedure.
+Production use and functional acceptance cover P0–P4. Observability Center is a
+static navigation placeholder. The current baseline requires a fresh application
+database; see the [README database reset procedure](../README.md#database-reset-for-the-current-baseline).
 The [kubeconfig deletion fix](superpowers/plans/2026-10-23-kubeconfig-deletion.md)
 is included in the existing cluster migration, 00015. The migration sequence
 ends at 00021; the next new migration starts at 00022. Both Dev and Production

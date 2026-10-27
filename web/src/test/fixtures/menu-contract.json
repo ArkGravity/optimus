@@ -67,11 +67,6 @@
       "permission": "apps:repo:read"
     },
     {
-      "component": "delivery/overview/Index",
-      "path": "/delivery/overview",
-      "permission": ""
-    },
-    {
       "component": "observability/overview/Index",
       "path": "/observability/overview",
       "permission": ""

@@ -18,17 +18,15 @@ not been used. Production functional acceptance covers P0–P4 only; sign-off
 and release tagging remain outstanding. Dev and Production are selected; UAT
 is skipped.
 
-2026-10-23 scope reset: Observability Center and Delivery Management contain
-only one authenticated Coming Soon child each. Their business implementations
-and the exclusive HTTP credential extension are removed. Reconsider them after
-other Optimus functions mature. See
-`docs/superpowers/plans/2026-10-23-feature-scope-reset.md`.
+Observability Center contains one authenticated Coming Soon child. Reconsider
+its implementation after other Optimus functions mature.
 
-Local verification passed Go lint (Go 1.25.0), all Go race/database tests on
-disposable PostgreSQL 17, frontend lint/typecheck/locale parity/158 tests/build,
-embedded binary build, generated-artifact checks, and real P2/P3 Colima smoke.
-Production rollout and database recreation remain outstanding. The kubeconfig
-deletion issue discovered during that smoke is fixed by the follow-up in
+Local verification (2026-10-27) passed Go lint (Go 1.25.0), all Go race/database
+tests on disposable PostgreSQL 17, frontend lint/typecheck/locale parity/157
+tests/build, embedded binary build, and generated-artifact checks. Real P2/P3
+Colima smoke passed on 2026-10-23. Production rollout and database recreation
+remain outstanding. The kubeconfig deletion issue discovered during that smoke
+is fixed by the follow-up in
 `docs/superpowers/plans/2026-10-23-kubeconfig-deletion.md`: live references deny
 deletion; historical references are detached in the same transaction as the
 physical credential deletion and shared audit event.
@@ -38,7 +36,7 @@ operator permits rebuilding both. The kubeconfig lifecycle fix is included
 directly in `00015_create_clusters.sql`. The migration sequence ends at 00021;
 00022 is available for the next new requirement or issue. Existing application
 databases must be recreated and initialized with migrate + seed; no in-place
-upgrade path is maintained for this reset. Recreating containers alone retains
+upgrade path is maintained for this baseline. Recreating containers alone retains
 PostgreSQL data. Do not commit work without explicit user authorization for
 that specific change.
 

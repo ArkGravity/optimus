@@ -184,23 +184,29 @@ func TestRun_SeedsInitialMenuTree(t *testing.T) {
 
 	wantCodes := []string{
 		"dashboard",
+		"assets", "assets.cloud_accounts", "assets.instances", "assets.vpcs", "assets.databases", "assets.sync_runs",
 		"system", "system.users", "system.roles", "system.permissions", "system.menus", "system.audit_logs",
 		"credentials", "credentials.ssh_keys", "credentials.kubeconfigs", "credentials.cloud_keys",
 		"k8s", "k8s.clusters", "k8s.workloads", "k8s.network", "k8s.config", "k8s.cluster_resources",
 		"apps", "apps.applications", "apps.chart_repos",
 		"observability", "observability.overview",
-		"delivery", "delivery.overview",
 	}
-	for _, code := range wantCodes {
-		var m models.Menu
-		err := gdb.Where("code = ?", code).First(&m).Error
-		require.NoError(t, err, "missing menu code %q", code)
+	var menus []models.Menu
+	require.NoError(t, gdb.Find(&menus).Error)
+	var menuCodes []string
+	for _, menu := range menus {
+		menuCodes = append(menuCodes, menu.Code)
 	}
+	require.ElementsMatch(t, wantCodes, menuCodes)
 	var topLevel []models.Menu
 	require.NoError(t, gdb.Where("parent_id IS NULL").Order("sort_order, id").Find(&topLevel).Error)
+	var topLevelCodes []string
+	for _, menu := range topLevel {
+		topLevelCodes = append(topLevelCodes, menu.Code)
+	}
 	require.Equal(t,
-		[]string{"dashboard", "assets", "k8s", "apps", "delivery", "observability", "credentials", "system"},
-		[]string{topLevel[0].Code, topLevel[1].Code, topLevel[2].Code, topLevel[3].Code, topLevel[4].Code, topLevel[5].Code, topLevel[6].Code, topLevel[7].Code},
+		[]string{"dashboard", "assets", "k8s", "apps", "observability", "credentials", "system"},
+		topLevelCodes,
 	)
 
 	// Parent linkage: credentials.* children must have parent_id = credentials.id.
@@ -210,18 +216,16 @@ func TestRun_SeedsInitialMenuTree(t *testing.T) {
 	gdb.Model(&models.Menu{}).Where("parent_id = ?", parent.ID).Count(&childrenCount)
 	require.Equal(t, int64(3), childrenCount)
 
-	for _, group := range []string{"delivery", "observability"} {
-		var parent models.Menu
-		require.NoError(t, gdb.Where("code = ?", group).First(&parent).Error)
-		require.Nil(t, parent.PermissionCode)
-		var children []models.Menu
-		require.NoError(t, gdb.Where("parent_id = ?", parent.ID).Find(&children).Error)
-		require.Len(t, children, 1)
-		require.Equal(t, group+".overview", children[0].Code)
-		require.Equal(t, "/"+group+"/overview", children[0].Path)
-		require.Equal(t, group+"/overview/Index", children[0].Component)
-		require.Nil(t, children[0].PermissionCode)
-	}
+	var observability models.Menu
+	require.NoError(t, gdb.Where("code = ?", "observability").First(&observability).Error)
+	require.Nil(t, observability.PermissionCode)
+	var children []models.Menu
+	require.NoError(t, gdb.Where("parent_id = ?", observability.ID).Find(&children).Error)
+	require.Len(t, children, 1)
+	require.Equal(t, "observability.overview", children[0].Code)
+	require.Equal(t, "/observability/overview", children[0].Path)
+	require.Equal(t, "observability/overview/Index", children[0].Component)
+	require.Nil(t, children[0].PermissionCode)
 
 	// Parent linkage: k8s.* children must have parent_id = k8s.id.
 	var k8sParent models.Menu

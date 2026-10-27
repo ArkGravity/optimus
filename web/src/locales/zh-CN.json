@@ -150,10 +150,6 @@
       "databases": "RDS 数据库",
       "sync_runs": "同步运行记录"
     },
-    "delivery_group": "交付管理",
-    "delivery": {
-      "overview": "功能预留"
-    },
     "observability_group": "可观测中心",
     "observability": {
       "overview": "功能预留"

@@ -179,9 +179,6 @@ func ensureInitialMenus(ctx context.Context, tx *gorm.DB) error {
 			{Code: "apps.applications", Name: "menu.apps.applications", Path: "/apps/applications", Component: "apps/applications/List", PermissionCode: sp("apps:application:read")},
 			{Code: "apps.chart_repos", Name: "menu.apps.chart_repos", Path: "/apps/chart-repos", Component: "apps/chart-repos/List", PermissionCode: sp("apps:repo:read")},
 		}},
-		{Code: "delivery", Name: "menu.delivery_group", Path: "/delivery", Component: "", Icon: "deployment-unit", Children: []spec{
-			{Code: "delivery.overview", Name: "menu.delivery.overview", Path: "/delivery/overview", Component: "delivery/overview/Index"},
-		}},
 		{Code: "observability", Name: "menu.observability_group", Path: "/observability", Component: "", Icon: "line-chart", Children: []spec{
 			{Code: "observability.overview", Name: "menu.observability.overview", Path: "/observability/overview", Component: "observability/overview/Index"},
 		}},
