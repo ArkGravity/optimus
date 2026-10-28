@@ -1,9 +1,9 @@
 # Kubeconfig deletion after cluster removal
 
 Status: Implemented and locally verified against the revised fresh-schema
-baseline.
-Requested by the operator on 2026-10-23. Do not commit this fix without explicit
-user authorization.
+baseline. The operator confirmed production database recreation, deployment of
+the latest image, and successful P0–P4 functional acceptance on 2026-10-28.
+Requested by the operator on 2026-10-23.
 
 ## Behavior
 
@@ -12,13 +12,14 @@ only soft-deleted clusters remain, detach their credential references and
 physically delete the credential in one transaction. Preserve cluster history,
 application history, and the shared audit trail; retain no deleted secret.
 
-The operator clarified that both Dev and Production are unused, are still in
-functional acceptance, and may be rebuilt. Modify the existing
-`00015_create_clusters.sql` directly: permit a NULL `clusters.kubeconfig_id`
-only on deleted rows, enforced by a check constraint. Keep the restrictive
-foreign key. Do not add a migration for this fix. The sequence ends at 00021;
-00022 remains available for future requirements or other issues. Recreate
-existing application databases and initialize them with migrate + seed.
+At implementation time on 2026-10-23, both Dev and Production were unused
+acceptance environments and the operator permitted rebuilding them. The fix
+was included directly in `00015_create_clusters.sql`: a check constraint permits
+a NULL `clusters.kubeconfig_id` only on deleted rows, and the restrictive
+foreign key remains. No migration was added for this fix. The sequence ends at
+00021; future schema changes use new sequential migrations starting at 00022.
+The production application database has since been rebuilt and initialized with
+migrate + seed as part of the accepted baseline.
 
 Lock the credential row before checking references. Count, detach, delete and
 audit share that transaction. PostgreSQL FK locking serializes concurrent
@@ -50,4 +51,5 @@ lint, build, and a live API/Helm smoke including final kubeconfig deletion.
 - The smoke also rechecked P2 live reads, P3 lifecycle, and application/cluster
   deletion guards. All disposable containers, servers and Kubernetes namespace
   were cleaned.
-- `git diff --check` passed. No production database or deployment was changed.
+- `git diff --check` passed. No production database or deployment was changed
+  during local verification.

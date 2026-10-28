@@ -556,7 +556,7 @@
     "not_found": "凭证不存在",
     "name_taken": "凭证名称已被占用",
     "invalid_key_format": "凭证内容格式错误",
-    "invalid_provider": "云厂商必须是 aws / gcp / azure 之一",
+    "invalid_provider": "云厂商必须是 aliyun / aws / gcp 之一",
     "invalid_purpose": "consume 调用必须提供 purpose",
     "system_purpose_required": "系统调用的 purpose 必须以 system: 开头",
     "crypto_seal_failed": "加密失败，请联系管理员",

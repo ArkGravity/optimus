@@ -12,6 +12,7 @@ import (
 	"github.com/ArkGravity/optimus/internal/infra/advisorylock"
 	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
 	"github.com/ArkGravity/optimus/internal/models"
+	"github.com/ArkGravity/optimus/internal/modules/assets/account/inuse"
 	"github.com/ArkGravity/optimus/internal/modules/audit"
 )
 
@@ -206,13 +207,11 @@ func (s *Service) Update(ctx context.Context, actorID uint64, ip, ua string, id 
 }
 
 func (s *Service) Delete(ctx context.Context, actorID uint64, ip, ua string, id uint64) error {
-	var m *models.CredentialCloudKey
 	err := s.repo.Transaction(ctx, func(tx *gorm.DB) error {
 		if err := advisorylock.LockCloudKey(ctx, tx, id); err != nil {
 			return err
 		}
-		var err error
-		m, err = s.repo.GetTx(ctx, tx, id)
+		m, err := s.repo.GetForUpdate(ctx, tx, id)
 		if err != nil {
 			return err
 		}
@@ -233,6 +232,9 @@ func (s *Service) Delete(ctx context.Context, actorID uint64, ip, ua string, id 
 					fmt.Sprintf("cloud key referenced by %d cloud account(s)", n),
 				)
 			}
+			if err := inuse.DetachDeletedByCloudKeyID(ctx, tx, id); err != nil {
+				return err
+			}
 		}
 		rows, err := s.repo.DeleteTx(ctx, tx, id)
 		if err != nil {
@@ -241,17 +243,24 @@ func (s *Service) Delete(ctx context.Context, actorID uint64, ip, ua string, id 
 		if rows != 1 {
 			return gorm.ErrRecordNotFound
 		}
+		if s.audit != nil {
+			return s.audit.WithTx(tx).Record(ctx, audit.Event{
+				UserID: ptrIfNonZero(actorID), Action: "credentials.delete",
+				TargetType: "credentials.cloud_key", TargetID: strconv.FormatUint(id, 10),
+				Payload: map[string]any{"name": m.Name}, IP: ip, UserAgent: ua,
+			})
+		}
 		return nil
 	})
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return apperr.New(apperr.CodeNotFound, "credentials.not_found", "credential not found")
 		}
-		return err
+		if _, ok := apperr.AsBiz(err); ok {
+			return err
+		}
+		return apperr.Wrap(err, apperr.CodeDBError, "common.database_error", "database operation failed")
 	}
-	s.writeAudit(ctx, ptrIfNonZero(actorID), "credentials.delete", id, ip, ua, map[string]any{
-		"name": m.Name,
-	})
 	return nil
 }
 

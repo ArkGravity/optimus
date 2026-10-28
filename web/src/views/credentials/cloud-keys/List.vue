@@ -85,9 +85,9 @@ const providerInput = ref<'' | CloudProvider>('')
 
 const providerOptions = computed(() => [
   { value: '',      label: t('credentials.filter_provider_all') },
+  { value: 'aliyun', label: 'Aliyun' },
   { value: 'aws',   label: 'AWS' },
   { value: 'gcp',   label: 'GCP' },
-  { value: 'azure', label: 'Azure' },
 ])
 
 const table = useTable<CloudKeySummary, CloudKeyListQuery>({

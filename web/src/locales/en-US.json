@@ -556,7 +556,7 @@
     "not_found": "Credential not found",
     "name_taken": "Credential name already exists",
     "invalid_key_format": "Invalid credential format",
-    "invalid_provider": "Provider must be aws / gcp / azure",
+    "invalid_provider": "Provider must be aliyun / aws / gcp",
     "invalid_purpose": "A purpose must be supplied for consume",
     "system_purpose_required": "System consume requires purpose prefix system:",
     "crypto_seal_failed": "Encryption failed",

@@ -15,10 +15,11 @@
         <a-textarea v-model:value="form.description" :rows="2" :maxlength="4096" />
       </a-form-item>
       <a-form-item :label="$t('credentials.field.provider')" name="provider">
-        <a-radio-group v-model:value="form.provider">
+        <a-input v-if="isEdit && initial?.provider === 'azure'" value="Azure" disabled />
+        <a-radio-group v-else v-model:value="form.provider">
+          <a-radio-button value="aliyun">Aliyun</a-radio-button>
           <a-radio-button value="aws">AWS</a-radio-button>
           <a-radio-button value="gcp">GCP</a-radio-button>
-          <a-radio-button value="azure">Azure</a-radio-button>
         </a-radio-group>
       </a-form-item>
       <a-form-item :label="$t('credentials.field.region')" name="region">
@@ -48,7 +49,7 @@ import { useI18n } from '@/hooks/useI18n'
 import { isBizError } from '@/utils/http-error'
 import { formDiff } from '@/utils/form-diff'
 import type { CloudKeyApi } from '@/api/credentials/cloud-key'
-import type { CloudKeySummary, CloudProvider } from '@/types/api'
+import type { CloudKeySummary } from '@/types/api'
 
 const props = defineProps<{
   open: boolean
@@ -69,7 +70,7 @@ const formRef = ref<FormInstance>()
 const form = reactive<{
   name: string
   description: string
-  provider: CloudProvider
+  provider: CloudKeySummary['provider']
   region: string
   access_key_id: string
   secret_access_key: string
@@ -81,7 +82,7 @@ const form = reactive<{
   access_key_id: '',
   secret_access_key: '',
 })
-let initialSnapshot: { name: string; description: string; provider: CloudProvider; region: string } = {
+let initialSnapshot: { name: string; description: string; provider: CloudKeySummary['provider']; region: string } = {
   name: '', description: '', provider: 'aws', region: '',
 }
 
@@ -144,6 +145,10 @@ async function onOk() {
       }
       message.success(t('credentials.toast.updated'))
     } else {
+      if (form.provider === 'azure') {
+        message.error(t('credentials.invalid_provider'))
+        return
+      }
       await cloudKeyApi.create({
         name: form.name,
         description: form.description || undefined,

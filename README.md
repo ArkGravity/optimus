@@ -141,8 +141,9 @@ Compose project name and data volumes, and never use `down -v` for this repair.
 
 The supported production feature scope is P0–P4: platform administration,
 credential vault, Kubernetes inspection, Helm application management, and AWS
-assets. Production was deployed but remains unused. Functional acceptance
-sign-off and release tagging are outstanding.
+assets. On 2026-10-28 the operator confirmed that the production database was
+rebuilt, the latest image was deployed, and all P0–P4 functions passed production
+acceptance. Release tagging remains outstanding.
 
 Observability Center retains one Coming Soon navigation entry. Its business
 functions are unavailable and excluded from production functional acceptance.
@@ -152,29 +153,33 @@ Runtime checklists (Dev / disposable resources only):
 [P3 applications](scripts/p3-smoke.md) and [P4 assets](scripts/p4-smoke.md).
 Do not point those checklists at production credentials or clusters.
 
-### Database reset for the current baseline
+### Database baseline
 
-This release requires a fresh application database. It does not support an
-in-place upgrade from the previous schema. Stop the old application before
-resetting the database, then use the new image for `migrate`, `seed`, and the
-server. Recreate only the Optimus application database; leave unrelated
-databases and Kubernetes releases intact.
+The accepted production database was rebuilt and initialized with migrate +
+seed. Its SQL sequence ends at `00021`. The kubeconfig lifecycle fix is included
+directly in `00015_create_clusters.sql`, preserving historical clusters and
+live-reference protection.
 
-A container rebuild/recreation alone is insufficient: Compose retains its
-`pgdata` volume. If PostgreSQL is dedicated entirely to this unused Optimus
-stack, the stack's PostgreSQL volume may instead be recreated. The reset
-removes all application data, including users, roles, credentials, menus and
-Goose version records. Do not restore the previous schema dump into the new
-database. Run the updated seed, save the newly generated administrator
-password, and configure the application again.
+The cloud-key deletion fix adds `00022_cloud_key_deletion.sql`. Apply it with
+the updated binary's `optimus migrate` command before running the updated
+server. It permits detaching references from deleted cloud accounts while
+preserving their history and protecting live references. No database recreation
+or reseeding is required. Deploying this fix to production is pending.
 
-Dev and Production are both unused and still in functional acceptance, and
-both may be rebuilt. Existing local development databases need the same reset.
-The kubeconfig lifecycle fix is included directly in
-`00015_create_clusters.sql`, preserving historical clusters and live-reference
-protection. The retained SQL sequence ends at `00021`; `00022_xxx.sql` remains
-available for the next new requirement or issue.
+The provider update adds `00023_cloud_key_aliyun_provider.sql`. New cloud keys
+and provider changes support Aliyun, AWS and GCP. Existing Azure credentials
+are retained for metadata edits and deletion. Apply migrations through 00023
+before running the updated server. P4 asset discovery remains AWS-only.
+
+Future schema changes preserve the accepted production data and use new
+sequential migrations starting at `00024_xxx.sql`.
 `make migrate-new name=<snake_case>` uses sequential numbering.
+
+Older, pre-baseline databases require fresh initialization; no in-place upgrade
+from that old schema is maintained. Recreating containers alone retains the
+PostgreSQL `pgdata` volume. A baseline reset must include the application data
+and Goose version records, and must leave unrelated databases and Kubernetes
+releases intact.
 
 ## Documentation
 

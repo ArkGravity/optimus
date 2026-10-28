@@ -13,10 +13,14 @@ and `metadata = {"project": "optimus", "app_id": "optimus"}`; filter reads by
 
 ## Status
 
-P0–P4 are the supported feature scope. Production has been deployed but has
-not been used. Production functional acceptance covers P0–P4 only; sign-off
-and release tagging remain outstanding. Dev and Production are selected; UAT
-is skipped.
+P0–P4 are the supported feature scope. On 2026-10-28 the operator confirmed
+that the production database was rebuilt, the latest image was deployed, and
+all P0–P4 functions passed production acceptance. Production functional
+acceptance is complete; release tagging remains outstanding. Dev and
+Production are selected; UAT is skipped.
+
+The accepted production code baseline is `330ff6c`. CI run `40596993827` passed
+all six jobs, including publication of `main-330ff6c` to GHCR and Docker Hub.
 
 Observability Center contains one authenticated Coming Soon child. Reconsider
 its implementation after other Optimus functions mature.
@@ -24,20 +28,32 @@ its implementation after other Optimus functions mature.
 Local verification (2026-10-27) passed Go lint (Go 1.25.0), all Go race/database
 tests on disposable PostgreSQL 17, frontend lint/typecheck/locale parity/157
 tests/build, embedded binary build, and generated-artifact checks. Real P2/P3
-Colima smoke passed on 2026-10-23. Production rollout and database recreation
-remain outstanding. The kubeconfig deletion issue discovered during that smoke
-is fixed by the follow-up in
+Colima smoke passed on 2026-10-23. Production rollout, database recreation and
+P0–P4 acceptance were confirmed by the operator on 2026-10-28. The kubeconfig
+deletion issue discovered during that smoke is fixed by the follow-up in
 `docs/superpowers/plans/2026-10-23-kubeconfig-deletion.md`: live references deny
 deletion; historical references are detached in the same transaction as the
 physical credential deletion and shared audit event.
 
-Dev and Production are both unused and still in functional acceptance; the
-operator permits rebuilding both. The kubeconfig lifecycle fix is included
-directly in `00015_create_clusters.sql`. The migration sequence ends at 00021;
-00022 is available for the next new requirement or issue. Existing application
-databases must be recreated and initialized with migrate + seed; no in-place
-upgrade path is maintained for this baseline. Recreating containers alone retains
-PostgreSQL data. Do not commit work without explicit user authorization for
+The accepted production baseline ends at 00021 and includes the kubeconfig
+lifecycle fix directly in `00015_create_clusters.sql`. The cloud-key cleanup
+fix adds `00022_cloud_key_deletion.sql`: only deleted cloud accounts may detach
+their credential reference; credential deletion and its audit event are atomic.
+The provider update adds `00023_cloud_key_aliyun_provider.sql`. New cloud keys
+and provider changes allow only `aliyun`, `aws`, and `gcp`; existing Azure keys
+retain their identity and support metadata edits and deletion. P4 asset sync
+remains AWS-only. Deploying these changes requires migrate up to 00023,
+preserving existing data; no database recreation or reseeding is needed.
+Production rollout is pending. Local Go 1.25 lint, full race/database tests on
+disposable PostgreSQL 17, frontend lint/typecheck/locale parity/160 tests,
+generated-artifact checks, and the embedded binary build passed on 2026-10-28,
+including existing-data upgrades, provider validation and legacy credential
+retention, live-reference protection, atomic audit/rollback, and concurrent FK
+reference coverage. The next new migration starts at 00024. Older, pre-baseline
+databases require recreation and
+initialization with migrate + seed; no in-place upgrade path from that old
+schema is maintained. Recreating containers alone retains PostgreSQL data.
+Do not commit work without explicit user authorization for
 that specific change.
 
 2026-09-24 monorepo merge: the `optimus-be` and `optimus-fe` repositories (split
@@ -68,7 +84,7 @@ embedded UI on local host development and a remote Linux Compose stack. The
 2026-09-17 frontend UI work (Ant Design theme tokens, dark sidebar, compact
 workspace and menu tabs) is included in that Dev close.
 
-2026-09-27 Production: the published Compose stack is deployed. The environment is unused and will be rebuilt for the current scope. The
+2026-09-27 Production: the published Compose stack was first deployed. The
 general `/dashboard` page remains a coming-soon placeholder.
 
 2026-10-07 image delivery: CI is configured to build and publish both
@@ -310,6 +326,10 @@ The most important rules are:
 - Cron writes `assets_sync_runs`; it does not write audit rows.
 - Cloud-key delete must remain nil-safe when the P4 assets in-use counter is not
   wired. When wired, deleting a referenced cloud key fails with code `43001`.
+- Cloud-key deletion locks the credential, refuses live cloud-account
+  references (including disabled accounts), and detaches only deleted-account
+  references in the same transaction as physical deletion and the shared audit
+  event. Keep the foreign key and live-account reference check constraint.
 - Removing regions from a cloud account must explicitly soft-delete resources in
   those removed regions.
 - P4 frontend paths must be lowercase/kebab-case to match Linux production.
@@ -321,7 +341,7 @@ The most important rules are:
   `OPTIMUS_ASSETS_AWS_REQUEST_TIMEOUT`.
 
 P4's manual release checklist is `scripts/p4-smoke.md`. Use it against a
-disposable read-only AWS credential before production sign-off; do not add AWS
+disposable read-only AWS credential for P4 regression checks; do not add AWS
 write/manage APIs in P4.
 
 ## Local Gotchas

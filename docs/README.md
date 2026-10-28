@@ -49,10 +49,14 @@ tests.
 
 ## Current feature scope
 
-Production use and functional acceptance cover P0–P4. Observability Center is a
-static navigation placeholder. The current baseline requires a fresh application
-database; see the [README database reset procedure](../README.md#database-reset-for-the-current-baseline).
+The operator confirmed production database recreation, deployment of the latest
+image, and successful P0–P4 functional acceptance on 2026-10-28. Observability
+Center remains a static navigation placeholder. See the
+[README database baseline](../README.md#database-baseline).
 The [kubeconfig deletion fix](superpowers/plans/2026-10-23-kubeconfig-deletion.md)
 is included in the existing cluster migration, 00015. The migration sequence
-ends at 00021; the next new migration starts at 00022. Both Dev and Production
-are unused acceptance environments and may be rebuilt.
+ends at 00021 for the accepted production baseline. The cloud-key cleanup fix
+adds migration 00022; the Aliyun/AWS/GCP cloud-key provider update adds 00023.
+These changes require a data-preserving migrate up before deployment; production
+rollout is pending. No database recreation or reseeding is needed. The next new
+migration starts at 00024. Release tagging remains outstanding.

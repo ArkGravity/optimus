@@ -9,10 +9,11 @@ import (
 )
 
 type CloudAccount struct {
-	ID             uint64      `gorm:"primaryKey"`
-	Name           string      `gorm:"size:128;not null"`
-	Provider       string      `gorm:"size:16;not null"`
-	CloudKeyID     uint64      `gorm:"column:cloudkey_id;not null;index"`
+	ID       uint64 `gorm:"primaryKey"`
+	Name     string `gorm:"size:128;not null"`
+	Provider string `gorm:"size:16;not null"`
+	// Only deleted rows may have a NULL reference, represented as zero here.
+	CloudKeyID     uint64      `gorm:"column:cloudkey_id;index"`
 	EnabledRegions StringArray `gorm:"type:text[];not null"`
 	Enabled        bool        `gorm:"not null;default:true"`
 	Description    string      `gorm:"type:text;not null;default:''"`

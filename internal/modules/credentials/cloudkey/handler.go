@@ -42,7 +42,7 @@ func (h *Handler) parseID(c *gin.Context) (uint64, bool) {
 // @Param    page      query    int    false "page (default 1)"
 // @Param    page_size query    int    false "page size (default 20)"
 // @Param    q         query    string false "search by name or description"
-// @Param    provider  query    string false "filter by provider (aws|gcp|azure)"
+// @Param    provider  query    string false "filter by provider (aliyun|aws|gcp)"
 // @Success  200 {object} response.Envelope
 // @Router   /credentials/cloud-keys [get]
 func (h *Handler) list(c *gin.Context) {

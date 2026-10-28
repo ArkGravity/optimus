@@ -18,6 +18,7 @@ import (
 	"github.com/ArkGravity/optimus/internal/infra/db"
 	"github.com/ArkGravity/optimus/internal/infra/middleware"
 	"github.com/ArkGravity/optimus/internal/infra/permissions"
+	"github.com/ArkGravity/optimus/internal/models"
 	"github.com/ArkGravity/optimus/internal/modules/audit"
 	"github.com/ArkGravity/optimus/internal/modules/credentials/cloudkey"
 	"github.com/ArkGravity/optimus/internal/seed"
@@ -123,4 +124,66 @@ func TestHandler_Update_RotateSecret(t *testing.T) {
 	require.Equal(t, http.StatusOK, w.Code)
 	require.False(t, bytes.Contains(w.Body.Bytes(), []byte("S2")),
 		"PUT response leaks the new secret")
+}
+
+func TestHandler_CloudKeyProviderContract(t *testing.T) {
+	router := newHandlerRouter(t)
+	var aliyunID uint64
+	for _, provider := range []string{"aliyun", "aws", "gcp", "azure", "ibm"} {
+		t.Run(provider, func(t *testing.T) {
+			request := newReq()
+			request.Name = provider + "-key"
+			request.Provider = provider
+			response := doJSON(t, router, http.MethodPost, "/api/v1/credentials/cloud-keys", request)
+			if provider == "azure" || provider == "ibm" {
+				require.Equal(t, http.StatusBadRequest, response.Code)
+				require.Contains(t, response.Body.String(), "common.validation")
+				return
+			}
+			require.Equal(t, http.StatusOK, response.Code, response.Body.String())
+			var result struct {
+				Data cloudkey.Detail `json:"data"`
+			}
+			require.NoError(t, json.Unmarshal(response.Body.Bytes(), &result))
+			require.Equal(t, provider, result.Data.Provider)
+			if provider == "aliyun" {
+				aliyunID = result.Data.ID
+			}
+		})
+	}
+	response := doJSON(t, router, http.MethodGet, "/api/v1/credentials/cloud-keys?provider=aliyun", nil)
+	require.Equal(t, http.StatusOK, response.Code)
+	var list struct {
+		Data cloudkey.ListResponse `json:"data"`
+	}
+	require.NoError(t, json.Unmarshal(response.Body.Bytes(), &list))
+	require.Equal(t, int64(1), list.Data.Total)
+	require.Len(t, list.Data.Items, 1)
+	path := "/api/v1/credentials/cloud-keys/" + strconv.FormatUint(aliyunID, 10)
+	response = doJSON(t, router, http.MethodPut, path, map[string]any{"provider": "gcp"})
+	require.Equal(t, http.StatusOK, response.Code)
+	response = doJSON(t, router, http.MethodPut, path, map[string]any{"provider": "aliyun"})
+	require.Equal(t, http.StatusOK, response.Code)
+	response = doJSON(t, router, http.MethodPut, path, map[string]any{"provider": "azure"})
+	require.Equal(t, http.StatusBadRequest, response.Code)
+	response = doJSON(t, router, http.MethodGet, path, nil)
+	require.Contains(t, response.Body.String(), `"provider":"aliyun"`)
+}
+
+func TestHandler_PreservesLegacyAzureCredentialMetadata(t *testing.T) {
+	svc, db, cleanup := newSvcWithDB(t)
+	t.Cleanup(cleanup)
+	legacy := &models.CredentialCloudKey{
+		Name: "legacy-azure", Provider: "azure", AccessKeyIDEnc: []byte("SEALold-ak"), SecretAccessKeyEnc: []byte("SEALold-sk"),
+	}
+	require.NoError(t, db.Create(legacy).Error)
+	router := gin.New()
+	handler := cloudkey.NewHandler(svc)
+	router.PUT("/cloud-keys/:id", handler.HandleUpdate())
+	response := doJSON(t, router, http.MethodPut, "/cloud-keys/"+strconv.FormatUint(legacy.ID, 10), map[string]any{"description": "retained"})
+	require.Equal(t, http.StatusOK, response.Code, response.Body.String())
+	require.Contains(t, response.Body.String(), `"provider":"azure"`)
+	require.NoError(t, db.First(legacy, legacy.ID).Error)
+	require.Equal(t, []byte("SEALold-ak"), legacy.AccessKeyIDEnc)
+	require.Equal(t, []byte("SEALold-sk"), legacy.SecretAccessKeyEnc)
 }

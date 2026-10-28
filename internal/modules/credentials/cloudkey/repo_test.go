@@ -77,7 +77,7 @@ func TestRepo_List_ProviderFilter(t *testing.T) {
 		name string
 		prov string
 	}{
-		{"a1", "aws"}, {"a2", "aws"}, {"g1", "gcp"}, {"z1", "azure"},
+		{"a1", "aws"}, {"a2", "aws"}, {"g1", "gcp"}, {"ali1", "aliyun"},
 	}
 	for _, n := range names {
 		require.NoError(t, r.Create(ctx, &models.CredentialCloudKey{

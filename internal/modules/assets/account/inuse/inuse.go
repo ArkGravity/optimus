@@ -37,4 +37,12 @@ func countByCloudKeyID(ctx context.Context, db *gorm.DB, cloudKeyID uint64) (int
 	return count, err
 }
 
+// DetachDeletedByCloudKeyID clears historical references after the credential
+// is locked and live references are checked in the same transaction.
+func DetachDeletedByCloudKeyID(ctx context.Context, tx *gorm.DB, cloudKeyID uint64) error {
+	return tx.WithContext(ctx).Unscoped().Model(&models.CloudAccount{}).
+		Where("cloudkey_id = ? AND deleted_at IS NOT NULL", cloudKeyID).
+		Update("cloudkey_id", nil).Error
+}
+
 var _ Counter = (*GORMCounter)(nil)

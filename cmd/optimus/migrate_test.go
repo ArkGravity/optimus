@@ -26,7 +26,7 @@ func TestRunGoose_UpAppliesAllMigrations(t *testing.T) {
 	var maxVersion int64
 	require.NoError(t,
 		db.QueryRow("SELECT MAX(version_id) FROM goose_db_version").Scan(&maxVersion))
-	require.Equal(t, int64(21), maxVersion, "fresh baseline must end at 00021")
+	require.Equal(t, int64(23), maxVersion, "fresh schema must end at 00023")
 
 	rows, err := db.Query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name")
 	require.NoError(t, err)

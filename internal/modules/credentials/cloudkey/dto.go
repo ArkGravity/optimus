@@ -24,7 +24,7 @@ type Actor struct {
 type CreateRequest struct {
 	Name            string `json:"name"              binding:"required,max=128"`
 	Description     string `json:"description"       binding:"max=4096"`
-	Provider        string `json:"provider"          binding:"required,oneof=aws gcp azure"`
+	Provider        string `json:"provider"          binding:"required,oneof=aliyun aws gcp"`
 	Region          string `json:"region"            binding:"max=32"`
 	AccessKeyID     string `json:"access_key_id"     binding:"required,max=256"`
 	SecretAccessKey string `json:"secret_access_key" binding:"required"`
@@ -33,7 +33,7 @@ type CreateRequest struct {
 type UpdateRequest struct {
 	Name            *string `json:"name,omitempty"              binding:"omitempty,max=128"`
 	Description     *string `json:"description,omitempty"       binding:"omitempty,max=4096"`
-	Provider        *string `json:"provider,omitempty"          binding:"omitempty,oneof=aws gcp azure"`
+	Provider        *string `json:"provider,omitempty"          binding:"omitempty,oneof=aliyun aws gcp"`
 	Region          *string `json:"region,omitempty"            binding:"omitempty,max=32"`
 	AccessKeyID     *string `json:"access_key_id,omitempty"     binding:"omitempty,max=256"`
 	SecretAccessKey *string `json:"secret_access_key,omitempty"`

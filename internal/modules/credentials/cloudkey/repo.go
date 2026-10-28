@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/ArkGravity/optimus/internal/models"
 )
@@ -27,6 +28,10 @@ func (r *Repo) Get(ctx context.Context, id uint64) (*models.CredentialCloudKey, 
 
 func (r *Repo) GetTx(ctx context.Context, tx *gorm.DB, id uint64) (*models.CredentialCloudKey, error) {
 	return get(ctx, tx, id)
+}
+
+func (r *Repo) GetForUpdate(ctx context.Context, tx *gorm.DB, id uint64) (*models.CredentialCloudKey, error) {
+	return get(ctx, tx.Clauses(clause.Locking{Strength: "UPDATE"}), id)
 }
 
 func get(ctx context.Context, db *gorm.DB, id uint64) (*models.CredentialCloudKey, error) {

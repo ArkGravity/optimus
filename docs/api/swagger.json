@@ -2043,7 +2043,7 @@
                     },
                     {
                         "type": "string",
-                        "description": "filter by provider (aws|gcp|azure)",
+                        "description": "filter by provider (aliyun|aws|gcp)",
                         "name": "provider",
                         "in": "query"
                     }
@@ -4953,9 +4953,9 @@
                 "provider": {
                     "type": "string",
                     "enum": [
+                        "aliyun",
                         "aws",
-                        "gcp",
-                        "azure"
+                        "gcp"
                     ]
                 },
                 "region": {
@@ -4985,9 +4985,9 @@
                 "provider": {
                     "type": "string",
                     "enum": [
+                        "aliyun",
                         "aws",
-                        "gcp",
-                        "azure"
+                        "gcp"
                     ]
                 },
                 "region": {

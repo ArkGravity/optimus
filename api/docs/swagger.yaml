@@ -490,9 +490,9 @@ definitions:
         type: string
       provider:
         enum:
+        - aliyun
         - aws
         - gcp
-        - azure
         type: string
       region:
         maxLength: 32
@@ -518,9 +518,9 @@ definitions:
         type: string
       provider:
         enum:
+        - aliyun
         - aws
         - gcp
-        - azure
         type: string
       region:
         maxLength: 32
@@ -2083,7 +2083,7 @@ paths:
         in: query
         name: q
         type: string
-      - description: filter by provider (aws|gcp|azure)
+      - description: filter by provider (aliyun|aws|gcp)
         in: query
         name: provider
         type: string

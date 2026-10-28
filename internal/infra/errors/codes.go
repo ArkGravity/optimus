@@ -73,7 +73,7 @@ const (
 
 	// 43xxx P4 assets domain — cloud asset discovery + AWS SDK runtime.
 	// See P4 spec §9. 43001-43099 cloud-account domain; 43100-43199 sync/AWS.
-	// 43200+ reserved for future P4.x GCP/Azure provider expansion.
+	// 43200+ reserved for future P4.x Aliyun/GCP provider expansion.
 
 	// 43001-43099 cloud account / domain
 	CodeAssetsCloudAccountInUse        Code = 43001 // cloudkey delete blocked: referenced by CloudAccount

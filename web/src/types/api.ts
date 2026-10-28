@@ -267,12 +267,12 @@ export interface KubeconfigListQuery {
 }
 
 // Cloud keys
-export type CloudProvider = 'aws' | 'gcp' | 'azure'
+export type CloudProvider = 'aliyun' | 'aws' | 'gcp'
 export interface CloudKeySummary {
   id: number
   name: string
   description: string
-  provider: CloudProvider
+  provider: CloudProvider | 'azure'
   region: string
   created_by?: CredentialActor
   created_at: string

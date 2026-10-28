@@ -2045,7 +2045,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "filter by provider (aws|gcp|azure)",
+                        "description": "filter by provider (aliyun|aws|gcp)",
                         "name": "provider",
                         "in": "query"
                     }
@@ -4955,9 +4955,9 @@ const docTemplate = `{
                 "provider": {
                     "type": "string",
                     "enum": [
+                        "aliyun",
                         "aws",
-                        "gcp",
-                        "azure"
+                        "gcp"
                     ]
                 },
                 "region": {
@@ -4987,9 +4987,9 @@ const docTemplate = `{
                 "provider": {
                     "type": "string",
                     "enum": [
+                        "aliyun",
                         "aws",
-                        "gcp",
-                        "azure"
+                        "gcp"
                     ]
                 },
                 "region": {
