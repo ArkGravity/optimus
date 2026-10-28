@@ -96,45 +96,39 @@ func TestCloudKeyMigrationRejectsUnsafeDowngrade(t *testing.T) {
 	require.Equal(t, "23514", pgErr.Code)
 }
 
-func TestCloudKeyProviderMigrationPreservesLegacyCredentials(t *testing.T) {
-	database, keyID, _ := cloudKeyUpgradeDatabase(t)
-	var legacyID int64
-	require.NoError(t, database.QueryRow(`INSERT INTO credentials_cloud_keys
-        (name, provider, access_key_id_enc, secret_access_key_enc)
-        VALUES ('legacy-azure', 'azure', $1, $2) RETURNING id`, []byte("legacy-ak"), []byte("legacy-sk")).Scan(&legacyID))
+func TestCloudKeyProviderBaselinePreservesCredentials(t *testing.T) {
+	database, cleanup := startRawPostgres(t)
+	t.Cleanup(cleanup)
+	goose.SetBaseFS(migrations.FS)
+	require.NoError(t, goose.SetDialect("postgres"))
+	require.NoError(t, goose.UpTo(database, ".", 14))
+	providers := []string{"aliyun", "aws", "gcp"}
+	ids := make([]int64, len(providers))
+	for i, provider := range providers {
+		require.NoError(t, database.QueryRow(`INSERT INTO credentials_cloud_keys
+            (name, provider, access_key_id_enc, secret_access_key_enc)
+            VALUES ($1, $2, $3, $4) RETURNING id`, provider+"-key", provider,
+			[]byte("sealed-ak"), []byte("sealed-sk")).Scan(&ids[i]))
+	}
 	require.NoError(t, runGoose(database, "up"))
 	require.NoError(t, runGoose(database, "up"))
 	version, err := goose.GetDBVersion(database)
 	require.NoError(t, err)
-	require.Equal(t, int64(23), version)
-	var provider string
-	var accessKey, secretKey []byte
-	require.NoError(t, database.QueryRow("SELECT provider, access_key_id_enc, secret_access_key_enc FROM credentials_cloud_keys WHERE id = $1", legacyID).Scan(&provider, &accessKey, &secretKey))
-	require.Equal(t, "azure", provider)
-	require.Equal(t, []byte("legacy-ak"), accessKey)
-	require.Equal(t, []byte("legacy-sk"), secretKey)
-	var accounts int
-	require.NoError(t, database.QueryRow("SELECT count(*) FROM cloud_accounts WHERE cloudkey_id = $1", keyID).Scan(&accounts))
-	require.Equal(t, 2, accounts)
-	var aliyunID int64
-	require.NoError(t, database.QueryRow(`INSERT INTO credentials_cloud_keys
-        (name, provider, access_key_id_enc, secret_access_key_enc)
-        VALUES ('aliyun-key', 'aliyun', $1, $2) RETURNING id`, []byte("aliyun-ak"), []byte("aliyun-sk")).Scan(&aliyunID))
-	require.Error(t, runGoose(database, "down"), "downgrade must not destroy Aliyun credentials")
-	version, err = goose.GetDBVersion(database)
-	require.NoError(t, err)
-	require.Equal(t, int64(23), version)
-	_, err = database.Exec("DELETE FROM credentials_cloud_keys WHERE id = $1", aliyunID)
-	require.NoError(t, err)
-	require.NoError(t, runGoose(database, "down"))
-	version, err = goose.GetDBVersion(database)
-	require.NoError(t, err)
 	require.Equal(t, int64(22), version)
-	_, err = database.Exec(`INSERT INTO credentials_cloud_keys
+	for i, id := range ids {
+		var provider string
+		var accessKey, secretKey []byte
+		require.NoError(t, database.QueryRow("SELECT provider, access_key_id_enc, secret_access_key_enc FROM credentials_cloud_keys WHERE id = $1", id).Scan(&provider, &accessKey, &secretKey))
+		require.Equal(t, providers[i], provider)
+		require.Equal(t, []byte("sealed-ak"), accessKey)
+		require.Equal(t, []byte("sealed-sk"), secretKey)
+	}
+	for _, provider := range []string{"azure", "ibm"} {
+		_, err = database.Exec(`INSERT INTO credentials_cloud_keys
         (name, provider, access_key_id_enc, secret_access_key_enc)
-        VALUES ('rejected', 'aliyun', $1, $2)`, []byte("ak"), []byte("sk"))
-	var pgErr *pgconn.PgError
-	require.ErrorAs(t, err, &pgErr)
-	require.Equal(t, "23514", pgErr.Code)
-	require.NoError(t, runGoose(database, "up"))
+        VALUES ($1, $2, $3, $4)`, provider+"-rejected", provider, []byte("ak"), []byte("sk"))
+		var pgErr *pgconn.PgError
+		require.ErrorAs(t, err, &pgErr)
+		require.Equal(t, "23514", pgErr.Code)
+	}
 }

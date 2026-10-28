@@ -15,8 +15,7 @@
         <a-textarea v-model:value="form.description" :rows="2" :maxlength="4096" />
       </a-form-item>
       <a-form-item :label="$t('credentials.field.provider')" name="provider">
-        <a-input v-if="isEdit && initial?.provider === 'azure'" value="Azure" disabled />
-        <a-radio-group v-else v-model:value="form.provider">
+        <a-radio-group v-model:value="form.provider">
           <a-radio-button value="aliyun">Aliyun</a-radio-button>
           <a-radio-button value="aws">AWS</a-radio-button>
           <a-radio-button value="gcp">GCP</a-radio-button>
@@ -145,10 +144,6 @@ async function onOk() {
       }
       message.success(t('credentials.toast.updated'))
     } else {
-      if (form.provider === 'azure') {
-        message.error(t('credentials.invalid_provider'))
-        return
-      }
       await cloudKeyApi.create({
         name: form.name,
         description: form.description || undefined,

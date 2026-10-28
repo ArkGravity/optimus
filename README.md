@@ -160,19 +160,23 @@ seed. Its SQL sequence ends at `00021`. The kubeconfig lifecycle fix is included
 directly in `00015_create_clusters.sql`, preserving historical clusters and
 live-reference protection.
 
-The cloud-key deletion fix adds `00022_cloud_key_deletion.sql`. Apply it with
-the updated binary's `optimus migrate` command before running the updated
-server. It permits detaching references from deleted cloud accounts while
-preserving their history and protecting live references. No database recreation
-or reseeding is required. Deploying this fix to production is pending.
+The cloud-key deletion fix adds `00022_cloud_key_deletion.sql`. It permits
+detaching references from deleted cloud accounts while preserving their history
+and protecting live references.
 
-The provider update adds `00023_cloud_key_aliyun_provider.sql`. New cloud keys
-and provider changes support Aliyun, AWS and GCP. Existing Azure credentials
-are retained for metadata edits and deletion. Apply migrations through 00023
-before running the updated server. P4 asset discovery remains AWS-only.
+The provider update is included directly in
+`00014_create_credentials_cloud_keys.sql`. New cloud keys and provider changes
+support only Aliyun, AWS and GCP in the UI, API and database constraint.
+P4 asset discovery remains AWS-only.
 
-Future schema changes preserve the accepted production data and use new
-sequential migrations starting at `00024_xxx.sql`.
+On 2026-10-28 the operator confirmed that Production may still be rebuilt for
+this baseline revision. Recreate the application database, including Goose
+version records, then initialize it with the revised migrations and seed.
+An existing database does not pick up the revised 00014 constraint by rerunning
+migrate. Production rollout of this revision is pending.
+
+The source migration sequence ends at `00022`; the next new migration starts
+at `00023_xxx.sql`.
 `make migrate-new name=<snake_case>` uses sequential numbering.
 
 Older, pre-baseline databases require fresh initialization; no in-place upgrade

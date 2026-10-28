@@ -56,7 +56,9 @@ Center remains a static navigation placeholder. See the
 The [kubeconfig deletion fix](superpowers/plans/2026-10-23-kubeconfig-deletion.md)
 is included in the existing cluster migration, 00015. The migration sequence
 ends at 00021 for the accepted production baseline. The cloud-key cleanup fix
-adds migration 00022; the Aliyun/AWS/GCP cloud-key provider update adds 00023.
-These changes require a data-preserving migrate up before deployment; production
-rollout is pending. No database recreation or reseeding is needed. The next new
-migration starts at 00024. Release tagging remains outstanding.
+adds migration 00022; the Aliyun/AWS/GCP cloud-key provider constraint is included
+directly in the existing 00014 migration. The operator permits rebuilding
+Production for this baseline revision; existing application databases require
+recreation and initialization with migrate + seed. Production rollout is
+pending. The source migration sequence ends at 00022; the next new migration
+starts at 00023. Release tagging remains outstanding.

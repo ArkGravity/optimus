@@ -4,6 +4,7 @@ import { defineComponent, h } from 'vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import { RadioButton, RadioGroup } from 'ant-design-vue'
 import type * as AntDesignVue from 'ant-design-vue'
+import type { CloudProvider } from '@/types/api'
 import CloudKeyEditModal from './CloudKeyEditModal.vue'
 
 vi.mock('@/hooks/useI18n', () => ({ useI18n: () => ({ t: (key: string) => key }) }))
@@ -38,13 +39,13 @@ const stubs = {
   'a-input': Input, 'a-textarea': Input, 'a-input-password': Input,
 }
 
-function setup(initial?: { provider: 'azure' }) {
+function setup(initial?: { provider: CloudProvider }) {
   const api = { create: vi.fn().mockResolvedValue({}), update: vi.fn().mockResolvedValue({}) }
   const wrapper = mount(CloudKeyEditModal, {
     props: {
       open: true,
       initial: initial && {
-        id: 7, name: 'legacy', description: '', region: '',
+        id: 7, name: 'existing', description: '', region: '',
         created_at: '', updated_at: '', provider: initial.provider,
       },
     },
@@ -78,20 +79,18 @@ describe('Cloud Key provider selection', () => {
     expect(wrapper.emitted('saved')).toBeTruthy()
   })
 
-  it('allows legacy Azure metadata edits without relabeling the credential', async () => {
-    const { api, wrapper } = setup({ provider: 'azure' })
-    const legacyProvider = wrapper.find('input[disabled]')
-    expect((legacyProvider.element as HTMLInputElement).value).toBe('Azure')
-    expect(wrapper.findAll('input[type="radio"]')).toHaveLength(0)
-    await wrapper.find('input').setValue('renamed')
+  it('preserves the selected provider when editing credential metadata', async () => {
+    const { api, wrapper } = setup({ provider: 'gcp' })
+    expect(wrapper.find('input[value="gcp"]').element).toHaveProperty('checked', true)
+    await wrapper.find('input:not([type="radio"])').setValue('renamed')
     await wrapper.find('.submit').trigger('click')
     await flushPromises()
     expect(api.update).toHaveBeenCalledWith(7, { name: 'renamed' })
     expect(api.create).not.toHaveBeenCalled()
   })
 
-  it('resets a legacy edit before opening a new credential', async () => {
-    const { api, wrapper } = setup({ provider: 'azure' })
+  it('resets an edit before opening a new credential', async () => {
+    const { api, wrapper } = setup({ provider: 'aliyun' })
     await wrapper.setProps({ open: false, initial: null })
     await wrapper.setProps({ open: true })
     expect(wrapper.find('input[value="aws"]').element).toHaveProperty('checked', true)

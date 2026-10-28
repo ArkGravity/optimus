@@ -39,22 +39,25 @@ The accepted production baseline ends at 00021 and includes the kubeconfig
 lifecycle fix directly in `00015_create_clusters.sql`. The cloud-key cleanup
 fix adds `00022_cloud_key_deletion.sql`: only deleted cloud accounts may detach
 their credential reference; credential deletion and its audit event are atomic.
-The provider update adds `00023_cloud_key_aliyun_provider.sql`. New cloud keys
-and provider changes allow only `aliyun`, `aws`, and `gcp`; existing Azure keys
-retain their identity and support metadata edits and deletion. P4 asset sync
-remains AWS-only. Deploying these changes requires migrate up to 00023,
-preserving existing data; no database recreation or reseeding is needed.
-Production rollout is pending. Local Go 1.25 lint, full race/database tests on
-disposable PostgreSQL 17, frontend lint/typecheck/locale parity/160 tests,
+The provider update is included directly in
+`00014_create_credentials_cloud_keys.sql`. New cloud keys and provider changes
+allow only `aliyun`, `aws`, and `gcp`; the database constraint matches those
+three providers. P4 asset sync remains AWS-only.
+On 2026-10-28 the operator confirmed Production may still be rebuilt for this
+baseline revision. Existing application databases must be recreated and
+initialized with migrate + seed to adopt the revised 00014 constraint;
+rerunning migrate on an existing database does not reapply that migration.
+The source migration sequence ends at 00022; 00023 is available for the next
+new requirement or issue. Production rollout is pending.
+Local Go 1.25 lint, full race/database tests on disposable PostgreSQL 17,
+frontend lint/typecheck/locale parity/160 tests,
 generated-artifact checks, and the embedded binary build passed on 2026-10-28,
-including existing-data upgrades, provider validation and legacy credential
-retention, live-reference protection, atomic audit/rollback, and concurrent FK
-reference coverage. The next new migration starts at 00024. Older, pre-baseline
-databases require recreation and
-initialization with migrate + seed; no in-place upgrade path from that old
+including existing-data upgrades, provider validation, credential retention,
+live-reference protection, atomic audit/rollback, and concurrent FK reference
+coverage. Older, pre-baseline databases require recreation and initialization
+with migrate + seed; no in-place upgrade path from that old
 schema is maintained. Recreating containers alone retains PostgreSQL data.
-Do not commit work without explicit user authorization for
-that specific change.
+Do not commit work without explicit user authorization for that specific change.
 
 2026-09-24 monorepo merge: the `optimus-be` and `optimus-fe` repositories (split
 on 2026-09-14 from the original `logic3579/optimus` monorepo) were merged back
@@ -131,7 +134,7 @@ Run from the repository root:
 - `make swag` / `make swagger-diff`
 - `make dump-perms` / `make perm-check`
 - `make migrate-up` / `make migrate-down`
-- `make migrate-new name=<snake_case>` (sequential numbering, next is 00022)
+- `make migrate-new name=<snake_case>` (sequential numbering, next is 00023)
 - `make seed`
 
 Frontend commands run from `web/`: `bun install`, `bun run dev`,

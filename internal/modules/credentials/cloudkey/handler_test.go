@@ -18,7 +18,6 @@ import (
 	"github.com/ArkGravity/optimus/internal/infra/db"
 	"github.com/ArkGravity/optimus/internal/infra/middleware"
 	"github.com/ArkGravity/optimus/internal/infra/permissions"
-	"github.com/ArkGravity/optimus/internal/models"
 	"github.com/ArkGravity/optimus/internal/modules/audit"
 	"github.com/ArkGravity/optimus/internal/modules/credentials/cloudkey"
 	"github.com/ArkGravity/optimus/internal/seed"
@@ -168,22 +167,4 @@ func TestHandler_CloudKeyProviderContract(t *testing.T) {
 	require.Equal(t, http.StatusBadRequest, response.Code)
 	response = doJSON(t, router, http.MethodGet, path, nil)
 	require.Contains(t, response.Body.String(), `"provider":"aliyun"`)
-}
-
-func TestHandler_PreservesLegacyAzureCredentialMetadata(t *testing.T) {
-	svc, db, cleanup := newSvcWithDB(t)
-	t.Cleanup(cleanup)
-	legacy := &models.CredentialCloudKey{
-		Name: "legacy-azure", Provider: "azure", AccessKeyIDEnc: []byte("SEALold-ak"), SecretAccessKeyEnc: []byte("SEALold-sk"),
-	}
-	require.NoError(t, db.Create(legacy).Error)
-	router := gin.New()
-	handler := cloudkey.NewHandler(svc)
-	router.PUT("/cloud-keys/:id", handler.HandleUpdate())
-	response := doJSON(t, router, http.MethodPut, "/cloud-keys/"+strconv.FormatUint(legacy.ID, 10), map[string]any{"description": "retained"})
-	require.Equal(t, http.StatusOK, response.Code, response.Body.String())
-	require.Contains(t, response.Body.String(), `"provider":"azure"`)
-	require.NoError(t, db.First(legacy, legacy.ID).Error)
-	require.Equal(t, []byte("SEALold-ak"), legacy.AccessKeyIDEnc)
-	require.Equal(t, []byte("SEALold-sk"), legacy.SecretAccessKeyEnc)
 }

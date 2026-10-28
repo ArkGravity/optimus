@@ -272,7 +272,7 @@ export interface CloudKeySummary {
   id: number
   name: string
   description: string
-  provider: CloudProvider | 'azure'
+  provider: CloudProvider
   region: string
   created_by?: CredentialActor
   created_at: string

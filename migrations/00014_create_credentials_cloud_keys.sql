@@ -3,7 +3,7 @@ CREATE TABLE credentials_cloud_keys (
     id                     BIGSERIAL    PRIMARY KEY,
     name                   VARCHAR(128) NOT NULL UNIQUE,
     description            TEXT         NOT NULL DEFAULT '',
-    provider               VARCHAR(16)  NOT NULL CHECK (provider IN ('aws','gcp','azure')),
+    provider               VARCHAR(16)  NOT NULL CHECK (provider IN ('aliyun','aws','gcp')),
     region                 VARCHAR(32)  NOT NULL DEFAULT '',
     access_key_id_enc      BYTEA        NOT NULL,
     secret_access_key_enc  BYTEA        NOT NULL,
