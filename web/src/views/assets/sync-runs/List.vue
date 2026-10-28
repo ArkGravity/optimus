@@ -101,7 +101,7 @@ const startedAfterInput = ref<Dayjs | null>(null)
 const statusColor: Record<SyncRunStatus, string> = {
   running: 'blue', success: 'green', failed: 'red', skipped: 'gold',
 }
-const resourceTypeOptions = computed(() => (['instance', 'network', 'database'] as const).map(value => ({
+const resourceTypeOptions = computed(() => (['instance', 'network', 'database', 'security_group'] as const).map(value => ({
   value, label: t(`assets.sync.resource_types.${value}`),
 })))
 const statusOptions = computed(() => (['running', 'success', 'failed', 'skipped'] as const).map(value => ({

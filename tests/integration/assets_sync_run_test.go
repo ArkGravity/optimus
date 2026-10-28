@@ -52,6 +52,10 @@ func (*integrationFetcher) FetchVPCsAndSubnets(context.Context, *assetsync.Clien
 	return []models.AWSVPC{}, []models.AWSSubnet{}, nil
 }
 
+func (*integrationFetcher) FetchSecurityGroups(context.Context, *assetsync.Clients) ([]models.AWSSecurityGroup, error) {
+	return nil, nil
+}
+
 func (*integrationFetcher) FetchDatabases(context.Context, *assetsync.Clients) ([]models.AWSDatabase, error) {
 	return []models.AWSDatabase{}, nil
 }
@@ -90,12 +94,12 @@ func TestAssetsSyncEngineIntegration(t *testing.T) {
 
 		var foundRuns []models.AssetsSyncRun
 		require.NoError(t, gdb.Where("cloud_account_id = ?", account.ID).Order("id").Find(&foundRuns).Error)
-		require.Len(t, foundRuns, 3)
+		require.Len(t, foundRuns, 4)
 		for _, run := range foundRuns {
 			require.Equal(t, "success", run.Status)
 		}
-		require.Equal(t, []string{"instance", "network", "database"}, []string{
-			foundRuns[0].ResourceType, foundRuns[1].ResourceType, foundRuns[2].ResourceType,
+		require.Equal(t, []string{"instance", "network", "database", "security_group"}, []string{
+			foundRuns[0].ResourceType, foundRuns[1].ResourceType, foundRuns[2].ResourceType, foundRuns[3].ResourceType,
 		})
 		require.EqualValues(t, 3, foundRuns[0].ItemsSeen)
 		var alive int64
@@ -168,7 +172,7 @@ func TestAssetsManualSyncHTTPQueuesAndEventuallyRuns(t *testing.T) {
 		err := gdb.Model(&models.AssetsSyncRun{}).
 			Where("cloud_account_id = ? AND trigger = ? AND status = ? AND finished_at IS NOT NULL", account.ID, "manual", "success").
 			Count(&count).Error
-		return err == nil && count == 3
+		return err == nil && count == 4
 	}, 2*time.Second, 20*time.Millisecond)
 	var auditCount int64
 	require.NoError(t, gdb.Model(&models.AuditLog{}).

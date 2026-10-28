@@ -22,6 +22,12 @@ func (fn networkFetcherFunc) FetchVPCsAndSubnets(ctx context.Context, clients *C
 
 type databaseFetcherFunc func(context.Context, *Clients) ([]models.AWSDatabase, error)
 
+type securityGroupFetcherFunc func(context.Context, *Clients) ([]models.AWSSecurityGroup, error)
+
+func (fn securityGroupFetcherFunc) FetchSecurityGroups(ctx context.Context, clients *Clients) ([]models.AWSSecurityGroup, error) {
+	return fn(ctx, clients)
+}
+
 func (fn databaseFetcherFunc) FetchDatabases(ctx context.Context, clients *Clients) ([]models.AWSDatabase, error) {
 	return fn(ctx, clients)
 }
@@ -48,6 +54,12 @@ func TestCompositeFetcher_RoutesComponents(t *testing.T) {
 			}
 			return nil, wantErr
 		}),
+		SecurityGroup: securityGroupFetcherFunc(func(_ context.Context, got *Clients) ([]models.AWSSecurityGroup, error) {
+			if got != clients {
+				t.Error("security group client was not forwarded")
+			}
+			return []models.AWSSecurityGroup{{GroupID: "sg-1"}}, nil
+		}),
 	}
 
 	instances, err := fetcher.FetchInstances(context.Background(), clients)
@@ -61,6 +73,9 @@ func TestCompositeFetcher_RoutesComponents(t *testing.T) {
 	if databases, err := fetcher.FetchDatabases(context.Background(), clients); databases != nil || !errors.Is(err, wantErr) {
 		t.Fatalf("FetchDatabases() = %#v, %v", databases, err)
 	}
+	if groups, err := fetcher.FetchSecurityGroups(context.Background(), clients); err != nil || len(groups) != 1 || groups[0].GroupID != "sg-1" {
+		t.Fatalf("FetchSecurityGroups() = %#v, %v", groups, err)
+	}
 }
 
 func TestCompositeFetcher_MissingComponentsReturnConfigurationError(t *testing.T) {
@@ -71,9 +86,10 @@ func TestCompositeFetcher_MissingComponentsReturnConfigurationError(t *testing.T
 		{name: "nil receiver"},
 		{name: "nil components", fetcher: &CompositeFetcher{}},
 		{name: "typed nil components", fetcher: &CompositeFetcher{
-			Instance: instanceFetcherFunc(nil),
-			Network:  networkFetcherFunc(nil),
-			Database: databaseFetcherFunc(nil),
+			Instance:      instanceFetcherFunc(nil),
+			Network:       networkFetcherFunc(nil),
+			Database:      databaseFetcherFunc(nil),
+			SecurityGroup: securityGroupFetcherFunc(nil),
 		}},
 	}
 	for _, test := range tests {
@@ -91,6 +107,10 @@ func TestCompositeFetcher_MissingComponentsReturnConfigurationError(t *testing.T
 			databases, err := test.fetcher.FetchDatabases(context.Background(), nil)
 			if databases != nil || !errors.Is(err, ErrFetcherNotConfigured) {
 				t.Errorf("FetchDatabases() = %#v, %v", databases, err)
+			}
+			groups, err := test.fetcher.FetchSecurityGroups(context.Background(), nil)
+			if groups != nil || !errors.Is(err, ErrFetcherNotConfigured) {
+				t.Errorf("FetchSecurityGroups() = %#v, %v", groups, err)
 			}
 		})
 	}

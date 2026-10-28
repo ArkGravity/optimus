@@ -1497,6 +1497,188 @@ const docTemplate = `{
                 }
             }
         },
+        "/assets/security-groups": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "List security groups",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "cloud account ID",
+                        "name": "account_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "AWS region",
+                        "name": "region",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "VPC ID",
+                        "name": "vpc_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "name, group ID, or description",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "include deleted snapshots",
+                        "name": "include_deleted",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 200,
+                        "type": "integer",
+                        "default": 20,
+                        "description": "page size",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_assets_securitygroup.ListResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/security-groups/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Get security group rules",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "security group snapshot row ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_assets_securitygroup.Detail"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    }
+                }
+            }
+        },
         "/assets/sync-runs": {
             "get": {
                 "security": [
@@ -1520,7 +1702,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "instance|network|database",
+                        "description": "instance|network|database|security_group",
                         "name": "resource_type",
                         "in": "query"
                     },
@@ -4717,6 +4899,164 @@ const docTemplate = `{
                     "additionalProperties": {
                         "type": "string"
                     }
+                },
+                "vpc_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_modules_assets_securitygroup.Detail": {
+            "type": "object",
+            "properties": {
+                "cloud_account_id": {
+                    "type": "integer"
+                },
+                "cloud_account_name": {
+                    "type": "string"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "group_id": {
+                    "type": "string"
+                },
+                "group_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "inbound_rule_count": {
+                    "type": "integer"
+                },
+                "inbound_rules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_modules_assets_securitygroup.Rule"
+                    }
+                },
+                "last_seen_at": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "outbound_rule_count": {
+                    "type": "integer"
+                },
+                "outbound_rules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_modules_assets_securitygroup.Rule"
+                    }
+                },
+                "owner_id": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "vpc_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_modules_assets_securitygroup.ListResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_modules_assets_securitygroup.Summary"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_modules_assets_securitygroup.Rule": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "from_port": {
+                    "type": "integer"
+                },
+                "owner_id": {
+                    "type": "string"
+                },
+                "peering_id": {
+                    "type": "string"
+                },
+                "protocol": {
+                    "type": "string"
+                },
+                "target": {
+                    "type": "string"
+                },
+                "target_type": {
+                    "type": "string"
+                },
+                "to_port": {
+                    "type": "integer"
+                },
+                "vpc_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_modules_assets_securitygroup.Summary": {
+            "type": "object",
+            "properties": {
+                "cloud_account_id": {
+                    "type": "integer"
+                },
+                "cloud_account_name": {
+                    "type": "string"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "group_id": {
+                    "type": "string"
+                },
+                "group_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "inbound_rule_count": {
+                    "type": "integer"
+                },
+                "last_seen_at": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "outbound_rule_count": {
+                    "type": "integer"
+                },
+                "owner_id": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
                 },
                 "vpc_id": {
                     "type": "string"

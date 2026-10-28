@@ -24,6 +24,7 @@ const expectedGates: Record<string, string[]> = {
   ],
   'databases/List.vue': [],
   'instances/List.vue': [],
+  'security-groups/List.vue': [],
   'sync-runs/List.vue': [],
   'vpcs/Detail.vue': [],
   'vpcs/List.vue': [],

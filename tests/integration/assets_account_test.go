@@ -81,6 +81,9 @@ func TestAssetsCloudAccountHTTPIntegration(t *testing.T) {
 		id, _ := createCloudAccountHTTP(t, r, token, key.ID, "region-shrink", "us-east-1", "eu-west-1")
 		dbtest.SeedAWSInstance(t, gdb, id, "us-east-1", "i-east")
 		dbtest.SeedAWSInstance(t, gdb, id, "eu-west-1", "i-west")
+		for _, region := range []string{"us-east-1", "eu-west-1"} {
+			require.NoError(t, gdb.Create(&models.AWSSecurityGroup{CloudAccountID: id, Region: region, GroupID: "sg-region", LastSeenAt: time.Now()}).Error)
+		}
 
 		rec := assetsRequest(t, r, token, http.MethodPut, fmt.Sprintf("/api/v1/assets/cloud-accounts/%d", id), map[string]any{
 			"enabled_regions": []string{"us-east-1"},
@@ -92,6 +95,11 @@ func TestAssetsCloudAccountHTTPIntegration(t *testing.T) {
 		require.NoError(t, gdb.Unscoped().Where("instance_id = ?", "i-west").First(&west).Error)
 		require.False(t, east.DeletedAt.Valid)
 		require.True(t, west.DeletedAt.Valid)
+		var eastGroup, westGroup models.AWSSecurityGroup
+		require.NoError(t, gdb.Unscoped().Where("cloud_account_id = ? AND region = ?", id, "us-east-1").First(&eastGroup).Error)
+		require.NoError(t, gdb.Unscoped().Where("cloud_account_id = ? AND region = ?", id, "eu-west-1").First(&westGroup).Error)
+		require.False(t, eastGroup.DeletedAt.Valid)
+		require.True(t, westGroup.DeletedAt.Valid)
 	})
 
 	t.Run("delete cascades every resource type", func(t *testing.T) {
@@ -101,15 +109,16 @@ func TestAssetsCloudAccountHTTPIntegration(t *testing.T) {
 		require.NoError(t, gdb.Create(&models.AWSVPC{CloudAccountID: id, Region: "us-east-1", VPCID: "vpc-cascade", LastSeenAt: now}).Error)
 		require.NoError(t, gdb.Create(&models.AWSSubnet{CloudAccountID: id, Region: "us-east-1", SubnetID: "subnet-cascade", VPCID: "vpc-cascade", LastSeenAt: now}).Error)
 		require.NoError(t, gdb.Create(&models.AWSDatabase{CloudAccountID: id, Region: "us-east-1", DBInstanceID: "db-cascade", LastSeenAt: now}).Error)
+		require.NoError(t, gdb.Create(&models.AWSSecurityGroup{CloudAccountID: id, Region: "us-east-1", GroupID: "sg-cascade", LastSeenAt: now}).Error)
 
 		rec := assetsRequest(t, r, token, http.MethodDelete, fmt.Sprintf("/api/v1/assets/cloud-accounts/%d", id), nil)
 		require.Equalf(t, http.StatusOK, rec.Code, "delete failed: %s", rec.Body.String())
-		require.EqualValues(t, 4, bodyMap(t, rec)["data"].(map[string]any)["cascaded_resources_count"])
+		require.EqualValues(t, 5, bodyMap(t, rec)["data"].(map[string]any)["cascaded_resources_count"])
 
 		var accountCount int64
 		require.NoError(t, gdb.Unscoped().Model(&models.CloudAccount{}).Where("id = ? AND deleted_at IS NOT NULL", id).Count(&accountCount).Error)
 		require.EqualValues(t, 1, accountCount)
-		for _, model := range []any{&models.AWSInstance{}, &models.AWSVPC{}, &models.AWSSubnet{}, &models.AWSDatabase{}} {
+		for _, model := range []any{&models.AWSInstance{}, &models.AWSVPC{}, &models.AWSSubnet{}, &models.AWSDatabase{}, &models.AWSSecurityGroup{}} {
 			var count int64
 			require.NoError(t, gdb.Unscoped().Model(model).Where("cloud_account_id = ? AND deleted_at IS NOT NULL", id).Count(&count).Error)
 			require.EqualValues(t, 1, count, "%T was not soft-deleted", model)

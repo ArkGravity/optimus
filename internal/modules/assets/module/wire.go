@@ -22,6 +22,7 @@ import (
 	assetdatabase "github.com/ArkGravity/optimus/internal/modules/assets/database"
 	asseterrs "github.com/ArkGravity/optimus/internal/modules/assets/errs"
 	"github.com/ArkGravity/optimus/internal/modules/assets/instance"
+	"github.com/ArkGravity/optimus/internal/modules/assets/securitygroup"
 	assetsync "github.com/ArkGravity/optimus/internal/modules/assets/sync"
 	"github.com/ArkGravity/optimus/internal/modules/assets/sync/runs"
 	"github.com/ArkGravity/optimus/internal/modules/assets/vpc"
@@ -49,13 +50,14 @@ type Module struct {
 	Engine        *assetsync.Engine
 	CronScheduler *cron.Cron
 
-	accountHandler  *account.Handler
-	instanceHandler *instance.Handler
-	vpcHandler      *vpc.Handler
-	databaseHandler *assetdatabase.Handler
-	runsHandler     *runs.Handler
-	cancel          context.CancelFunc
-	workers         workerGroup
+	accountHandler       *account.Handler
+	instanceHandler      *instance.Handler
+	vpcHandler           *vpc.Handler
+	securityGroupHandler *securitygroup.Handler
+	databaseHandler      *assetdatabase.Handler
+	runsHandler          *runs.Handler
+	cancel               context.CancelFunc
+	workers              workerGroup
 }
 
 func Wire(rootCtx context.Context, in Input) *Module {
@@ -69,9 +71,10 @@ func Wire(rootCtx context.Context, in Input) *Module {
 	fetcher := in.Fetcher
 	if fetcher == nil {
 		fetcher = &assetsync.CompositeFetcher{
-			Instance: assetsync.EC2Fetcher{},
-			Network:  assetsync.VPCFetcher{},
-			Database: assetsync.RDSFetcher{},
+			Instance:      assetsync.EC2Fetcher{},
+			Network:       assetsync.VPCFetcher{},
+			Database:      assetsync.RDSFetcher{},
+			SecurityGroup: assetsync.SecurityGroupFetcher{},
 		}
 	}
 	engine := assetsync.NewEngine(
@@ -84,14 +87,15 @@ func Wire(rootCtx context.Context, in Input) *Module {
 	)
 
 	module := &Module{
-		Consumer:        assets.NewConsumer(in.DB),
-		InUseCounter:    inuse.New(in.DB),
-		Engine:          engine,
-		instanceHandler: instance.NewHandler(instance.NewService(instance.NewRepo(in.DB))),
-		vpcHandler:      vpc.NewHandler(vpc.NewService(vpc.NewRepo(in.DB))),
-		databaseHandler: assetdatabase.NewHandler(assetdatabase.NewService(assetdatabase.NewRepo(in.DB))),
-		runsHandler:     runs.NewHandler(runs.NewService(runsRepo)),
-		cancel:          cancel,
+		Consumer:             assets.NewConsumer(in.DB),
+		InUseCounter:         inuse.New(in.DB),
+		Engine:               engine,
+		instanceHandler:      instance.NewHandler(instance.NewService(instance.NewRepo(in.DB))),
+		vpcHandler:           vpc.NewHandler(vpc.NewService(vpc.NewRepo(in.DB))),
+		securityGroupHandler: securitygroup.NewHandler(securitygroup.NewService(securitygroup.NewRepo(in.DB))),
+		databaseHandler:      assetdatabase.NewHandler(assetdatabase.NewService(assetdatabase.NewRepo(in.DB))),
+		runsHandler:          runs.NewHandler(runs.NewService(runsRepo)),
+		cancel:               cancel,
 	}
 	module.accountHandler = account.NewHandler(accountService)
 	module.accountHandler.SetTriggerSync(newManualSyncTrigger(moduleCtx, accountService, engine, in.Config.AWSRequestTimeout, in.Logger, &module.workers))
@@ -136,6 +140,7 @@ func (m *Module) MountRoutes(protected *gin.RouterGroup, cache *rbac.PermissionC
 	m.accountHandler.Mount(group, requirePermission)
 	m.instanceHandler.Mount(group, requirePermission)
 	m.vpcHandler.Mount(group, requirePermission)
+	m.securityGroupHandler.Mount(group, requirePermission)
 	m.databaseHandler.Mount(group, requirePermission)
 	m.runsHandler.Mount(group, requirePermission)
 }
@@ -240,10 +245,10 @@ func manualSyncTimeout(requestTimeout time.Duration, regionCount int) time.Durat
 	if regionCount < 1 {
 		regionCount = 1
 	}
-	if int64(regionCount) > math.MaxInt64/3 {
+	if int64(regionCount) > math.MaxInt64/4 {
 		return time.Duration(math.MaxInt64)
 	}
-	units := int64(regionCount) * 3
+	units := int64(regionCount) * 4
 	if int64(requestTimeout) > math.MaxInt64/units {
 		return time.Duration(math.MaxInt64)
 	}

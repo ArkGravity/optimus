@@ -15,6 +15,9 @@ var ErrFetcherNotConfigured = errors.New("assets sync fetcher is not configured"
 
 // CompositeFetcher routes each resource sweep to its AWS service fetcher.
 type CompositeFetcher struct {
+	SecurityGroup interface {
+		FetchSecurityGroups(context.Context, *Clients) ([]models.AWSSecurityGroup, error)
+	}
 	Instance interface {
 		FetchInstances(context.Context, *Clients) ([]models.AWSInstance, error)
 	}
@@ -58,4 +61,11 @@ func isNilFetcher(fetcher any) bool {
 	default:
 		return false
 	}
+}
+
+func (fetcher *CompositeFetcher) FetchSecurityGroups(ctx context.Context, clients *Clients) ([]models.AWSSecurityGroup, error) {
+	if fetcher == nil || isNilFetcher(fetcher.SecurityGroup) {
+		return nil, fmt.Errorf("security_group: %w", ErrFetcherNotConfigured)
+	}
+	return fetcher.SecurityGroup.FetchSecurityGroups(ctx, clients)
 }

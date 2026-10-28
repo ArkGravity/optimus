@@ -22,7 +22,7 @@ func (h *Handler) Mount(group *gin.RouterGroup, requirePermission func(code stri
 // @Security BearerAuth
 // @Produce  json
 // @Param    account_id    query int    false "filter by cloud account"
-// @Param    resource_type query string false "instance|network|database"
+// @Param    resource_type query string false "instance|network|database|security_group"
 // @Param    status        query string false "running|success|failed|skipped"
 // @Param    started_after query string false "inclusive RFC3339 lower bound"
 // @Param    page          query int    false "page" default(1)

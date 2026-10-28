@@ -114,7 +114,7 @@ func TestCloudKeyProviderBaselinePreservesCredentials(t *testing.T) {
 	require.NoError(t, runGoose(database, "up"))
 	version, err := goose.GetDBVersion(database)
 	require.NoError(t, err)
-	require.Equal(t, int64(22), version)
+	require.Equal(t, int64(23), version)
 	for i, id := range ids {
 		var provider string
 		var accessKey, secretKey []byte

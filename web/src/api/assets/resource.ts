@@ -2,6 +2,8 @@ import type { AxiosInstance } from 'axios'
 
 import type { Envelope } from '@/types/api'
 import type {
+  SecurityGroupSummary,
+  SecurityGroupDetail,
   DatabaseSummary,
   InstanceSummary,
   ListResponse,
@@ -17,6 +19,8 @@ export interface ResourceListParams {
   page?: number
   size?: number
 }
+
+export interface SecurityGroupListParams extends ResourceListParams { vpc_id?: string }
 
 export interface InstanceListParams extends ResourceListParams {
   state?: string
@@ -37,6 +41,14 @@ export interface SubnetListParams {
 
 export function makeAssetsResourceApi(client: AxiosInstance) {
   return {
+    listSecurityGroups: async (params: SecurityGroupListParams = {}) => {
+      const response = await client.get<Envelope<ListResponse<SecurityGroupSummary>>>('/assets/security-groups', { params })
+      return response.data.data
+    },
+    getSecurityGroup: async (id: number) => {
+      const response = await client.get<Envelope<SecurityGroupDetail>>(`/assets/security-groups/${id}`)
+      return response.data.data
+    },
     listInstances: async (params: InstanceListParams = {}) => {
       const response = await client.get<Envelope<ListResponse<InstanceSummary>>>('/assets/instances', { params })
       return response.data.data

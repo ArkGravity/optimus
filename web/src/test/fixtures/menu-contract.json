@@ -12,13 +12,18 @@
       "permission": "assets:account:read"
     },
     {
-      "component": "assets/instances/List",
-      "path": "/assets/instances",
+      "component": "assets/vpcs/List",
+      "path": "/assets/vpcs",
       "permission": "assets:resource:read"
     },
     {
-      "component": "assets/vpcs/List",
-      "path": "/assets/vpcs",
+      "component": "assets/security-groups/List",
+      "path": "/assets/security-groups",
+      "permission": "assets:resource:read"
+    },
+    {
+      "component": "assets/instances/List",
+      "path": "/assets/instances",
       "permission": "assets:resource:read"
     },
     {

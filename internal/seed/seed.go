@@ -156,8 +156,9 @@ func ensureInitialMenus(ctx context.Context, tx *gorm.DB) error {
 		{Code: "dashboard", Name: "menu.dashboard", Path: "/dashboard", Component: "dashboard/Index", Icon: "dashboard"},
 		{Code: "assets", Name: "menu.assets_group", Path: "/assets", Component: "", Icon: "cloud-server", PermissionCode: sp("assets:resource:read"), ChildSortStart: 1, Children: []spec{
 			{Code: "assets.cloud_accounts", Name: "menu.assets.cloud_accounts", Path: "/assets/cloud-accounts", Component: "assets/cloud-accounts/List", PermissionCode: sp("assets:account:read")},
-			{Code: "assets.instances", Name: "menu.assets.instances", Path: "/assets/instances", Component: "assets/instances/List", PermissionCode: sp("assets:resource:read")},
 			{Code: "assets.vpcs", Name: "menu.assets.vpcs", Path: "/assets/vpcs", Component: "assets/vpcs/List", PermissionCode: sp("assets:resource:read")},
+			{Code: "assets.security_groups", Name: "menu.assets.security_groups", Path: "/assets/security-groups", Component: "assets/security-groups/List", PermissionCode: sp("assets:resource:read")},
+			{Code: "assets.instances", Name: "menu.assets.instances", Path: "/assets/instances", Component: "assets/instances/List", PermissionCode: sp("assets:resource:read")},
 			{Code: "assets.databases", Name: "menu.assets.databases", Path: "/assets/databases", Component: "assets/databases/List", PermissionCode: sp("assets:resource:read")},
 			{Code: "assets.sync_runs", Name: "menu.assets.sync_runs", Path: "/assets/sync-runs", Component: "assets/sync-runs/List", PermissionCode: sp("assets:sync:read")},
 		}},

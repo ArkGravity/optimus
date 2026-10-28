@@ -68,6 +68,12 @@ describe('assets API factories', () => {
     await api.listVPCs(vpcs)
     expect(methods.get).toHaveBeenLastCalledWith('/assets/vpcs', { params: vpcs })
 
+    const groups = { account_id: 2, region: 'eu-west-1', vpc_id: 'vpc-1', include_deleted: true }
+    await api.listSecurityGroups(groups)
+    expect(methods.get).toHaveBeenLastCalledWith('/assets/security-groups', { params: groups })
+    await api.getSecurityGroup(19)
+    expect(methods.get).toHaveBeenLastCalledWith('/assets/security-groups/19')
+
     await api.listSubnets(9)
     expect(methods.get).toHaveBeenLastCalledWith('/assets/vpcs/9/subnets')
 

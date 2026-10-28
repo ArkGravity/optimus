@@ -148,7 +148,8 @@
       "instances": "EC2 Instances",
       "vpcs": "VPCs",
       "databases": "RDS Databases",
-      "sync_runs": "Sync Runs"
+      "sync_runs": "Sync Runs",
+      "security_groups": "Security Groups"
     },
     "observability_group": "Observability Center",
     "observability": {
@@ -343,6 +344,28 @@
         "tags": "Tags",
         "last_seen_at": "Last seen",
         "no_data": "No data"
+      },
+      "security_group": {
+        "title": "Security Groups",
+        "group_id": "Group ID",
+        "group_name": "Group name",
+        "description": "Description",
+        "owner_id": "Owner account",
+        "inbound": "Inbound rules",
+        "outbound": "Outbound rules",
+        "protocol": "Protocol",
+        "ports": "Ports / ICMP type and code",
+        "source": "Source",
+        "destination": "Destination",
+        "target_type": "Target type",
+        "all": "All",
+        "details": "Rules and details",
+        "target_types": {
+          "ipv4": "IPv4",
+          "ipv6": "IPv6",
+          "prefix_list": "Prefix list",
+          "security_group": "Security group"
+        }
       }
     },
     "sync": {
@@ -372,7 +395,8 @@
       "resource_types": {
         "instance": "Instance",
         "network": "Network",
-        "database": "Database"
+        "database": "Database",
+        "security_group": "Security groups"
       },
       "triggers": {
         "cron": "Scheduled",

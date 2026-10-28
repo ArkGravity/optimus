@@ -53,12 +53,13 @@ The operator confirmed production database recreation, deployment of the latest
 image, and successful P0–P4 functional acceptance on 2026-10-28. Observability
 Center remains a static navigation placeholder. See the
 [README database baseline](../README.md#database-baseline).
-The [kubeconfig deletion fix](superpowers/plans/2026-10-23-kubeconfig-deletion.md)
-is included in the existing cluster migration, 00015. The migration sequence
-ends at 00021 for the accepted production baseline. The cloud-key cleanup fix
-adds migration 00022; the Aliyun/AWS/GCP cloud-key provider constraint is included
-directly in the existing 00014 migration. The operator permits rebuilding
-Production for this baseline revision; existing application databases require
-recreation and initialization with migrate + seed. Production rollout is
-pending. The source migration sequence ends at 00022; the next new migration
-starts at 00023. Release tagging remains outstanding.
+The accepted production revision is `d0016d0`, with migrations through 00022
+and the Aliyun/AWS/GCP cloud-key constraint in 00014; the operator confirmed
+rebuilding, deploying and accepting it on 2026-10-28.
+
+The current Assets extension adds read-only AWS Security Groups and their
+inbound/outbound rules. Migration 00023 adds snapshots without rebuilding the
+accepted database; rerun seed to add and reorder the menus. The sync credential
+needs `ec2:DescribeSecurityGroups`. See the [P4 checklist](../scripts/p4-smoke.md)
+for verification. Production rollout of this extension is pending; the next new
+migration starts at 00024. Release tagging remains outstanding.

@@ -155,28 +155,22 @@ Do not point those checklists at production credentials or clusters.
 
 ### Database baseline
 
-The accepted production database was rebuilt and initialized with migrate +
-seed. Its SQL sequence ends at `00021`. The kubeconfig lifecycle fix is included
-directly in `00015_create_clusters.sql`, preserving historical clusters and
-live-reference protection.
+The operator confirmed rebuilding, deploying and accepting `d0016d0` on
+2026-10-28. This accepted production baseline ends at `00022`, including the
+kubeconfig lifecycle fix in `00015_create_clusters.sql`, cloud-key deletion in
+`00022_cloud_key_deletion.sql`, and the Aliyun/AWS/GCP provider constraint in
+`00014_create_credentials_cloud_keys.sql`. P4 asset discovery remains AWS-only.
 
-The cloud-key deletion fix adds `00022_cloud_key_deletion.sql`. It permits
-detaching references from deleted cloud accounts while preserving their history
-and protecting live references.
+The Assets extension adds `00023_assets_security_groups.sql` for AWS Security
+Groups and their inbound/outbound rules. Upgrade the accepted 00022 database
+with migrate + seed, preserving existing data. Seed adds the Security Groups
+menu and orders Assets as Cloud Accounts, VPCs, Security Groups, EC2 Instances,
+RDS Databases, Sync Runs. Read-only sync credentials additionally require
+`ec2:DescribeSecurityGroups`; see the [P4 checklist](scripts/p4-smoke.md).
+Production rollout and acceptance of this extension are pending.
 
-The provider update is included directly in
-`00014_create_credentials_cloud_keys.sql`. New cloud keys and provider changes
-support only Aliyun, AWS and GCP in the UI, API and database constraint.
-P4 asset discovery remains AWS-only.
-
-On 2026-10-28 the operator confirmed that Production may still be rebuilt for
-this baseline revision. Recreate the application database, including Goose
-version records, then initialize it with the revised migrations and seed.
-An existing database does not pick up the revised 00014 constraint by rerunning
-migrate. Production rollout of this revision is pending.
-
-The source migration sequence ends at `00022`; the next new migration starts
-at `00023_xxx.sql`.
+The source migration sequence ends at `00023`; the next new migration starts
+at `00024_xxx.sql`.
 `make migrate-new name=<snake_case>` uses sequential numbering.
 
 Older, pre-baseline databases require fresh initialization; no in-place upgrade

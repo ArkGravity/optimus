@@ -47,7 +47,7 @@ func validateListQuery(query ListQuery) (ListFilter, error) {
 	if query.AccountID > math.MaxInt64 {
 		return ListFilter{}, validationError("account_id exceeds database range")
 	}
-	if !oneOf(query.ResourceType, "", "instance", "network", "database") {
+	if !oneOf(query.ResourceType, "", "instance", "network", "database", "security_group") {
 		return ListFilter{}, validationError("invalid resource_type")
 	}
 	if !oneOf(query.Status, "", "running", "success", "failed", "skipped") {

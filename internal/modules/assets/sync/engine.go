@@ -38,6 +38,7 @@ type Fetcher interface {
 	FetchInstances(context.Context, *Clients) ([]models.AWSInstance, error)
 	FetchVPCsAndSubnets(context.Context, *Clients) ([]models.AWSVPC, []models.AWSSubnet, error)
 	FetchDatabases(context.Context, *Clients) ([]models.AWSDatabase, error)
+	FetchSecurityGroups(context.Context, *Clients) ([]models.AWSSecurityGroup, error)
 }
 
 type Engine struct {
@@ -123,6 +124,12 @@ func (e *Engine) RunAccountLocked(ctx context.Context, accountID uint64, trigger
 			return err
 		}
 		if err := e.sweepDatabases(ctx, account, region, trigger, triggeredBy); err != nil {
+			return err
+		}
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		if err := e.sweepSecurityGroups(ctx, account, region, trigger, triggeredBy); err != nil {
 			return err
 		}
 	}

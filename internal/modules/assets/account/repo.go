@@ -197,6 +197,7 @@ func (r *Repo) CascadeSoftDeleteResources(ctx context.Context, tx *gorm.DB, acco
 	}
 	tx = tx.WithContext(ctx)
 	modelsToDelete := []any{
+		&models.AWSSecurityGroup{},
 		&models.AWSInstance{},
 		&models.AWSVPC{},
 		&models.AWSSubnet{},

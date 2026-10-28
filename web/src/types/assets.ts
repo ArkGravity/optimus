@@ -106,7 +106,7 @@ export interface DatabaseSummary {
 }
 
 export type SyncRunStatus = 'running' | 'success' | 'failed' | 'skipped'
-export type SyncRunResourceType = 'instance' | 'network' | 'database'
+export type SyncRunResourceType = 'instance' | 'network' | 'database' | 'security_group'
 export type SyncRunTrigger = 'cron' | 'manual' | 'test'
 
 export interface SyncRunSummary {
@@ -129,4 +129,37 @@ export interface SyncRunSummary {
 export interface ListResponse<T> {
   items: T[]
   total: number
+}
+
+export interface SecurityGroupSummary {
+  id: number
+  cloud_account_id: number
+  cloud_account_name: string
+  region: string
+  group_id: string
+  group_name: string
+  name: string
+  description: string
+  vpc_id: string
+  owner_id: string
+  inbound_rule_count: number
+  outbound_rule_count: number
+  last_seen_at: string
+  deleted: boolean
+}
+export interface SecurityGroupRule {
+  protocol: string
+  from_port?: number
+  to_port?: number
+  target_type: 'ipv4' | 'ipv6' | 'prefix_list' | 'security_group'
+  target: string
+  description: string
+  owner_id?: string
+  vpc_id?: string
+  peering_id?: string
+}
+export interface SecurityGroupDetail extends SecurityGroupSummary {
+  tags: Record<string, string>
+  inbound_rules: SecurityGroupRule[]
+  outbound_rules: SecurityGroupRule[]
 }

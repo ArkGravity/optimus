@@ -19,8 +19,10 @@ all P0–P4 functions passed production acceptance. Production functional
 acceptance is complete; release tagging remains outstanding. Dev and
 Production are selected; UAT is skipped.
 
-The accepted production code baseline is `330ff6c`. CI run `40596993827` passed
-all six jobs, including publication of `main-330ff6c` to GHCR and Docker Hub.
+The accepted production code baseline is `d0016d0`. CI run `40677238414` passed
+all six jobs, including publication of `main-d0016d0` to GHCR and Docker Hub.
+The operator confirmed rebuilding, deploying and accepting this revision on
+2026-10-28, including cloud-key deletion and the three-provider baseline.
 
 Observability Center contains one authenticated Coming Soon child. Reconsider
 its implementation after other Optimus functions mature.
@@ -35,28 +37,31 @@ deletion issue discovered during that smoke is fixed by the follow-up in
 deletion; historical references are detached in the same transaction as the
 physical credential deletion and shared audit event.
 
-The accepted production baseline ends at 00021 and includes the kubeconfig
-lifecycle fix directly in `00015_create_clusters.sql`. The cloud-key cleanup
-fix adds `00022_cloud_key_deletion.sql`: only deleted cloud accounts may detach
-their credential reference; credential deletion and its audit event are atomic.
-The provider update is included directly in
-`00014_create_credentials_cloud_keys.sql`. New cloud keys and provider changes
-allow only `aliyun`, `aws`, and `gcp`; the database constraint matches those
-three providers. P4 asset sync remains AWS-only.
-On 2026-10-28 the operator confirmed Production may still be rebuilt for this
-baseline revision. Existing application databases must be recreated and
-initialized with migrate + seed to adopt the revised 00014 constraint;
-rerunning migrate on an existing database does not reapply that migration.
-The source migration sequence ends at 00022; 00023 is available for the next
-new requirement or issue. Production rollout is pending.
-Local Go 1.25 lint, full race/database tests on disposable PostgreSQL 17,
-frontend lint/typecheck/locale parity/160 tests,
-generated-artifact checks, and the embedded binary build passed on 2026-10-28,
-including existing-data upgrades, provider validation, credential retention,
-live-reference protection, atomic audit/rollback, and concurrent FK reference
-coverage. Older, pre-baseline databases require recreation and initialization
-with migrate + seed; no in-place upgrade path from that old
+The accepted production baseline ends at 00022 and includes the kubeconfig
+lifecycle fix directly in `00015_create_clusters.sql`. Cloud-key deletion in
+`00022_cloud_key_deletion.sql` only detaches deleted-account references;
+credential deletion and its shared audit event are atomic. Cloud-key providers
+are Aliyun, AWS and GCP, enforced directly in `00014_create_credentials_cloud_keys.sql`.
+P4 asset discovery remains AWS-only.
+
+The current Assets extension adds read-only AWS Security Groups, including
+inbound/outbound rules, via `00023_assets_security_groups.sql`. Upgrade the
+accepted 00022 database with migrate + seed; preserve existing data. Seed
+updates the menu order to Cloud Accounts, VPCs, Security Groups, EC2 Instances,
+RDS Databases, Sync Runs. Sync credentials also need `ec2:DescribeSecurityGroups`.
+Security groups use their own `security_group` sync-run unit and retain the
+successful-full-sweep deletion rule, account locking and region cleanup.
+This extension has not been deployed or accepted in Production. The next new
+migration starts at 00024. Older, pre-baseline databases require recreation and
+initialization with migrate + seed; no in-place upgrade path from that old
 schema is maintained. Recreating containers alone retains PostgreSQL data.
+Local verification on 2026-10-28 passed Go 1.25 lint and race/database tests on
+disposable Colima PostgreSQL 17, frontend lint/typecheck/locale parity/165 tests,
+Swagger/permission consistency and the embedded binary build. Coverage includes
+00022-to-00023 preservation, reseeding existing menus, complete/failed/empty
+security-group sweeps, snapshot restoration, region/account cleanup and HTTP
+401/403/200 rule reads. Real AWS Security Groups acceptance remains pending;
+follow `scripts/p4-smoke.md` with a disposable read-only credential.
 Do not commit work without explicit user authorization for that specific change.
 
 2026-09-24 monorepo merge: the `optimus-be` and `optimus-fe` repositories (split
@@ -134,7 +139,7 @@ Run from the repository root:
 - `make swag` / `make swagger-diff`
 - `make dump-perms` / `make perm-check`
 - `make migrate-up` / `make migrate-down`
-- `make migrate-new name=<snake_case>` (sequential numbering, next is 00023)
+- `make migrate-new name=<snake_case>` (sequential numbering, next is 00024)
 - `make seed`
 
 Frontend commands run from `web/`: `bun install`, `bun run dev`,

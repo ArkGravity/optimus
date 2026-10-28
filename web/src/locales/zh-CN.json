@@ -148,7 +148,8 @@
       "instances": "EC2 实例",
       "vpcs": "VPC",
       "databases": "RDS 数据库",
-      "sync_runs": "同步运行记录"
+      "sync_runs": "同步运行记录",
+      "security_groups": "安全组"
     },
     "observability_group": "可观测中心",
     "observability": {
@@ -343,6 +344,28 @@
         "tags": "标签",
         "last_seen_at": "最后发现时间",
         "no_data": "暂无数据"
+      },
+      "security_group": {
+        "title": "安全组",
+        "group_id": "安全组 ID",
+        "group_name": "安全组名称",
+        "description": "描述",
+        "owner_id": "所有者账号",
+        "inbound": "入站规则",
+        "outbound": "出站规则",
+        "protocol": "协议",
+        "ports": "端口 / ICMP 类型和代码",
+        "source": "来源",
+        "destination": "目的地",
+        "target_type": "目标类型",
+        "all": "全部",
+        "details": "规则与详情",
+        "target_types": {
+          "ipv4": "IPv4",
+          "ipv6": "IPv6",
+          "prefix_list": "前缀列表",
+          "security_group": "安全组"
+        }
       }
     },
     "sync": {
@@ -372,7 +395,8 @@
       "resource_types": {
         "instance": "实例",
         "network": "网络",
-        "database": "数据库"
+        "database": "数据库",
+        "security_group": "安全组"
       },
       "triggers": {
         "cron": "定时",

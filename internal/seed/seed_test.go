@@ -184,7 +184,7 @@ func TestRun_SeedsInitialMenuTree(t *testing.T) {
 
 	wantCodes := []string{
 		"dashboard",
-		"assets", "assets.cloud_accounts", "assets.instances", "assets.vpcs", "assets.databases", "assets.sync_runs",
+		"assets", "assets.cloud_accounts", "assets.vpcs", "assets.security_groups", "assets.instances", "assets.databases", "assets.sync_runs",
 		"system", "system.users", "system.roles", "system.permissions", "system.menus", "system.audit_logs",
 		"credentials", "credentials.ssh_keys", "credentials.kubeconfigs", "credentials.cloud_keys",
 		"k8s", "k8s.clusters", "k8s.workloads", "k8s.network", "k8s.config", "k8s.cluster_resources",
@@ -198,6 +198,15 @@ func TestRun_SeedsInitialMenuTree(t *testing.T) {
 		menuCodes = append(menuCodes, menu.Code)
 	}
 	require.ElementsMatch(t, wantCodes, menuCodes)
+	var assetParent models.Menu
+	require.NoError(t, gdb.Where("code = ?", "assets").First(&assetParent).Error)
+	var assetChildren []models.Menu
+	require.NoError(t, gdb.Where("parent_id = ?", assetParent.ID).Order("sort_order, id").Find(&assetChildren).Error)
+	var assetCodes []string
+	for _, menu := range assetChildren {
+		assetCodes = append(assetCodes, menu.Code)
+	}
+	require.Equal(t, []string{"assets.cloud_accounts", "assets.vpcs", "assets.security_groups", "assets.instances", "assets.databases", "assets.sync_runs"}, assetCodes)
 	var topLevel []models.Menu
 	require.NoError(t, gdb.Where("parent_id IS NULL").Order("sort_order, id").Find(&topLevel).Error)
 	var topLevelCodes []string
@@ -324,10 +333,11 @@ func TestRun_SeedsAssetsMenuTree(t *testing.T) {
 	}{
 		{"assets", "menu.assets_group", "/assets", "", &resourceRead, 1},
 		{"assets.cloud_accounts", "menu.assets.cloud_accounts", "/assets/cloud-accounts", "assets/cloud-accounts/List", &accountRead, 1},
-		{"assets.instances", "menu.assets.instances", "/assets/instances", "assets/instances/List", &resourceRead, 2},
-		{"assets.vpcs", "menu.assets.vpcs", "/assets/vpcs", "assets/vpcs/List", &resourceRead, 3},
-		{"assets.databases", "menu.assets.databases", "/assets/databases", "assets/databases/List", &resourceRead, 4},
-		{"assets.sync_runs", "menu.assets.sync_runs", "/assets/sync-runs", "assets/sync-runs/List", &syncRead, 5},
+		{"assets.vpcs", "menu.assets.vpcs", "/assets/vpcs", "assets/vpcs/List", &resourceRead, 2},
+		{"assets.security_groups", "menu.assets.security_groups", "/assets/security-groups", "assets/security-groups/List", &resourceRead, 3},
+		{"assets.instances", "menu.assets.instances", "/assets/instances", "assets/instances/List", &resourceRead, 4},
+		{"assets.databases", "menu.assets.databases", "/assets/databases", "assets/databases/List", &resourceRead, 5},
+		{"assets.sync_runs", "menu.assets.sync_runs", "/assets/sync-runs", "assets/sync-runs/List", &syncRead, 6},
 	}
 
 	var parent models.Menu
@@ -349,7 +359,7 @@ func TestRun_SeedsAssetsMenuTree(t *testing.T) {
 
 	var assetsRows int64
 	require.NoError(t, gdb.Model(&models.Menu{}).Where("code = ? OR code LIKE ?", "assets", "assets.%").Count(&assetsRows).Error)
-	require.Equal(t, int64(6), assetsRows)
+	require.Equal(t, int64(7), assetsRows)
 }
 
 func TestRun_AssetsMenusRemainIdempotent(t *testing.T) {
@@ -361,12 +371,19 @@ func TestRun_AssetsMenusRemainIdempotent(t *testing.T) {
 	options := seed.Options{AdminUsername: "admin", AdminEmail: "admin@example.com"}
 	_, err = seed.Run(context.Background(), gdb, options)
 	require.NoError(t, err)
+	// Simulate the previous assets menu before rerunning seed during an upgrade.
+	require.NoError(t, gdb.Unscoped().Where("code = ?", "assets.security_groups").Delete(&models.Menu{}).Error)
+	require.NoError(t, gdb.Model(&models.Menu{}).Where("code = ?", "assets.instances").Update("sort_order", 2).Error)
+	require.NoError(t, gdb.Model(&models.Menu{}).Where("code = ?", "assets.vpcs").Update("sort_order", 3).Error)
 	_, err = seed.Run(context.Background(), gdb, options)
 	require.NoError(t, err)
 
 	var assetsRows int64
 	require.NoError(t, gdb.Model(&models.Menu{}).Where("code = ? OR code LIKE ?", "assets", "assets.%").Count(&assetsRows).Error)
-	require.Equal(t, int64(6), assetsRows)
+	require.Equal(t, int64(7), assetsRows)
+	var ordered []string
+	require.NoError(t, gdb.Model(&models.Menu{}).Where("code LIKE ?", "assets.%").Order("sort_order").Pluck("code", &ordered).Error)
+	require.Equal(t, []string{"assets.cloud_accounts", "assets.vpcs", "assets.security_groups", "assets.instances", "assets.databases", "assets.sync_runs"}, ordered)
 }
 
 func TestRun_AdminAndViewerCoverAssetsPermissions(t *testing.T) {

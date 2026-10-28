@@ -67,7 +67,7 @@ func TestServiceListValidatesQuery(t *testing.T) {
 }
 
 func TestServiceListAcceptsDocumentedEnums(t *testing.T) {
-	for _, resourceType := range []string{"", "instance", "network", "database"} {
+	for _, resourceType := range []string{"", "instance", "network", "database", "security_group"} {
 		for _, status := range []string{"", "running", "success", "failed", "skipped"} {
 			repo := &stubListRepo{}
 			_, err := NewService(repo).List(context.Background(), ListQuery{ResourceType: resourceType, Status: status})

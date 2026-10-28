@@ -138,7 +138,7 @@ func TestManualSyncTrigger_AuditsInlineAndRunsWithDetachedBoundedContext(t *test
 	require.NoError(t, workerCtx.Err(), "request cancellation must not cancel the worker")
 	deadline, ok := workerCtx.Deadline()
 	require.True(t, ok)
-	require.WithinDuration(t, time.Now().Add(300*time.Millisecond), deadline, 100*time.Millisecond)
+	require.WithinDuration(t, time.Now().Add(400*time.Millisecond), deadline, 100*time.Millisecond)
 
 	close(release)
 	require.Eventually(t, func() bool { return engine.unlockCalls.Load() == 1 }, time.Second, time.Millisecond)

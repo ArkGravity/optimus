@@ -48,6 +48,10 @@ func (*fakeFetcher) FetchVPCsAndSubnets(context.Context, *Clients) ([]models.AWS
 	return nil, nil, nil
 }
 
+func (*fakeFetcher) FetchSecurityGroups(context.Context, *Clients) ([]models.AWSSecurityGroup, error) {
+	return nil, nil
+}
+
 func (*fakeFetcher) FetchDatabases(context.Context, *Clients) ([]models.AWSDatabase, error) {
 	return nil, nil
 }
@@ -97,8 +101,8 @@ func TestEngineRunAccountUsesFreshCredentialsAndClientsPerSweep(t *testing.T) {
 	gdb, account, engine, consumer, factory := setupEngine(t, fetcher)
 
 	require.NoError(t, engine.RunAccount(context.Background(), account.ID, "cron", nil))
-	require.Equal(t, 3, factory.calls)
-	require.Len(t, consumer.purposes, 3)
+	require.Equal(t, 4, factory.calls)
+	require.Len(t, consumer.purposes, 4)
 	for _, purpose := range consumer.purposes {
 		require.True(t, strings.HasPrefix(purpose, "system:assets.sync.cron.account-"), purpose)
 	}
@@ -108,7 +112,7 @@ func TestEngineRunAccountUsesFreshCredentialsAndClientsPerSweep(t *testing.T) {
 	}
 	var runsFound []models.AssetsSyncRun
 	require.NoError(t, gdb.Order("id").Find(&runsFound).Error)
-	require.Len(t, runsFound, 3)
+	require.Len(t, runsFound, 4)
 	for _, run := range runsFound {
 		require.Equal(t, "success", run.Status)
 	}
@@ -181,7 +185,7 @@ func TestEngineFactoryConfigErrorKeepsSafe43107Code(t *testing.T) {
 	require.NoError(t, engine.RunAccount(context.Background(), account.ID, "cron", nil))
 	var found []models.AssetsSyncRun
 	require.NoError(t, gdb.Order("id").Find(&found).Error)
-	require.Len(t, found, 3)
+	require.Len(t, found, 4)
 	for _, run := range found {
 		require.Equal(t, "failed", run.Status)
 		require.EqualValues(t, errs.CodeAssetsAWSConfig, run.ErrorCode)
@@ -202,7 +206,7 @@ func TestEngineRunAllContinuesAfterAccountErrorAndReturnsAggregate(t *testing.T)
 	require.Error(t, err)
 	var healthyRuns int64
 	require.NoError(t, gdb.Model(&models.AssetsSyncRun{}).Where("cloud_account_id = ? AND status = ?", healthy.ID, "success").Count(&healthyRuns).Error)
-	require.EqualValues(t, 3, healthyRuns)
+	require.EqualValues(t, 4, healthyRuns)
 	var brokenRuns int64
 	require.NoError(t, gdb.Model(&models.AssetsSyncRun{}).Where("cloud_account_id = ?", broken.ID).Count(&brokenRuns).Error)
 	require.Zero(t, brokenRuns)

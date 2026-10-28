@@ -341,6 +341,110 @@ definitions:
       vpc_id:
         type: string
     type: object
+  internal_modules_assets_securitygroup.Detail:
+    properties:
+      cloud_account_id:
+        type: integer
+      cloud_account_name:
+        type: string
+      deleted:
+        type: boolean
+      description:
+        type: string
+      group_id:
+        type: string
+      group_name:
+        type: string
+      id:
+        type: integer
+      inbound_rule_count:
+        type: integer
+      inbound_rules:
+        items:
+          $ref: '#/definitions/internal_modules_assets_securitygroup.Rule'
+        type: array
+      last_seen_at:
+        type: string
+      name:
+        type: string
+      outbound_rule_count:
+        type: integer
+      outbound_rules:
+        items:
+          $ref: '#/definitions/internal_modules_assets_securitygroup.Rule'
+        type: array
+      owner_id:
+        type: string
+      region:
+        type: string
+      tags:
+        additionalProperties:
+          type: string
+        type: object
+      vpc_id:
+        type: string
+    type: object
+  internal_modules_assets_securitygroup.ListResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/internal_modules_assets_securitygroup.Summary'
+        type: array
+      total:
+        type: integer
+    type: object
+  internal_modules_assets_securitygroup.Rule:
+    properties:
+      description:
+        type: string
+      from_port:
+        type: integer
+      owner_id:
+        type: string
+      peering_id:
+        type: string
+      protocol:
+        type: string
+      target:
+        type: string
+      target_type:
+        type: string
+      to_port:
+        type: integer
+      vpc_id:
+        type: string
+    type: object
+  internal_modules_assets_securitygroup.Summary:
+    properties:
+      cloud_account_id:
+        type: integer
+      cloud_account_name:
+        type: string
+      deleted:
+        type: boolean
+      description:
+        type: string
+      group_id:
+        type: string
+      group_name:
+        type: string
+      id:
+        type: integer
+      inbound_rule_count:
+        type: integer
+      last_seen_at:
+        type: string
+      name:
+        type: string
+      outbound_rule_count:
+        type: integer
+      owner_id:
+        type: string
+      region:
+        type: string
+      vpc_id:
+        type: string
+    type: object
   internal_modules_assets_sync_runs.ListResponse:
     properties:
       items:
@@ -1744,6 +1848,118 @@ paths:
       summary: List EC2 instances
       tags:
       - assets
+  /assets/security-groups:
+    get:
+      parameters:
+      - description: cloud account ID
+        in: query
+        name: account_id
+        type: integer
+      - description: AWS region
+        in: query
+        name: region
+        type: string
+      - description: VPC ID
+        in: query
+        name: vpc_id
+        type: string
+      - description: name, group ID, or description
+        in: query
+        name: q
+        type: string
+      - description: include deleted snapshots
+        in: query
+        name: include_deleted
+        type: boolean
+      - default: 1
+        description: page
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: page size
+        in: query
+        maximum: 200
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_assets_securitygroup.ListResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: List security groups
+      tags:
+      - assets
+  /assets/security-groups/{id}:
+    get:
+      parameters:
+      - description: security group snapshot row ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_assets_securitygroup.Detail'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Get security group rules
+      tags:
+      - assets
   /assets/sync-runs:
     get:
       parameters:
@@ -1751,7 +1967,7 @@ paths:
         in: query
         name: account_id
         type: integer
-      - description: instance|network|database
+      - description: instance|network|database|security_group
         in: query
         name: resource_type
         type: string

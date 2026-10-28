@@ -18,6 +18,7 @@ Run after a clean `make migrate-up` and `make seed` against Postgres.
         "ec2:DescribeInstances",
         "ec2:DescribeVpcs",
         "ec2:DescribeSubnets",
+        "ec2:DescribeSecurityGroups",
         "rds:DescribeDBInstances"
       ],
       "Resource": "*"
@@ -36,20 +37,25 @@ Run after a clean `make migrate-up` and `make seed` against Postgres.
 3. Click **Sync now** (or wait for the configured cron). Confirm the request
    returns immediately and the row becomes available for another sync after
    the worker completes.
-4. Open `/assets/sync-runs`. Expect `instance`, `network`, and `database`
-   runs with status `success`; verify `items_seen` matches the account's
+4. Open `/assets/sync-runs`. Expect `instance`, `network`, `database`,
+   and `security_group` runs with status `success`; verify `items_seen` matches the account's
    discovered resources. A failed run exposes its error code and reveals the
    detailed error only on the error control's tooltip.
 5. Open `/assets/instances`, `/assets/vpcs`, and `/assets/databases`.
    Check account/region/search filters and pagination. Open a VPC and verify
    its subnet list; verify keyboard Enter and Space also open a selected VPC.
-6. Remove one enabled region from the Cloud Account. With **Include deleted**
+6. Open `/assets/security-groups`, filter by account, region and VPC, and open
+   a group. Compare inbound/outbound rules, IPv4/IPv6 ranges, group references,
+   prefix lists, port ranges and ICMP type/code with AWS. The menu order is
+   Cloud Accounts, VPCs, Security Groups, EC2 Instances, RDS Databases, Sync Runs.
+   No AWS write actions are exposed.
+7. Remove one enabled region from the Cloud Account. With **Include deleted**
    enabled, verify resources in that region become soft-deleted; with it
    disabled, verify they are hidden.
-7. Simulate drift in the smoke account (for example, remove an EC2 instance),
+8. Simulate drift in the smoke account (for example, remove an EC2 instance),
    run another sync, and confirm the missing resource is soft-deleted only
    after a successful full sweep.
-8. While the Cloud Account exists, try deleting its cloud key. Expect error
+9. While the Cloud Account exists, try deleting its cloud key. Expect error
    `43001` (`assets.cloud_account.in_use`). Delete the Cloud Account and
    verify the response reports its cascaded soft-delete count; retrying the
    cloud-key delete should now succeed.
