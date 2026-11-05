@@ -16,6 +16,11 @@ function vueFiles(dir: string, files: string[] = []): string[] {
 
 const expectedGates: Record<string, string[]> = {
   'cloud-accounts/Form.vue': [],
+  'components/AssetFilters.vue': [],
+  'components/AssetDetail.vue': [],
+  'components/DetailSections.vue': [],
+  'components/FirewallRules.vue': [],
+  'components/VPCSubnets.vue': [],
   'cloud-accounts/List.vue': [
     'assets:account:write',
     'assets:account:write',
@@ -23,6 +28,7 @@ const expectedGates: Record<string, string[]> = {
     'assets:account:delete',
   ],
   'databases/List.vue': [],
+  'firewalls/List.vue': [],
   'instances/List.vue': [],
   'security-groups/List.vue': [],
   'sync-runs/List.vue': [],

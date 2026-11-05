@@ -41,26 +41,17 @@ func (f *fakeAudit) snapshot() []audit.Event {
 	return append([]audit.Event(nil), f.events...)
 }
 
-type fakeCloudKeyExists struct {
-	exists bool
-	err    error
-}
-
 type unusedCipher struct{}
 
 func (unusedCipher) Seal([]byte) ([]byte, error) { return nil, errors.New("unused") }
 func (unusedCipher) Open([]byte) ([]byte, error) { return nil, errors.New("unused") }
-
-func (f fakeCloudKeyExists) Exists(context.Context, uint64) (bool, error) {
-	return f.exists, f.err
-}
 
 func setupSvc(t *testing.T) (*Service, *Repo, *fakeAudit, *models.CredentialCloudKey) {
 	t.Helper()
 	repo, gdb := setupRepo(t)
 	recorder := &fakeAudit{}
 	cloudKey := dbtest.SeedCloudKey(t, gdb, "ck-"+t.Name())
-	return NewService(repo, recorder, fakeCloudKeyExists{exists: true}), repo, recorder, cloudKey
+	return NewService(repo, recorder, nil), repo, recorder, cloudKey
 }
 
 func requireBizCode(t *testing.T, err error, code apperr.Code) {
@@ -81,7 +72,7 @@ func parseTargetID(t *testing.T, value string) uint64 {
 func TestService_Create_ValidatesProvider(t *testing.T) {
 	svc, _, _, cloudKey := setupSvc(t)
 	_, err := svc.Create(context.Background(), 7, "", "", CreateRequest{
-		Name: "prod", Provider: "gcp", CloudKeyID: cloudKey.ID, EnabledRegions: []string{"us-east-1"},
+		Name: "prod", Provider: "azure", CloudKeyID: cloudKey.ID, EnabledRegions: []string{"us-east-1"},
 	})
 	requireBizCode(t, err, errs.CodeAssetsProviderUnsupported)
 }
@@ -101,8 +92,9 @@ func TestService_Create_ValidatesRegion(t *testing.T) {
 func TestService_Create_ChecksCloudKeyExists(t *testing.T) {
 	repo, gdb := setupRepo(t)
 	recorder := &fakeAudit{}
-	svc := NewService(repo, recorder, fakeCloudKeyExists{exists: false})
+	svc := NewService(repo, recorder, nil)
 	cloudKey := dbtest.SeedCloudKey(t, gdb, "missing-reference")
+	require.NoError(t, gdb.Delete(cloudKey).Error)
 	_, err := svc.Create(context.Background(), 7, "", "", CreateRequest{
 		Name: "prod", Provider: "aws", CloudKeyID: cloudKey.ID, EnabledRegions: []string{"us-east-1"},
 	})
@@ -148,7 +140,7 @@ func TestCloudKeyCreateAndDeleteSerializeWithoutDanglingReference(t *testing.T) 
 	key := dbtest.SeedCloudKey(t, gdb, "lifecycle-key")
 	cloudKeySvc := cloudkey.NewService(cloudkey.NewRepo(gdb), unusedCipher{}, audit.NewRecorder(gdb))
 	cloudKeySvc.SetAccountsInUseCounter(repo)
-	accountSvc := NewService(repo, &fakeAudit{}, cloudKeySvc)
+	accountSvc := NewService(repo, &fakeAudit{}, nil)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -316,14 +308,12 @@ func TestService_GetListUpdateAndNoop(t *testing.T) {
 	require.Len(t, recorder.snapshot(), before, "equal regions must be a no-op")
 }
 
-func TestService_Create_PropagatesCloudKeyCheckerError(t *testing.T) {
-	repo, _ := setupRepo(t)
-	wantErr := errors.New("checker failed")
-	svc := NewService(repo, &fakeAudit{}, fakeCloudKeyExists{err: wantErr})
-	_, err := svc.Create(context.Background(), 1, "", "", CreateRequest{
-		Name: "prod", Provider: "aws", CloudKeyID: 42, EnabledRegions: []string{"us-east-1"},
-	})
-	require.ErrorIs(t, err, wantErr)
+func TestService_Create_PropagatesCloudKeyMetadataLookupError(t *testing.T) {
+	repo, gdb := setupRepo(t)
+	require.NoError(t, gdb.Migrator().DropTable(&models.CredentialCloudKey{}))
+	svc := NewService(repo, &fakeAudit{}, nil)
+	_, err := svc.Create(context.Background(), 1, "", "", CreateRequest{Name: "prod", Provider: "aws", CloudKeyID: 42, EnabledRegions: []string{"us-east-1"}})
+	require.Error(t, err)
 }
 
 func TestService_RecordSyncTriggerAudit(t *testing.T) {
@@ -365,7 +355,7 @@ func TestService_PropagatesNameAndCloudKeyNameLookupErrors(t *testing.T) {
 	t.Run("name lookup", func(t *testing.T) {
 		repo, _ := setupRepo(t)
 		require.NoError(t, repo.DB().Migrator().DropTable(&models.CloudAccount{}))
-		svc := NewService(repo, &fakeAudit{}, fakeCloudKeyExists{exists: true})
+		svc := NewService(repo, &fakeAudit{}, nil)
 		_, err := svc.Create(context.Background(), 1, "", "", CreateRequest{
 			Name: "prod", Provider: "aws", CloudKeyID: 1, EnabledRegions: []string{"us-east-1"},
 		})

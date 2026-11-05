@@ -27,14 +27,14 @@ func TestDeleteAfterCloudAccountCleanupPreservesHistory(t *testing.T) {
 	svc.SetAccountsInUseCounter(inuse.New(db))
 	key, err := svc.Create(ctx, 0, "", "", newReq())
 	require.NoError(t, err)
-	accounts := account.NewService(account.NewRepo(db), audit.NewRecorder(db), svc)
+	accounts := account.NewService(account.NewRepo(db), audit.NewRecorder(db), nil)
 	row, err := accounts.Create(ctx, 0, "", "", account.CreateRequest{
 		Name: "cleanup", Provider: "aws", CloudKeyID: key.ID, EnabledRegions: []string{"us-east-1"},
 	})
 	require.NoError(t, err)
 	instance := &models.AWSInstance{CloudAccountID: row.ID, Region: "us-east-1", InstanceID: "i-cleanup"}
 	require.NoError(t, db.Create(instance).Error)
-	run := &models.AssetsSyncRun{CloudAccountID: row.ID, Region: "us-east-1", ResourceType: "instance", Status: "success", Trigger: "manual"}
+	run := &models.AssetsSyncRun{CloudAccountID: row.ID, Provider: "aws", LocationType: "region", Location: "us-east-1", ScopeRevision: row.ScopeRevision, Region: "us-east-1", ResourceType: "instance", Status: "success", Trigger: "manual"}
 	require.NoError(t, db.Create(run).Error)
 
 	err = svc.Delete(ctx, 0, "", "", key.ID)

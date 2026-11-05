@@ -7,16 +7,28 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"math"
 	"net/netip"
+	"strconv"
 	"strings"
 
-	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
-
 	"gorm.io/gorm"
+
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	"github.com/ArkGravity/optimus/internal/modules/assets/query"
+	"github.com/ArkGravity/optimus/internal/modules/assets/resource"
 )
 
-// Instance is the read-side view of a live EC2 instance snapshot.
+// Instance is the read-side view of a live instance snapshot.
 type Instance struct {
+	Provider     string
+	AssetKey     string
+	ProjectID    string
+	LocationType string
+	Location     string
+	Zone         string
+	NativeID     string
+	NetworkRef   string
 	AccountID    int64
 	AccountName  string
 	Region       string
@@ -34,9 +46,20 @@ type Instance struct {
 // live match. Callers should test it with errors.Is.
 var ErrAssetsInstanceNotFound = errors.New("assets: instance not found")
 
+// InstanceScope narrows a private address lookup using provider-native identity.
+type InstanceScope struct {
+	Provider       string
+	CloudAccountID *uint64
+	NetworkRef     string
+}
+
+// ErrAssetsInstanceAmbiguous identifies multiple distinct live instance matches.
+var ErrAssetsInstanceAmbiguous = errors.New("multiple assets match instance lookup")
+
 // Consumer is the stable read-only assets seam used by downstream modules.
 type Consumer interface {
 	LookupInstanceByPrivateIP(ctx context.Context, ip netip.Addr) (*Instance, error)
+	LookupInstanceByPrivateIPScoped(ctx context.Context, ip netip.Addr, scope InstanceScope) (*Instance, error)
 	LookupInstanceByID(ctx context.Context, accountID int64, region, instanceID string) (*Instance, error)
 	ListInstancesByVPC(ctx context.Context, accountID int64, region, vpcID string) ([]Instance, error)
 }
@@ -47,17 +70,80 @@ type consumer struct{ db *gorm.DB }
 func NewConsumer(db *gorm.DB) Consumer { return &consumer{db: db} }
 
 func (c *consumer) LookupInstanceByPrivateIP(ctx context.Context, ip netip.Addr) (*Instance, error) {
-	if !ip.IsValid() {
-		return nil, validationError("IP address must be valid")
+	return c.LookupInstanceByPrivateIPScoped(ctx, ip, InstanceScope{})
+}
+
+func (c *consumer) LookupInstanceByPrivateIPScoped(ctx context.Context, ip netip.Addr, scope InstanceScope) (*Instance, error) {
+	if !ip.IsValid() || ip.Zone() != "" {
+		return nil, validationError("IP address must be valid and unzoned")
 	}
-	canonical := ip.Unmap()
-	if canonical.Is4() {
-		return c.findOne(ctx,
-			"(aws_instances.private_ip = ? OR aws_instances.private_ip = ?)",
-			canonical.String(), "::ffff:"+canonical.String(),
-		)
+	f := query.Filter{
+		Provider: scope.Provider, NetworkRef: scope.NetworkRef,
+		IP: ip.Unmap().String(), PrivateIPOnly: true, Page: 1, Size: 2,
 	}
-	return c.findOne(ctx, "aws_instances.private_ip = ?", canonical.String())
+	if scope.CloudAccountID != nil {
+		if *scope.CloudAccountID == 0 || *scope.CloudAccountID > math.MaxInt64 {
+			return nil, validationError("account ID must be positive and within database range")
+		}
+		f.AccountID = *scope.CloudAccountID
+	}
+	if err := f.Validate(); err != nil {
+		return nil, err
+	}
+	rows, _, err := query.NewRepo(c.db).ListInstances(ctx, f)
+	if err != nil {
+		return nil, databaseError(err)
+	}
+	if len(rows) == 0 {
+		return nil, ErrAssetsInstanceNotFound
+	}
+	if len(rows) > 1 {
+		return nil, ErrAssetsInstanceAmbiguous
+	}
+	row := rows[0]
+	nic, ok := matchedInterface(row.NetworkInterfaces, ip.Unmap(), scope.NetworkRef)
+	if !ok {
+		return nil, ErrAssetsInstanceNotFound
+	}
+	return &Instance{
+		AccountID: int64(row.CloudAccountID), AccountName: row.CloudAccountName,
+		Provider: row.Provider, AssetKey: row.AssetKey, ProjectID: row.ProjectID,
+		LocationType: row.LocationType, Location: row.Location, Region: row.Region, Zone: row.Zone,
+		NativeID: row.NativeID, InstanceID: row.InstanceID, Name: row.Name,
+		InstanceType: row.InstanceType, State: row.State,
+		PrivateIP: ip.Unmap(), PublicIP: firstAddress(nic.PublicIPv4, nic.PublicIPv6),
+		VPCID: nic.NetworkRef, NetworkRef: nic.NetworkRef, SubnetID: nic.SubnetRef,
+	}, nil
+}
+
+// Select metadata from the same NIC that satisfied the private address and scope.
+func matchedInterface(nics []resource.NetworkInterface, ip netip.Addr, network string) (resource.NetworkInterface, bool) {
+	for _, nic := range nics {
+		if network != "" && nic.NetworkRef != network {
+			continue
+		}
+		for _, addresses := range [][]string{nic.PrivateIPv4, nic.PrivateIPv6} {
+			for _, value := range addresses {
+				address, err := netip.ParseAddr(value)
+				if err == nil && address.Zone() == "" && address.Unmap() == ip {
+					return nic, true
+				}
+			}
+		}
+	}
+	return resource.NetworkInterface{}, false
+}
+
+func firstAddress(groups ...[]string) netip.Addr {
+	for _, addresses := range groups {
+		for _, value := range addresses {
+			address, err := netip.ParseAddr(value)
+			if err == nil && address.Zone() == "" {
+				return address.Unmap()
+			}
+		}
+	}
+	return netip.Addr{}
 }
 
 func (c *consumer) LookupInstanceByID(ctx context.Context, accountID int64, region, instanceID string) (*Instance, error) {
@@ -121,6 +207,8 @@ type consumerRow struct {
 	ID           int64          `gorm:"column:id"`
 	AccountID    int64          `gorm:"column:cloud_account_id"`
 	AccountName  string         `gorm:"column:account_name"`
+	ProjectID    string         `gorm:"column:project_id"`
+	Zone         string         `gorm:"column:availability_zone"`
 	Region       string         `gorm:"column:region"`
 	InstanceID   string         `gorm:"column:instance_id"`
 	Name         string         `gorm:"column:name"`
@@ -139,6 +227,8 @@ func (c *consumer) baseQuery(ctx context.Context) *gorm.DB {
 			aws_instances.id,
 			aws_instances.cloud_account_id,
 			cloud_accounts.name AS account_name,
+			COALESCE(cloud_accounts.project_id,'') AS project_id,
+			aws_instances.availability_zone,
 			aws_instances.region,
 			aws_instances.instance_id,
 			aws_instances.name,
@@ -154,6 +244,9 @@ func (c *consumer) baseQuery(ctx context.Context) *gorm.DB {
 
 func (r consumerRow) instance() Instance {
 	return Instance{
+		Provider: "aws", AssetKey: "aws:instance:" + strconv.FormatInt(r.ID, 10),
+		NativeID: r.InstanceID, ProjectID: r.ProjectID, Zone: r.Zone,
+		LocationType: "region", Location: r.Region, NetworkRef: r.VPCID,
 		AccountID: r.AccountID, AccountName: r.AccountName,
 		Region: r.Region, InstanceID: r.InstanceID, Name: r.Name,
 		InstanceType: r.InstanceType, State: r.State,

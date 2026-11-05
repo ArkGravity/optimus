@@ -22,6 +22,10 @@ func (r *Repo) Create(ctx context.Context, m *models.CredentialCloudKey) error {
 	return r.db.WithContext(ctx).Create(m).Error
 }
 
+func (r *Repo) CreateTx(ctx context.Context, tx *gorm.DB, m *models.CredentialCloudKey) error {
+	return tx.WithContext(ctx).Create(m).Error
+}
+
 func (r *Repo) Get(ctx context.Context, id uint64) (*models.CredentialCloudKey, error) {
 	return get(ctx, r.db, id)
 }
@@ -89,10 +93,14 @@ func (r *Repo) List(ctx context.Context, q ListQuery) ([]models.CredentialCloudK
 }
 
 func (r *Repo) Update(ctx context.Context, id uint64, fields map[string]any) error {
+	return r.UpdateTx(ctx, r.db, id, fields)
+}
+
+func (r *Repo) UpdateTx(ctx context.Context, tx *gorm.DB, id uint64, fields map[string]any) error {
 	if len(fields) == 0 {
 		return nil
 	}
-	return r.db.WithContext(ctx).
+	return tx.WithContext(ctx).
 		Model(&models.CredentialCloudKey{}).
 		Where("id = ?", id).
 		Updates(fields).Error

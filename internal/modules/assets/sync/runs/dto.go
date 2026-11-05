@@ -6,6 +6,10 @@ type Summary struct {
 	ID                uint64     `json:"id"`
 	CloudAccountID    uint64     `json:"cloud_account_id"`
 	CloudAccountName  string     `json:"cloud_account_name,omitempty"`
+	Provider          string     `json:"provider"`
+	LocationType      string     `json:"location_type"`
+	Location          string     `json:"location"`
+	ScopeRevision     int64      `json:"scope_revision"`
 	Region            string     `json:"region"`
 	ResourceType      string     `json:"resource_type"`
 	StartedAt         time.Time  `json:"started_at"`
@@ -20,6 +24,9 @@ type Summary struct {
 }
 
 type ListQuery struct {
+	Provider     string `form:"provider"`
+	LocationType string `form:"location_type"`
+	Location     string `form:"location"`
 	AccountID    uint64 `form:"account_id"`
 	ResourceType string `form:"resource_type"`
 	Status       string `form:"status"`
@@ -31,6 +38,9 @@ type ListQuery struct {
 // ListFilter is the validated repository input. StartedAfter is parsed once by
 // the service so persistence cannot silently ignore an invalid timestamp.
 type ListFilter struct {
+	Provider     string
+	LocationType string
+	Location     string
 	AccountID    uint64
 	ResourceType string
 	Status       string

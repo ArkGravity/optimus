@@ -22,6 +22,16 @@
         @change="onSearchInputChange"
       />
       <a-select
+        v-model:value="providerFilter"
+        data-testid="provider"
+        allow-clear
+        :aria-label="t('assets.account.provider')"
+        :placeholder="t('assets.account.provider')"
+        style="width: 140px;"
+        :options="providerOptions"
+        @change="onProviderChange"
+      />
+      <a-select
         v-model:value="enabledFilter"
         allow-clear
         :aria-label="t('assets.account.enabled')"
@@ -40,7 +50,9 @@
       row-key="id"
     >
       <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'enabled'">
+        <template v-if="column.key === 'provider'">{{ providerNames[record.provider as Provider] }}</template>
+        <template v-else-if="column.key === 'project_id' || column.key === 'external_account_id'">{{ record[column.key] || t('assets.detail.not_applicable') }}</template>
+        <template v-else-if="column.key === 'enabled'">
           <a-tag :color="record.enabled ? 'green' : 'default'">{{ record.enabled ? '✓' : '—' }}</a-tag>
         </template>
         <template v-else-if="column.key === 'last_sync_at'">
@@ -88,23 +100,21 @@
       :total="table.total.value"
       show-size-changer
       @change="onPageChange"
-      @show-size-change="onPageSizeChange"
     />
 
-    <Form :open="formOpen" :editing="editing" @close="formOpen = false" @saved="onSaved" />
+    <Form :open="formOpen" :editing="editing" @close="closeForm" @saved="onSaved" />
   </a-card>
 </template>
 
 <script setup lang="ts">
 import { usePageState } from '@/hooks/usePageState'
-import { computed, inject, onMounted, ref } from 'vue'
+import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import type { AssetsAccountApi, AssetsAccountListParams } from '@/api/assets/account'
 import PageHeader from '@/components/PageHeader.vue'
 import { useI18n } from '@/hooks/useI18n'
-import { useTable } from '@/hooks/useTable'
 import { useAssetsStore } from '@/stores/assets'
-import type { CloudAccountDetail, CloudAccountSummary } from '@/types/assets'
+import type { CloudAccountDetail, CloudAccountSummary, Provider } from '@/types/assets'
 import { isBizError } from '@/utils/http-error'
 import Form from './Form.vue'
 
@@ -113,23 +123,58 @@ const { t } = useI18n()
 const store = useAssetsStore()
 const searchInput = ref('')
 const enabledFilter = ref<boolean | undefined>()
+const providerFilter = ref<Provider | undefined>()
+const providerNames: Record<Provider, string> = { aws: 'AWS', aliyun: 'Aliyun', gcp: 'GCP' }
+const providerOptions = Object.entries(providerNames).map(([value, label]) => ({ value, label }))
 const formOpen = ref(false)
 const editing = ref<CloudAccountDetail | null>(null)
+let editGeneration = 0
+let listGeneration = 0
+let alive = true
 
 const enabledOptions = computed(() => [
   { value: true, label: t('assets.account.enabled') },
   { value: false, label: t('system.users.status_disabled') },
 ])
-const table = useTable<CloudAccountSummary, AssetsAccountListParams>({
-  fetcher: async ({ page, pageSize, filters }) => {
-    const result = await accountApi.list({
-      page, size: pageSize, q: filters?.q || undefined, enabled: filters?.enabled,
-    })
-    return { items: result.items, total: result.total }
-  },
-})
+// Account filters retain the existing workspace keys. Responses and request
+// ownership belong only to this mounted list.
+const table = {
+  page: ref(1), pageSize: ref(20), filters: ref<AssetsAccountListParams>({}),
+  items: ref<CloudAccountSummary[]>([]), total: ref(0), loading: ref(false),
+  reload: loadAccounts, setFilters: setTableFilters, setPage: setTablePage, setPageSize: setTablePageSize,
+}
+usePageState({ page: table.page, pageSize: table.pageSize, filters: table.filters }, 'table')
+async function loadAccounts() {
+  const generation = ++listGeneration
+  const owns = () => alive && generation === listGeneration
+  table.loading.value = true
+  table.items.value = []
+  table.total.value = 0
+  const filters = table.filters.value
+  try {
+    const result = await accountApi.list({ page: table.page.value, size: table.pageSize.value, q: filters.q || undefined, enabled: filters.enabled, provider: filters.provider })
+    if (!owns()) return
+    table.items.value = result.items
+    table.total.value = result.total
+  } catch (error) {
+    if (owns()) throw error
+  } finally {
+    if (owns()) table.loading.value = false
+  }
+}
+async function setTableFilters(patch: Partial<AssetsAccountListParams>) {
+  table.filters.value = { ...table.filters.value, ...patch }
+  table.page.value = 1
+  await loadAccounts()
+}
+async function setTablePage(page: number) { table.page.value = page; await loadAccounts() }
+async function setTablePageSize(size: number) { table.pageSize.value = size; table.page.value = 1; await loadAccounts() }
 const columns = computed(() => [
   { key: 'name', title: t('assets.account.name'), dataIndex: 'name' },
+  { key: 'provider', title: t('assets.account.provider'), dataIndex: 'provider' },
+  { key: 'project_id', title: t('assets.account.project_id'), dataIndex: 'project_id' },
+  { key: 'external_account_id', title: t('assets.account.external_account_id'), dataIndex: 'external_account_id' },
+  { key: 'scope_revision', title: t('assets.account.scope_revision'), dataIndex: 'scope_revision' },
   { key: 'cloudkey_name', title: t('assets.account.cloudkey'), dataIndex: 'cloudkey_name' },
   { key: 'regions_count', title: t('assets.account.regions'), dataIndex: 'regions_count' },
   { key: 'enabled', title: t('assets.account.enabled') },
@@ -157,20 +202,25 @@ async function onSearchInputChange(event: Event) {
 async function onEnabledChange(value: boolean | undefined) {
   await runTableAction(() => table.setFilters({ enabled: value }))
 }
-async function onPageChange(page: number) { await runTableAction(() => table.setPage(page)) }
-async function onPageSizeChange(_: number, size: number) {
-  await runTableAction(() => table.setPageSize(size))
+async function onProviderChange(value: Provider | undefined) { await runTableAction(() => table.setFilters({ provider: value })) }
+async function onPageChange(page: number, size = table.pageSize.value) {
+  if (size !== table.pageSize.value) await runTableAction(() => table.setPageSize(size))
+  else await runTableAction(() => table.setPage(page))
 }
-function openCreate() { editing.value = null; formOpen.value = true }
+function openCreate() { editGeneration++; editing.value = null; formOpen.value = true }
+function closeForm() { editGeneration++; formOpen.value = false; editing.value = null }
 async function openEdit(account: CloudAccountSummary) {
+  const generation = ++editGeneration
   try {
-    editing.value = await accountApi.get(account.id)
+    const result = await accountApi.get(account.id)
+    if (!alive || generation !== editGeneration) return
+    editing.value = result
     formOpen.value = true
   } catch (error) {
-    showError(error)
+    if (alive && generation === editGeneration) showError(error)
   }
 }
-async function onSaved() { formOpen.value = false; await reloadTable() }
+async function onSaved() { closeForm(); await reloadTable() }
 
 async function syncNow(account: CloudAccountSummary) {
   if (store.syncInFlight[account.id]) return
@@ -199,11 +249,12 @@ function statusColor(status: string) {
 function formatTime(value: string) { return new Date(value).toLocaleString() }
 
 onMounted(reloadTable)
-usePageState({ searchInput, enabledFilter })
+onBeforeUnmount(() => { alive = false; editGeneration++; listGeneration++; table.loading.value = false })
+usePageState({ searchInput, enabledFilter, providerFilter })
 
 </script>
 
 <style scoped lang="scss">
-.filter-row { display: flex; gap: 12px; align-items: center; }
+.filter-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 .danger { color: var(--ant-color-error, #ff4d4f); }
 </style>

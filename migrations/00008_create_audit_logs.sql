@@ -8,7 +8,8 @@ CREATE TABLE audit_logs (
     payload      JSONB        NOT NULL DEFAULT '{}'::JSONB,
     ip           VARCHAR(64)  NOT NULL DEFAULT '',
     user_agent   VARCHAR(512) NOT NULL DEFAULT '',
-    created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+    created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    CONSTRAINT fk_audit_logs_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
 CREATE INDEX idx_audit_logs_user_id     ON audit_logs (user_id);

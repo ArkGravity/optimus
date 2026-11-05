@@ -82,13 +82,17 @@ func setupServer(t *testing.T) (*gin.Engine, *gorm.DB) {
 }
 
 type assetsTestWiring struct {
-	Factory  assetsync.ClientFactory
-	Fetcher  assetsync.Fetcher
-	Consumer assetsync.CloudKeyConsumer
+	Factory   assetsync.ClientFactory
+	Fetcher   assetsync.Fetcher
+	Consumer  assetsync.CloudKeyConsumer
+	Registry  *assetsync.Registry
+	Catalogs  map[string]account.RegionCatalog
+	AfterWire func(*assetsmodule.Module)
 }
 
 // setupServerWithAssetsWiring mounts the production assets module when test
-// AWS dependencies are supplied. The nil path keeps the lighter account-only
+// provider dependencies are supplied. An omitted Consumer uses the real vault.
+// The nil path keeps the lighter account-only
 // surface used by unrelated integration tests and account CRUD coverage.
 func setupServerWithAssetsWiring(t *testing.T, assetsDeps *assetsTestWiring) (*gin.Engine, *gorm.DB) {
 	t.Helper()
@@ -149,7 +153,7 @@ func setupServerWithAssetsWiring(t *testing.T, assetsDeps *assetsTestWiring) (*g
 	credentialsModule.MountRoutes(protected, cache)
 
 	if assetsDeps == nil {
-		accountService := account.NewService(account.NewRepo(gdb), auditRec, credentialsModule.CloudKey)
+		accountService := account.NewService(account.NewRepo(gdb), auditRec, credentialsModule.Consumer)
 		accountHandler := account.NewHandler(accountService)
 		accountHandler.Mount(protected.Group("/assets"), func(code string) gin.HandlerFunc {
 			return middleware.RequirePermission(cache, code)
@@ -157,16 +161,25 @@ func setupServerWithAssetsWiring(t *testing.T, assetsDeps *assetsTestWiring) (*g
 		credentialsModule.CloudKey.SetAccountsInUseCounter(inuse.New(gdb))
 	} else {
 		assetsCtx, cancelAssets := context.WithCancel(context.Background())
+		consumer := assetsDeps.Consumer
+		if consumer == nil {
+			consumer = credentialsModule.Consumer
+		}
 		assetsModule := assetsmodule.Wire(assetsCtx, assetsmodule.Input{
 			DB:                  gdb,
 			Config:              config.AssetsConfig{SyncCron: "0 0 1 1 *", SyncStartupDelay: time.Hour, SyncRunRetentionDays: 90, AWSRequestTimeout: time.Second},
 			Audit:               auditRec,
-			CredentialsConsumer: assetsDeps.Consumer,
-			CloudKeyService:     credentialsModule.CloudKey,
+			CredentialsConsumer: consumer,
+			ProviderRegistry:    assetsDeps.Registry,
+			RegionCatalogs:      assetsDeps.Catalogs,
 			Logger:              logger,
 			ClientFactory:       assetsDeps.Factory,
+			AWSIdentity:         integrationAWSIdentity{},
 			Fetcher:             assetsDeps.Fetcher,
 		})
+		if assetsDeps.AfterWire != nil {
+			assetsDeps.AfterWire(assetsModule)
+		}
 		credentialsModule.CloudKey.SetAccountsInUseCounter(assetsModule.InUseCounter)
 		assetsModule.MountRoutes(protected, cache)
 		t.Cleanup(func() {

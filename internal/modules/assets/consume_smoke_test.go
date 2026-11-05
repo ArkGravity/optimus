@@ -94,9 +94,8 @@ func TestConsumerAllLookupsScopeMapOrderAndExcludeDeleted(t *testing.T) {
 	_, err = c.LookupInstanceByID(ctx, int64(first.ID), "eu-west-1", "i-main")
 	require.ErrorIs(t, err, ErrAssetsInstanceNotFound, "ID lookup must stay inside region tuple")
 
-	got, err = c.LookupInstanceByPrivateIP(ctx, netip.MustParseAddr("10.0.0.9"))
-	require.NoError(t, err)
-	require.Equal(t, "i-shared-new", got.InstanceID, "ambiguous private IP uses newest snapshot")
+	_, err = c.LookupInstanceByPrivateIP(ctx, netip.MustParseAddr("10.0.0.9"))
+	require.ErrorIs(t, err, ErrAssetsInstanceAmbiguous)
 
 	list, err := c.ListInstancesByVPC(ctx, int64(first.ID), "us-east-1", "vpc-main")
 	require.NoError(t, err)

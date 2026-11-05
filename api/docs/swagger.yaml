@@ -10,6 +10,313 @@ definitions:
       message_key:
         type: string
     type: object
+  github_com_ArkGravity_optimus_internal_modules_assets_query.AWSRuleFacts:
+    properties:
+      owner_id:
+        type: string
+      peering_id:
+        type: string
+      rule_index:
+        description: RuleIndex is the zero-based index in the corresponding common
+          rule array.
+        type: integer
+      vpc_id:
+        type: string
+    type: object
+  github_com_ArkGravity_optimus_internal_modules_assets_query.AliyunRuleFacts:
+    properties:
+      destination_group_id:
+        type: string
+      destination_group_name:
+        type: string
+      destination_group_owner_account:
+        type: string
+      destination_prefix_list_id:
+        type: string
+      destination_prefix_list_name:
+        type: string
+      nic_type:
+        type: string
+      port_range_list_id:
+        type: string
+      port_range_list_name:
+        type: string
+      rule_id:
+        type: string
+      rule_index:
+        type: integer
+      source_group_id:
+        type: string
+      source_group_name:
+        type: string
+      source_group_owner_account:
+        type: string
+      source_port_range:
+        type: string
+      source_prefix_list_id:
+        type: string
+      source_prefix_list_name:
+        type: string
+    type: object
+  github_com_ArkGravity_optimus_internal_modules_assets_query.DatabaseNativeDetails:
+    properties:
+      availability_type:
+        type: string
+      category:
+        type: string
+      connection_name:
+        type: string
+      cpu_count:
+        type: integer
+      database_installed_version:
+        type: string
+      dns_name:
+        type: string
+      gcp_dns_names:
+        items:
+          $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.GCPDatabaseDNSName'
+        type: array
+      gcp_ip_addresses:
+        items:
+          $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.GCPDatabaseIPAddress'
+        type: array
+      instance_type:
+        type: string
+      ipv6_address:
+        type: string
+      memory_mb:
+        type: integer
+      primary_dns_name:
+        type: string
+      psc_service_attachment_link:
+        type: string
+      secondary_gce_zone:
+        type: string
+      sql_network_architecture:
+        type: string
+      storage_type:
+        type: string
+      write_endpoint:
+        type: string
+    type: object
+  github_com_ArkGravity_optimus_internal_modules_assets_query.FirewallNativeDetails:
+    properties:
+      aliyun_inbound_rule_facts:
+        items:
+          $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.AliyunRuleFacts'
+        type: array
+      aliyun_outbound_rule_facts:
+        items:
+          $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.AliyunRuleFacts'
+        type: array
+      aws_inbound_rule_facts:
+        items:
+          $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.AWSRuleFacts'
+        type: array
+      aws_outbound_rule_facts:
+        items:
+          $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.AWSRuleFacts'
+        type: array
+      direction:
+        type: string
+      disabled:
+        type: boolean
+      inner_access_policy:
+        type: string
+      priority:
+        type: integer
+      security_group_type:
+        type: string
+    type: object
+  github_com_ArkGravity_optimus_internal_modules_assets_query.GCPDatabaseDNSName:
+    properties:
+      connection_type:
+        type: string
+      dns_scope:
+        type: string
+      name:
+        type: string
+      record_manager:
+        type: string
+    type: object
+  github_com_ArkGravity_optimus_internal_modules_assets_query.GCPDatabaseIPAddress:
+    properties:
+      address:
+        type: string
+      type:
+        type: string
+    type: object
+  github_com_ArkGravity_optimus_internal_modules_assets_query.InstanceNativeDetails:
+    properties:
+      cpu_count:
+        type: integer
+      gcp_network_interfaces:
+        items:
+          $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_resource.GCPNetworkInterfaceDetails'
+        type: array
+      image_id:
+        type: string
+      memory_mb:
+        type: integer
+      network_tags:
+        items:
+          type: string
+        type: array
+      os:
+        type: string
+      resource_manager_tags:
+        additionalProperties:
+          type: string
+        type: object
+    type: object
+  github_com_ArkGravity_optimus_internal_modules_assets_query.SubnetNativeDetails:
+    properties:
+      available_ip_count:
+        type: integer
+      private_ip_google_access:
+        type: boolean
+      purpose:
+        type: string
+    type: object
+  github_com_ArkGravity_optimus_internal_modules_assets_query.VPCNativeDetails:
+    properties:
+      auto_create_subnetworks:
+        type: boolean
+      mtu:
+        type: integer
+      routing_mode:
+        type: string
+    type: object
+  github_com_ArkGravity_optimus_internal_modules_assets_resource.DatabaseEndpoint:
+    properties:
+      address:
+        type: string
+      port:
+        type: integer
+      type:
+        type: string
+    type: object
+  github_com_ArkGravity_optimus_internal_modules_assets_resource.GCPAliasRange:
+    properties:
+      cidr:
+        type: string
+      subnetwork_range_name:
+        type: string
+    type: object
+  github_com_ArkGravity_optimus_internal_modules_assets_resource.GCPExternalIPv6:
+    properties:
+      address:
+        type: string
+      name:
+        type: string
+      prefix_length:
+        type: integer
+    type: object
+  github_com_ArkGravity_optimus_internal_modules_assets_resource.GCPNetworkInterfaceDetails:
+    properties:
+      alias_ipv4_ranges:
+        items:
+          $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_resource.GCPAliasRange'
+        type: array
+      alias_ipv6_ranges:
+        items:
+          $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_resource.GCPAliasRange'
+        type: array
+      external_ipv6:
+        items:
+          $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_resource.GCPExternalIPv6'
+        type: array
+      interface_index:
+        type: integer
+      internal_ipv6_prefix_length:
+        type: integer
+      ipv6_access_type:
+        type: string
+      name:
+        type: string
+      stack_type:
+        type: string
+    type: object
+  github_com_ArkGravity_optimus_internal_modules_assets_resource.NetworkInterface:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      network_ref:
+        type: string
+      private_ipv4:
+        items:
+          type: string
+        type: array
+      private_ipv6:
+        items:
+          type: string
+        type: array
+      public_ipv4:
+        items:
+          type: string
+        type: array
+      public_ipv6:
+        items:
+          type: string
+        type: array
+      subnet_ref:
+        type: string
+    type: object
+  github_com_ArkGravity_optimus_internal_modules_assets_resource.Rule:
+    properties:
+      action:
+        type: string
+      description:
+        type: string
+      destination_ranges:
+        items:
+          type: string
+        type: array
+      direction:
+        type: string
+      enabled:
+        type: boolean
+        x-nullable: true
+      from_port:
+        type: integer
+      icmp_code:
+        type: integer
+      icmp_type:
+        type: integer
+      priority:
+        type: integer
+        x-nullable: true
+      protocol:
+        type: string
+      source_network_tags:
+        items:
+          type: string
+        type: array
+      source_ranges:
+        items:
+          type: string
+        type: array
+      source_service_accounts:
+        items:
+          type: string
+        type: array
+      target:
+        type: string
+      target_network_tags:
+        items:
+          type: string
+        type: array
+      target_service_accounts:
+        items:
+          type: string
+        type: array
+      target_type:
+        type: string
+      to_port:
+        type: integer
+    type: object
   internal_modules_apps_application.CreateRequest:
     properties:
       chart_name:
@@ -156,6 +463,8 @@ definitions:
         maxLength: 128
         minLength: 1
         type: string
+      project_id:
+        type: string
       provider:
         type: string
     required:
@@ -180,6 +489,8 @@ definitions:
         items:
           type: string
         type: array
+      external_account_id:
+        type: string
       id:
         type: integer
       last_sync_at:
@@ -188,9 +499,13 @@ definitions:
         type: string
       name:
         type: string
+      project_id:
+        type: string
       provider:
         type: string
       regions_count:
+        type: integer
+      scope_revision:
         type: integer
       updated_at:
         type: string
@@ -204,6 +519,20 @@ definitions:
       total:
         type: integer
     type: object
+  internal_modules_assets_account.RegionOption:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  internal_modules_assets_account.RegionOptionsResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/internal_modules_assets_account.RegionOption'
+        type: array
+    type: object
   internal_modules_assets_account.Summary:
     properties:
       cloudkey_id:
@@ -214,6 +543,8 @@ definitions:
         type: string
       enabled:
         type: boolean
+      external_account_id:
+        type: string
       id:
         type: integer
       last_sync_at:
@@ -222,15 +553,21 @@ definitions:
         type: string
       name:
         type: string
+      project_id:
+        type: string
       provider:
         type: string
       regions_count:
+        type: integer
+      scope_revision:
         type: integer
       updated_at:
         type: string
     type: object
   internal_modules_assets_account.UpdateRequest:
     properties:
+      cloudkey_id:
+        type: integer
       description:
         maxLength: 2000
         type: string
@@ -244,6 +581,10 @@ definitions:
         maxLength: 128
         minLength: 1
         type: string
+      project_id:
+        type: string
+      provider:
+        type: string
     type: object
   internal_modules_assets_database.ListResponse:
     properties:
@@ -256,6 +597,8 @@ definitions:
     type: object
   internal_modules_assets_database.Summary:
     properties:
+      asset_key:
+        type: string
       cloud_account_id:
         type: integer
       cloud_account_name:
@@ -266,32 +609,199 @@ definitions:
         type: boolean
       endpoint:
         type: string
+      endpoints:
+        items:
+          $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_resource.DatabaseEndpoint'
+        type: array
       engine:
         type: string
       engine_version:
         type: string
+      ha_mode:
+        type: string
+        x-nullable: true
       id:
         type: integer
       instance_class:
         type: string
       last_seen_at:
         type: string
+      location:
+        type: string
+      location_type:
+        type: string
       multi_az:
         type: boolean
+        x-nullable: true
+      name:
+        type: string
+      native_details:
+        $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.DatabaseNativeDetails'
+      native_id:
+        type: string
+      native_status:
+        type: string
       port:
         type: integer
+      product:
+        type: string
+      project_id:
+        type: string
+      provider:
+        type: string
       publicly_accessible:
         type: boolean
+        x-nullable: true
       region:
         type: string
       status:
         type: string
       storage_gb:
+        format: int64
         type: integer
+        x-nullable: true
       tags:
         additionalProperties:
           type: string
         type: object
+      zone:
+        type: string
+    type: object
+  internal_modules_assets_firewall.Detail:
+    properties:
+      asset_key:
+        type: string
+      cloud_account_id:
+        type: integer
+      cloud_account_name:
+        type: string
+      deleted:
+        type: boolean
+      description:
+        type: string
+      group_id:
+        type: string
+      group_name:
+        type: string
+      id:
+        type: integer
+      inbound_rule_count:
+        type: integer
+      inbound_rules:
+        items:
+          $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_resource.Rule'
+        type: array
+      last_seen_at:
+        type: string
+      location:
+        type: string
+      location_type:
+        type: string
+      name:
+        type: string
+      native_details:
+        $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.FirewallNativeDetails'
+      native_id:
+        type: string
+      native_status:
+        type: string
+      network_ref:
+        type: string
+      outbound_rule_count:
+        type: integer
+      outbound_rules:
+        items:
+          $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_resource.Rule'
+        type: array
+      owner_id:
+        type: string
+      project_id:
+        type: string
+      provider:
+        type: string
+      region:
+        type: string
+      tags:
+        additionalProperties:
+          type: string
+        type: object
+      vpc_id:
+        type: string
+      zone:
+        type: string
+    type: object
+  internal_modules_assets_firewall.ListResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/internal_modules_assets_firewall.Summary'
+        type: array
+      total:
+        type: integer
+    type: object
+  internal_modules_assets_firewall.NativeSummary:
+    properties:
+      direction:
+        type: string
+      disabled:
+        type: boolean
+      priority:
+        type: integer
+    type: object
+  internal_modules_assets_firewall.Summary:
+    properties:
+      asset_key:
+        type: string
+      cloud_account_id:
+        type: integer
+      cloud_account_name:
+        type: string
+      deleted:
+        type: boolean
+      description:
+        type: string
+      group_id:
+        type: string
+      group_name:
+        type: string
+      id:
+        type: integer
+      inbound_rule_count:
+        type: integer
+      last_seen_at:
+        type: string
+      location:
+        type: string
+      location_type:
+        type: string
+      name:
+        type: string
+      native_details:
+        $ref: '#/definitions/internal_modules_assets_firewall.NativeSummary'
+      native_id:
+        type: string
+      native_status:
+        type: string
+      network_ref:
+        type: string
+      outbound_rule_count:
+        type: integer
+      owner_id:
+        type: string
+      project_id:
+        type: string
+      provider:
+        type: string
+      region:
+        type: string
+      tags:
+        additionalProperties:
+          type: string
+        type: object
+      vpc_id:
+        type: string
+      zone:
+        type: string
     type: object
   internal_modules_assets_instance.ListResponse:
     properties:
@@ -304,6 +814,8 @@ definitions:
     type: object
   internal_modules_assets_instance.Summary:
     properties:
+      asset_key:
+        type: string
       availability_zone:
         type: string
       cloud_account_id:
@@ -322,9 +834,27 @@ definitions:
         type: string
       launch_time:
         type: string
+      location:
+        type: string
+      location_type:
+        type: string
       name:
         type: string
+      native_details:
+        $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.InstanceNativeDetails'
+      native_id:
+        type: string
+      native_status:
+        type: string
+      network_interfaces:
+        items:
+          $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_resource.NetworkInterface'
+        type: array
       private_ip:
+        type: string
+      project_id:
+        type: string
+      provider:
         type: string
       public_ip:
         type: string
@@ -339,6 +869,8 @@ definitions:
           type: string
         type: object
       vpc_id:
+        type: string
+      zone:
         type: string
     type: object
   internal_modules_assets_securitygroup.Detail:
@@ -472,10 +1004,18 @@ definitions:
         type: integer
       items_softdeleted:
         type: integer
+      location:
+        type: string
+      location_type:
+        type: string
+      provider:
+        type: string
       region:
         type: string
       resource_type:
         type: string
+      scope_revision:
+        type: integer
       started_at:
         type: string
       status:
@@ -505,19 +1045,43 @@ definitions:
     type: object
   internal_modules_assets_vpc.SubnetSummary:
     properties:
+      asset_key:
+        type: string
       availability_zone:
         type: string
       cidr_block:
         type: string
+      cidr_blocks:
+        items:
+          type: string
+        type: array
       cloud_account_id:
         type: integer
+      cloud_account_name:
+        type: string
       deleted:
         type: boolean
       id:
         type: integer
       last_seen_at:
         type: string
+      location:
+        type: string
+      location_type:
+        type: string
       name:
+        type: string
+      native_details:
+        $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.SubnetNativeDetails'
+      native_id:
+        type: string
+      native_status:
+        type: string
+      network_ref:
+        type: string
+      project_id:
+        type: string
+      provider:
         type: string
       region:
         type: string
@@ -529,11 +1093,19 @@ definitions:
         type: object
       vpc_id:
         type: string
+      zone:
+        type: string
     type: object
   internal_modules_assets_vpc.Summary:
     properties:
+      asset_key:
+        type: string
       cidr_block:
         type: string
+      cidr_blocks:
+        items:
+          type: string
+        type: array
       cloud_account_id:
         type: integer
       cloud_account_name:
@@ -544,9 +1116,26 @@ definitions:
         type: integer
       is_default:
         type: boolean
+        x-nullable: true
       last_seen_at:
         type: string
+      location:
+        type: string
+      location_type:
+        type: string
       name:
+        type: string
+      native_details:
+        $ref: '#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.VPCNativeDetails'
+      native_id:
+        type: string
+      native_status:
+        type: string
+      network_ref:
+        type: string
+      project_id:
+        type: string
+      provider:
         type: string
       region:
         type: string
@@ -557,6 +1146,8 @@ definitions:
           type: string
         type: object
       vpc_id:
+        type: string
+      zone:
         type: string
     type: object
   internal_modules_auth.LoginRequest:
@@ -581,10 +1172,21 @@ definitions:
     required:
     - refresh_token
     type: object
+  internal_modules_credentials_cloudkey.Actor:
+    properties:
+      display_name:
+        type: string
+      id:
+        type: integer
+      username:
+        type: string
+    type: object
   internal_modules_credentials_cloudkey.CreateRequest:
     properties:
       access_key_id:
         maxLength: 256
+        type: string
+      auth_type:
         type: string
       description:
         maxLength: 4096
@@ -603,17 +1205,59 @@ definitions:
         type: string
       secret_access_key:
         type: string
+      service_account_json:
+        type: string
     required:
-    - access_key_id
     - name
     - provider
-    - secret_access_key
+    type: object
+  internal_modules_credentials_cloudkey.ListResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/internal_modules_credentials_cloudkey.Summary'
+        type: array
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total:
+        type: integer
+    type: object
+  internal_modules_credentials_cloudkey.Summary:
+    properties:
+      auth_type:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        $ref: '#/definitions/internal_modules_credentials_cloudkey.Actor'
+      credential_project_id:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      needs_configuration:
+        type: boolean
+      provider:
+        type: string
+      region:
+        type: string
+      service_account_email:
+        type: string
+      updated_at:
+        type: string
     type: object
   internal_modules_credentials_cloudkey.UpdateRequest:
     properties:
       access_key_id:
         maxLength: 256
         type: string
+      auth_type:
+        type: string
       description:
         maxLength: 4096
         type: string
@@ -630,6 +1274,8 @@ definitions:
         maxLength: 32
         type: string
       secret_access_key:
+        type: string
+      service_account_json:
         type: string
     type: object
   internal_modules_credentials_kubeconfig.CreateRequest:
@@ -1412,6 +2058,10 @@ paths:
         name: q
         type: string
       - description: cloud provider
+        enum:
+        - aws
+        - aliyun
+        - gcp
         in: query
         name: provider
         type: string
@@ -1655,6 +2305,8 @@ paths:
       - assets
   /assets/cloud-accounts/{id}/sync:
     post:
+      description: Queues work immediately; authenticated provider planning and zone
+        discovery run in the worker under the configured account ceiling.
       parameters:
       - description: cloud account ID
         in: path
@@ -1705,14 +2357,89 @@ paths:
       summary: Trigger cloud account sync
       tags:
       - assets
+  /assets/cloud-accounts/region-options:
+    get:
+      parameters:
+      - description: cloud provider
+        enum:
+        - aws
+        - aliyun
+        - gcp
+        in: query
+        name: provider
+        required: true
+        type: string
+      - description: cloud key ID
+        in: query
+        name: cloudkey_id
+        required: true
+        type: integer
+      - description: Explicit GCP target Project ID, independent from credential home
+          project
+        in: query
+        name: project_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_assets_account.RegionOptionsResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: List cloud account region options
+      tags:
+      - assets
   /assets/databases:
     get:
       parameters:
+      - description: cloud provider
+        enum:
+        - aws
+        - aliyun
+        - gcp
+        in: query
+        name: provider
+        type: string
+      - description: GCP project
+        in: query
+        name: project_id
+        type: string
+      - description: zone
+        in: query
+        name: zone
+        type: string
       - description: filter by cloud account
         in: query
         name: account_id
         type: integer
-      - description: filter by AWS region
+      - description: filter by region
         in: query
         name: region
         type: string
@@ -1773,17 +2500,217 @@ paths:
             $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
-      summary: List RDS databases
+      summary: List databases
+      tags:
+      - assets
+  /assets/databases/{asset_key}:
+    get:
+      parameters:
+      - description: Canonical asset key or legacy AWS row ID
+        in: path
+        name: asset_key
+        required: true
+        type: string
+      - default: false
+        description: include a soft-deleted snapshot
+        in: query
+        name: include_deleted
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_assets_database.Summary'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Get database
+      tags:
+      - assets
+  /assets/firewalls:
+    get:
+      parameters:
+      - description: cloud provider
+        enum:
+        - aws
+        - aliyun
+        - gcp
+        in: query
+        name: provider
+        type: string
+      - description: cloud account
+        in: query
+        name: account_id
+        type: integer
+      - description: GCP project
+        in: query
+        name: project_id
+        type: string
+      - description: region
+        in: query
+        name: region
+        type: string
+      - description: zone
+        in: query
+        name: zone
+        type: string
+      - description: full native network reference
+        in: query
+        name: network_ref
+        type: string
+      - description: search name, native ID, description or tags
+        in: query
+        name: q
+        type: string
+      - default: false
+        description: include soft-deleted resources
+        in: query
+        name: include_deleted
+        type: boolean
+      - default: 1
+        description: page
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: page size
+        in: query
+        maximum: 200
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_assets_firewall.ListResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: List firewalls
+      tags:
+      - assets
+  /assets/firewalls/{asset_key}:
+    get:
+      parameters:
+      - description: Canonical asset key or legacy AWS row ID
+        in: path
+        name: asset_key
+        required: true
+        type: string
+      - default: false
+        description: include a soft-deleted snapshot
+        in: query
+        name: include_deleted
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_assets_firewall.Detail'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Get firewall
       tags:
       - assets
   /assets/instances:
     get:
       parameters:
+      - description: cloud provider
+        enum:
+        - aws
+        - aliyun
+        - gcp
+        in: query
+        name: provider
+        type: string
+      - description: GCP project
+        in: query
+        name: project_id
+        type: string
+      - description: zone
+        in: query
+        name: zone
+        type: string
       - description: filter by cloud account
         in: query
         name: account_id
         type: integer
-      - description: filter by AWS region
+      - description: filter by region
         in: query
         name: region
         type: string
@@ -1791,11 +2718,23 @@ paths:
         in: query
         name: state
         type: string
-      - description: filter by VPC ID
+      - description: filter by full native network reference
         in: query
         name: vpc_id
         type: string
-      - description: search name, instance ID, private IP, or tag values
+      - description: exact private or public NIC IP address
+        in: query
+        name: ip
+        type: string
+      - description: tag key
+        in: query
+        name: tag_key
+        type: string
+      - description: tag value (requires tag_key)
+        in: query
+        name: tag_value
+        type: string
+      - description: search name, native ID, private IP, or tag values
         in: query
         name: q
         type: string
@@ -1845,7 +2784,57 @@ paths:
             $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
       security:
       - BearerAuth: []
-      summary: List EC2 instances
+      summary: List instances
+      tags:
+      - assets
+  /assets/instances/{asset_key}:
+    get:
+      parameters:
+      - description: Canonical asset key or legacy AWS row ID
+        in: path
+        name: asset_key
+        required: true
+        type: string
+      - default: false
+        description: include a soft-deleted snapshot
+        in: query
+        name: include_deleted
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_assets_instance.Summary'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Get instance
       tags:
       - assets
   /assets/security-groups:
@@ -1967,7 +2956,19 @@ paths:
         in: query
         name: account_id
         type: integer
-      - description: instance|network|database|security_group
+      - description: aws|aliyun|gcp
+        in: query
+        name: provider
+        type: string
+      - description: global|region|zone
+        in: query
+        name: location_type
+        type: string
+      - description: exact collection location
+        in: query
+        name: location
+        type: string
+      - description: instance|network|database|security_group|subnet|firewall|planning
         in: query
         name: resource_type
         type: string
@@ -2026,15 +3027,31 @@ paths:
   /assets/vpcs:
     get:
       parameters:
+      - description: cloud provider
+        enum:
+        - aws
+        - aliyun
+        - gcp
+        in: query
+        name: provider
+        type: string
+      - description: GCP project
+        in: query
+        name: project_id
+        type: string
+      - description: zone
+        in: query
+        name: zone
+        type: string
       - description: filter by cloud account
         in: query
         name: account_id
         type: integer
-      - description: filter by AWS region
+      - description: filter by region
         in: query
         name: region
         type: string
-      - description: match VPC name or AWS VPC ID
+      - description: match VPC name or native ID
         in: query
         name: q
         type: string
@@ -2086,15 +3103,65 @@ paths:
       summary: List VPCs
       tags:
       - assets
-  /assets/vpcs/{id}/subnets:
+  /assets/vpcs/{asset_key}:
     get:
       parameters:
-      - description: VPC snapshot row ID
+      - description: Canonical asset key or legacy AWS row ID
         in: path
-        name: id
+        name: asset_key
         required: true
-        type: integer
-      - description: match subnet name or AWS subnet ID
+        type: string
+      - default: false
+        description: include a soft-deleted snapshot
+        in: query
+        name: include_deleted
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_assets_vpc.Summary'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Get VPC
+      tags:
+      - assets
+  /assets/vpcs/{asset_key}/subnets:
+    get:
+      parameters:
+      - description: Canonical asset key or legacy AWS row ID
+        in: path
+        name: asset_key
+        required: true
+        type: string
+      - description: match subnet name or native ID
         in: query
         name: q
         type: string
@@ -2309,7 +3376,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_credentials_cloudkey.ListResponse'
+              type: object
       security:
       - BearerAuth: []
       summary: List cloud keys
@@ -2319,7 +3391,8 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: credential payload
+      - description: AWS/Aliyun access_key or GCP service_account_json credential
+          payload
         in: body
         name: body
         required: true
@@ -2331,7 +3404,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_credentials_cloudkey.Summary'
+              type: object
       security:
       - BearerAuth: []
       summary: Create cloud key
@@ -2370,7 +3448,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_credentials_cloudkey.Summary'
+              type: object
       security:
       - BearerAuth: []
       summary: Get cloud key
@@ -2385,7 +3468,8 @@ paths:
         name: id
         required: true
         type: integer
-      - description: credential payload
+      - description: Metadata update or provider-specific secret rotation; blank secrets
+          preserve existing values
         in: body
         name: body
         required: true
@@ -2397,7 +3481,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_credentials_cloudkey.Summary'
+              type: object
       security:
       - BearerAuth: []
       summary: Update cloud key

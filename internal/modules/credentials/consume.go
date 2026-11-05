@@ -1,6 +1,6 @@
 // Package credentials is the entry point for downstream sub-projects (P2/P3/P4)
 // that need to read decrypted credential material. The exported Consumer interface
-// is the SOLE public API — downstream callers must not import the sshkey /
+// is the SOLE credential retrieval API — downstream callers must not import the sshkey /
 // kubeconfig / cloudkey sub-packages directly.
 //
 // Permission semantics: this seam does NOT enforce credentials:*:use. Downstream
@@ -42,11 +42,13 @@ type Kubeconfig struct {
 
 // CloudKey is the decrypted shape returned by Consumer.GetCloudKey.
 type CloudKey struct {
-	Name            string
-	Provider        string
-	Region          string
-	AccessKeyID     string
-	SecretAccessKey string
+	Name               string
+	Provider           string
+	Region             string
+	AccessKeyID        string
+	SecretAccessKey    string
+	AuthType           string
+	ServiceAccountJSON []byte
 }
 
 // Wipe minimizes the reachable lifetime of decrypted cloud-key material.
@@ -60,6 +62,11 @@ func Wipe(key *CloudKey) {
 	key.Provider = ""
 	key.AccessKeyID = ""
 	key.SecretAccessKey = ""
+	key.AuthType = ""
+	for i := range key.ServiceAccountJSON {
+		key.ServiceAccountJSON[i] = 0
+	}
+	key.ServiceAccountJSON = nil
 }
 
 // Consumer is the seam used by downstream sub-projects. `purpose` is a free-form
@@ -114,11 +121,13 @@ func (c *consumer) GetCloudKey(ctx context.Context, id uint64, purpose string) (
 		return nil, err
 	}
 	return &CloudKey{
-		Name:            rec.Name,
-		Provider:        rec.Provider,
-		Region:          rec.Region,
-		AccessKeyID:     rec.AccessKeyID,
-		SecretAccessKey: rec.SecretAccessKey,
+		Name:               rec.Name,
+		Provider:           rec.Provider,
+		Region:             rec.Region,
+		AccessKeyID:        rec.AccessKeyID,
+		SecretAccessKey:    rec.SecretAccessKey,
+		AuthType:           rec.AuthType,
+		ServiceAccountJSON: rec.ServiceAccountJSON,
 	}, nil
 }
 
@@ -147,4 +156,11 @@ func actorFromCtx(ctx context.Context) *uint64 {
 // worker) can still drive audit attribution through the Consumer seam.
 func WithActor(ctx context.Context, actor uint64) context.Context {
 	return context.WithValue(ctx, ctxKeyActor, actor)
+}
+
+// ValidateServiceAccountJSON performs local validation only. It never retrieves
+// credentials or follows URLs. Callers own and should wipe the canonical copy.
+func ValidateServiceAccountJSON(data []byte) ([]byte, error) {
+	canonical, _, err := cloudkey.ValidateServiceAccountJSON(data)
+	return canonical, err
 }

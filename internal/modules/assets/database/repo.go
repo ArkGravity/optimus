@@ -2,75 +2,94 @@ package database
 
 import (
 	"context"
-	"encoding/json"
+	"math"
 
 	"gorm.io/gorm"
 
-	"github.com/ArkGravity/optimus/internal/models"
+	"github.com/ArkGravity/optimus/internal/modules/assets/query"
 )
 
-type Repo struct{ db *gorm.DB }
+type Repo struct {
+	query *query.Repo
+}
 
-func NewRepo(db *gorm.DB) *Repo { return &Repo{db: db} }
-
-func (r *Repo) List(ctx context.Context, filter ListFilter) ([]Summary, int64, error) {
-	query := r.db.WithContext(ctx).Table("aws_databases")
-	if !filter.IncludeDeleted {
-		query = query.Where("aws_databases.deleted_at IS NULL")
-	}
-	if filter.AccountID != 0 {
-		query = query.Where("aws_databases.cloud_account_id = ?", filter.AccountID)
-	}
-	if filter.Region != "" {
-		query = query.Where("aws_databases.region = ?", filter.Region)
-	}
-	if filter.Engine != "" {
-		query = query.Where("aws_databases.engine = ?", filter.Engine)
-	}
-	if filter.Status != "" {
-		query = query.Where("aws_databases.status = ?", filter.Status)
-	}
-	if filter.Q != "" {
-		like := "%" + filter.Q + "%"
-		query = query.Where("(aws_databases.db_instance_id ILIKE ? OR aws_databases.endpoint ILIKE ?)", like, like)
-	}
-
-	var total int64
-	if err := query.Count(&total).Error; err != nil {
-		return nil, 0, err
-	}
-
-	var rows []struct {
-		models.AWSDatabase
-		CloudAccountName string `gorm:"column:cloud_account_name"`
-	}
-	err := query.
-		Select("aws_databases.*, cloud_accounts.name AS cloud_account_name").
-		Joins("LEFT JOIN cloud_accounts ON cloud_accounts.id = aws_databases.cloud_account_id").
-		Order("aws_databases.deleted_at IS NULL DESC, aws_databases.last_seen_at DESC, aws_databases.id DESC").
-		Offset((filter.Page - 1) * filter.Size).
-		Limit(filter.Size).
-		Scan(&rows).Error
+func NewRepo(db *gorm.DB) *Repo { return &Repo{query: query.NewRepo(db)} }
+func (r *Repo) List(ctx context.Context, f ListFilter) ([]Summary, int64, error) {
+	rows, total, err := r.query.ListDatabases(ctx, f.queryFilter())
 	if err != nil {
 		return nil, 0, err
 	}
-
 	items := make([]Summary, len(rows))
-	for i := range rows {
-		items[i] = toSummary(rows[i].AWSDatabase, rows[i].CloudAccountName)
+	for i, row := range rows {
+		items[i] = fromProjection(row)
 	}
 	return items, total, nil
 }
-
-func toSummary(row models.AWSDatabase, accountName string) Summary {
-	tags := map[string]string{}
-	_ = json.Unmarshal(row.Tags, &tags)
-	return Summary{
-		ID: row.ID, CloudAccountID: row.CloudAccountID, CloudAccountName: accountName,
-		Region: row.Region, DBInstanceID: row.DBInstanceID, Engine: row.Engine,
-		EngineVersion: row.EngineVersion, InstanceClass: row.InstanceClass, Status: row.Status,
-		Endpoint: row.Endpoint, Port: row.Port, MultiAZ: row.MultiAZ,
-		PubliclyAccessible: row.PubliclyAccessible, StorageGB: row.StorageGB, Tags: tags,
-		LastSeenAt: row.LastSeenAt, Deleted: row.DeletedAt.Valid,
+func (r *Repo) FindByKey(ctx context.Context, key string, includeDeleted bool) (*Summary, error) {
+	row, err := r.query.FindDatabase(ctx, key, includeDeleted)
+	if err != nil {
+		return nil, err
+	}
+	item := fromProjection(*row)
+	return &item, nil
+}
+func fromProjection(row query.Database) Summary {
+	item := Summary{
+		Name:             row.Name,
+		Product:          row.Product,
+		Endpoints:        row.Endpoints,
+		HAMode:           row.HAMode,
+		NativeDetails:    row.NativeDetails,
+		AssetKey:         row.AssetKey,
+		Provider:         row.Provider,
+		ProjectID:        row.ProjectID,
+		LocationType:     row.LocationType,
+		Location:         row.Location,
+		Zone:             row.Zone,
+		NativeID:         row.NativeID,
+		NativeStatus:     row.NativeStatus,
+		ID:               row.ID,
+		CloudAccountID:   row.CloudAccountID,
+		CloudAccountName: row.CloudAccountName,
+		Region:           row.Region,
+		DBInstanceID:     row.DBInstanceID,
+		Engine:           row.Engine,
+		EngineVersion:    row.EngineVersion,
+		InstanceClass:    row.InstanceClass,
+		Status:           row.Status,
+		Endpoint:         row.Endpoint,
+		Port:             row.Port,
+		Tags:             row.Tags,
+		LastSeenAt:       row.LastSeenAt,
+		Deleted:          row.Deleted,
+	}
+	item.multiAZ = row.MultiAZ
+	item.publiclyAccessible = row.PubliclyAccessible
+	item.storageGB = row.StorageGB
+	if row.MultiAZ != nil {
+		item.MultiAZ = *row.MultiAZ
+	}
+	if row.PubliclyAccessible != nil {
+		item.PubliclyAccessible = *row.PubliclyAccessible
+	}
+	if row.StorageGB != nil && *row.StorageGB >= math.MinInt32 && *row.StorageGB <= math.MaxInt32 {
+		v := int32(*row.StorageGB)
+		item.StorageGB = &v
+	}
+	return item
+}
+func (f ListFilter) queryFilter() query.Filter {
+	return query.Filter{
+		Provider:       f.Provider,
+		AccountID:      f.AccountID,
+		ProjectID:      f.ProjectID,
+		Region:         f.Region,
+		Zone:           f.Zone,
+		Q:              f.Q,
+		IncludeDeleted: f.IncludeDeleted,
+		Page:           f.Page,
+		Size:           f.Size,
+		Engine:         f.Engine,
+		Status:         f.Status,
 	}
 }

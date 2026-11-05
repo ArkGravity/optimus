@@ -8,29 +8,7 @@ import (
 	"gorm.io/gorm/clause"
 
 	"github.com/ArkGravity/optimus/internal/models"
-	"github.com/ArkGravity/optimus/internal/modules/assets/sync/runs"
 )
-
-func (e *Engine) sweepSecurityGroups(ctx context.Context, account models.CloudAccount, region, trigger string, triggeredBy *uint64) error {
-	runID, err := e.insertRun(ctx, account.ID, region, "security_group", trigger, triggeredBy)
-	if err != nil {
-		return err
-	}
-	clients, err := e.clientsForSweep(ctx, account.ID, account.CloudKeyID, region, "security_group", trigger, triggeredBy == nil)
-	if err != nil {
-		return e.finishUpstreamFailure(ctx, runID, err)
-	}
-	started := time.Now()
-	items, err := e.fetcher.FetchSecurityGroups(ctx, clients)
-	if err != nil {
-		return e.finishUpstreamFailure(ctx, runID, err)
-	}
-	deleted, err := UpsertSecurityGroups(ctx, e.db, account.ID, region, started, items)
-	if err != nil {
-		return e.finishPersistence(ctx, runID, err)
-	}
-	return e.finishRun(ctx, runID, runs.FinishRequest{Status: "success", ItemsSeen: saturatingInt32(int64(len(items))), ItemsSoftDeleted: saturatingInt32(deleted)})
-}
 
 func UpsertSecurityGroups(ctx context.Context, db *gorm.DB, accountID uint64, region string, started time.Time, items []models.AWSSecurityGroup) (int64, error) {
 	var deleted int64
@@ -38,6 +16,18 @@ func UpsertSecurityGroups(ctx context.Context, db *gorm.DB, accountID uint64, re
 		if err := lockEligibleAccount(tx, accountID, region); err != nil {
 			return err
 		}
+		var err error
+		deleted, err = UpsertSecurityGroupsTx(ctx, tx, accountID, region, started, items)
+		return err
+	})
+	return deleted, err
+}
+
+// UpsertSecurityGroupsTx publishes inside the caller-owned transaction. The caller must lock the collection scope first.
+func UpsertSecurityGroupsTx(ctx context.Context, tx *gorm.DB, accountID uint64, region string, started time.Time, items []models.AWSSecurityGroup) (int64, error) {
+	tx = tx.WithContext(ctx)
+	var deleted int64
+	err := func() error {
 		for i := range items {
 			items[i].ID = 0
 			items[i].CloudAccountID, items[i].Region, items[i].LastSeenAt = accountID, region, started
@@ -55,6 +45,6 @@ func UpsertSecurityGroups(ctx context.Context, db *gorm.DB, accountID uint64, re
 		result := tx.Where("cloud_account_id = ? AND region = ? AND last_seen_at < ?", accountID, region, started).Delete(&models.AWSSecurityGroup{})
 		deleted = result.RowsAffected
 		return result.Error
-	})
+	}()
 	return deleted, err
 }

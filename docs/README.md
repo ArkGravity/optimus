@@ -13,7 +13,7 @@ Optimus is one repository: the Go backend at the root and the Vue web UI in
   retention and lifecycle rules for the compact workspace.
 - [Brand mark](branding.md): the shared logo asset.
 - Runtime smoke checklists: [P3](../scripts/p3-smoke.md),
-  [P4](../scripts/p4-smoke.md).
+  [P4 AWS](../scripts/p4-smoke.md), [P4 multi-cloud](../scripts/p4-multicloud-smoke.md).
 
 ## Designs and plans
 
@@ -57,9 +57,42 @@ The accepted production revision is `d0016d0`, with migrations through 00022
 and the Aliyun/AWS/GCP cloud-key constraint in 00014; the operator confirmed
 rebuilding, deploying and accepting it on 2026-10-28.
 
-The current Assets extension adds read-only AWS Security Groups and their
-inbound/outbound rules. Migration 00023 adds snapshots without rebuilding the
-accepted database; rerun seed to add and reorder the menus. The sync credential
-needs `ec2:DescribeSecurityGroups`. See the [P4 checklist](../scripts/p4-smoke.md)
-for verification. Production rollout of this extension is pending; the next new
-migration starts at 00024. Release tagging remains outstanding.
+The unshipped AWS Security Groups and
+[multi-cloud Assets](superpowers/specs/2026-10-28-multicloud-assets-design.md)
+work remains on `feat/multicloud-assets` from `3bd0add`. Its current approved
+source baseline has exactly 19 sequential migrations, ending at 00019; the next
+is 00020. It preserves all 31 business tables and final multi-cloud behavior.
+Old schema 00022/00023/00028 cannot upgrade in place using the renumbered files:
+actually recreate the database, including `goose_db_version`, before migrate +
+seed during a separately authorized rollout. Container recreation alone keeps
+the old database. No Dev/Production rebuild has occurred as part of this source
+change; historical production acceptance remains `d0016d0`/00022.
+Seed retains the former built-in Security Groups menu ID, grants and custom
+children while renaming it to Firewalls. Menus remain Cloud Accounts, VPCs,
+Firewalls, Instances, Databases, Sync Runs. See the
+[database guide](../README.md#database-baseline) for recreation, compatibility,
+credential deletion, recovery limits and provider-specific timeouts.
+
+The 19-file baseline reorganization is locally complete as of 2026-11-05, with
+independent specification and quality approvals. Actual PostgreSQL catalog
+comparison verified equivalence to the former final schema. Populated reverse
+migrations, fresh/repeated initialization and seed, the full repository
+database/race suite and the embedded build passed. Actual binary smoke verified
+head19/32-table initialization and the authenticated APIs and UI. No application
+or production database was rebuilt. The operator confirmed basic local
+functional acceptance and authorized commit, push, PR and merge to main on
+2026-11-05; production rollout and full acceptance remain pending.
+
+All 17 tasks of the [active implementation plan](superpowers/plans/2026-10-28-multicloud-assets.md)
+are locally complete as of 2026-11-05. Implementation steps passed independent
+specification/quality reviews and a fresh overall composition review. They provide typed
+AWS/Aliyun AK/SK and GCP Service Account JSON credentials, provider-native resource
+tables (including `gcp_databases`), provider adapters and shared resource UI.
+Final verification passed Go 1.25 lint/unit races, complete database package
+coverage, web checks with 302 tests, generated checks, the embedded build and
+actual compiled HTTP smoke on a unique disposable database. The active plan
+records the full database run's one corrected legacy-fixture failure and its
+successful entire-package recheck. Delivery proceeds from
+`feat/multicloud-assets` through a reviewed PR to main. Local fixtures do not establish real-provider acceptance. Real AWS
+Security Groups, Aliyun and GCP smoke, rollout and release tagging remain pending;
+these branches do not change accepted production `d0016d0`/00022.

@@ -42,27 +42,169 @@ lifecycle fix directly in `00015_create_clusters.sql`. Cloud-key deletion in
 `00022_cloud_key_deletion.sql` only detaches deleted-account references;
 credential deletion and its shared audit event are atomic. Cloud-key providers
 are Aliyun, AWS and GCP, enforced directly in `00014_create_credentials_cloud_keys.sql`.
-P4 asset discovery remains AWS-only.
+Asset discovery in the accepted production baseline is AWS-only.
 
-The current Assets extension adds read-only AWS Security Groups, including
-inbound/outbound rules, via `00023_assets_security_groups.sql`. Upgrade the
-accepted 00022 database with migrate + seed; preserve existing data. Seed
-updates the menu order to Cloud Accounts, VPCs, Security Groups, EC2 Instances,
-RDS Databases, Sync Runs. Sync credentials also need `ec2:DescribeSecurityGroups`.
-Security groups use their own `security_group` sync-run unit and retain the
-successful-full-sweep deletion rule, account locking and region cleanup.
-This extension has not been deployed or accepted in Production. The next new
-migration starts at 00024. Older, pre-baseline databases require recreation and
-initialization with migrate + seed; no in-place upgrade path from that old
-schema is maintained. Recreating containers alone retains PostgreSQL data.
-Local verification on 2026-10-28 passed Go 1.25 lint and race/database tests on
-disposable Colima PostgreSQL 17, frontend lint/typecheck/locale parity/165 tests,
-Swagger/permission consistency and the embedded binary build. Coverage includes
-00022-to-00023 preservation, reseeding existing menus, complete/failed/empty
-security-group sweeps, snapshot restoration, region/account cleanup and HTTP
-401/403/200 rule reads. Real AWS Security Groups acceptance remains pending;
-follow `scripts/p4-smoke.md` with a disposable read-only credential.
-Do not commit work without explicit user authorization for that specific change.
+The current unshipped source uses the operator-approved fresh 19-file migration
+baseline. It ends at `00019_create_assets_sync_runs.sql`; the next new migration
+is 00020. All 31 business tables and final multi-cloud constraints remain.
+This supersedes the former 00022/00023 -> 00028 in-place upgrade contract.
+Existing databases, including their `goose_db_version` history, must actually
+be recreated before migrate + seed with this baseline; recreating containers
+alone retains PostgreSQL data. The operator permits Dev/Production recreation
+for a later rollout, but this task authorizes source reorganization and dedicated
+disposable test databases only. No application database has been rebuilt by
+this change; last production acceptance remains `d0016d0` / historical 00022.
+Seed preserves the built-in Security Groups menu row ID, permission grants and
+custom children when renaming it to Firewalls. The menu order is Cloud Accounts,
+VPCs, Firewalls, Instances, Databases, Sync Runs. AWS credentials need
+`ec2:DescribeRegions` and `ec2:DescribeSecurityGroups` alongside inventory reads.
+AWS GetCallerIdentity does not require an extra IAM permission.
+
+Fresh baseline19 verification (2026-11-05): exact layout/head tests observed
+RED then GREEN. Changed command/migration/seed database race packages passed,
+including all 31 business tables populated before full Down0, fresh Up19 and
+seed twice. Final auth/reference/native/scope/history checks and normal/tagged
+focused lint passed. Independent PostgreSQL schema comparison matched old head28
+to fresh19 across 31 tables, 396 columns, 118 constraints, 135 indexes and 29
+sequences/ownership. Dedicated comparison databases were removed. Independent
+specification and quality reviews approved with no findings. The complete
+repository database/race suite passed against the new baseline. The embedded
+build and actual binary smoke passed fresh head19/32-table initialization,
+repeated migrate/seed, authentication, list APIs and UI/Swagger serving checks;
+the smoke server and its unique database were removed and absence verified.
+No runtime/app behavior or Dev/Production database changed.
+
+These extensions have not been deployed or accepted in Production. Local
+verification of the original 00023 extension on 2026-10-28 passed Go 1.25 lint,
+race/database tests, frontend checks/165 tests, generated artifacts and embedded
+build. Real AWS Security Groups acceptance remains pending. Use
+`scripts/p4-smoke.md` and `scripts/p4-multicloud-smoke.md` with separately supplied
+disposable read-only credentials. Fresh-baseline Down operations drop credentials and inventory after their
+dependants; they are not rollout recovery. Legacy-invalid GCP SQL/auth/UI
+compatibility remains supported, while historical backfills and intermediate
+SA-auth downgrade guards are absent from the fresh baseline. Retain database backups and the matching vault key. Do not commit work
+without explicit user authorization for that specific change.
+
+The active approved requirement is multi-cloud Assets with Aliyun AK/SK and GCP
+Service Account JSON authentication, independent provider/resource tables and
+shared read projections/UI. The GCP database table is `gcp_databases`. Menus
+will be Cloud Accounts, VPCs, Firewalls, Instances, Databases, Sync Runs.
+Read the active design and plan before implementation:
+`docs/superpowers/specs/2026-10-28-multicloud-assets-design.md` and
+`docs/superpowers/plans/2026-10-28-multicloud-assets.md`.
+The implementation branch is `feat/multicloud-assets`, based on `3bd0add`; that base's CI
+run `40702433368` passed all six jobs and published its images. The design and
+17-task plan are written. The operator requested subagent-driven implementation;
+Tasks 1–14 (common resource contracts, credential migration 00024, typed
+credential service integration and provider-specific Cloud Keys UI) passed
+separate spec/code-quality reviews. Go 1.25 lint, the complete credential
+database race suite, HTTP secret non-disclosure and regenerated Swagger
+consistency passed. The UI passed typecheck/lint/locale parity and all 194
+tests, including optimized-parent prop-order regressions. Multi-cloud account
+scope migration 00025, metadata binding, catalog seam and identity pinning also
+passed account/cloud-key/migration database race suites and affected HTTP tests.
+Native provider schemas/models (Task 6a, migrations 00026–00027) passed separate
+reviews, full migration/resource race tests, all-ten model roundtrips and tagged
+lint. NIC serialization preserves empty address arrays. Persistence/cascade
+(Task 6b) passed both reviews and final account/Aliyun/GCP database race suites,
+including zone/region consistency, full region-change rollback and Unscoped
+history retention. Shared sync engine/run metadata (Task 7, migration 00028) passed both reviews,
+final affected database race suites, normal/tagged lint and Swagger checks.
+The AWS adapter (Task 8) passed independent spec and quality reviews on
+2026-10-29. Production wiring now uses NewProviderEngine with explicit AWS
+credentials, authenticated region catalogs and fresh-unit STS identity checks;
+staged legacy orchestration is removed. Required unit/database race suites,
+affected async HTTP integration, normal/tagged focused lint and SDK graph/
+checksum checks passed. Eight real-STS-path cancellation/deadline regressions
+cover the review fix. All 554 resolved modules remain compatible with Go 1.25;
+the researched Aliyun/GCP SDK versions are pinned. Unified query core (Task 9a)
+passed independent spec/quality reviews, PostgreSQL race fixtures, focused
+normal/tagged lint and bounded-page/index checks on 2026-10-29. Same-NIC IP
+scoping, zoned-IP validation, nullable native facts and typed AWS rule target
+metadata are covered. Family DTO/repository/service integration (9b) also
+passed independent spec/quality reviews, affected unit/database race suites,
+normal/tagged focused lint and regenerated Swagger checks. Native arrays,
+nullable facts, int64 capacities, key/scoped-subnet seams and legacy AWS aliases
+are covered; the nullable ha_mode schema correction was rechecked. Canonical
+HTTP details, Firewalls and scoped Consumer (Task 10) passed both reviews,
+all Assets unit/database race suites, real JWT/RBAC route integration, focused
+normal/tagged lint and generated Swagger checks. Private-only lookups preserve
+ambiguity/not-found identities and return the canonical requested IP plus
+matched-NIC context; legacy AWS ID/VPC methods remain intact. Aliyun identity,
+compute and network collection (Task 11) passed both reviews, affected unit/
+database race suites, HTTP integration and normal/tagged focused lint. Explicit
+AK/SK clients, fresh-unit STS checks, strict pagination and attached-NIC
+enrichment are fixture-verified; real Aliyun acceptance is pending and requires
+ecs:DescribeNetworkInterfaces read permission. The SDK retry policy is explicit
+and all 554 modules remain Go 1.25 compatible. Aliyun databases/Firewalls
+(Task 12) also passed both reviews, affected unit/database race suites,
+measured four-worker cancellation fixtures, normal/tagged lint, Swagger and
+locale checks. All four Aliyun units are fixture-verified, including classic
+SG scopes, typed port-list references, required detail failure preservation,
+stable revival and fixed provider-neutral run errors. Real Aliyun acceptance
+remains pending. GCP explicit authentication/scope and compute/network (Task 13)
+passed both reviews on 2026-11-04, including explicit Compute/SQL clients,
+authoritative zone planning, typed NIC facts and scope-isolated publication.
+Affected unit/database race evidence, lint, Swagger and checksum checks passed;
+final JWT body-lifetime, warning and constructor security regressions are green.
+Google universe/endpoints are pinned; enabled/unknown ambient client-certificate
+discovery fails closed before SDK construction, without global environment
+mutation or validation bypass. Real GCP acceptance remains pending. GCP
+databases/Firewalls (Task 14) passed both reviews on 2026-11-04, affected race/
+database suites, five-family SDK integration, lint, Swagger and checksum/tidy
+checks. Priority presence and SDK debug-payload logging have permanent security
+regressions; supported explicit constructor logging suppresses raw payloads.
+Selected dependencies remain Go 1.25 compatible with required pins intact.
+SQL listing repeats per selected region and firewall pages over 16 MiB fail
+closed. Real GCP acceptance remains pending. Shared UI/menu integration (Task 15)
+was executed as reviewed substeps 15a–15c.
+Substep 15a passed independent spec/quality reviews on 2026-11-04: exact
+TypeScript/API contracts, shared filters/request generations and rule formatting
+passed 59 affected tests, typecheck, lint and locale parity. Permission cleanup,
+saved-state restoration, loading/error ownership, nullable native facts and
+managed port-list references are covered. This preceded resource/detail page integration (15b) and forms/menus (15c).
+Substep 15b1 also passed both reviews on 2026-11-04: typed shared details,
+canonical routes and scoped subnets passed affected tests, typecheck, lint and
+locale parity. Actual Ant Design search/pagination regressions cover the review
+fixes; exact Int64 keys, detail lifecycle and factual boolean rendering are
+verified. Resource/sync lists (15b2) and forms/menus (15c) followed.
+Substep 15b2 passed both reviews on 2026-11-04: resource/Firewalls/sync lists
+passed 120 affected tests, typecheck, lint and locale parity. Server-key identity,
+real control events, guarded async state, native collection display and localized
+unknown facts are covered. Click/keyboard navigation assertions retain provider
+and Int64 precision. Substep 15c passed independent spec/quality reviews on
+2026-11-05: account forms preserve metadata-only edits without credential reads,
+seed retains the legacy menu ID and rejects reserved-code collisions atomically,
+and real router guards protect the compatibility URL. Initial full frontend
+296 tests/build and seed database races passed. Five real-control red/green
+regressions fixed stale submission/list ownership; affected checks and independent
+26-test rechecks passed with no findings. Tasks 15.1–15.7 are complete;
+Task 16 also passed independent spec/quality reviews on 2026-11-05: general/AWS
+timeouts, configured account ceilings and elapsed planning budgets are covered
+by actual SDK/HTTP/database regressions. Affected race/lint/generated checks
+passed; operating docs and safe catalog error contracts match the implementation.
+Task 17 local verification and a fresh independent overall composition review
+completed on 2026-11-05 with no remaining findings. Three-provider HTTP/vault/
+sync/deletion and combined upgrade/fresh-init fixtures passed. Full Go 1.25
+lint/unit races and database package coverage passed; one legacy test fixture
+needed migration 00028 metadata, then its entire cloud-key race suite passed
+with all assertions retained. Reviewed embedded Assets and Swagger repairs
+passed affected race/lint checks. Final web checks passed 302 tests, typecheck,
+lint and locale parity; generated checks and the embedded build passed. The
+actual rebuilt binary passed 176 valid Assets GET/HEAD, 78 raw invalid-path,
+15 API/Swagger JSON404, 39 Swagger resource/query and authentication/cache
+checks, using a unique disposable database that was removed after shutdown.
+All 17 planned tasks are locally complete. Real AWS/Aliyun/GCP acceptance remains
+pending; the operator confirmed basic local functional acceptance on 2026-11-05.
+Commit, push, PR creation and merge to main are now explicitly authorized.
+Production rollout and full acceptance remain pending.
+Current source schema ends at 00019; the next new migration is 00020. The historical baseline
+Go unit/database suites and all 165 frontend tests passed before schema changes.
+Historical migrations 00024–00028 implemented the approved feature sequence;
+the current fresh baseline supersedes their numbering. Track work and delivery in the active plan. The operator will rebuild and deploy
+Production for full validation; production acceptance remains `d0016d0`/00022.
+The dedicated test PostgreSQL container, its data volume and both test PostgreSQL
+images were removed after verification; shared Colima Kubernetes resources remain.
 
 2026-09-24 monorepo merge: the `optimus-be` and `optimus-fe` repositories (split
 on 2026-09-14 from the original `logic3579/optimus` monorepo) were merged back
@@ -139,7 +281,7 @@ Run from the repository root:
 - `make swag` / `make swagger-diff`
 - `make dump-perms` / `make perm-check`
 - `make migrate-up` / `make migrate-down`
-- `make migrate-new name=<snake_case>` (sequential numbering, next is 00024)
+- `make migrate-new name=<snake_case>` (sequential numbering, next is 00020)
 - `make seed`
 
 Frontend commands run from `web/`: `bun install`, `bun run dev`,
@@ -237,7 +379,9 @@ Integration variants require Colima Docker and the `dbtest` build tag.
   win. Unknown `/api*` and `/swagger*` paths return the JSON envelope (40401),
   never the SPA shell. Only GET/HEAD are served.
 - Hashed `/assets/*` are immutable; `index.html` is `no-store`; other files
-  revalidate. Missing `/assets/*` return 404; other misses fall back to
+  revalidate. Known Assets menu pages and legal detail URLs under `/assets/`
+  fall back to the `no-store` index shell. Missing built/hashed/dotted resources
+  and unknown paths under that prefix return 404; other misses fall back to
   `index.html`.
 - The embedded build is preloaded at startup with ETags and gzip variants.
   `server.web_dir` serves a build from disk per request instead.
@@ -320,13 +464,16 @@ Integration variants require Colima Docker and the `dbtest` build tag.
 
 ## P4 Assets Rules
 
-For P4, follow `docs/superpowers/plans/2026-06-11-p4-assets.md` task by task.
+For P4, preserve the historical AWS baseline in
+`docs/superpowers/plans/2026-06-11-p4-assets.md`; active multi-cloud work follows
+`docs/superpowers/plans/2026-10-28-multicloud-assets.md`.
 The most important rules are:
 
 - `credentials.Consumer` is the only path for cloud keys.
 - Fetch cloud keys with a purpose like `assets.sync.<reason>` and wipe them
   after use.
-- Build AWS clients per sweep/request; do not cache SDK clients.
+- Build provider clients per unit/request using explicit selected credentials; do
+  not cache SDK clients or use ambient authentication.
 - Only authoritative successful full sweeps may soft-delete missing resources.
 - VPC and subnet sweeps are one transaction and one `network` sync-run unit.
 - Manual sync is asynchronous: the handler returns immediately and the worker
@@ -345,12 +492,20 @@ The most important rules are:
   returns `ErrAssetsInstanceNotFound` for absent matches.
 - P4 runtime configuration uses `OPTIMUS_ASSETS_SYNC_CRON`,
   `OPTIMUS_ASSETS_SYNC_STARTUP_DELAY`,
-  `OPTIMUS_ASSETS_SYNC_RUN_RETENTION_DAYS`, and
-  `OPTIMUS_ASSETS_AWS_REQUEST_TIMEOUT`.
+  `OPTIMUS_ASSETS_SYNC_RUN_RETENTION_DAYS`,
+  `OPTIMUS_ASSETS_REQUEST_TIMEOUT` (Aliyun/GCP, 30s),
+  `OPTIMUS_ASSETS_AWS_REQUEST_TIMEOUT` (independent AWS override, 30s) and
+  `OPTIMUS_ASSETS_SYNC_TIMEOUT` (account ceiling, 15m). Positive configured account
+  ceilings above 15m remain effective; unit budgets remain at most 15m and actual
+  global/regional/zonal plans determine the overflow-safe aggregate budget.
 
-P4's manual release checklist is `scripts/p4-smoke.md`. Use it against a
-disposable read-only AWS credential for P4 regression checks; do not add AWS
-write/manage APIs in P4.
+P4's manual release checklists are `scripts/p4-smoke.md` (AWS) and
+`scripts/p4-multicloud-smoke.md` (all providers). Real-provider acceptance remains
+pending; fixtures are separate evidence. Do not add cloud write/manage APIs.
+GCP uses fixed official universe/endpoints. Ambient mTLS discovery is unsupported:
+`GOOGLE_API_USE_CLIENT_CERTIFICATE` accepts unset/case-insensitive false only;
+true/unknown fails Config before SDK discovery. Never mutate global environment
+variables or log raw SDK payloads, SA JSON, JWTs or AK/SK.
 
 ## Local Gotchas
 

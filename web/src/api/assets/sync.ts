@@ -1,9 +1,12 @@
 import type { AxiosInstance } from 'axios'
 
 import type { Envelope } from '@/types/api'
-import type { ListResponse, SyncRunResourceType, SyncRunStatus, SyncRunSummary } from '@/types/assets'
+import type { ListResponse, LocationType, Provider, SyncRunResourceType, SyncRunStatus, SyncRunSummary } from '@/types/assets'
 
 export interface SyncRunListParams {
+  provider?: Provider
+  location_type?: LocationType
+  location?: string
   account_id?: number
   resource_type?: SyncRunResourceType
   status?: SyncRunStatus

@@ -17,6 +17,7 @@ import (
 
 	"github.com/ArkGravity/optimus/internal/infra/db"
 	"github.com/ArkGravity/optimus/internal/models"
+	awsprovider "github.com/ArkGravity/optimus/internal/modules/assets/providers/aws"
 	assetsync "github.com/ArkGravity/optimus/internal/modules/assets/sync"
 	"github.com/ArkGravity/optimus/internal/modules/assets/sync/runs"
 	"github.com/ArkGravity/optimus/internal/modules/credentials"
@@ -69,11 +70,15 @@ func (integrationClientFactory) For(context.Context, *credentials.CloudKey, stri
 type integrationCloudKeyConsumer struct{}
 
 func (integrationCloudKeyConsumer) GetCloudKey(context.Context, uint64, string) (*credentials.CloudKey, error) {
-	return &credentials.CloudKey{Provider: "aws", AccessKeyID: "integration-access", SecretAccessKey: "integration-secret"}, nil
+	return &credentials.CloudKey{Provider: "aws", AuthType: "access_key", AccessKeyID: "integration-access", SecretAccessKey: "integration-secret"}, nil
 }
 
 func newIntegrationEngine(gdb *gorm.DB, fetcher assetsync.Fetcher) *assetsync.Engine {
-	return assetsync.NewEngine(gdb, runs.NewRepo(gdb), integrationClientFactory{}, fetcher, integrationCloudKeyConsumer{}, time.Second)
+	registry, err := assetsync.NewRegistry(awsprovider.New(awsprovider.Options{ClientFactory: integrationClientFactory{}, Fetcher: fetcher, Identity: integrationAWSIdentity{}}))
+	if err != nil {
+		panic(err)
+	}
+	return assetsync.NewProviderEngine(gdb, runs.NewRepo(gdb), registry, integrationCloudKeyConsumer{}, time.Second, assetsync.DefaultAccountTimeout)
 }
 
 func TestAssetsSyncEngineIntegration(t *testing.T) {
@@ -94,14 +99,14 @@ func TestAssetsSyncEngineIntegration(t *testing.T) {
 
 		var foundRuns []models.AssetsSyncRun
 		require.NoError(t, gdb.Where("cloud_account_id = ?", account.ID).Order("id").Find(&foundRuns).Error)
-		require.Len(t, foundRuns, 4)
+		require.Len(t, foundRuns, 5)
 		for _, run := range foundRuns {
 			require.Equal(t, "success", run.Status)
 		}
-		require.Equal(t, []string{"instance", "network", "database", "security_group"}, []string{
-			foundRuns[0].ResourceType, foundRuns[1].ResourceType, foundRuns[2].ResourceType, foundRuns[3].ResourceType,
+		require.Equal(t, []string{"planning", "instance", "network", "database", "security_group"}, []string{
+			foundRuns[0].ResourceType, foundRuns[1].ResourceType, foundRuns[2].ResourceType, foundRuns[3].ResourceType, foundRuns[4].ResourceType,
 		})
-		require.EqualValues(t, 3, foundRuns[0].ItemsSeen)
+		require.EqualValues(t, 3, foundRuns[1].ItemsSeen)
 		var alive int64
 		require.NoError(t, gdb.Model(&models.AWSInstance{}).Where("cloud_account_id = ?", account.ID).Count(&alive).Error)
 		require.EqualValues(t, 3, alive)
@@ -125,7 +130,7 @@ func TestAssetsSyncEngineIntegration(t *testing.T) {
 		}
 		require.NoError(t, gdb.Create(&existing).Error)
 		fetcher.setError(errors.New("simulated upstream failure"))
-		require.NoError(t, engine.RunAccount(context.Background(), account.ID, "cron", nil))
+		require.Error(t, engine.RunAccount(context.Background(), account.ID, "cron", nil))
 
 		var latest models.AssetsSyncRun
 		require.NoError(t, gdb.Where("cloud_account_id = ? AND resource_type = ?", account.ID, "instance").Order("id DESC").First(&latest).Error)
@@ -137,7 +142,7 @@ func TestAssetsSyncEngineIntegration(t *testing.T) {
 
 	t.Run("prune zero is no-op and positive retention deletes old runs", func(t *testing.T) {
 		old := models.AssetsSyncRun{
-			CloudAccountID: account.ID, Region: "us-east-1", ResourceType: "instance",
+			CloudAccountID: account.ID, Region: "us-east-1", Provider: "aws", LocationType: "region", Location: "us-east-1", ScopeRevision: 1, ResourceType: "instance",
 			StartedAt: time.Now().Add(-48 * time.Hour), Status: "success", Trigger: "cron",
 		}
 		require.NoError(t, gdb.Create(&old).Error)
@@ -172,11 +177,17 @@ func TestAssetsManualSyncHTTPQueuesAndEventuallyRuns(t *testing.T) {
 		err := gdb.Model(&models.AssetsSyncRun{}).
 			Where("cloud_account_id = ? AND trigger = ? AND status = ? AND finished_at IS NOT NULL", account.ID, "manual", "success").
 			Count(&count).Error
-		return err == nil && count == 4
+		return err == nil && count == 5
 	}, 2*time.Second, 20*time.Millisecond)
 	var auditCount int64
 	require.NoError(t, gdb.Model(&models.AuditLog{}).
 		Where("action = ? AND target_id = ?", "assets.cloud_account.sync_trigger", fmt.Sprint(account.ID)).
 		Count(&auditCount).Error)
 	require.EqualValues(t, 1, auditCount)
+}
+
+type integrationAWSIdentity struct{}
+
+func (integrationAWSIdentity) AccountID(context.Context, *credentials.CloudKey, string) (string, error) {
+	return "111111111111", nil
 }

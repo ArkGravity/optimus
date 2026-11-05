@@ -1,8 +1,24 @@
 package instance
 
-import "time"
+import (
+	"time"
+
+	"github.com/ArkGravity/optimus/internal/modules/assets/query"
+	"github.com/ArkGravity/optimus/internal/modules/assets/resource"
+)
 
 type Summary struct {
+	NetworkInterfaces []resource.NetworkInterface `json:"network_interfaces"`
+	NativeDetails     query.InstanceNativeDetails `json:"native_details"`
+	AssetKey          string                      `json:"asset_key"`
+	Provider          string                      `json:"provider"`
+	ProjectID         string                      `json:"project_id"`
+	LocationType      string                      `json:"location_type"`
+	Location          string                      `json:"location"`
+	Zone              string                      `json:"zone"`
+	NativeID          string                      `json:"native_id"`
+	NativeStatus      string                      `json:"native_status"`
+
 	ID               uint64            `json:"id"`
 	CloudAccountID   uint64            `json:"cloud_account_id"`
 	CloudAccountName string            `json:"cloud_account_name,omitempty"`
@@ -23,6 +39,13 @@ type Summary struct {
 }
 
 type ListQuery struct {
+	IP        string `form:"ip"`
+	TagKey    string `form:"tag_key"`
+	TagValue  string `form:"tag_value"`
+	Provider  string `form:"provider"`
+	ProjectID string `form:"project_id"`
+	Zone      string `form:"zone"`
+
 	AccountID      uint64 `form:"account_id"`
 	Region         string `form:"region"`
 	State          string `form:"state"`
@@ -35,6 +58,13 @@ type ListQuery struct {
 
 // ListFilter is validated before it reaches persistence.
 type ListFilter struct {
+	IP        string
+	TagKey    string
+	TagValue  string
+	Provider  string
+	ProjectID string
+	Zone      string
+
 	AccountID      uint64
 	Region         string
 	State          string

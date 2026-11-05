@@ -1,6 +1,7 @@
 package migrations
 
 import (
+	"fmt"
 	"math"
 	"strings"
 	"testing"
@@ -9,39 +10,34 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestEmbedContainsAllMigrations(t *testing.T) {
+func TestEmbeddedFreshBaselineLayout(t *testing.T) {
+	names := []string{"create_users", "create_roles", "create_permissions", "create_user_roles", "create_role_permissions", "create_menus", "create_refresh_tokens", "create_audit_logs", "create_credentials_ssh_keys", "create_credentials_kubeconfigs", "create_credentials_cloud_keys", "create_clusters", "create_apps_chart_repos", "create_apps_applications", "create_cloud_accounts", "create_aws_assets", "create_aliyun_assets", "create_gcp_assets", "create_assets_sync_runs"}
 	entries, err := FS.ReadDir(".")
 	require.NoError(t, err)
-	var sqlCount int
-	for _, e := range entries {
-		if !e.IsDir() && strings.HasSuffix(e.Name(), ".sql") {
-			sqlCount++
+	var actual []string
+	for _, entry := range entries {
+		if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".sql") {
+			actual = append(actual, entry.Name())
 		}
 	}
-	require.GreaterOrEqual(t, sqlCount, 11, "expected at least 11 embedded migration files")
-}
-
-func TestEmbeddedMigrationsHaveUniqueVersions(t *testing.T) {
+	var expected []string
+	for i, name := range names {
+		expected = append(expected, fmt.Sprintf("%05d_%s.sql", i+1, name))
+	}
+	require.Equal(t, expected, actual)
 	goose.SetBaseFS(FS)
 	t.Cleanup(func() { goose.SetBaseFS(nil) })
-
-	migrations, err := goose.CollectMigrations(".", 0, math.MaxInt64)
+	collected, err := goose.CollectMigrations(".", 0, math.MaxInt64)
 	require.NoError(t, err)
-
-	var version21Count int
-	for _, migration := range migrations {
-		if migration.Version == 21 {
-			version21Count++
-		}
+	require.Len(t, collected, 19)
+	for i, migration := range collected {
+		require.EqualValues(t, i+1, migration.Version)
 	}
-	require.Equal(t, 1, version21Count, "migration version 21 must be discoverable exactly once")
 }
 
-func TestP4AssetsReferencesCredentialsCloudKeys(t *testing.T) {
-	sql, err := FS.ReadFile("00021_p4_assets.sql")
+func TestCloudAccountsReferencesCredentialsCloudKeys(t *testing.T) {
+	sql, err := FS.ReadFile("00015_create_cloud_accounts.sql")
 	require.NoError(t, err)
-
-	contents := string(sql)
-	require.Contains(t, contents, "REFERENCES credentials_cloud_keys(id)")
-	require.NotContains(t, contents, "REFERENCES credential_cloud_keys")
+	require.Contains(t, string(sql), "REFERENCES credentials_cloud_keys(id)")
+	require.NotContains(t, string(sql), "REFERENCES credential_cloud_keys")
 }

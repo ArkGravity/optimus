@@ -30,12 +30,42 @@ func (h *Handler) Mount(group *gin.RouterGroup, requirePermission func(code stri
 	}
 	write := group.Group("", requirePermission("assets:account:write"))
 	{
+		write.GET("/cloud-accounts/region-options", h.RegionOptions)
 		write.POST("/cloud-accounts", h.Create)
 		write.PUT("/cloud-accounts/:id", h.Update)
 		write.POST("/cloud-accounts/:id/sync", h.TriggerSync)
 	}
 	remove := group.Group("", requirePermission("assets:account:delete"))
 	remove.DELETE("/cloud-accounts/:id", h.Delete)
+}
+
+// RegionOptions lists selectable provider regions for an explicit credential and target.
+// @Summary List cloud account region options
+// @Tags assets
+// @Security BearerAuth
+// @Produce json
+// @Param provider query string true "cloud provider" Enums(aws,aliyun,gcp)
+// @Param cloudkey_id query int true "cloud key ID"
+// @Param project_id query string false "Explicit GCP target Project ID, independent from credential home project"
+// @Success 200 {object} response.Envelope{data=RegionOptionsResponse}
+// @Failure 400 {object} response.Envelope
+// @Failure 401 {object} response.Envelope
+// @Failure 403 {object} response.Envelope
+// @Failure 422 {object} response.Envelope
+// @Failure 500 {object} response.Envelope
+// @Router /assets/cloud-accounts/region-options [get]
+func (h *Handler) RegionOptions(c *gin.Context) {
+	var query RegionOptionsQuery
+	if err := c.ShouldBindQuery(&query); err != nil {
+		response.Error(c, apperr.New(apperr.CodeValidation, "common.validation", "invalid region catalog query"))
+		return
+	}
+	result, err := h.svc.RegionOptions(c.Request.Context(), c.GetUint64(middleware.CtxKeyUserID), query)
+	if err != nil {
+		response.Error(c, err)
+		return
+	}
+	response.Success(c, result)
 }
 
 func (h *Handler) parseID(c *gin.Context) (uint64, bool) {
@@ -53,7 +83,7 @@ func (h *Handler) parseID(c *gin.Context) (uint64, bool) {
 // @Security BearerAuth
 // @Produce  json
 // @Param    q               query string false "search by name"
-// @Param    provider        query string false "cloud provider"
+// @Param    provider        query string false "cloud provider" Enums(aws,aliyun,gcp)
 // @Param    enabled         query bool   false "enabled filter"
 // @Param    include_deleted query bool   false "include soft-deleted accounts"
 // @Param    page            query int    false "page" default(1)
@@ -213,6 +243,7 @@ func (h *Handler) Delete(c *gin.Context) {
 
 // TriggerSync starts a manual sync when the sync engine is wired.
 // @Summary  Trigger cloud account sync
+// @Description Queues work immediately; authenticated provider planning and zone discovery run in the worker under the configured account ceiling.
 // @Tags     assets
 // @Security BearerAuth
 // @Produce  json

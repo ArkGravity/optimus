@@ -49,6 +49,8 @@ func TestServiceListValidatesQuery(t *testing.T) {
 		{"account beyond bigint", ListQuery{AccountID: uint64(math.MaxInt64) + 1}},
 		{"invalid resource type", ListQuery{ResourceType: "bucket"}},
 		{"invalid status", ListQuery{Status: "done"}},
+		{"invalid provider", ListQuery{Provider: "other"}},
+		{"invalid location type", ListQuery{LocationType: "other"}},
 		{"invalid timestamp", ListQuery{StartedAfter: "2026-07-16"}},
 		{"negative page", ListQuery{Page: -1}},
 		{"negative size", ListQuery{Size: -1}},
@@ -66,8 +68,19 @@ func TestServiceListValidatesQuery(t *testing.T) {
 	}
 }
 
+func TestServiceListPassesProviderLocationFilters(t *testing.T) {
+	repo := &stubListRepo{}
+	_, err := NewService(repo).List(context.Background(), ListQuery{Provider: "gcp", LocationType: "zone", Location: "us-central1-a", ResourceType: "subnet"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if repo.filter.Provider != "gcp" || repo.filter.LocationType != "zone" || repo.filter.Location != "us-central1-a" {
+		t.Fatalf("scope filters lost: %+v", repo.filter)
+	}
+}
+
 func TestServiceListAcceptsDocumentedEnums(t *testing.T) {
-	for _, resourceType := range []string{"", "instance", "network", "database", "security_group"} {
+	for _, resourceType := range []string{"", "instance", "network", "database", "security_group", "subnet", "firewall", "planning"} {
 		for _, status := range []string{"", "running", "success", "failed", "skipped"} {
 			repo := &stubListRepo{}
 			_, err := NewService(repo).List(context.Background(), ListQuery{ResourceType: resourceType, Status: status})

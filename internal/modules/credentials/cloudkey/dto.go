@@ -3,14 +3,18 @@ package cloudkey
 import "time"
 
 type Summary struct {
-	ID          uint64    `json:"id"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	Provider    string    `json:"provider"`
-	Region      string    `json:"region"`
-	CreatedBy   *Actor    `json:"created_by,omitempty"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	ID                  uint64    `json:"id"`
+	Name                string    `json:"name"`
+	Description         string    `json:"description"`
+	Provider            string    `json:"provider"`
+	Region              string    `json:"region"`
+	AuthType            string    `json:"auth_type"`
+	ServiceAccountEmail string    `json:"service_account_email"`
+	CredentialProjectID string    `json:"credential_project_id"`
+	NeedsConfiguration  bool      `json:"needs_configuration"`
+	CreatedBy           *Actor    `json:"created_by,omitempty"`
+	CreatedAt           time.Time `json:"created_at"`
+	UpdatedAt           time.Time `json:"updated_at"`
 }
 
 type Detail = Summary
@@ -22,21 +26,25 @@ type Actor struct {
 }
 
 type CreateRequest struct {
-	Name            string `json:"name"              binding:"required,max=128"`
-	Description     string `json:"description"       binding:"max=4096"`
-	Provider        string `json:"provider"          binding:"required,oneof=aliyun aws gcp"`
-	Region          string `json:"region"            binding:"max=32"`
-	AccessKeyID     string `json:"access_key_id"     binding:"required,max=256"`
-	SecretAccessKey string `json:"secret_access_key" binding:"required"`
+	Name               string `json:"name"              binding:"required,max=128"`
+	Description        string `json:"description"       binding:"max=4096"`
+	Provider           string `json:"provider"          binding:"required,oneof=aliyun aws gcp"`
+	Region             string `json:"region"            binding:"max=32"`
+	AuthType           string `json:"auth_type"`
+	AccessKeyID        string `json:"access_key_id" binding:"max=256"`
+	SecretAccessKey    string `json:"secret_access_key"`
+	ServiceAccountJSON string `json:"service_account_json"`
 }
 
 type UpdateRequest struct {
-	Name            *string `json:"name,omitempty"              binding:"omitempty,max=128"`
-	Description     *string `json:"description,omitempty"       binding:"omitempty,max=4096"`
-	Provider        *string `json:"provider,omitempty"          binding:"omitempty,oneof=aliyun aws gcp"`
-	Region          *string `json:"region,omitempty"            binding:"omitempty,max=32"`
-	AccessKeyID     *string `json:"access_key_id,omitempty"     binding:"omitempty,max=256"`
-	SecretAccessKey *string `json:"secret_access_key,omitempty"`
+	Name               *string `json:"name,omitempty"              binding:"omitempty,max=128"`
+	Description        *string `json:"description,omitempty"       binding:"omitempty,max=4096"`
+	Provider           *string `json:"provider,omitempty"          binding:"omitempty,oneof=aliyun aws gcp"`
+	Region             *string `json:"region,omitempty"            binding:"omitempty,max=32"`
+	AccessKeyID        *string `json:"access_key_id,omitempty"     binding:"omitempty,max=256"`
+	SecretAccessKey    *string `json:"secret_access_key,omitempty"`
+	AuthType           *string `json:"auth_type,omitempty"`
+	ServiceAccountJSON *string `json:"service_account_json,omitempty"`
 }
 
 type ListQuery struct {

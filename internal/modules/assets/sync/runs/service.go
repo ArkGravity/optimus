@@ -47,7 +47,13 @@ func validateListQuery(query ListQuery) (ListFilter, error) {
 	if query.AccountID > math.MaxInt64 {
 		return ListFilter{}, validationError("account_id exceeds database range")
 	}
-	if !oneOf(query.ResourceType, "", "instance", "network", "database", "security_group") {
+	if !oneOf(query.Provider, "", "aws", "aliyun", "gcp") {
+		return ListFilter{}, validationError("invalid provider")
+	}
+	if !oneOf(query.LocationType, "", "global", "region", "zone") {
+		return ListFilter{}, validationError("invalid location_type")
+	}
+	if !oneOf(query.ResourceType, "", "instance", "network", "database", "security_group", "subnet", "firewall", "planning") {
 		return ListFilter{}, validationError("invalid resource_type")
 	}
 	if !oneOf(query.Status, "", "running", "success", "failed", "skipped") {
@@ -64,6 +70,7 @@ func validateListQuery(query ListQuery) (ListFilter, error) {
 	}
 
 	filter := ListFilter{
+		Provider: query.Provider, LocationType: query.LocationType, Location: query.Location,
 		AccountID: query.AccountID, ResourceType: query.ResourceType, Status: query.Status,
 		Page: query.Page, Size: query.Size,
 	}

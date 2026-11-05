@@ -108,7 +108,16 @@
     "43104": "无法连接 AWS API",
     "43105": "AWS API 限流",
     "43106": "AWS API 调用失败",
-    "43107": "AWS SDK 配置加载失败"
+    "43107": "AWS SDK 配置加载失败",
+    "43201": "云凭证无效或已过期",
+    "43202": "云 API 访问被拒绝",
+    "43203": "无法连接云 API",
+    "43204": "云 API 请求被限流",
+    "43205": "资产采集配置无效",
+    "43206": "资产快照不完整",
+    "43207": "云 API 未启用",
+    "43208": "资产采集失败",
+    "43209": "已验证的云身份与此云账号不匹配"
   },
   "network": {
     "error": "网络错误，请稍后再试"
@@ -145,11 +154,12 @@
     "assets_group": "资产管理",
     "assets": {
       "cloud_accounts": "云账号",
-      "instances": "EC2 实例",
+      "instances": "实例",
       "vpcs": "VPC",
-      "databases": "RDS 数据库",
+      "databases": "数据库",
       "sync_runs": "同步运行记录",
-      "security_groups": "安全组"
+      "security_groups": "安全组",
+      "firewalls": "防火墙"
     },
     "observability_group": "可观测中心",
     "observability": {
@@ -269,10 +279,11 @@
   "assets": {
     "menu": {
       "cloud_accounts": "云账号",
-      "instances": "EC2 实例",
+      "instances": "实例",
       "vpcs": "VPC",
-      "databases": "RDS 数据库",
-      "sync_runs": "同步运行记录"
+      "databases": "数据库",
+      "sync_runs": "同步运行记录",
+      "firewalls": "防火墙"
     },
     "account": {
       "title": "云账号",
@@ -292,11 +303,17 @@
       },
       "sync_queued": "已加入同步队列",
       "delete_confirm": "确认删除云账号「{name}」？删除将级联软删该账号下所有发现的资源。",
-      "cascaded_resources": "已级联软删 {count} 条资源记录"
+      "cascaded_resources": "已级联软删 {count} 条资源记录",
+      "project_id": "目标项目 ID",
+      "credential_project_info": "凭据所属项目（仅供参考）",
+      "credential_read_required": "创建云账号需要读取云凭据的权限。",
+      "load_regions": "加载地域",
+      "external_account_id": "外部身份",
+      "scope_revision": "范围版本"
     },
     "resource": {
       "instance": {
-        "title": "EC2 实例",
+        "title": "实例",
         "instance_id": "实例 ID",
         "name": "名称",
         "type": "实例类型",
@@ -307,7 +324,10 @@
         "subnet": "子网",
         "az": "可用区",
         "launch_time": "启动时间",
-        "tags": "标签"
+        "tags": "标签",
+        "observed_private_ips": "已发现的私有 IP",
+        "observed_public_ips": "已发现的公网 IP",
+        "observed_networks": "已发现的网络"
       },
       "vpc": {
         "title": "VPC",
@@ -326,7 +346,7 @@
         "az": "可用区"
       },
       "database": {
-        "title": "RDS 数据库",
+        "title": "数据库",
         "db_instance_id": "实例标识",
         "engine": "引擎",
         "version": "版本",
@@ -336,7 +356,8 @@
         "port": "端口",
         "multi_az": "多可用区",
         "publicly_accessible": "公网可达",
-        "storage_gb": "存储 GB"
+        "storage_gb": "存储 GB",
+        "observed_endpoints": "已发现的端点"
       },
       "common": {
         "include_deleted": "包含已删除",
@@ -366,6 +387,11 @@
           "prefix_list": "前缀列表",
           "security_group": "安全组"
         }
+      },
+      "firewall": {
+        "title": "防火墙",
+        "inbound_entries": "入站规则条目",
+        "outbound_entries": "出站规则条目"
       }
     },
     "sync": {
@@ -396,12 +422,191 @@
         "instance": "实例",
         "network": "网络",
         "database": "数据库",
-        "security_group": "安全组"
+        "security_group": "防火墙",
+        "planning": "范围规划",
+        "subnet": "子网",
+        "firewall": "防火墙"
       },
       "triggers": {
         "cron": "定时",
         "manual": "手动",
         "test": "测试"
+      }
+    },
+    "provider": {
+      "unauthorized": "云凭证无效或已过期",
+      "forbidden": "云 API 访问被拒绝",
+      "unreachable": "无法连接云 API",
+      "throttled": "云 API 请求被限流",
+      "config": "资产采集配置无效",
+      "partial": "资产快照不完整",
+      "api_disabled": "云 API 未启用",
+      "other": "资产采集失败",
+      "identity_mismatch": "已验证的云身份与此云账号不匹配"
+    },
+    "filters": {
+      "provider": "云服务商",
+      "account_id": "云账号 ID",
+      "project_id": "项目 ID",
+      "region": "区域",
+      "zone": "可用区",
+      "q": "搜索资产",
+      "vpc_id": "网络引用",
+      "network_ref": "网络引用",
+      "ip": "IP 地址",
+      "tag_key": "标签键",
+      "tag_value": "标签值",
+      "location": {
+        "global": "全局",
+        "region": "区域级",
+        "zone": "可用区级"
+      }
+    },
+    "firewall_rules": {
+      "all": "全部",
+      "unavailable": "不适用",
+      "allow": "允许",
+      "deny": "拒绝",
+      "enabled": "已启用",
+      "disabled": "已禁用",
+      "port_list": "端口列表",
+      "priority": "优先级",
+      "action": "动作",
+      "source_ranges": "源地址范围",
+      "destination_ranges": "目标地址范围",
+      "source_network_tags": "源网络标签",
+      "target_network_tags": "目标网络标签",
+      "source_service_accounts": "源服务账号",
+      "target_service_accounts": "目标服务账号",
+      "ipv4": "IPv4",
+      "ipv6": "IPv6",
+      "security_group": "安全组",
+      "prefix_list": "前缀列表"
+    },
+    "detail": {
+      "yes": "是",
+      "no": "否",
+      "not_applicable": "不适用",
+      "forbidden": "需要资产读取权限。",
+      "invalid_key": "资产标识无效。",
+      "provenance_notice": "云厂商提供的原生来源和配置事实，不代表连接端点。",
+      "firewall_inventory_notice": "配置规则清单包含已禁用规则，不评估实际生效访问策略或配额。",
+      "sections": {
+        "common": "资产",
+        "instance": "实例",
+        "vpc": "VPC",
+        "database": "数据库",
+        "firewall": "防火墙",
+        "network_interface": "网卡",
+        "connection_endpoint": "连接端点",
+        "database_native": "数据库原生事实",
+        "database_provenance_ip": "云厂商 IP 来源（可能仅用于出站）",
+        "database_provenance_dns": "云厂商 DNS 来源",
+        "rule_native": "原生规则引用",
+        "subnet": "子网"
+      },
+      "fields": {
+        "asset_key": "资产键",
+        "provider": "云厂商",
+        "account": "云账号",
+        "project_id": "目标项目",
+        "name": "名称",
+        "native_id": "原生 ID",
+        "native_status": "原生状态",
+        "location_type": "位置类型",
+        "location": "位置",
+        "region": "区域",
+        "zone": "可用区",
+        "last_seen_at": "最近发现",
+        "deleted": "已删除",
+        "labels": "标签（Labels）",
+        "tags": "标签",
+        "instance_type": "实例类型",
+        "state": "状态",
+        "launch_time": "启动时间",
+        "cpu_count": "CPU 数量",
+        "memory_mb": "内存（MB）",
+        "image_id": "镜像",
+        "os": "操作系统",
+        "network_tags": "网络标签",
+        "resource_manager_tags": "Resource Manager 标签",
+        "interface_index": "网卡索引",
+        "network_ref": "网络引用",
+        "subnet_ref": "子网引用",
+        "private_ipv4": "私有 IPv4 地址",
+        "public_ipv4": "公共 IPv4 地址",
+        "private_ipv6": "私有 IPv6 地址",
+        "public_ipv6": "公共 IPv6 地址",
+        "native_name": "原生网卡名称",
+        "stack_type": "协议栈类型",
+        "ipv6_access_type": "IPv6 访问类型",
+        "internal_ipv6_prefix_length": "内部 IPv6 前缀长度",
+        "alias_ipv4_ranges": "IPv4 别名范围（范围名称）",
+        "alias_ipv6_ranges": "IPv6 别名范围（范围名称）",
+        "external_ipv6": "外部 IPv6 前缀（名称）",
+        "cidr_blocks": "CIDR 地址段",
+        "is_default": "默认网络",
+        "mtu": "MTU",
+        "routing_mode": "路由模式",
+        "auto_create_subnetworks": "自动创建子网",
+        "product": "产品",
+        "engine": "数据库引擎",
+        "engine_version": "引擎版本",
+        "instance_class": "实例规格",
+        "status": "状态",
+        "ha_mode": "高可用模式",
+        "multi_az": "多可用区",
+        "publicly_accessible": "公网访问",
+        "storage_gb": "存储（GB）",
+        "address": "地址",
+        "port": "端口",
+        "type": "类型",
+        "primary_dns_name": "主 DNS 名称（原生）",
+        "write_endpoint": "写入端点（原生）",
+        "ipv6_address": "IPv6 地址（原生）",
+        "secondary_gce_zone": "备用可用区",
+        "dns_name": "DNS 名称（原生）",
+        "psc_service_attachment_link": "PSC 服务附件引用",
+        "sql_network_architecture": "SQL 网络架构",
+        "database_installed_version": "已安装数据库版本",
+        "storage_type": "存储类型",
+        "connection_name": "连接名称（原生）",
+        "availability_type": "可用性类型",
+        "category": "类别",
+        "connection_type": "连接类型",
+        "dns_scope": "DNS 范围",
+        "record_manager": "DNS 记录管理方",
+        "description": "描述",
+        "group_id": "安全组 ID",
+        "group_name": "安全组名称",
+        "vpc_id": "VPC 引用",
+        "owner_id": "所属账号",
+        "inbound_rule_count": "入站规则数",
+        "outbound_rule_count": "出站规则数",
+        "priority": "优先级",
+        "enabled": "已启用",
+        "direction": "方向",
+        "security_group_type": "安全组类型",
+        "inner_access_policy": "组内访问策略",
+        "peering_id": "对等连接引用",
+        "source_group_id": "源安全组 ID",
+        "destination_group_id": "目标安全组 ID",
+        "source_prefix_list_id": "源前缀列表 ID",
+        "destination_prefix_list_id": "目标前缀列表 ID",
+        "rule_id": "原生规则 ID",
+        "nic_type": "网卡类型",
+        "source_group_name": "源安全组名称",
+        "source_group_owner_account": "源安全组所属账号",
+        "destination_group_name": "目标安全组名称",
+        "destination_group_owner_account": "目标安全组所属账号",
+        "source_prefix_list_name": "源前缀列表名称",
+        "destination_prefix_list_name": "目标前缀列表名称",
+        "source_port_range": "源端口范围（原生）",
+        "port_range_list_id": "端口列表引用 ID",
+        "port_range_list_name": "端口列表引用名称",
+        "available_ip_count": "可用 IP 地址数",
+        "purpose": "用途",
+        "private_ip_google_access": "Google 私有访问"
       }
     }
   },
@@ -547,6 +752,9 @@
       "region": "区域",
       "access_key_id": "Access Key ID",
       "secret_access_key": "Secret Access Key",
+      "service_account_json": "服务账号 JSON",
+      "service_account_email": "服务账号邮箱",
+      "credential_project_id": "凭据所属项目 ID",
       "auth_type": "认证类型",
       "updated_at": "更新时间"
     },
@@ -575,7 +783,16 @@
     "cloud_keys": {
       "title": "云密钥",
       "col_provider": "云厂商",
-      "col_region": "区域"
+      "col_region": "区域",
+      "col_identity": "认证 / 身份",
+      "access_key_auth": "访问密钥",
+      "needs_configuration": "需要配置",
+      "repair_hint": "请使用服务账号 JSON 密钥替换旧访问密钥后再使用此 GCP 凭据。仍可编辑元数据。",
+      "upload_json": "选择服务账号 JSON 文件",
+      "paste_json": "粘贴服务账号 JSON",
+      "json_hint": "选择不超过 64 KiB 的 JSON 文件或粘贴内容。仅在保存时发送凭据。编辑已有凭据时留空可保留原内容。",
+      "json_too_large": "服务账号 JSON 文件不能超过 64 KiB。",
+      "json_read_failed": "无法读取 JSON 文件。请重新选择文件或粘贴内容。"
     },
     "not_found": "凭证不存在",
     "name_taken": "凭证名称已被占用",

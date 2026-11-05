@@ -13,8 +13,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 
 	// Blank import registers the generated OpenAPI spec with swag at init time
 	// so /swagger/* serves it. Regenerate via `make swag` whenever annotations
@@ -160,7 +158,7 @@ func runServer(args []string) {
 
 	// Swagger UI: served at /swagger/index.html. The spec is bundled via the
 	// blank import of github.com/ArkGravity/optimus/api/docs above.
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	mountSwaggerRoutes(r)
 
 	api := r.Group("/api/v1")
 
@@ -247,7 +245,6 @@ func runServer(args []string) {
 		Config:              cfg.Assets,
 		Audit:               auditRec,
 		CredentialsConsumer: credsModule.Consumer,
-		CloudKeyService:     credsModule.CloudKey,
 		Logger:              logger,
 	})
 	credsModule.CloudKey.SetAccountsInUseCounter(assetsModule.InUseCounter)

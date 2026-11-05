@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -102,6 +103,144 @@ func TestEmbedded_MissingHashedAssetDoesNotFallBack(t *testing.T) {
 	require.Empty(t, rec.Body.String())
 }
 
+func assetPagePaths() []string {
+	paths := []string{
+		"/assets",
+		"/assets/cloud-accounts", "/assets/vpcs", "/assets/firewalls",
+		"/assets/instances", "/assets/databases", "/assets/sync-runs",
+		"/assets/security-groups",
+		"/assets/vpcs/gcp%3Avpc%3A42", "/assets/instances/aws%3Ainstance%3A9223372036854775807",
+	}
+	for _, family := range []string{"instance", "vpc", "database", "firewall"} {
+		for _, id := range []string{"1", "9223372036854775807"} {
+			paths = append(paths, fmt.Sprintf("/assets/%ss/%s", family, id))
+			for _, provider := range []string{"aws", "aliyun", "gcp"} {
+				paths = append(paths, fmt.Sprintf("/assets/%ss/%s:%s:%s", family, provider, family, id))
+			}
+		}
+	}
+	return paths
+}
+
+func TestAssetsPageReusesIndexGzipAndETag(t *testing.T) {
+	dist := distFS()
+	largeIndex := strings.Repeat(indexHTML, 100)
+	dist["index.html"] = &fstest.MapFile{Data: []byte(largeIndex)}
+	h, err := webui.New("", dist)
+	require.NoError(t, err)
+	r := newRouter(t, h)
+	headers := map[string]string{"Accept-Encoding": "gzip"}
+	index := do(r, http.MethodGet, "/", headers)
+	page := do(r, http.MethodGet, "/assets/vpcs/gcp%3Avpc%3A42", headers)
+	require.Equal(t, http.StatusOK, page.Code)
+	require.Equal(t, "gzip", page.Header().Get("Content-Encoding"))
+	require.Equal(t, "no-cache, no-store, must-revalidate", page.Header().Get("Cache-Control"))
+	require.Equal(t, index.Header(), page.Header())
+	require.Equal(t, index.Body.Bytes(), page.Body.Bytes())
+	zr, err := gzip.NewReader(bytes.NewReader(page.Body.Bytes()))
+	require.NoError(t, err)
+	decoded, err := io.ReadAll(zr)
+	require.NoError(t, err)
+	require.NoError(t, zr.Close())
+	require.Equal(t, largeIndex, string(decoded))
+	head := do(r, http.MethodHead, "/assets/vpcs/gcp%3Avpc%3A42", headers)
+	require.Equal(t, http.StatusOK, head.Code)
+	require.Empty(t, head.Body.String())
+	require.Equal(t, page.Header(), head.Header())
+	cached := do(r, http.MethodGet, "/assets/vpcs/gcp%3Avpc%3A42", map[string]string{"If-None-Match": page.Header().Get("ETag")})
+	require.Equal(t, http.StatusNotModified, cached.Code)
+	require.Empty(t, cached.Body.String())
+	require.Equal(t, page.Header().Get("Cache-Control"), cached.Header().Get("Cache-Control"))
+}
+
+func TestAssetsPagesServeSPAShell(t *testing.T) {
+	for _, mode := range []string{"embedded", "disk"} {
+		t.Run(mode, func(t *testing.T) {
+			r := embedded(t)
+			if mode == "disk" {
+				dir := t.TempDir()
+				require.NoError(t, os.WriteFile(filepath.Join(dir, "index.html"), []byte(indexHTML), 0o600))
+				h, err := webui.New(dir, nil)
+				require.NoError(t, err)
+				r = newRouter(t, h)
+			}
+			for _, target := range assetPagePaths() {
+				for _, suffix := range []string{"", "/", "?provider=gcp&page=2"} {
+					t.Run(target+suffix, func(t *testing.T) {
+						get := do(r, http.MethodGet, target+suffix, nil)
+						require.Equal(t, http.StatusOK, get.Code)
+						require.Equal(t, indexHTML, get.Body.String())
+						require.Contains(t, get.Header().Get("Content-Type"), "text/html")
+						require.Equal(t, "no-cache, no-store, must-revalidate", get.Header().Get("Cache-Control"))
+						head := do(r, http.MethodHead, target+suffix, nil)
+						require.Equal(t, http.StatusOK, head.Code)
+						require.Empty(t, head.Body.String())
+						require.Equal(t, get.Header().Get("Content-Length"), head.Header().Get("Content-Length"))
+						require.Equal(t, get.Header().Get("Cache-Control"), head.Header().Get("Cache-Control"))
+					})
+				}
+			}
+		})
+	}
+}
+
+func TestUnknownAssetsPathsRemainNotFound(t *testing.T) {
+	r := embedded(t)
+	paths := []string{
+		"/assets//", "/assets/unknown", "/assets/stale-123.js", "/assets/stale-123.js.map",
+		"/assets/chunks/stale-123.js", "/assets/instances/index-abc.js",
+		"/assets/instances/42.js", "/assets/instances/42.js.map",
+		"/assets/instances/42/extra", "/assets/instances/gcp:instance:42/index.js",
+		"/assets/cloud-accounts/new", "/assets/cloud-accounts/42", "/assets/sync-runs/42",
+		"/assets/security-groups/42", "/assets/subnets/42",
+		"/assets/instances/aws:vpc:42", "/assets/vpcs/gcp:instance:42",
+		"/assets/databases/azure:database:42", "/assets/firewalls/GCP:firewall:42",
+		"/assets/instances/0", "/assets/instances/01", "/assets/instances/+1",
+		"/assets/instances/-1", "/assets/instances/9223372036854775808",
+		"/assets/instances/gcp:instance:0", "/assets/instances/gcp:instance:01",
+		"/assets/instances/gcp:instance:9223372036854775808",
+		"/assets/instances/gcp:instance:42:1", "/assets/instances/42//",
+		"/assets/instances//42", "/assets/fake/../instances", "/assets/./instances",
+		"/assets/instances/.hidden", "/assets/instances/%2e%2e/firewalls",
+	}
+	for _, target := range paths {
+		t.Run(target, func(t *testing.T) {
+			for _, method := range []string{http.MethodGet, http.MethodHead} {
+				rec := do(r, method, target, nil)
+				require.Equal(t, http.StatusNotFound, rec.Code)
+				require.Empty(t, rec.Body.String())
+			}
+		})
+	}
+}
+
+func TestMissingAssetsTraversalPathsRemainNotFound(t *testing.T) {
+	for _, mode := range []string{"embedded", "disk"} {
+		t.Run(mode, func(t *testing.T) {
+			r := embedded(t)
+			if mode == "disk" {
+				dir := t.TempDir()
+				require.NoError(t, os.WriteFile(filepath.Join(dir, "index.html"), []byte(indexHTML), 0o600))
+				h, err := webui.New(dir, nil)
+				require.NoError(t, err)
+				r = newRouter(t, h)
+			}
+			for _, target := range []string{
+				"/assets/../missing", "/assets/../../missing",
+				"/assets/%2e%2e/missing", "/assets/instances/../../missing",
+			} {
+				t.Run(target, func(t *testing.T) {
+					for _, method := range []string{http.MethodGet, http.MethodHead} {
+						rec := do(r, method, target, nil)
+						require.Equal(t, http.StatusNotFound, rec.Code)
+						require.Empty(t, rec.Body.String())
+					}
+				})
+			}
+		})
+	}
+}
+
 func TestEmbedded_ConditionalAndHeadRequests(t *testing.T) {
 	r := embedded(t)
 	first := do(r, http.MethodGet, "/optimus-logo.png", nil)
@@ -137,9 +276,14 @@ func TestBackendPathsReturnJSONNotFound(t *testing.T) {
 }
 
 func TestNonReadMethodsAreRejectedOutsideAPI(t *testing.T) {
-	rec := do(embedded(t), http.MethodPost, "/system/users", nil)
-	require.Equal(t, http.StatusMethodNotAllowed, rec.Code)
-	require.Equal(t, "GET, HEAD", rec.Header().Get("Allow"))
+	r := embedded(t)
+	for _, target := range []string{"/system/users", "/assets/instances", "/assets/instances/gcp:instance:42"} {
+		for _, method := range []string{http.MethodPost, http.MethodPut, http.MethodPatch, http.MethodDelete} {
+			rec := do(r, method, target, nil)
+			require.Equal(t, http.StatusMethodNotAllowed, rec.Code, target)
+			require.Equal(t, "GET, HEAD", rec.Header().Get("Allow"), target)
+		}
+	}
 }
 
 func TestEmbedded_NotBuilt(t *testing.T) {

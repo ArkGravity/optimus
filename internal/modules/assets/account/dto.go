@@ -3,17 +3,20 @@ package account
 import "time"
 
 type Summary struct {
-	ID             uint64     `json:"id"`
-	Name           string     `json:"name"`
-	Provider       string     `json:"provider"`
-	CloudKeyID     uint64     `json:"cloudkey_id"`
-	CloudKeyName   string     `json:"cloudkey_name"`
-	RegionsCount   int        `json:"regions_count"`
-	Enabled        bool       `json:"enabled"`
-	LastSyncAt     *time.Time `json:"last_sync_at,omitempty"`
-	LastSyncStatus string     `json:"last_sync_status,omitempty"`
-	CreatedAt      time.Time  `json:"created_at"`
-	UpdatedAt      time.Time  `json:"updated_at"`
+	ID                uint64     `json:"id"`
+	Name              string     `json:"name"`
+	Provider          string     `json:"provider"`
+	ProjectID         string     `json:"project_id"`
+	ExternalAccountID string     `json:"external_account_id"`
+	ScopeRevision     int64      `json:"scope_revision"`
+	CloudKeyID        uint64     `json:"cloudkey_id"`
+	CloudKeyName      string     `json:"cloudkey_name"`
+	RegionsCount      int        `json:"regions_count"`
+	Enabled           bool       `json:"enabled"`
+	LastSyncAt        *time.Time `json:"last_sync_at,omitempty"`
+	LastSyncStatus    string     `json:"last_sync_status,omitempty"`
+	CreatedAt         time.Time  `json:"created_at"`
+	UpdatedAt         time.Time  `json:"updated_at"`
 }
 
 type Detail struct {
@@ -25,6 +28,7 @@ type Detail struct {
 type CreateRequest struct {
 	Name           string   `json:"name"            binding:"required,min=1,max=128"`
 	Provider       string   `json:"provider"        binding:"required"`
+	ProjectID      string   `json:"project_id"`
 	CloudKeyID     uint64   `json:"cloudkey_id"     binding:"required"`
 	EnabledRegions []string `json:"enabled_regions" binding:"required,min=1,dive,min=1"`
 	Enabled        *bool    `json:"enabled"`
@@ -32,6 +36,9 @@ type CreateRequest struct {
 }
 
 type UpdateRequest struct {
+	Provider       *string  `json:"provider,omitempty"`
+	ProjectID      *string  `json:"project_id,omitempty"`
+	CloudKeyID     *uint64  `json:"cloudkey_id,omitempty"`
 	Name           *string  `json:"name,omitempty"            binding:"omitempty,min=1,max=128"`
 	EnabledRegions []string `json:"enabled_regions,omitempty" binding:"omitempty,dive,min=1"`
 	Enabled        *bool    `json:"enabled,omitempty"`

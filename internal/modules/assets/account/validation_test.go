@@ -8,14 +8,18 @@ import (
 	"github.com/stretchr/testify/require"
 
 	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
-	"github.com/ArkGravity/optimus/internal/modules/assets/errs"
 )
 
-func TestValidateRegionsRejectsDuplicates(t *testing.T) {
-	err := validateRegions([]string{"us-east-1", "us-east-1"})
-	var bizErr *apperr.BizError
-	require.True(t, errors.As(err, &bizErr))
-	require.Equal(t, errs.CodeAssetsRegionInvalid, bizErr.Code)
+func TestNormalizeRegionsNormalizesSetAndValidatesProvider(t *testing.T) {
+	for _, tc := range []struct{ provider, region string }{{"aws", "us-east-1"}, {"aws", "us-gov-west-1"}, {"aliyun", "cn-hangzhou"}, {"gcp", "us-central1"}} {
+		regions, err := normalizeRegions(tc.provider, []string{tc.region, tc.region})
+		require.NoError(t, err)
+		require.Equal(t, []string{tc.region}, regions)
+	}
+	for _, tc := range []struct{ provider, region string }{{"aws", "us-central1"}, {"aliyun", "us-central1"}, {"gcp", "cn-hangzhou"}, {"gcp", "https://example.test"}} {
+		_, err := normalizeRegions(tc.provider, []string{tc.region})
+		require.Error(t, err)
+	}
 }
 
 func TestNormalizeName(t *testing.T) {

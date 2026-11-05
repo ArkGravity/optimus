@@ -125,7 +125,7 @@ func TestE2E_AppsApplication_CreateNonexistentCluster(t *testing.T) {
 	})
 	require.NotEqual(t, http.StatusOK, rec.Code, "create against missing cluster should not succeed, body=%s", rec.Body.String())
 	// Body must be the envelope; we don't pin the exact code because that
-	// depends on whether the FK is enforced (migrations 00010 add FKs) — both
+	// depends on whether the FK is enforced by the owning CREATE migration — both
 	// CodeInternal (10000) and a BizError-mapped 4xx are acceptable. What we
 	// MUST NOT see is raw postgres text.
 	require.NotContains(t, rec.Body.String(), "violates foreign key")

@@ -2,16 +2,13 @@ package instance
 
 import (
 	"context"
-	"math"
+	"errors"
 	"strings"
 
-	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
-)
+	"gorm.io/gorm"
 
-const (
-	defaultPage = 1
-	defaultSize = 20
-	maxSize     = 200
+	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	"github.com/ArkGravity/optimus/internal/modules/assets/resource"
 )
 
 type listRepository interface {
@@ -37,34 +34,57 @@ func (s *Service) List(ctx context.Context, query ListQuery) (*ListResponse, err
 	return &ListResponse{Items: items, Total: total}, nil
 }
 
-func validateListQuery(query ListQuery) (ListFilter, error) {
-	if query.Page == 0 {
-		query.Page = defaultPage
+func validateListQuery(input ListQuery) (ListFilter, error) {
+	if input.Page == 0 {
+		input.Page = 1
 	}
-	if query.Size == 0 {
-		query.Size = defaultSize
+	if input.Size == 0 {
+		input.Size = 20
 	}
-	if query.AccountID > math.MaxInt64 {
-		return ListFilter{}, validationError("account_id exceeds database range")
+	f := ListFilter{
+		AccountID:      input.AccountID,
+		IncludeDeleted: input.IncludeDeleted,
+		Page:           input.Page,
+		Size:           input.Size,
+		Provider:       strings.TrimSpace(input.Provider),
+		ProjectID:      strings.TrimSpace(input.ProjectID),
+		Region:         strings.TrimSpace(input.Region),
+		Zone:           strings.TrimSpace(input.Zone),
+		Q:              strings.TrimSpace(input.Q),
+		State:          strings.TrimSpace(input.State),
+		VPCID:          strings.TrimSpace(input.VPCID),
+		IP:             strings.TrimSpace(input.IP),
+		TagKey:         strings.TrimSpace(input.TagKey),
+		TagValue:       strings.TrimSpace(input.TagValue),
 	}
-	if query.Page < 1 {
-		return ListFilter{}, validationError("page must be at least 1")
+	if err := f.queryFilter().Validate(); err != nil {
+		return ListFilter{}, err
 	}
-	if query.Size < 1 || query.Size > maxSize {
-		return ListFilter{}, validationError("size must be between 1 and 200")
-	}
-	if query.Page-1 > math.MaxInt/query.Size {
-		return ListFilter{}, validationError("pagination offset exceeds supported range")
-	}
-
-	return ListFilter{
-		AccountID: query.AccountID, Region: strings.TrimSpace(query.Region),
-		State: strings.TrimSpace(query.State), VPCID: strings.TrimSpace(query.VPCID),
-		Q: strings.TrimSpace(query.Q), IncludeDeleted: query.IncludeDeleted,
-		Page: query.Page, Size: query.Size, Offset: (query.Page - 1) * query.Size,
-	}, nil
+	f.Offset = (f.Page - 1) * f.Size
+	return f, nil
 }
 
 func validationError(message string) error {
 	return apperr.New(apperr.CodeValidation, "common.validation", message)
+}
+
+// FindByKey accepts canonical provider keys and legacy numeric AWS IDs.
+func (s *Service) FindByKey(ctx context.Context, key string, includeDeleted bool) (*Summary, error) {
+	if _, err := resource.ParseAssetKey(key, "instance"); err != nil {
+		return nil, validationError("invalid asset key")
+	}
+	repo, ok := s.repo.(interface {
+		FindByKey(context.Context, string, bool) (*Summary, error)
+	})
+	if !ok {
+		return nil, apperr.New(apperr.CodeDBError, "common.database_error", "database operation failed")
+	}
+	row, err := repo.FindByKey(ctx, key, includeDeleted)
+	if errors.Is(err, gorm.ErrRecordNotFound) || (err == nil && row == nil) {
+		return nil, apperr.New(apperr.CodeNotFound, "common.not_found", "asset not found")
+	}
+	if err != nil {
+		return nil, apperr.Wrap(err, apperr.CodeDBError, "common.database_error", "database operation failed")
+	}
+	return row, nil
 }

@@ -95,6 +95,8 @@ type AssetsConfig struct {
 	SyncStartupDelay     time.Duration `mapstructure:"sync_startup_delay"`
 	SyncRunRetentionDays int           `mapstructure:"sync_run_retention_days"`
 	AWSRequestTimeout    time.Duration `mapstructure:"aws_request_timeout"`
+	RequestTimeout       time.Duration `mapstructure:"request_timeout"`
+	SyncTimeout          time.Duration `mapstructure:"sync_timeout"`
 }
 
 func Load(path string) (*Config, error) {
@@ -109,6 +111,8 @@ func Load(path string) (*Config, error) {
 	v.SetDefault("assets.sync_startup_delay", 30*time.Second)
 	v.SetDefault("assets.sync_run_retention_days", 90)
 	v.SetDefault("assets.aws_request_timeout", 30*time.Second)
+	v.SetDefault("assets.request_timeout", 30*time.Second)
+	v.SetDefault("assets.sync_timeout", 15*time.Minute)
 	if err := v.ReadInConfig(); err != nil {
 		return nil, fmt.Errorf("read config: %w", err)
 	}
@@ -150,6 +154,12 @@ func (c *Config) ValidateStrict() error {
 	}
 	if c.Assets.SyncRunRetentionDays <= 0 {
 		return errors.New("assets.sync_run_retention_days must be > 0")
+	}
+	if c.Assets.RequestTimeout <= 0 {
+		return errors.New("assets.request_timeout must be > 0")
+	}
+	if c.Assets.SyncTimeout <= 0 {
+		return errors.New("assets.sync_timeout must be > 0")
 	}
 	if c.Assets.AWSRequestTimeout <= 0 {
 		return errors.New("assets.aws_request_timeout must be > 0")

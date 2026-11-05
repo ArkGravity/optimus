@@ -73,14 +73,23 @@ const (
 
 	// 43xxx P4 assets domain — cloud asset discovery + AWS SDK runtime.
 	// See P4 spec §9. 43001-43099 cloud-account domain; 43100-43199 sync/AWS.
-	// 43200+ reserved for future P4.x Aliyun/GCP provider expansion.
+	// Provider-neutral asset collection failures.
+	CodeAssetsUnauthorized     Code = 43201
+	CodeAssetsForbidden        Code = 43202
+	CodeAssetsUnreachable      Code = 43203
+	CodeAssetsThrottled        Code = 43204
+	CodeAssetsConfig           Code = 43205
+	CodeAssetsPartial          Code = 43206
+	CodeAssetsAPIDisabled      Code = 43207
+	CodeAssetsOther            Code = 43208
+	CodeAssetsIdentityMismatch Code = 43209
 
 	// 43001-43099 cloud account / domain
 	CodeAssetsCloudAccountInUse        Code = 43001 // cloudkey delete blocked: referenced by CloudAccount
 	CodeAssetsCloudAccountNotFound     Code = 43002
 	CodeAssetsCloudAccountNameConflict Code = 43003
-	CodeAssetsRegionInvalid            Code = 43004 // region string fails AWS regex
-	CodeAssetsProviderUnsupported      Code = 43005 // provider != "aws" at MVP
+	CodeAssetsRegionInvalid            Code = 43004 // invalid explicit provider region selection
+	CodeAssetsProviderUnsupported      Code = 43005 // provider is not AWS, Aliyun or GCP
 	CodeAssetsCloudAccountDisabled     Code = 43006 // manual sync on enabled=false account
 	CodeAssetsCloudKeyNotFound         Code = 43008 // Create/Update references missing cloudkey_id
 	CodeAssetsVPCNotFound              Code = 43009 // /vpcs/{id}/subnets row lookup miss

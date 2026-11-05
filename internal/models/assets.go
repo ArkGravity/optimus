@@ -9,9 +9,12 @@ import (
 )
 
 type CloudAccount struct {
-	ID       uint64 `gorm:"primaryKey"`
-	Name     string `gorm:"size:128;not null"`
-	Provider string `gorm:"size:16;not null"`
+	ID                uint64 `gorm:"primaryKey"`
+	Name              string `gorm:"size:128;not null"`
+	Provider          string `gorm:"size:16;not null"`
+	ProjectID         string `gorm:"type:text;not null;default:''"`
+	ExternalAccountID string `gorm:"type:text;not null;default:''"`
+	ScopeRevision     int64  `gorm:"not null;default:1"`
 	// Only deleted rows may have a NULL reference, represented as zero here.
 	CloudKeyID     uint64      `gorm:"column:cloudkey_id;index"`
 	EnabledRegions StringArray `gorm:"type:text[];not null"`
@@ -109,6 +112,10 @@ func (AWSDatabase) TableName() string { return "aws_databases" }
 type AssetsSyncRun struct {
 	ID                uint64 `gorm:"primaryKey"`
 	CloudAccountID    uint64 `gorm:"column:cloud_account_id;not null"`
+	Provider          string `gorm:"size:16;not null"`
+	LocationType      string `gorm:"size:16;not null"`
+	Location          string `gorm:"type:text;not null"`
+	ScopeRevision     int64  `gorm:"not null"`
 	Region            string `gorm:"size:32;not null"`
 	ResourceType      string `gorm:"size:16;not null"`
 	StartedAt         time.Time

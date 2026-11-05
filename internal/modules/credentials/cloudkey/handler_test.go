@@ -133,6 +133,10 @@ func TestHandler_CloudKeyProviderContract(t *testing.T) {
 			request := newReq()
 			request.Name = provider + "-key"
 			request.Provider = provider
+			if provider == "gcp" {
+				request.AccessKeyID, request.SecretAccessKey = "", ""
+				request.ServiceAccountJSON = string(serviceAccountFixture(t))
+			}
 			response := doJSON(t, router, http.MethodPost, "/api/v1/credentials/cloud-keys", request)
 			if provider == "azure" || provider == "ibm" {
 				require.Equal(t, http.StatusBadRequest, response.Code)
@@ -159,12 +163,56 @@ func TestHandler_CloudKeyProviderContract(t *testing.T) {
 	require.Equal(t, int64(1), list.Data.Total)
 	require.Len(t, list.Data.Items, 1)
 	path := "/api/v1/credentials/cloud-keys/" + strconv.FormatUint(aliyunID, 10)
-	response = doJSON(t, router, http.MethodPut, path, map[string]any{"provider": "gcp"})
+	response = doJSON(t, router, http.MethodPut, path, map[string]any{"provider": "gcp", "service_account_json": string(serviceAccountFixture(t))})
 	require.Equal(t, http.StatusOK, response.Code)
-	response = doJSON(t, router, http.MethodPut, path, map[string]any{"provider": "aliyun"})
+	response = doJSON(t, router, http.MethodPut, path, map[string]any{"provider": "aliyun", "access_key_id": "ak", "secret_access_key": "sk"})
 	require.Equal(t, http.StatusOK, response.Code)
 	response = doJSON(t, router, http.MethodPut, path, map[string]any{"provider": "azure"})
 	require.Equal(t, http.StatusBadRequest, response.Code)
 	response = doJSON(t, router, http.MethodGet, path, nil)
 	require.Contains(t, response.Body.String(), `"provider":"aliyun"`)
+}
+
+func TestHandler_ServiceAccountSummaryAndSafeErrors(t *testing.T) {
+	router := newHandlerRouter(t)
+	secret := string(serviceAccountFixture(t))
+	response := doJSON(t, router, http.MethodPost, "/api/v1/credentials/cloud-keys", map[string]any{
+		"name": "gcp-json", "provider": "gcp", "service_account_json": secret,
+	})
+	require.Equal(t, http.StatusOK, response.Code, response.Body.String())
+	var result struct {
+		Data cloudkey.Detail `json:"data"`
+	}
+	require.NoError(t, json.Unmarshal(response.Body.Bytes(), &result))
+	require.Equal(t, "service_account_json", result.Data.AuthType)
+	require.Equal(t, "test-project", result.Data.CredentialProjectID)
+	require.Equal(t, "collector@test-project.iam.gserviceaccount.com", result.Data.ServiceAccountEmail)
+	path := "/api/v1/credentials/cloud-keys/" + strconv.FormatUint(result.Data.ID, 10)
+	for _, endpoint := range []string{path, "/api/v1/credentials/cloud-keys"} {
+		response = doJSON(t, router, http.MethodGet, endpoint, nil)
+		require.Equal(t, http.StatusOK, response.Code)
+		require.NotContains(t, response.Body.String(), "PRIVATE KEY")
+		require.NotContains(t, response.Body.String(), `"service_account_json":`)
+		require.NotContains(t, response.Body.String(), "_enc")
+	}
+	response = doJSON(t, router, http.MethodPut, path, map[string]any{"description": "metadata only"})
+	require.Equal(t, http.StatusOK, response.Code)
+	response = doJSON(t, router, http.MethodPut, path, map[string]any{"service_account_json": `{"type":"external_account","credential_source":{"executable":{"command":"DO-NOT-ECHO-THIS-SECRET"}}}`})
+	require.Equal(t, http.StatusBadRequest, response.Code)
+	require.Contains(t, response.Body.String(), "common.validation")
+	require.NotContains(t, response.Body.String(), "DO-NOT-ECHO-THIS-SECRET")
+	response = doJSON(t, router, http.MethodPost, "/api/v1/credentials/cloud-keys", map[string]any{
+		"name": "gcp-keys", "provider": "gcp", "access_key_id": "DO-NOT-ECHO-THIS-SECRET", "secret_access_key": "SECRET",
+	})
+	require.Equal(t, http.StatusBadRequest, response.Code)
+	require.NotContains(t, response.Body.String(), "DO-NOT-ECHO-THIS-SECRET")
+	response = doJSON(t, router, http.MethodPost, "/api/v1/credentials/cloud-keys", map[string]any{
+		"name": "malformed-secret", "provider": "gcp", "service_account_json": map[string]string{"private_key": "DO-NOT-ECHO-THIS-SECRET"},
+	})
+	require.Equal(t, http.StatusBadRequest, response.Code)
+	var invalid struct {
+		Message string `json:"message"`
+	}
+	require.NoError(t, json.Unmarshal(response.Body.Bytes(), &invalid))
+	require.Equal(t, "invalid cloud credential configuration", invalid.Message)
 }

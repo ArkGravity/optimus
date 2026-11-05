@@ -33,7 +33,7 @@ func (h *Handler) parseID(c *gin.Context) (uint64, bool) {
 	return id, true
 }
 
-// list returns a paginated set of cloud-provider access keys. Secret material is
+// list returns a paginated set of cloud-provider credentials. Secret material is
 // never included.
 // @Summary  List cloud keys
 // @Tags     credentials
@@ -43,7 +43,7 @@ func (h *Handler) parseID(c *gin.Context) (uint64, bool) {
 // @Param    page_size query    int    false "page size (default 20)"
 // @Param    q         query    string false "search by name or description"
 // @Param    provider  query    string false "filter by provider (aliyun|aws|gcp)"
-// @Success  200 {object} response.Envelope
+// @Success  200 {object} response.Envelope{data=ListResponse}
 // @Router   /credentials/cloud-keys [get]
 func (h *Handler) list(c *gin.Context) {
 	var q ListQuery
@@ -65,7 +65,7 @@ func (h *Handler) list(c *gin.Context) {
 // @Security BearerAuth
 // @Produce  json
 // @Param    id path int true "credential ID"
-// @Success  200 {object} response.Envelope
+// @Success  200 {object} response.Envelope{data=Summary}
 // @Router   /credentials/cloud-keys/{id} [get]
 func (h *Handler) get(c *gin.Context) {
 	id, ok := h.parseID(c)
@@ -80,20 +80,20 @@ func (h *Handler) get(c *gin.Context) {
 	response.Success(c, out)
 }
 
-// create stores a new cloud key. Both access_key_id and secret_access_key are
+// create stores a cloud credential with its provider-specific secret shape
 // sealed before persisting.
 // @Summary  Create cloud key
 // @Tags     credentials
 // @Security BearerAuth
 // @Accept   json
 // @Produce  json
-// @Param    body body     CreateRequest true "credential payload"
-// @Success  200 {object} response.Envelope
+// @Param    body body     CreateRequest true "AWS/Aliyun access_key or GCP service_account_json credential payload"
+// @Success  200 {object} response.Envelope{data=Summary}
 // @Router   /credentials/cloud-keys [post]
 func (h *Handler) create(c *gin.Context) {
 	var req CreateRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		response.Error(c, apperr.New(apperr.CodeValidation, "common.validation", err.Error()))
+		response.Error(c, validationError())
 		return
 	}
 	out, err := h.svc.Create(c.Request.Context(), h.actor(c), c.ClientIP(), c.Request.UserAgent(), req)
@@ -104,15 +104,15 @@ func (h *Handler) create(c *gin.Context) {
 	response.Success(c, out)
 }
 
-// update mutates metadata and/or rotates either secret.
+// update mutates metadata and/or rotates provider-specific secret material.
 // @Summary  Update cloud key
 // @Tags     credentials
 // @Security BearerAuth
 // @Accept   json
 // @Produce  json
 // @Param    id   path     int           true "credential ID"
-// @Param    body body     UpdateRequest true "credential payload"
-// @Success  200 {object} response.Envelope
+// @Param    body body     UpdateRequest true "Metadata update or provider-specific secret rotation; blank secrets preserve existing values"
+// @Success  200 {object} response.Envelope{data=Summary}
 // @Router   /credentials/cloud-keys/{id} [put]
 func (h *Handler) update(c *gin.Context) {
 	id, ok := h.parseID(c)
@@ -121,7 +121,7 @@ func (h *Handler) update(c *gin.Context) {
 	}
 	var req UpdateRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		response.Error(c, apperr.New(apperr.CodeValidation, "common.validation", err.Error()))
+		response.Error(c, validationError())
 		return
 	}
 	out, err := h.svc.Update(c.Request.Context(), h.actor(c), c.ClientIP(), c.Request.UserAgent(), id, req)

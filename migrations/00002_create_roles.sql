@@ -12,5 +12,7 @@ CREATE TABLE roles (
 
 CREATE INDEX idx_roles_deleted_at ON roles (deleted_at);
 
+CREATE UNIQUE INDEX roles_code_uniq ON roles (code) WHERE deleted_at IS NULL;
+
 -- +goose Down
 DROP TABLE roles;

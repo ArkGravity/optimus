@@ -82,7 +82,7 @@ func TestHandlerMountRegistersResourceReadPermission(t *testing.T) {
 		t.Fatalf("permission=%q", permission)
 	}
 	routes := router.Routes()
-	if len(routes) != 1 || routes[0].Method != http.MethodGet || routes[0].Path != "/api/v1/assets/instances" {
+	if len(routes) != 2 || routes[0].Method != http.MethodGet || routes[0].Path != "/api/v1/assets/instances" {
 		t.Fatalf("routes=%#v", routes)
 	}
 }

@@ -16,5 +16,8 @@ CREATE TABLE users (
 
 CREATE INDEX idx_users_deleted_at ON users (deleted_at);
 
+CREATE UNIQUE INDEX users_username_uniq ON users (username) WHERE deleted_at IS NULL;
+CREATE UNIQUE INDEX users_email_uniq ON users (email) WHERE deleted_at IS NULL;
+
 -- +goose Down
 DROP TABLE users;

@@ -93,15 +93,67 @@ func (h *Handler) Handle(c *gin.Context) {
 	if !hidden(name) && h.serve(c, name) {
 		return
 	}
-	// Hashed bundles never fall back to the SPA shell: a stale chunk must 404
-	// instead of being parsed as HTML.
-	if strings.HasPrefix(name, assetsDir) {
+	// Assets pages share this prefix with Vite bundles. Only known page shapes
+	// fall back; stale chunks and unknown resource paths must remain 404s.
+	if (strings.HasPrefix(p, "/"+assetsDir) || strings.HasPrefix(name, assetsDir)) && !knownAssetsPage(p) {
 		c.AbortWithStatus(http.StatusNotFound)
 		return
 	}
 	if !h.serve(c, indexFile) {
 		c.String(http.StatusNotFound, notBuiltMessage)
 	}
+}
+
+// knownAssetsPage mirrors the Assets menu and static detail route shapes without
+// depending on business modules. Check the original decoded path so cleaning
+// cannot turn an arbitrary nested path into a valid page.
+func knownAssetsPage(p string) bool {
+	if p == "/assets" || p == "/assets/" {
+		return true
+	}
+	parts := strings.Split(strings.TrimSuffix(p, "/"), "/")
+	if len(parts) < 3 || parts[0] != "" || parts[1] != "assets" {
+		return false
+	}
+	if len(parts) == 3 {
+		switch parts[2] {
+		case "cloud-accounts", "vpcs", "firewalls", "instances", "databases", "sync-runs", "security-groups":
+			return true
+		}
+		return false
+	}
+	if len(parts) != 4 {
+		return false
+	}
+	var family string
+	switch parts[2] {
+	case "instances":
+		family = "instance"
+	case "vpcs":
+		family = "vpc"
+	case "databases":
+		family = "database"
+	case "firewalls":
+		family = "firewall"
+	default:
+		return false
+	}
+	key := strings.Split(parts[3], ":")
+	if len(key) == 3 {
+		switch key[0] {
+		case "aws", "aliyun", "gcp":
+		default:
+			return false
+		}
+		if key[1] != family {
+			return false
+		}
+	} else if len(key) != 1 {
+		return false
+	}
+	id := key[len(key)-1]
+	n, err := strconv.ParseUint(id, 10, 63)
+	return err == nil && n > 0 && strconv.FormatUint(n, 10) == id
 }
 
 func (h *Handler) serve(c *gin.Context, name string) bool {

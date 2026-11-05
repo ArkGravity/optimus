@@ -184,7 +184,7 @@ func TestRun_SeedsInitialMenuTree(t *testing.T) {
 
 	wantCodes := []string{
 		"dashboard",
-		"assets", "assets.cloud_accounts", "assets.vpcs", "assets.security_groups", "assets.instances", "assets.databases", "assets.sync_runs",
+		"assets", "assets.cloud_accounts", "assets.vpcs", "assets.firewalls", "assets.instances", "assets.databases", "assets.sync_runs",
 		"system", "system.users", "system.roles", "system.permissions", "system.menus", "system.audit_logs",
 		"credentials", "credentials.ssh_keys", "credentials.kubeconfigs", "credentials.cloud_keys",
 		"k8s", "k8s.clusters", "k8s.workloads", "k8s.network", "k8s.config", "k8s.cluster_resources",
@@ -206,7 +206,7 @@ func TestRun_SeedsInitialMenuTree(t *testing.T) {
 	for _, menu := range assetChildren {
 		assetCodes = append(assetCodes, menu.Code)
 	}
-	require.Equal(t, []string{"assets.cloud_accounts", "assets.vpcs", "assets.security_groups", "assets.instances", "assets.databases", "assets.sync_runs"}, assetCodes)
+	require.Equal(t, []string{"assets.cloud_accounts", "assets.vpcs", "assets.firewalls", "assets.instances", "assets.databases", "assets.sync_runs"}, assetCodes)
 	var topLevel []models.Menu
 	require.NoError(t, gdb.Where("parent_id IS NULL").Order("sort_order, id").Find(&topLevel).Error)
 	var topLevelCodes []string
@@ -334,7 +334,7 @@ func TestRun_SeedsAssetsMenuTree(t *testing.T) {
 		{"assets", "menu.assets_group", "/assets", "", &resourceRead, 1},
 		{"assets.cloud_accounts", "menu.assets.cloud_accounts", "/assets/cloud-accounts", "assets/cloud-accounts/List", &accountRead, 1},
 		{"assets.vpcs", "menu.assets.vpcs", "/assets/vpcs", "assets/vpcs/List", &resourceRead, 2},
-		{"assets.security_groups", "menu.assets.security_groups", "/assets/security-groups", "assets/security-groups/List", &resourceRead, 3},
+		{"assets.firewalls", "menu.assets.firewalls", "/assets/firewalls", "assets/firewalls/List", &resourceRead, 3},
 		{"assets.instances", "menu.assets.instances", "/assets/instances", "assets/instances/List", &resourceRead, 4},
 		{"assets.databases", "menu.assets.databases", "/assets/databases", "assets/databases/List", &resourceRead, 5},
 		{"assets.sync_runs", "menu.assets.sync_runs", "/assets/sync-runs", "assets/sync-runs/List", &syncRead, 6},
@@ -372,7 +372,7 @@ func TestRun_AssetsMenusRemainIdempotent(t *testing.T) {
 	_, err = seed.Run(context.Background(), gdb, options)
 	require.NoError(t, err)
 	// Simulate the previous assets menu before rerunning seed during an upgrade.
-	require.NoError(t, gdb.Unscoped().Where("code = ?", "assets.security_groups").Delete(&models.Menu{}).Error)
+	require.NoError(t, gdb.Unscoped().Where("code = ?", "assets.firewalls").Delete(&models.Menu{}).Error)
 	require.NoError(t, gdb.Model(&models.Menu{}).Where("code = ?", "assets.instances").Update("sort_order", 2).Error)
 	require.NoError(t, gdb.Model(&models.Menu{}).Where("code = ?", "assets.vpcs").Update("sort_order", 3).Error)
 	_, err = seed.Run(context.Background(), gdb, options)
@@ -383,7 +383,67 @@ func TestRun_AssetsMenusRemainIdempotent(t *testing.T) {
 	require.Equal(t, int64(7), assetsRows)
 	var ordered []string
 	require.NoError(t, gdb.Model(&models.Menu{}).Where("code LIKE ?", "assets.%").Order("sort_order").Pluck("code", &ordered).Error)
-	require.Equal(t, []string{"assets.cloud_accounts", "assets.vpcs", "assets.security_groups", "assets.instances", "assets.databases", "assets.sync_runs"}, ordered)
+	require.Equal(t, []string{"assets.cloud_accounts", "assets.vpcs", "assets.firewalls", "assets.instances", "assets.databases", "assets.sync_runs"}, ordered)
+}
+
+func TestRun_RenamesLegacyFirewallMenuPreservingIdentity(t *testing.T) {
+	gdb, teardown := db.StartTestPostgres(t, filepath.Join("..", "..", "migrations"))
+	defer teardown()
+	_, err := permissions.Register(context.Background(), gdb, permissions.All)
+	require.NoError(t, err)
+	legacy := models.Menu{Code: "assets.security_groups", Name: "menu.assets.security_groups", Path: "/assets/security-groups", Component: "assets/security-groups/List"}
+	require.NoError(t, gdb.Create(&legacy).Error)
+	child := models.Menu{Code: "operator.firewall-child", Name: "custom", ParentID: &legacy.ID}
+	require.NoError(t, gdb.Create(&child).Error)
+	options := seed.Options{AdminUsername: "admin", AdminEmail: "admin@example.com", BcryptCost: 4}
+	for range 2 {
+		_, err = seed.Run(context.Background(), gdb, options)
+		require.NoError(t, err)
+		var menu models.Menu
+		require.NoError(t, gdb.Where("code = ?", "assets.firewalls").First(&menu).Error)
+		require.Equal(t, legacy.ID, menu.ID)
+		require.Equal(t, "menu.assets.firewalls", menu.Name)
+		require.Equal(t, "/assets/firewalls", menu.Path)
+		require.Equal(t, "assets/firewalls/List", menu.Component)
+		require.Equal(t, 3, menu.SortOrder)
+		require.NotNil(t, menu.PermissionCode)
+		require.Equal(t, "assets:resource:read", *menu.PermissionCode)
+		var count int64
+		require.NoError(t, gdb.Model(&models.Menu{}).Where("code IN ?", []string{"assets.security_groups", "assets.firewalls"}).Count(&count).Error)
+		require.Equal(t, int64(1), count)
+		var preserved models.Menu
+		require.NoError(t, gdb.First(&preserved, child.ID).Error)
+		require.Equal(t, &legacy.ID, preserved.ParentID)
+	}
+}
+
+func TestRun_FirewallMenuCollisionRollsBackWithoutDeletingRows(t *testing.T) {
+	gdb, teardown := db.StartTestPostgres(t, filepath.Join("..", "..", "migrations"))
+	defer teardown()
+	_, err := permissions.Register(context.Background(), gdb, permissions.All)
+	require.NoError(t, err)
+	role := models.Role{Code: "operator", Name: "operator"}
+	require.NoError(t, gdb.Create(&role).Error)
+	var permission models.Permission
+	require.NoError(t, gdb.Where("code = ?", "assets:resource:read").First(&permission).Error)
+	grant := models.RolePermission{RoleID: role.ID, PermissionID: permission.ID}
+	require.NoError(t, gdb.Create(&grant).Error)
+	for _, code := range []string{"assets.security_groups", "assets.firewalls"} {
+		require.NoError(t, gdb.Create(&models.Menu{Code: code, Name: "operator metadata"}).Error)
+	}
+	_, err = seed.Run(context.Background(), gdb, seed.Options{AdminUsername: "admin", BcryptCost: 4})
+	require.ErrorContains(t, err, "assets menu collision")
+	var menus []models.Menu
+	require.NoError(t, gdb.Where("code IN ?", []string{"assets.security_groups", "assets.firewalls"}).Find(&menus).Error)
+	require.Len(t, menus, 2)
+	for _, menu := range menus {
+		require.Equal(t, "operator metadata", menu.Name)
+	}
+	var grants []models.RolePermission
+	require.NoError(t, gdb.Order("role_id, permission_id").Find(&grants).Error)
+	require.Len(t, grants, 1)
+	require.Equal(t, role.ID, grants[0].RoleID)
+	require.Equal(t, permission.ID, grants[0].PermissionID)
 }
 
 func TestRun_AdminAndViewerCoverAssetsPermissions(t *testing.T) {

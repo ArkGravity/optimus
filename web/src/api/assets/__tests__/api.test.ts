@@ -20,6 +20,47 @@ function makeClient() {
 }
 
 describe('assets API factories', () => {
+  it('preserves canonical provider keys, including row-ID collisions and unsafe numeric IDs', async () => {
+    const { methods, client } = makeClient()
+    const api = makeAssetsResourceApi(client)
+    methods.get.mockResolvedValue(envelope({}))
+    await api.getInstance('aws:instance:19')
+    expect(methods.get).toHaveBeenLastCalledWith('/assets/instances/aws%3Ainstance%3A19')
+    await api.getInstance('gcp:instance:19', { include_deleted: true })
+    expect(methods.get).toHaveBeenLastCalledWith('/assets/instances/gcp%3Ainstance%3A19', { params: { include_deleted: true } })
+    await api.getVPC('gcp:vpc:9007199254740993')
+    expect(methods.get).toHaveBeenLastCalledWith('/assets/vpcs/gcp%3Avpc%3A9007199254740993')
+    await api.getDatabase(9)
+    expect(methods.get).toHaveBeenLastCalledWith('/assets/databases/9')
+    await api.getFirewall('aliyun:firewall:19')
+    expect(methods.get).toHaveBeenLastCalledWith('/assets/firewalls/aliyun%3Afirewall%3A19')
+    await api.listSubnets('gcp:vpc:19', { include_deleted: true, page: 2, size: 50 })
+    expect(methods.get).toHaveBeenLastCalledWith('/assets/vpcs/gcp%3Avpc%3A19/subnets', { params: { include_deleted: true, page: 2, size: 50 } })
+  })
+
+  it('forwards multi-cloud filters and authenticated region options without renaming wire fields', async () => {
+    const { methods, client } = makeClient()
+    methods.get.mockResolvedValue(envelope({ items: [], total: 0 }))
+    const api = makeAssetsResourceApi(client)
+    const scope = { provider: 'gcp' as const, account_id: 7, project_id: 'target', region: 'europe-west4', zone: 'europe-west4-a', q: 'core', include_deleted: true, page: 2, size: 10 }
+    const instance = { ...scope, state: 'running', vpc_id: 'projects/host/global/networks/core', ip: '2001:db8::1', tag_key: 'env', tag_value: 'prod' }
+    await api.listInstances(instance)
+    expect(methods.get).toHaveBeenLastCalledWith('/assets/instances', { params: instance })
+    const firewall = { ...scope, network_ref: 'projects/host/global/networks/core' }
+    await api.listFirewalls(firewall)
+    expect(methods.get).toHaveBeenLastCalledWith('/assets/firewalls', { params: firewall })
+    const database = { ...scope, engine: 'POSTGRES', status: 'RUNNABLE' }
+    await api.listDatabases(database)
+    expect(methods.get).toHaveBeenLastCalledWith('/assets/databases', { params: database })
+    await api.listVPCs(scope)
+    expect(methods.get).toHaveBeenLastCalledWith('/assets/vpcs', { params: scope })
+    const options = { provider: 'gcp' as const, cloudkey_id: 4, project_id: 'target' }
+    await makeAssetsAccountApi(client).regionOptions(options)
+    expect(methods.get).toHaveBeenLastCalledWith('/assets/cloud-accounts/region-options', { params: options })
+    const runs = { provider: 'gcp' as const, location_type: 'global' as const, location: 'global', resource_type: 'firewall' as const }
+    await makeAssetsSyncApi(client).listRuns(runs)
+    expect(methods.get).toHaveBeenLastCalledWith('/assets/sync-runs', { params: runs })
+  })
   it('uses cloud-account paths, forwards snake_case queries, and unwraps envelopes', async () => {
     const { methods, client } = makeClient()
     const api = makeAssetsAccountApi(client)

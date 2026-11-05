@@ -806,6 +806,11 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "enum": [
+                            "aws",
+                            "aliyun",
+                            "gcp"
+                        ],
                         "type": "string",
                         "description": "cloud provider",
                         "name": "provider",
@@ -923,6 +928,99 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/internal_modules_assets_account.Detail"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/cloud-accounts/region-options": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "List cloud account region options",
+                "parameters": [
+                    {
+                        "enum": [
+                            "aws",
+                            "aliyun",
+                            "gcp"
+                        ],
+                        "type": "string",
+                        "description": "cloud provider",
+                        "name": "provider",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "cloud key ID",
+                        "name": "cloudkey_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Explicit GCP target Project ID, independent from credential home project",
+                        "name": "project_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_assets_account.RegionOptionsResponse"
                                         }
                                     }
                                 }
@@ -1196,6 +1294,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
+                "description": "Queues work immediately; authenticated provider planning and zone discovery run in the worker under the configured account ceiling.",
                 "produces": [
                     "application/json"
                 ],
@@ -1283,8 +1382,31 @@ const docTemplate = `{
                 "tags": [
                     "assets"
                 ],
-                "summary": "List RDS databases",
+                "summary": "List databases",
                 "parameters": [
+                    {
+                        "enum": [
+                            "aws",
+                            "aliyun",
+                            "gcp"
+                        ],
+                        "type": "string",
+                        "description": "cloud provider",
+                        "name": "provider",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "GCP project",
+                        "name": "project_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "zone",
+                        "name": "zone",
+                        "in": "query"
+                    },
                     {
                         "type": "integer",
                         "description": "filter by cloud account",
@@ -1293,7 +1415,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "filter by AWS region",
+                        "description": "filter by region",
                         "name": "region",
                         "in": "query"
                     },
@@ -1383,6 +1505,301 @@ const docTemplate = `{
                 }
             }
         },
+        "/assets/databases/{asset_key}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Get database",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Canonical asset key or legacy AWS row ID",
+                        "name": "asset_key",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "include a soft-deleted snapshot",
+                        "name": "include_deleted",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_assets_database.Summary"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/firewalls": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "List firewalls",
+                "parameters": [
+                    {
+                        "enum": [
+                            "aws",
+                            "aliyun",
+                            "gcp"
+                        ],
+                        "type": "string",
+                        "description": "cloud provider",
+                        "name": "provider",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "cloud account",
+                        "name": "account_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "GCP project",
+                        "name": "project_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "region",
+                        "name": "region",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "zone",
+                        "name": "zone",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "full native network reference",
+                        "name": "network_ref",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "search name, native ID, description or tags",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "include soft-deleted resources",
+                        "name": "include_deleted",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 200,
+                        "type": "integer",
+                        "default": 20,
+                        "description": "page size",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_assets_firewall.ListResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/firewalls/{asset_key}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Get firewall",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Canonical asset key or legacy AWS row ID",
+                        "name": "asset_key",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "include a soft-deleted snapshot",
+                        "name": "include_deleted",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_assets_firewall.Detail"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    }
+                }
+            }
+        },
         "/assets/instances": {
             "get": {
                 "security": [
@@ -1396,8 +1813,31 @@ const docTemplate = `{
                 "tags": [
                     "assets"
                 ],
-                "summary": "List EC2 instances",
+                "summary": "List instances",
                 "parameters": [
+                    {
+                        "enum": [
+                            "aws",
+                            "aliyun",
+                            "gcp"
+                        ],
+                        "type": "string",
+                        "description": "cloud provider",
+                        "name": "provider",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "GCP project",
+                        "name": "project_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "zone",
+                        "name": "zone",
+                        "in": "query"
+                    },
                     {
                         "type": "integer",
                         "description": "filter by cloud account",
@@ -1406,7 +1846,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "filter by AWS region",
+                        "description": "filter by region",
                         "name": "region",
                         "in": "query"
                     },
@@ -1418,13 +1858,31 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "filter by VPC ID",
+                        "description": "filter by full native network reference",
                         "name": "vpc_id",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "search name, instance ID, private IP, or tag values",
+                        "description": "exact private or public NIC IP address",
+                        "name": "ip",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "tag key",
+                        "name": "tag_key",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "tag value (requires tag_key)",
+                        "name": "tag_value",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "search name, native ID, private IP, or tag values",
                         "name": "q",
                         "in": "query"
                     },
@@ -1484,6 +1942,88 @@ const docTemplate = `{
                     },
                     "403": {
                         "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/instances/{asset_key}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Get instance",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Canonical asset key or legacy AWS row ID",
+                        "name": "asset_key",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "include a soft-deleted snapshot",
+                        "name": "include_deleted",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_assets_instance.Summary"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
                         }
@@ -1702,7 +2242,25 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "instance|network|database|security_group",
+                        "description": "aws|aliyun|gcp",
+                        "name": "provider",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "global|region|zone",
+                        "name": "location_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "exact collection location",
+                        "name": "location",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "instance|network|database|security_group|subnet|firewall|planning",
                         "name": "resource_type",
                         "in": "query"
                     },
@@ -1796,6 +2354,29 @@ const docTemplate = `{
                 "summary": "List VPCs",
                 "parameters": [
                     {
+                        "enum": [
+                            "aws",
+                            "aliyun",
+                            "gcp"
+                        ],
+                        "type": "string",
+                        "description": "cloud provider",
+                        "name": "provider",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "GCP project",
+                        "name": "project_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "zone",
+                        "name": "zone",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "filter by cloud account",
                         "name": "account_id",
@@ -1803,13 +2384,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "filter by AWS region",
+                        "description": "filter by region",
                         "name": "region",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "match VPC name or AWS VPC ID",
+                        "description": "match VPC name or native ID",
                         "name": "q",
                         "in": "query"
                     },
@@ -1881,7 +2462,89 @@ const docTemplate = `{
                 }
             }
         },
-        "/assets/vpcs/{id}/subnets": {
+        "/assets/vpcs/{asset_key}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assets"
+                ],
+                "summary": "Get VPC",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Canonical asset key or legacy AWS row ID",
+                        "name": "asset_key",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "include a soft-deleted snapshot",
+                        "name": "include_deleted",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_assets_vpc.Summary"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    }
+                }
+            }
+        },
+        "/assets/vpcs/{asset_key}/subnets": {
             "get": {
                 "security": [
                     {
@@ -1897,15 +2560,15 @@ const docTemplate = `{
                 "summary": "List VPC subnets",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "VPC snapshot row ID",
-                        "name": "id",
+                        "type": "string",
+                        "description": "Canonical asset key or legacy AWS row ID",
+                        "name": "asset_key",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "match subnet name or AWS subnet ID",
+                        "description": "match subnet name or native ID",
                         "name": "q",
                         "in": "query"
                     },
@@ -2236,7 +2899,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_credentials_cloudkey.ListResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -2259,7 +2934,7 @@ const docTemplate = `{
                 "summary": "Create cloud key",
                 "parameters": [
                     {
-                        "description": "credential payload",
+                        "description": "AWS/Aliyun access_key or GCP service_account_json credential payload",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -2272,7 +2947,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_credentials_cloudkey.Summary"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -2305,7 +2992,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_credentials_cloudkey.Summary"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -2335,7 +3034,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "credential payload",
+                        "description": "Metadata update or provider-specific secret rotation; blank secrets preserve existing values",
                         "name": "body",
                         "in": "body",
                         "required": true,
@@ -2348,7 +3047,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_credentials_cloudkey.Summary"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -4419,6 +5130,471 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_ArkGravity_optimus_internal_modules_assets_query.AWSRuleFacts": {
+            "type": "object",
+            "properties": {
+                "owner_id": {
+                    "type": "string"
+                },
+                "peering_id": {
+                    "type": "string"
+                },
+                "rule_index": {
+                    "description": "RuleIndex is the zero-based index in the corresponding common rule array.",
+                    "type": "integer"
+                },
+                "vpc_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_ArkGravity_optimus_internal_modules_assets_query.AliyunRuleFacts": {
+            "type": "object",
+            "properties": {
+                "destination_group_id": {
+                    "type": "string"
+                },
+                "destination_group_name": {
+                    "type": "string"
+                },
+                "destination_group_owner_account": {
+                    "type": "string"
+                },
+                "destination_prefix_list_id": {
+                    "type": "string"
+                },
+                "destination_prefix_list_name": {
+                    "type": "string"
+                },
+                "nic_type": {
+                    "type": "string"
+                },
+                "port_range_list_id": {
+                    "type": "string"
+                },
+                "port_range_list_name": {
+                    "type": "string"
+                },
+                "rule_id": {
+                    "type": "string"
+                },
+                "rule_index": {
+                    "type": "integer"
+                },
+                "source_group_id": {
+                    "type": "string"
+                },
+                "source_group_name": {
+                    "type": "string"
+                },
+                "source_group_owner_account": {
+                    "type": "string"
+                },
+                "source_port_range": {
+                    "type": "string"
+                },
+                "source_prefix_list_id": {
+                    "type": "string"
+                },
+                "source_prefix_list_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_ArkGravity_optimus_internal_modules_assets_query.DatabaseNativeDetails": {
+            "type": "object",
+            "properties": {
+                "availability_type": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "connection_name": {
+                    "type": "string"
+                },
+                "cpu_count": {
+                    "type": "integer"
+                },
+                "database_installed_version": {
+                    "type": "string"
+                },
+                "dns_name": {
+                    "type": "string"
+                },
+                "gcp_dns_names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.GCPDatabaseDNSName"
+                    }
+                },
+                "gcp_ip_addresses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.GCPDatabaseIPAddress"
+                    }
+                },
+                "instance_type": {
+                    "type": "string"
+                },
+                "ipv6_address": {
+                    "type": "string"
+                },
+                "memory_mb": {
+                    "type": "integer"
+                },
+                "primary_dns_name": {
+                    "type": "string"
+                },
+                "psc_service_attachment_link": {
+                    "type": "string"
+                },
+                "secondary_gce_zone": {
+                    "type": "string"
+                },
+                "sql_network_architecture": {
+                    "type": "string"
+                },
+                "storage_type": {
+                    "type": "string"
+                },
+                "write_endpoint": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_ArkGravity_optimus_internal_modules_assets_query.FirewallNativeDetails": {
+            "type": "object",
+            "properties": {
+                "aliyun_inbound_rule_facts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.AliyunRuleFacts"
+                    }
+                },
+                "aliyun_outbound_rule_facts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.AliyunRuleFacts"
+                    }
+                },
+                "aws_inbound_rule_facts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.AWSRuleFacts"
+                    }
+                },
+                "aws_outbound_rule_facts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.AWSRuleFacts"
+                    }
+                },
+                "direction": {
+                    "type": "string"
+                },
+                "disabled": {
+                    "type": "boolean"
+                },
+                "inner_access_policy": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "security_group_type": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_ArkGravity_optimus_internal_modules_assets_query.GCPDatabaseDNSName": {
+            "type": "object",
+            "properties": {
+                "connection_type": {
+                    "type": "string"
+                },
+                "dns_scope": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "record_manager": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_ArkGravity_optimus_internal_modules_assets_query.GCPDatabaseIPAddress": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_ArkGravity_optimus_internal_modules_assets_query.InstanceNativeDetails": {
+            "type": "object",
+            "properties": {
+                "cpu_count": {
+                    "type": "integer"
+                },
+                "gcp_network_interfaces": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_resource.GCPNetworkInterfaceDetails"
+                    }
+                },
+                "image_id": {
+                    "type": "string"
+                },
+                "memory_mb": {
+                    "type": "integer"
+                },
+                "network_tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "os": {
+                    "type": "string"
+                },
+                "resource_manager_tags": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "github_com_ArkGravity_optimus_internal_modules_assets_query.SubnetNativeDetails": {
+            "type": "object",
+            "properties": {
+                "available_ip_count": {
+                    "type": "integer"
+                },
+                "private_ip_google_access": {
+                    "type": "boolean"
+                },
+                "purpose": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_ArkGravity_optimus_internal_modules_assets_query.VPCNativeDetails": {
+            "type": "object",
+            "properties": {
+                "auto_create_subnetworks": {
+                    "type": "boolean"
+                },
+                "mtu": {
+                    "type": "integer"
+                },
+                "routing_mode": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_ArkGravity_optimus_internal_modules_assets_resource.DatabaseEndpoint": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_ArkGravity_optimus_internal_modules_assets_resource.GCPAliasRange": {
+            "type": "object",
+            "properties": {
+                "cidr": {
+                    "type": "string"
+                },
+                "subnetwork_range_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_ArkGravity_optimus_internal_modules_assets_resource.GCPExternalIPv6": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "prefix_length": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_ArkGravity_optimus_internal_modules_assets_resource.GCPNetworkInterfaceDetails": {
+            "type": "object",
+            "properties": {
+                "alias_ipv4_ranges": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_resource.GCPAliasRange"
+                    }
+                },
+                "alias_ipv6_ranges": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_resource.GCPAliasRange"
+                    }
+                },
+                "external_ipv6": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_resource.GCPExternalIPv6"
+                    }
+                },
+                "interface_index": {
+                    "type": "integer"
+                },
+                "internal_ipv6_prefix_length": {
+                    "type": "integer"
+                },
+                "ipv6_access_type": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "stack_type": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_ArkGravity_optimus_internal_modules_assets_resource.NetworkInterface": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "network_ref": {
+                    "type": "string"
+                },
+                "private_ipv4": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "private_ipv6": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "public_ipv4": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "public_ipv6": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "subnet_ref": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_ArkGravity_optimus_internal_modules_assets_resource.Rule": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "destination_ranges": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "direction": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean",
+                    "x-nullable": true
+                },
+                "from_port": {
+                    "type": "integer"
+                },
+                "icmp_code": {
+                    "type": "integer"
+                },
+                "icmp_type": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "type": "integer",
+                    "x-nullable": true
+                },
+                "protocol": {
+                    "type": "string"
+                },
+                "source_network_tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "source_ranges": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "source_service_accounts": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "target": {
+                    "type": "string"
+                },
+                "target_network_tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "target_service_accounts": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "target_type": {
+                    "type": "string"
+                },
+                "to_port": {
+                    "type": "integer"
+                }
+            }
+        },
         "internal_modules_apps_application.CreateRequest": {
             "type": "object",
             "required": [
@@ -4632,6 +5808,9 @@ const docTemplate = `{
                     "maxLength": 128,
                     "minLength": 1
                 },
+                "project_id": {
+                    "type": "string"
+                },
                 "provider": {
                     "type": "string"
                 }
@@ -4661,6 +5840,9 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "external_account_id": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -4673,10 +5855,16 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "project_id": {
+                    "type": "string"
+                },
                 "provider": {
                     "type": "string"
                 },
                 "regions_count": {
+                    "type": "integer"
+                },
+                "scope_revision": {
                     "type": "integer"
                 },
                 "updated_at": {
@@ -4698,6 +5886,28 @@ const docTemplate = `{
                 }
             }
         },
+        "internal_modules_assets_account.RegionOption": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_modules_assets_account.RegionOptionsResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_modules_assets_account.RegionOption"
+                    }
+                }
+            }
+        },
         "internal_modules_assets_account.Summary": {
             "type": "object",
             "properties": {
@@ -4713,6 +5923,9 @@ const docTemplate = `{
                 "enabled": {
                     "type": "boolean"
                 },
+                "external_account_id": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -4725,10 +5938,16 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "project_id": {
+                    "type": "string"
+                },
                 "provider": {
                     "type": "string"
                 },
                 "regions_count": {
+                    "type": "integer"
+                },
+                "scope_revision": {
                     "type": "integer"
                 },
                 "updated_at": {
@@ -4739,6 +5958,9 @@ const docTemplate = `{
         "internal_modules_assets_account.UpdateRequest": {
             "type": "object",
             "properties": {
+                "cloudkey_id": {
+                    "type": "integer"
+                },
                 "description": {
                     "type": "string",
                     "maxLength": 2000
@@ -4756,6 +5978,12 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 128,
                     "minLength": 1
+                },
+                "project_id": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
                 }
             }
         },
@@ -4776,6 +6004,9 @@ const docTemplate = `{
         "internal_modules_assets_database.Summary": {
             "type": "object",
             "properties": {
+                "asset_key": {
+                    "type": "string"
+                },
                 "cloud_account_id": {
                     "type": "integer"
                 },
@@ -4791,11 +6022,21 @@ const docTemplate = `{
                 "endpoint": {
                     "type": "string"
                 },
+                "endpoints": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_resource.DatabaseEndpoint"
+                    }
+                },
                 "engine": {
                     "type": "string"
                 },
                 "engine_version": {
                     "type": "string"
+                },
+                "ha_mode": {
+                    "type": "string",
+                    "x-nullable": true
                 },
                 "id": {
                     "type": "integer"
@@ -4806,14 +6047,43 @@ const docTemplate = `{
                 "last_seen_at": {
                     "type": "string"
                 },
+                "location": {
+                    "type": "string"
+                },
+                "location_type": {
+                    "type": "string"
+                },
                 "multi_az": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "x-nullable": true
+                },
+                "name": {
+                    "type": "string"
+                },
+                "native_details": {
+                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.DatabaseNativeDetails"
+                },
+                "native_id": {
+                    "type": "string"
+                },
+                "native_status": {
+                    "type": "string"
                 },
                 "port": {
                     "type": "integer"
                 },
+                "product": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
                 "publicly_accessible": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "x-nullable": true
                 },
                 "region": {
                     "type": "string"
@@ -4822,13 +6092,224 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "storage_gb": {
-                    "type": "integer"
+                    "type": "integer",
+                    "format": "int64",
+                    "x-nullable": true
                 },
                 "tags": {
                     "type": "object",
                     "additionalProperties": {
                         "type": "string"
                     }
+                },
+                "zone": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_modules_assets_firewall.Detail": {
+            "type": "object",
+            "properties": {
+                "asset_key": {
+                    "type": "string"
+                },
+                "cloud_account_id": {
+                    "type": "integer"
+                },
+                "cloud_account_name": {
+                    "type": "string"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "group_id": {
+                    "type": "string"
+                },
+                "group_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "inbound_rule_count": {
+                    "type": "integer"
+                },
+                "inbound_rules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_resource.Rule"
+                    }
+                },
+                "last_seen_at": {
+                    "type": "string"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "location_type": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "native_details": {
+                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.FirewallNativeDetails"
+                },
+                "native_id": {
+                    "type": "string"
+                },
+                "native_status": {
+                    "type": "string"
+                },
+                "network_ref": {
+                    "type": "string"
+                },
+                "outbound_rule_count": {
+                    "type": "integer"
+                },
+                "outbound_rules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_resource.Rule"
+                    }
+                },
+                "owner_id": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "vpc_id": {
+                    "type": "string"
+                },
+                "zone": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_modules_assets_firewall.ListResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_modules_assets_firewall.Summary"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_modules_assets_firewall.NativeSummary": {
+            "type": "object",
+            "properties": {
+                "direction": {
+                    "type": "string"
+                },
+                "disabled": {
+                    "type": "boolean"
+                },
+                "priority": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_modules_assets_firewall.Summary": {
+            "type": "object",
+            "properties": {
+                "asset_key": {
+                    "type": "string"
+                },
+                "cloud_account_id": {
+                    "type": "integer"
+                },
+                "cloud_account_name": {
+                    "type": "string"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "group_id": {
+                    "type": "string"
+                },
+                "group_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "inbound_rule_count": {
+                    "type": "integer"
+                },
+                "last_seen_at": {
+                    "type": "string"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "location_type": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "native_details": {
+                    "$ref": "#/definitions/internal_modules_assets_firewall.NativeSummary"
+                },
+                "native_id": {
+                    "type": "string"
+                },
+                "native_status": {
+                    "type": "string"
+                },
+                "network_ref": {
+                    "type": "string"
+                },
+                "outbound_rule_count": {
+                    "type": "integer"
+                },
+                "owner_id": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "vpc_id": {
+                    "type": "string"
+                },
+                "zone": {
+                    "type": "string"
                 }
             }
         },
@@ -4849,6 +6330,9 @@ const docTemplate = `{
         "internal_modules_assets_instance.Summary": {
             "type": "object",
             "properties": {
+                "asset_key": {
+                    "type": "string"
+                },
                 "availability_zone": {
                     "type": "string"
                 },
@@ -4876,10 +6360,37 @@ const docTemplate = `{
                 "launch_time": {
                     "type": "string"
                 },
+                "location": {
+                    "type": "string"
+                },
+                "location_type": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
+                "native_details": {
+                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.InstanceNativeDetails"
+                },
+                "native_id": {
+                    "type": "string"
+                },
+                "native_status": {
+                    "type": "string"
+                },
+                "network_interfaces": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_resource.NetworkInterface"
+                    }
+                },
                 "private_ip": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "string"
+                },
+                "provider": {
                     "type": "string"
                 },
                 "public_ip": {
@@ -4901,6 +6412,9 @@ const docTemplate = `{
                     }
                 },
                 "vpc_id": {
+                    "type": "string"
+                },
+                "zone": {
                     "type": "string"
                 }
             }
@@ -5104,11 +6618,23 @@ const docTemplate = `{
                 "items_softdeleted": {
                     "type": "integer"
                 },
+                "location": {
+                    "type": "string"
+                },
+                "location_type": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
                 "region": {
                     "type": "string"
                 },
                 "resource_type": {
                     "type": "string"
+                },
+                "scope_revision": {
+                    "type": "integer"
                 },
                 "started_at": {
                     "type": "string"
@@ -5155,14 +6681,26 @@ const docTemplate = `{
         "internal_modules_assets_vpc.SubnetSummary": {
             "type": "object",
             "properties": {
+                "asset_key": {
+                    "type": "string"
+                },
                 "availability_zone": {
                     "type": "string"
                 },
                 "cidr_block": {
                     "type": "string"
                 },
+                "cidr_blocks": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "cloud_account_id": {
                     "type": "integer"
+                },
+                "cloud_account_name": {
+                    "type": "string"
                 },
                 "deleted": {
                     "type": "boolean"
@@ -5173,7 +6711,31 @@ const docTemplate = `{
                 "last_seen_at": {
                     "type": "string"
                 },
+                "location": {
+                    "type": "string"
+                },
+                "location_type": {
+                    "type": "string"
+                },
                 "name": {
+                    "type": "string"
+                },
+                "native_details": {
+                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.SubnetNativeDetails"
+                },
+                "native_id": {
+                    "type": "string"
+                },
+                "native_status": {
+                    "type": "string"
+                },
+                "network_ref": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "string"
+                },
+                "provider": {
                     "type": "string"
                 },
                 "region": {
@@ -5190,14 +6752,26 @@ const docTemplate = `{
                 },
                 "vpc_id": {
                     "type": "string"
+                },
+                "zone": {
+                    "type": "string"
                 }
             }
         },
         "internal_modules_assets_vpc.Summary": {
             "type": "object",
             "properties": {
+                "asset_key": {
+                    "type": "string"
+                },
                 "cidr_block": {
                     "type": "string"
+                },
+                "cidr_blocks": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "cloud_account_id": {
                     "type": "integer"
@@ -5212,12 +6786,37 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "is_default": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "x-nullable": true
                 },
                 "last_seen_at": {
                     "type": "string"
                 },
+                "location": {
+                    "type": "string"
+                },
+                "location_type": {
+                    "type": "string"
+                },
                 "name": {
+                    "type": "string"
+                },
+                "native_details": {
+                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_modules_assets_query.VPCNativeDetails"
+                },
+                "native_id": {
+                    "type": "string"
+                },
+                "native_status": {
+                    "type": "string"
+                },
+                "network_ref": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "string"
+                },
+                "provider": {
                     "type": "string"
                 },
                 "region": {
@@ -5233,6 +6832,9 @@ const docTemplate = `{
                     }
                 },
                 "vpc_id": {
+                    "type": "string"
+                },
+                "zone": {
                     "type": "string"
                 }
             }
@@ -5271,18 +6873,33 @@ const docTemplate = `{
                 }
             }
         },
+        "internal_modules_credentials_cloudkey.Actor": {
+            "type": "object",
+            "properties": {
+                "display_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "internal_modules_credentials_cloudkey.CreateRequest": {
             "type": "object",
             "required": [
-                "access_key_id",
                 "name",
-                "provider",
-                "secret_access_key"
+                "provider"
             ],
             "properties": {
                 "access_key_id": {
                     "type": "string",
                     "maxLength": 256
+                },
+                "auth_type": {
+                    "type": "string"
                 },
                 "description": {
                     "type": "string",
@@ -5306,6 +6923,70 @@ const docTemplate = `{
                 },
                 "secret_access_key": {
                     "type": "string"
+                },
+                "service_account_json": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_modules_credentials_cloudkey.ListResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_modules_credentials_cloudkey.Summary"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_modules_credentials_cloudkey.Summary": {
+            "type": "object",
+            "properties": {
+                "auth_type": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "$ref": "#/definitions/internal_modules_credentials_cloudkey.Actor"
+                },
+                "credential_project_id": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "needs_configuration": {
+                    "type": "boolean"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "service_account_email": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
@@ -5315,6 +6996,9 @@ const docTemplate = `{
                 "access_key_id": {
                     "type": "string",
                     "maxLength": 256
+                },
+                "auth_type": {
+                    "type": "string"
                 },
                 "description": {
                     "type": "string",
@@ -5337,6 +7021,9 @@ const docTemplate = `{
                     "maxLength": 32
                 },
                 "secret_access_key": {
+                    "type": "string"
+                },
+                "service_account_json": {
                     "type": "string"
                 }
             }

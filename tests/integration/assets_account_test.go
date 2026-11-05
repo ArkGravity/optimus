@@ -56,7 +56,7 @@ func TestAssetsCloudAccountHTTPIntegration(t *testing.T) {
 		var row models.CloudAccount
 		require.NoError(t, gdb.First(&row, id).Error)
 		require.Equal(t, "primary-assets", row.Name)
-		require.Equal(t, models.StringArray{"us-east-1", "eu-west-1"}, row.EnabledRegions)
+		require.Equal(t, models.StringArray{"eu-west-1", "us-east-1"}, row.EnabledRegions)
 
 		duplicate := assetsRequest(t, r, token, http.MethodPost, "/api/v1/assets/cloud-accounts", map[string]any{
 			"name": "primary-assets", "provider": "aws", "cloudkey_id": key.ID, "enabled_regions": []string{"us-east-1"},
@@ -65,7 +65,7 @@ func TestAssetsCloudAccountHTTPIntegration(t *testing.T) {
 		require.EqualValues(t, asseterrs.CodeAssetsCloudAccountNameConflict, bodyMap(t, duplicate)["code"])
 
 		unsupported := assetsRequest(t, r, token, http.MethodPost, "/api/v1/assets/cloud-accounts", map[string]any{
-			"name": "gcp-account", "provider": "gcp", "cloudkey_id": key.ID, "enabled_regions": []string{"us-east-1"},
+			"name": "unsupported-account", "provider": "azure", "cloudkey_id": key.ID, "enabled_regions": []string{"us-east-1"},
 		})
 		require.Equal(t, http.StatusUnprocessableEntity, unsupported.Code)
 		require.EqualValues(t, asseterrs.CodeAssetsProviderUnsupported, bodyMap(t, unsupported)["code"])

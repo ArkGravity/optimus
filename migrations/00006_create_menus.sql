@@ -12,11 +12,14 @@ CREATE TABLE menus (
     hidden          BOOLEAN      NOT NULL DEFAULT FALSE,
     created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    deleted_at      TIMESTAMPTZ
+    deleted_at      TIMESTAMPTZ,
+    CONSTRAINT fk_menus_parent FOREIGN KEY (parent_id) REFERENCES menus(id) ON DELETE RESTRICT
 );
 
 CREATE INDEX idx_menus_parent_id  ON menus (parent_id);
 CREATE INDEX idx_menus_deleted_at ON menus (deleted_at);
+
+CREATE UNIQUE INDEX menus_code_uniq ON menus (code) WHERE deleted_at IS NULL;
 
 -- +goose Down
 DROP TABLE menus;

@@ -95,3 +95,25 @@ func TestParseProjectedIPNormalizesAddresses(t *testing.T) {
 		})
 	}
 }
+
+func TestConsumerScopedLookupRejectsInvalidScopeBeforeDatabase(t *testing.T) {
+	c := NewConsumer(nil)
+	zero := uint64(0)
+	overflow := uint64(math.MaxInt64) + 1
+	for _, input := range []struct {
+		ip    netip.Addr
+		scope InstanceScope
+	}{
+		{netip.Addr{}, InstanceScope{}},
+		{netip.MustParseAddr("fe80::1%eth0"), InstanceScope{}},
+		{netip.MustParseAddr("10.0.0.1"), InstanceScope{Provider: "azure"}},
+		{netip.MustParseAddr("10.0.0.1"), InstanceScope{CloudAccountID: &zero}},
+		{netip.MustParseAddr("10.0.0.1"), InstanceScope{CloudAccountID: &overflow}},
+	} {
+		_, err := c.LookupInstanceByPrivateIPScoped(context.Background(), input.ip, input.scope)
+		var biz *apperr.BizError
+		require.ErrorAs(t, err, &biz)
+		require.Equal(t, apperr.CodeValidation, biz.Code)
+	}
+	require.ErrorIs(t, fmt.Errorf("lookup: %w", ErrAssetsInstanceAmbiguous), ErrAssetsInstanceAmbiguous)
+}

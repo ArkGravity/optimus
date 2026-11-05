@@ -23,6 +23,8 @@ func TestLoad_DefaultsFromYAML(t *testing.T) {
 	require.Equal(t, 30*time.Second, cfg.Assets.SyncStartupDelay)
 	require.Equal(t, 90, cfg.Assets.SyncRunRetentionDays)
 	require.Equal(t, 30*time.Second, cfg.Assets.AWSRequestTimeout)
+	require.Equal(t, 30*time.Second, cfg.Assets.RequestTimeout)
+	require.Equal(t, 15*time.Minute, cfg.Assets.SyncTimeout)
 }
 
 func TestLoad_AssetsDefaultsWhenBlockIsOmitted(t *testing.T) {
@@ -35,6 +37,8 @@ func TestLoad_AssetsDefaultsWhenBlockIsOmitted(t *testing.T) {
 	require.Equal(t, 30*time.Second, cfg.Assets.SyncStartupDelay)
 	require.Equal(t, 90, cfg.Assets.SyncRunRetentionDays)
 	require.Equal(t, 30*time.Second, cfg.Assets.AWSRequestTimeout)
+	require.Equal(t, 30*time.Second, cfg.Assets.RequestTimeout)
+	require.Equal(t, 15*time.Minute, cfg.Assets.SyncTimeout)
 }
 
 func TestLoad_EnvOverride(t *testing.T) {
@@ -50,13 +54,17 @@ func TestLoad_AssetsEnvOverride(t *testing.T) {
 	t.Setenv("OPTIMUS_ASSETS_SYNC_CRON", "0 * * * *")
 	t.Setenv("OPTIMUS_ASSETS_SYNC_STARTUP_DELAY", "5s")
 	t.Setenv("OPTIMUS_ASSETS_SYNC_RUN_RETENTION_DAYS", "30")
-	t.Setenv("OPTIMUS_ASSETS_AWS_REQUEST_TIMEOUT", "45s")
+	t.Setenv("OPTIMUS_ASSETS_AWS_REQUEST_TIMEOUT", "60s")
+	t.Setenv("OPTIMUS_ASSETS_REQUEST_TIMEOUT", "20s")
+	t.Setenv("OPTIMUS_ASSETS_SYNC_TIMEOUT", "25m")
 	cfg, err := config.Load(filepath.Join("..", "..", "..", "configs", "config.yaml"))
 	require.NoError(t, err)
 	require.Equal(t, "0 * * * *", cfg.Assets.SyncCron)
 	require.Equal(t, 5*time.Second, cfg.Assets.SyncStartupDelay)
 	require.Equal(t, 30, cfg.Assets.SyncRunRetentionDays)
-	require.Equal(t, 45*time.Second, cfg.Assets.AWSRequestTimeout)
+	require.Equal(t, 60*time.Second, cfg.Assets.AWSRequestTimeout)
+	require.Equal(t, 20*time.Second, cfg.Assets.RequestTimeout)
+	require.Equal(t, 25*time.Minute, cfg.Assets.SyncTimeout)
 }
 
 func TestLoad_ServerProxyAndWebDirDefaults(t *testing.T) {
@@ -106,7 +114,12 @@ func TestValidateStrict_RejectsInvalidAssetsConfig(t *testing.T) {
 		{"invalid cron", func(c *config.Config) { c.Assets.SyncCron = "not-a-cron" }},
 		{"negative delay", func(c *config.Config) { c.Assets.SyncStartupDelay = -time.Second }},
 		{"zero retention", func(c *config.Config) { c.Assets.SyncRunRetentionDays = 0 }},
-		{"zero request timeout", func(c *config.Config) { c.Assets.AWSRequestTimeout = 0 }},
+		{"zero AWS timeout", func(c *config.Config) { c.Assets.AWSRequestTimeout = 0 }},
+		{"negative AWS timeout", func(c *config.Config) { c.Assets.AWSRequestTimeout = -time.Second }},
+		{"zero request timeout", func(c *config.Config) { c.Assets.RequestTimeout = 0 }},
+		{"negative request timeout", func(c *config.Config) { c.Assets.RequestTimeout = -time.Second }},
+		{"zero sync timeout", func(c *config.Config) { c.Assets.SyncTimeout = 0 }},
+		{"negative sync timeout", func(c *config.Config) { c.Assets.SyncTimeout = -time.Second }},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -122,7 +135,7 @@ func validStrictConfig() config.Config {
 	return config.Config{
 		Database: config.DatabaseConfig{DSN: "postgres://test"},
 		JWT:      config.JWTConfig{Secret: "12345678901234567890123456789012"},
-		Assets:   config.AssetsConfig{SyncCron: "*/15 * * * *", SyncRunRetentionDays: 90, AWSRequestTimeout: 30 * time.Second},
+		Assets:   config.AssetsConfig{SyncCron: "*/15 * * * *", SyncRunRetentionDays: 90, AWSRequestTimeout: 30 * time.Second, RequestTimeout: 30 * time.Second, SyncTimeout: 15 * time.Minute},
 	}
 }
 
@@ -152,4 +165,16 @@ func TestLoad_VaultMasterKeyFromEnv(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, "from-env", cfg.Vault.MasterKey)
 	require.Equal(t, "/etc/optimus/vault.key", cfg.Vault.MasterKeyFile)
+}
+
+func TestLoad_RejectsMalformedAndOverflowingAssetTimeouts(t *testing.T) {
+	for _, key := range []string{"OPTIMUS_ASSETS_REQUEST_TIMEOUT", "OPTIMUS_ASSETS_SYNC_TIMEOUT", "OPTIMUS_ASSETS_AWS_REQUEST_TIMEOUT"} {
+		for _, value := range []string{"invalid", "9223372036854775808ns"} {
+			t.Run(key+"/"+value, func(t *testing.T) {
+				t.Setenv(key, value)
+				_, err := config.Load(filepath.Join("..", "..", "..", "configs", "config.yaml"))
+				require.Error(t, err)
+			})
+		}
+	}
 }

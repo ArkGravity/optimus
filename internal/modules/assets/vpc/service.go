@@ -4,12 +4,14 @@ import (
 	"context"
 	"errors"
 	"math"
+	"strings"
 
 	"gorm.io/gorm"
 
 	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
 	"github.com/ArkGravity/optimus/internal/models"
 	"github.com/ArkGravity/optimus/internal/modules/assets/errs"
+	"github.com/ArkGravity/optimus/internal/modules/assets/resource"
 )
 
 const (
@@ -29,17 +31,11 @@ type Service struct{ repo repository }
 func NewService(repo repository) *Service { return &Service{repo: repo} }
 
 func (s *Service) List(ctx context.Context, query ListQuery) (*ListResponse, error) {
-	page, size, err := validatePagination(query.Page, query.Size)
+	filter, err := validateListQuery(query)
 	if err != nil {
 		return nil, err
 	}
-	if query.AccountID > math.MaxInt64 {
-		return nil, validationError("account_id exceeds database range")
-	}
-	items, total, err := s.repo.List(ctx, ListFilter{
-		AccountID: query.AccountID, Region: query.Region, Q: query.Q,
-		IncludeDeleted: query.IncludeDeleted, Page: page, Size: size,
-	})
+	items, total, err := s.repo.List(ctx, filter)
 	if err != nil {
 		return nil, databaseError(err)
 	}
@@ -66,7 +62,7 @@ func (s *Service) ListSubnetsByVPCRowID(ctx context.Context, vpcRowID uint64, qu
 	}
 	items, total, err := s.repo.ListSubnets(ctx, SubnetListFilter{
 		CloudAccountID: vpc.CloudAccountID, Region: vpc.Region, VPCID: vpc.VPCID,
-		Q: query.Q, IncludeDeleted: query.IncludeDeleted, Page: page, Size: size,
+		Q: strings.TrimSpace(query.Q), IncludeDeleted: query.IncludeDeleted, Page: page, Size: size,
 	})
 	if err != nil {
 		return nil, databaseError(err)
@@ -102,4 +98,77 @@ func validationError(message string) error {
 
 func databaseError(err error) error {
 	return apperr.Wrap(err, apperr.CodeDBError, "common.database_error", "database operation failed")
+}
+
+func validateListQuery(input ListQuery) (ListFilter, error) {
+	if input.Page == 0 {
+		input.Page = 1
+	}
+	if input.Size == 0 {
+		input.Size = 20
+	}
+	f := ListFilter{
+		Provider:       strings.TrimSpace(input.Provider),
+		AccountID:      input.AccountID,
+		ProjectID:      strings.TrimSpace(input.ProjectID),
+		Region:         strings.TrimSpace(input.Region),
+		Zone:           strings.TrimSpace(input.Zone),
+		Q:              strings.TrimSpace(input.Q),
+		IncludeDeleted: input.IncludeDeleted,
+		Page:           input.Page,
+		Size:           input.Size,
+	}
+	if err := f.queryFilter().Validate(); err != nil {
+		return ListFilter{}, err
+	}
+	return f, nil
+}
+
+// FindByKey accepts canonical provider keys and legacy numeric AWS IDs.
+func (s *Service) FindByKey(ctx context.Context, key string, includeDeleted bool) (*Summary, error) {
+	if _, err := resource.ParseAssetKey(key, "vpc"); err != nil {
+		return nil, validationError("invalid asset key")
+	}
+	repo, ok := s.repo.(interface {
+		FindByKey(context.Context, string, bool) (*Summary, error)
+	})
+	if !ok {
+		return nil, apperr.New(apperr.CodeDBError, "common.database_error", "database operation failed")
+	}
+	row, err := repo.FindByKey(ctx, key, includeDeleted)
+	if errors.Is(err, gorm.ErrRecordNotFound) || (err == nil && row == nil) {
+		return nil, apperr.New(errs.CodeAssetsVPCNotFound, errs.KeyVPCNotFound, "VPC not found")
+	}
+	if err != nil {
+		return nil, apperr.Wrap(err, apperr.CodeDBError, "common.database_error", "database operation failed")
+	}
+	return row, nil
+}
+
+// ListSubnetsByVPCKey scopes children through the full provider-native parent identity.
+func (s *Service) ListSubnetsByVPCKey(ctx context.Context, key string, input ListQuery) (*SubnetListResponse, error) {
+	if _, err := resource.ParseAssetKey(key, "vpc"); err != nil {
+		return nil, validationError("invalid asset key")
+	}
+	filter, err := validateListQuery(input)
+	if err != nil {
+		return nil, err
+	}
+	repo, ok := s.repo.(interface {
+		ListSubnetsByVPC(context.Context, string, ListFilter) ([]SubnetSummary, int64, error)
+	})
+	if !ok {
+		return nil, apperr.New(apperr.CodeDBError, "common.database_error", "database operation failed")
+	}
+	rows, total, err := repo.ListSubnetsByVPC(ctx, key, filter)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, apperr.New(errs.CodeAssetsVPCNotFound, errs.KeyVPCNotFound, "VPC not found")
+	}
+	if err != nil {
+		return nil, databaseError(err)
+	}
+	if rows == nil {
+		rows = []SubnetSummary{}
+	}
+	return &SubnetListResponse{Items: rows, Total: total}, nil
 }

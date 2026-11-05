@@ -32,13 +32,35 @@ func (r *Repo) CreateTx(ctx context.Context, tx *gorm.DB, row *models.CloudAccou
 	return mapWriteError(tx.WithContext(ctx).Create(row).Error)
 }
 
-func (r *Repo) CloudKeyExistsTx(ctx context.Context, tx *gorm.DB, id uint64) (bool, error) {
-	var count int64
-	err := tx.WithContext(ctx).
-		Model(&models.CredentialCloudKey{}).
-		Where("id = ?", id).
-		Count(&count).Error
-	return count > 0, err
+// ValidateCloudKeyTx reads only metadata and ciphertext presence. Callers hold
+// the credential advisory lock so deletion and conversion cannot race binding.
+func (r *Repo) ValidateCloudKeyTx(ctx context.Context, tx *gorm.DB, id uint64, provider string) error {
+	var row struct {
+		Provider, AuthType, ServiceAccountEmail, CredentialProjectID string
+		HasAccessKey, HasSecretKey, HasJSON                          bool
+	}
+	err := tx.WithContext(ctx).Model(&models.CredentialCloudKey{}).
+		Select("provider, auth_type, service_account_email, credential_project_id, octet_length(access_key_id_enc) > 0 AS has_access_key, octet_length(secret_access_key_enc) > 0 AS has_secret_key, octet_length(service_account_json_enc) > 0 AS has_json").
+		Where("id = ?", id).Take(&row).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return apperr.New(errs.CodeAssetsCloudKeyNotFound, errs.KeyCloudKeyNotFound, "cloud key not found")
+	}
+	if err != nil {
+		return err
+	}
+	usable := row.Provider == provider
+	switch provider {
+	case "aws", "aliyun":
+		usable = usable && row.AuthType == "access_key" && row.HasAccessKey && row.HasSecretKey && !row.HasJSON
+	case "gcp":
+		usable = usable && row.AuthType == "service_account_json" && row.HasJSON && !row.HasAccessKey && !row.HasSecretKey && row.ServiceAccountEmail != "" && row.CredentialProjectID != ""
+	default:
+		usable = false
+	}
+	if !usable {
+		return configError("cloud key does not provide usable authentication for this provider")
+	}
+	return nil
 }
 
 func (r *Repo) FindByID(ctx context.Context, id uint64) (*models.CloudAccount, error) {
@@ -191,25 +213,51 @@ func countByCloudKeyID(ctx context.Context, db *gorm.DB, cloudKeyID uint64) (int
 	return count, err
 }
 
+// CascadeSoftDeleteResources uses a fixed model allowlist. Region removal skips
+// global GCP families; deleting an account covers every provider family.
 func (r *Repo) CascadeSoftDeleteResources(ctx context.Context, tx *gorm.DB, accountID uint64, regions []string) (int64, error) {
 	if tx == nil {
-		tx = r.db
+		var total int64
+		err := r.Transaction(ctx, func(tx *gorm.DB) error {
+			var err error
+			total, err = r.CascadeSoftDeleteResources(ctx, tx, accountID, regions)
+			return err
+		})
+		return total, err
 	}
-	tx = tx.WithContext(ctx)
-	modelsToDelete := []any{
-		&models.AWSSecurityGroup{},
-		&models.AWSInstance{},
-		&models.AWSVPC{},
-		&models.AWSSubnet{},
-		&models.AWSDatabase{},
+	// Context makes Session clone the statement before clearing inherited Unscoped.
+	tx = tx.Session(&gorm.Session{NewDB: true, Context: ctx})
+	tx.Statement.Unscoped = false
+	targets := []struct {
+		model  any
+		global bool
+	}{
+		{&models.AWSSecurityGroup{}, false},
+		{&models.AWSInstance{}, false},
+		{&models.AWSVPC{}, false},
+		{&models.AWSSubnet{}, false},
+		{&models.AWSDatabase{}, false},
+		{&models.AliyunInstance{}, false},
+		{&models.AliyunVPC{}, false},
+		{&models.AliyunVSwitch{}, false},
+		{&models.AliyunDatabase{}, false},
+		{&models.AliyunSecurityGroup{}, false},
+		{&models.GCPInstance{}, false},
+		{&models.GCPNetwork{}, true},
+		{&models.GCPSubnet{}, false},
+		{&models.GCPDatabase{}, false},
+		{&models.GCPFirewall{}, true},
 	}
 	var total int64
-	for _, model := range modelsToDelete {
+	for _, target := range targets {
+		if len(regions) > 0 && target.global {
+			continue
+		}
 		query := tx.Where("cloud_account_id = ?", accountID)
 		if len(regions) > 0 {
 			query = query.Where("region IN ?", regions)
 		}
-		result := query.Delete(model)
+		result := query.Delete(target.model)
 		if result.Error != nil {
 			return total, result.Error
 		}
@@ -272,17 +320,20 @@ func (r *Repo) latestSyncRuns(ctx context.Context, accountIDs []uint64) (map[uin
 
 func toSummary(row models.CloudAccount, cloudKeyName string, lastSyncAt *time.Time, lastSyncStatus string) Summary {
 	return Summary{
-		ID:             row.ID,
-		Name:           row.Name,
-		Provider:       row.Provider,
-		CloudKeyID:     row.CloudKeyID,
-		CloudKeyName:   cloudKeyName,
-		RegionsCount:   len(row.EnabledRegions),
-		Enabled:        row.Enabled,
-		LastSyncAt:     lastSyncAt,
-		LastSyncStatus: lastSyncStatus,
-		CreatedAt:      row.CreatedAt,
-		UpdatedAt:      row.UpdatedAt,
+		ID:                row.ID,
+		Name:              row.Name,
+		Provider:          row.Provider,
+		ProjectID:         row.ProjectID,
+		ExternalAccountID: row.ExternalAccountID,
+		ScopeRevision:     row.ScopeRevision,
+		CloudKeyID:        row.CloudKeyID,
+		CloudKeyName:      cloudKeyName,
+		RegionsCount:      len(row.EnabledRegions),
+		Enabled:           row.Enabled,
+		LastSyncAt:        lastSyncAt,
+		LastSyncStatus:    lastSyncStatus,
+		CreatedAt:         row.CreatedAt,
+		UpdatedAt:         row.UpdatedAt,
 	}
 }
 

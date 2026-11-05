@@ -126,6 +126,7 @@ describe('CloudAccount List', () => {
     await vi.waitFor(() => expect(api.list).toHaveBeenLastCalledWith({ page: 1, size: 20, q: 'prod' }))
     wrapper.findComponent(APagination).vm.$emit('change', 2)
     await vi.waitFor(() => expect(api.list).toHaveBeenLastCalledWith({ page: 2, size: 20, q: 'prod' }))
+    await vi.waitFor(() => expect(wrapper.find('[data-testid="edit-3"]').exists()).toBe(true))
     await wrapper.find('[data-testid="edit-3"]').trigger('click')
     await vi.waitFor(() => expect(api.get).toHaveBeenCalledWith(3))
   })
