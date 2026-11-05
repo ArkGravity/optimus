@@ -73,9 +73,12 @@ make build
 The server exposes the web UI at `/`, the API at `/api/v1` and Swagger at
 `/swagger/index.html` on one port. Hashed `/assets/*` are cached as immutable,
 `index.html` is never cached, text assets are served gzip-compressed, unknown
-UI paths fall back to `index.html` and unknown `/api/*` paths return the JSON
-error envelope. Set `server.web_dir` (`OPTIMUS_SERVER_WEB_DIR`) to serve a web
-build from disk instead of the embedded copy. A plain `go build` without
+UI paths fall back to `index.html`. Under `/assets/`, known Assets menu pages
+and legal detail URLs receive the same uncached index shell; missing built,
+hashed or dotted resources and unknown paths return 404. Unknown `/api/*` and
+`/swagger*` paths return the JSON error envelope. Set `server.web_dir`
+(`OPTIMUS_SERVER_WEB_DIR`) to serve a web build from disk instead of the
+embedded copy. A plain `go build` without
 `make web` embeds only a placeholder and the server reports that the UI is not
 built; the API is unaffected.
 
@@ -150,7 +153,8 @@ functions are unavailable and excluded from production functional acceptance.
 Reconsider implementation after the other Optimus functions mature.
 
 Runtime checklists (Dev / disposable resources only):
-[P3 applications](scripts/p3-smoke.md) and [P4 assets](scripts/p4-smoke.md).
+[P3 applications](scripts/p3-smoke.md), [P4 AWS assets](scripts/p4-smoke.md)
+and [P4 multi-cloud assets](scripts/p4-multicloud-smoke.md).
 Do not point those checklists at production credentials or clusters.
 
 ### Database baseline
@@ -159,25 +163,92 @@ The operator confirmed rebuilding, deploying and accepting `d0016d0` on
 2026-10-28. This accepted production baseline ends at `00022`, including the
 kubeconfig lifecycle fix in `00015_create_clusters.sql`, cloud-key deletion in
 `00022_cloud_key_deletion.sql`, and the Aliyun/AWS/GCP provider constraint in
-`00014_create_credentials_cloud_keys.sql`. P4 asset discovery remains AWS-only.
+`00014_create_credentials_cloud_keys.sql`. Asset discovery in the accepted production baseline is AWS-only.
 
-The Assets extension adds `00023_assets_security_groups.sql` for AWS Security
-Groups and their inbound/outbound rules. Upgrade the accepted 00022 database
-with migrate + seed, preserving existing data. Seed adds the Security Groups
-menu and orders Assets as Cloud Accounts, VPCs, Security Groups, EC2 Instances,
-RDS Databases, Sync Runs. Read-only sync credentials additionally require
-`ec2:DescribeSecurityGroups`; see the [P4 checklist](scripts/p4-smoke.md).
-Production rollout and acceptance of this extension are pending.
+The unshipped `feat/multicloud-assets` source now uses the operator-approved
+fresh migration baseline: exactly 19 sequential SQL files, ending at
+`00019_create_assets_sync_runs.sql`; the next migration is `00020_xxx.sql`.
+It retains all 31 business tables, final multi-cloud schemas and runtime behavior.
+Typed credentials, account scopes, AWS/Aliyun/GCP inventory and sync-run metadata
+are defined directly in their owning CREATE migrations. Historical migration
+numbers above describe the last accepted production revision, not current files.
+Production rollout and real-provider acceptance remain pending.
 
-The source migration sequence ends at `00023`; the next new migration starts
-at `00024_xxx.sql`.
-`make migrate-new name=<snake_case>` uses sequential numbering.
+This baseline requires a fresh PostgreSQL database. Existing schema 00022,
+00023 or 00028 databases cannot upgrade in place with these renumbered files.
+For a separately authorized Dev/Production rollout, back up required data and
+retain the vault master key, stop application writers, and actually recreate the
+target database (or remove all its objects, including `goose_db_version`) before
+running `make migrate-up` and `make seed`, or the image's one-shot services.
+The resulting fresh database has 31 business tables plus `goose_db_version` at
+version 19. Recreating containers alone retains the PostgreSQL `pgdata` volume
+and its old migration history. This source change does not perform a database
+recreation, deployment or data restoration.
 
-Older, pre-baseline databases require fresh initialization; no in-place upgrade
-from that old schema is maintained. Recreating containers alone retains the
-PostgreSQL `pgdata` volume. A baseline reset must include the application data
-and Goose version records, and must leave unrelated databases and Kubernetes
-releases intact.
+Seed renames the built-in Security Groups menu to Firewalls while preserving its
+row ID, route ownership and existing permission grants and custom child references; repeated seed does not duplicate it.
+The menu order is Cloud Accounts, VPCs, Firewalls, Instances, Databases, Sync Runs.
+The legacy `/assets/security-groups` browser URL redirects under the same resource
+permission; the legacy AWS API remains available. Existing permissions are reused.
+
+Compatibility for legacy GCP AK/SK records remains: they use `auth_type=legacy_invalid` and show
+`needs_configuration`; repair them in Cloud Keys with a valid Service Account
+JSON before collection. AWS/Aliyun use explicit AK/SK; GCP uses only the selected
+Service Account JSON and an explicit target Project ID, which may differ from the
+credential's home project. Provider, bound credential and target project are
+immutable on Cloud Accounts; create a new account to change that binding. Rotate
+secret material on the existing credential when retaining its account binding.
+Deleting a cloud key is blocked (`43001`) while any live cloud account references
+it, including disabled accounts. Delete the account first; only historical
+references are detached during physical credential deletion and its atomic audit.
+
+Downgrade is not a rollout recovery procedure: the fresh baseline's Down
+operations drop tables and their data, including credentials once dependants
+have been removed. The former intermediate SA-auth downgrade guard no longer
+applies. Use a tested backup with its matching application revision and vault
+key for recovery.
+
+### Multi-cloud collection settings
+
+| YAML key | Environment variable | Default |
+|---|---|---|
+| `assets.request_timeout` | `OPTIMUS_ASSETS_REQUEST_TIMEOUT` | `30s` |
+| `assets.aws_request_timeout` | `OPTIMUS_ASSETS_AWS_REQUEST_TIMEOUT` | `30s` |
+| `assets.sync_timeout` | `OPTIMUS_ASSETS_SYNC_TIMEOUT` | `15m` |
+
+Timeouts accept positive Go durations; malformed, overflowing, zero and negative
+values fail configuration loading or startup validation. The independent AWS
+override applies to identity planning, authenticated region catalogs and resource
+requests: AWS `60s` remains effective with general `30s`. The general request
+setting applies to Aliyun/GCP. Each call also respects its parent cancellation and
+remaining unit/account deadline. Individual unit budgets stay bounded at 15m;
+`sync_timeout` is an account ceiling and may exceed 15m. The worker sums actual
+planned unit budgets with overflow protection and subtracts planning elapsed time;
+GCP plans global networks/firewalls, regional subnets/databases and discovered
+zones, rather than assuming four units per region. Manual sync returns immediately
+and performs identity/zone planning in the worker. Shared cron, startup delay and
+run-retention settings keep their existing names and behavior.
+
+Google clients use fixed official Google universe/endpoints and explicit selected
+credentials. Ambient client-certificate discovery is unsupported:
+`GOOGLE_API_USE_CLIENT_CERTIFICATE` must be unset or case-insensitive `false`;
+`true` and unknown values fail with Config before SDK discovery. The application
+does not mutate global environment variables. Supported explicit SDK logging
+suppresses raw debug payloads. Never include SA JSON, JWTs, AK/SK or raw provider
+responses in logs, screenshots or bug reports.
+
+Provider failures use fixed sanitized messages and codes: `43201` Unauthorized,
+`43202` Forbidden, `43203` Unreachable, `43204` Throttled, `43205` Config,
+`43206` Partial, `43207` APIDisabled, `43208` Other and `43209` IdentityMismatch.
+AWS `43102`–`43107` remain compatible. Provider Unauthorized is a domain failure,
+not an application JWT 401; OAuth acquisition and target API denial remain distinct.
+Incomplete units preserve the preceding snapshot and cannot delete missing rows.
+
+Use the [AWS checklist](scripts/p4-smoke.md) and
+[multi-cloud checklist](scripts/p4-multicloud-smoke.md) with separately supplied
+disposable read-only credentials. Fixture tests establish local behavior; real
+AWS Security Groups, Aliyun and GCP acceptance remains pending. The accepted
+production baseline remains `d0016d0`/00022.
 
 ## Documentation
 

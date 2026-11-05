@@ -7,21 +7,29 @@ import type {
   CreateCloudAccountRequest,
   ListResponse,
   UpdateCloudAccountRequest,
+  Provider,
+  RegionOptionsResponse,
 } from '@/types/assets'
 
 export interface AssetsAccountListParams {
   q?: string
-  provider?: string
+  provider?: Provider
   enabled?: boolean
   include_deleted?: boolean
   page?: number
   size?: number
 }
 
+export interface RegionOptionsParams { provider: Provider; cloudkey_id: number; project_id?: string }
+
 export function makeAssetsAccountApi(client: AxiosInstance) {
   const base = '/assets/cloud-accounts'
 
   return {
+    regionOptions: async (params: RegionOptionsParams) => {
+      const response = await client.get<Envelope<RegionOptionsResponse>>(`${base}/region-options`, { params })
+      return response.data.data
+    },
     list: async (params: AssetsAccountListParams = {}) => {
       const response = await client.get<Envelope<ListResponse<CloudAccountSummary>>>(base, { params })
       return response.data.data

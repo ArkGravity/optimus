@@ -9,9 +9,16 @@ import type {
   ListResponse,
   SubnetSummary,
   VPCSummary,
+  AssetKey,
+  Provider,
+  FirewallSummary,
+  FirewallDetail,
 } from '@/types/assets'
 
 export interface ResourceListParams {
+  provider?: Provider
+  project_id?: string
+  zone?: string
   account_id?: number
   region?: string
   q?: string
@@ -23,9 +30,15 @@ export interface ResourceListParams {
 export interface SecurityGroupListParams extends ResourceListParams { vpc_id?: string }
 
 export interface InstanceListParams extends ResourceListParams {
+  ip?: string
+  tag_key?: string
+  tag_value?: string
   state?: string
   vpc_id?: string
 }
+
+export interface FirewallListParams extends ResourceListParams { network_ref?: string }
+export interface ResourceDetailParams { include_deleted?: boolean }
 
 export interface DatabaseListParams extends ResourceListParams {
   engine?: string
@@ -40,7 +53,22 @@ export interface SubnetListParams {
 }
 
 export function makeAssetsResourceApi(client: AxiosInstance) {
+  async function get<T>(family: string, key: AssetKey | number, params?: ResourceDetailParams): Promise<T> {
+    const path = `/assets/${family}/${encodeURIComponent(String(key))}`
+    const response = params
+      ? await client.get<Envelope<T>>(path, { params })
+      : await client.get<Envelope<T>>(path)
+    return response.data.data
+  }
   return {
+    getInstance: (key: AssetKey | number, params?: ResourceDetailParams) => get<InstanceSummary>('instances', key, params),
+    getVPC: (key: AssetKey | number, params?: ResourceDetailParams) => get<VPCSummary>('vpcs', key, params),
+    getDatabase: (key: AssetKey | number, params?: ResourceDetailParams) => get<DatabaseSummary>('databases', key, params),
+    getFirewall: (key: AssetKey | number, params?: ResourceDetailParams) => get<FirewallDetail>('firewalls', key, params),
+    listFirewalls: async (params: FirewallListParams = {}) => {
+      const response = await client.get<Envelope<ListResponse<FirewallSummary>>>('/assets/firewalls', { params })
+      return response.data.data
+    },
     listSecurityGroups: async (params: SecurityGroupListParams = {}) => {
       const response = await client.get<Envelope<ListResponse<SecurityGroupSummary>>>('/assets/security-groups', { params })
       return response.data.data
@@ -57,8 +85,8 @@ export function makeAssetsResourceApi(client: AxiosInstance) {
       const response = await client.get<Envelope<ListResponse<VPCSummary>>>('/assets/vpcs', { params })
       return response.data.data
     },
-    listSubnets: async (vpcRowID: number, params?: SubnetListParams) => {
-      const path = `/assets/vpcs/${vpcRowID}/subnets`
+    listSubnets: async (vpcRowID: AssetKey | number, params?: SubnetListParams) => {
+      const path = `/assets/vpcs/${encodeURIComponent(String(vpcRowID))}/subnets`
       const response = params
         ? await client.get<Envelope<ListResponse<SubnetSummary>>>(path, { params })
         : await client.get<Envelope<ListResponse<SubnetSummary>>>(path)

@@ -26,7 +26,7 @@ func TestHandlerMountRoutesWithResourceReadPermission(t *testing.T) {
 		t.Fatalf("permissions = %#v", permissions)
 	}
 	routes := router.Routes()
-	if len(routes) != 2 || routes[0].Path != "/api/v1/assets/vpcs" || routes[1].Path != "/api/v1/assets/vpcs/:id/subnets" {
+	if len(routes) != 3 || routes[0].Path != "/api/v1/assets/vpcs" || routes[1].Path != "/api/v1/assets/vpcs/:asset_key" || routes[2].Path != "/api/v1/assets/vpcs/:asset_key/subnets" {
 		t.Fatalf("routes = %#v", routes)
 	}
 }
@@ -52,7 +52,7 @@ func TestHandlerListSubnetsSuccessAndQueryBinding(t *testing.T) {
 	vpc := &models.AWSVPC{ID: 8, CloudAccountID: 3, Region: "us-east-1", VPCID: "vpc-a"}
 	repo := &stubRepo{vpc: vpc}
 	router := gin.New()
-	router.GET("/vpcs/:id/subnets", NewHandler(NewService(repo)).ListSubnets)
+	router.GET("/vpcs/:asset_key/subnets", NewHandler(NewService(repo)).ListSubnets)
 	recorder := httptest.NewRecorder()
 	router.ServeHTTP(recorder, httptest.NewRequest(http.MethodGet,
 		"/vpcs/8/subnets?q=private&include_deleted=true&page=2&size=5", nil))
@@ -70,7 +70,7 @@ func TestHandlerRejectsInvalidQueriesAndIDsSafely(t *testing.T) {
 	router := gin.New()
 	handler := NewHandler(NewService(&stubRepo{}))
 	router.GET("/vpcs", handler.List)
-	router.GET("/vpcs/:id/subnets", handler.ListSubnets)
+	router.GET("/vpcs/:asset_key/subnets", handler.ListSubnets)
 	paths := []string{
 		"/vpcs?page=0", "/vpcs?size=0", "/vpcs?include_deleted=nope",
 		"/vpcs/0/subnets", "/vpcs/-1/subnets", "/vpcs/9223372036854775808/subnets",
@@ -108,7 +108,7 @@ func TestHandlerDatabaseErrorDoesNotLeak(t *testing.T) {
 
 func TestHandlerUnknownVPCUsesNotFoundEnvelope(t *testing.T) {
 	router := gin.New()
-	router.GET("/vpcs/:id/subnets", NewHandler(NewService(&stubRepo{findErr: gorm.ErrRecordNotFound})).ListSubnets)
+	router.GET("/vpcs/:asset_key/subnets", NewHandler(NewService(&stubRepo{findErr: gorm.ErrRecordNotFound})).ListSubnets)
 	recorder := httptest.NewRecorder()
 	router.ServeHTTP(recorder, httptest.NewRequest(http.MethodGet, "/vpcs/42/subnets", nil))
 	if recorder.Code != http.StatusNotFound {

@@ -33,6 +33,22 @@ function setup() {
 }
 
 describe('router guards', () => {
+  it.each([
+    { allowed: false, hasMenu: false },
+    { allowed: false, hasMenu: true },
+    { allowed: true, hasMenu: true },
+  ])('guards legacy firewall URL before redirect (allowed=$allowed, hasMenu=$hasMenu)', async ({ allowed, hasMenu }) => {
+    const { router, meApi, auth } = setup()
+    auth.setActiveTokens('access', 'refresh')
+    vi.mocked(meApi.permissions).mockResolvedValue(allowed ? ['assets:resource:read'] : [])
+    vi.mocked(meApi.menus).mockResolvedValue(hasMenu ? [{ ...dashboardMenu, id: 7, code: 'assets.firewalls', name: 'menu.assets.firewalls', path: '/assets/firewalls', component: 'assets/firewalls/List', permission_code: 'assets:resource:read' }] : [])
+    await router.push('/assets/security-groups?provider=aws&page=2#rules')
+    await router.isReady()
+    if (allowed) {
+      expect(router.currentRoute.value.fullPath).toBe('/assets/firewalls?provider=aws&page=2#rules')
+      expect(router.currentRoute.value.meta.permission).toBe('assets:resource:read')
+    } else expect(router.currentRoute.value.name).toBe('forbidden')
+  })
   it('sends an unauthenticated root visit to login', async () => {
     const { router, meApi } = setup()
 

@@ -3,7 +3,6 @@ package module
 import (
 	"context"
 	"log/slog"
-	"math"
 	"sync"
 	"time"
 
@@ -18,16 +17,18 @@ import (
 	"github.com/ArkGravity/optimus/internal/modules/assets"
 	"github.com/ArkGravity/optimus/internal/modules/assets/account"
 	"github.com/ArkGravity/optimus/internal/modules/assets/account/inuse"
-	"github.com/ArkGravity/optimus/internal/modules/assets/awsclient"
 	assetdatabase "github.com/ArkGravity/optimus/internal/modules/assets/database"
 	asseterrs "github.com/ArkGravity/optimus/internal/modules/assets/errs"
+	"github.com/ArkGravity/optimus/internal/modules/assets/firewall"
 	"github.com/ArkGravity/optimus/internal/modules/assets/instance"
+	aliyunprovider "github.com/ArkGravity/optimus/internal/modules/assets/providers/aliyun"
+	awsprovider "github.com/ArkGravity/optimus/internal/modules/assets/providers/aws"
+	gcpprovider "github.com/ArkGravity/optimus/internal/modules/assets/providers/gcp"
 	"github.com/ArkGravity/optimus/internal/modules/assets/securitygroup"
 	assetsync "github.com/ArkGravity/optimus/internal/modules/assets/sync"
 	"github.com/ArkGravity/optimus/internal/modules/assets/sync/runs"
 	"github.com/ArkGravity/optimus/internal/modules/assets/vpc"
 	"github.com/ArkGravity/optimus/internal/modules/audit"
-	"github.com/ArkGravity/optimus/internal/modules/credentials/cloudkey"
 	"github.com/ArkGravity/optimus/internal/modules/rbac"
 )
 
@@ -38,10 +39,12 @@ type Input struct {
 	Config              config.AssetsConfig
 	Audit               *audit.Recorder
 	CredentialsConsumer assetsync.CloudKeyConsumer
-	CloudKeyService     *cloudkey.Service
 	Logger              *slog.Logger
 	ClientFactory       assetsync.ClientFactory
 	Fetcher             assetsync.Fetcher
+	AWSIdentity         awsprovider.Identity
+	RegionCatalogs      map[string]account.RegionCatalog
+	ProviderRegistry    *assetsync.Registry
 }
 
 type Module struct {
@@ -52,6 +55,7 @@ type Module struct {
 
 	accountHandler       *account.Handler
 	instanceHandler      *instance.Handler
+	firewallHandler      *firewall.Handler
 	vpcHandler           *vpc.Handler
 	securityGroupHandler *securitygroup.Handler
 	databaseHandler      *assetdatabase.Handler
@@ -62,32 +66,20 @@ type Module struct {
 
 func Wire(rootCtx context.Context, in Input) *Module {
 	moduleCtx, cancel := context.WithCancel(rootCtx)
-	accountService := account.NewService(account.NewRepo(in.DB), in.Audit, in.CloudKeyService)
+	accountService := account.NewService(account.NewRepo(in.DB), in.Audit, in.CredentialsConsumer)
+	timeout := normalizeRequestTimeout(in.Config.RequestTimeout)
+	accountTimeout := in.Config.SyncTimeout
+	if accountTimeout <= 0 {
+		accountTimeout = assetsync.DefaultAccountTimeout
+	}
+	accountService.SetRegionCatalogs(regionCatalogs(in, timeout))
 	runsRepo := runs.NewRepo(in.DB)
-	factory := in.ClientFactory
-	if factory == nil {
-		factory = assetsync.ClientFactoryFunc(awsclient.For)
-	}
-	fetcher := in.Fetcher
-	if fetcher == nil {
-		fetcher = &assetsync.CompositeFetcher{
-			Instance:      assetsync.EC2Fetcher{},
-			Network:       assetsync.VPCFetcher{},
-			Database:      assetsync.RDSFetcher{},
-			SecurityGroup: assetsync.SecurityGroupFetcher{},
-		}
-	}
-	engine := assetsync.NewEngine(
-		in.DB,
-		runsRepo,
-		factory,
-		fetcher,
-		in.CredentialsConsumer,
-		normalizeRequestTimeout(in.Config.AWSRequestTimeout),
-	)
+	registry := providerRegistry(in, timeout)
+	engine := assetsync.NewProviderEngine(in.DB, runsRepo, registry, in.CredentialsConsumer, timeout, accountTimeout)
 
 	module := &Module{
 		Consumer:             assets.NewConsumer(in.DB),
+		firewallHandler:      firewall.NewHandler(firewall.NewService(firewall.NewRepo(in.DB))),
 		InUseCounter:         inuse.New(in.DB),
 		Engine:               engine,
 		instanceHandler:      instance.NewHandler(instance.NewService(instance.NewRepo(in.DB))),
@@ -98,7 +90,7 @@ func Wire(rootCtx context.Context, in Input) *Module {
 		cancel:               cancel,
 	}
 	module.accountHandler = account.NewHandler(accountService)
-	module.accountHandler.SetTriggerSync(newManualSyncTrigger(moduleCtx, accountService, engine, in.Config.AWSRequestTimeout, in.Logger, &module.workers))
+	module.accountHandler.SetTriggerSync(newManualSyncTrigger(moduleCtx, accountService, engine, in.Logger, &module.workers, accountTimeout))
 	module.CronScheduler = assetsync.StartScheduler(moduleCtx, assetsync.Config{
 		SyncCron:          in.Config.SyncCron,
 		StartupDelay:      in.Config.SyncStartupDelay,
@@ -106,6 +98,31 @@ func Wire(rootCtx context.Context, in Input) *Module {
 		AWSRequestTimeout: normalizeRequestTimeout(in.Config.AWSRequestTimeout),
 	}, engine, in.Logger)
 	return module
+}
+
+func regionCatalogs(in Input, timeout time.Duration) map[string]account.RegionCatalog {
+	catalogs := map[string]account.RegionCatalog{
+		"aws":    awsprovider.RegionCatalog{Timeout: normalizeRequestTimeout(in.Config.AWSRequestTimeout)},
+		"aliyun": aliyunprovider.RegionCatalog{Timeout: timeout},
+		"gcp":    gcpprovider.RegionCatalog{Timeout: timeout},
+	}
+	for name, catalog := range in.RegionCatalogs {
+		catalogs[name] = catalog
+	}
+	return catalogs
+}
+
+func providerRegistry(in Input, timeout time.Duration) *assetsync.Registry {
+	if in.ProviderRegistry != nil {
+		return in.ProviderRegistry
+	}
+	// Providers are assembled here, never by the shared engine.
+	registry, _ := assetsync.NewRegistry(
+		awsprovider.New(awsprovider.Options{ClientFactory: in.ClientFactory, Fetcher: in.Fetcher, Identity: in.AWSIdentity, RequestTimeout: normalizeRequestTimeout(in.Config.AWSRequestTimeout)}),
+		aliyunprovider.New(aliyunprovider.Options{RequestTimeout: timeout}),
+		gcpprovider.New(gcpprovider.Options{RequestTimeout: timeout}),
+	)
+	return registry
 }
 
 // Shutdown cancels scheduled and manual sync work, then waits for both to
@@ -139,6 +156,7 @@ func (m *Module) MountRoutes(protected *gin.RouterGroup, cache *rbac.PermissionC
 	}
 	m.accountHandler.Mount(group, requirePermission)
 	m.instanceHandler.Mount(group, requirePermission)
+	m.firewallHandler.Mount(group, requirePermission)
 	m.vpcHandler.Mount(group, requirePermission)
 	m.securityGroupHandler.Mount(group, requirePermission)
 	m.databaseHandler.Mount(group, requirePermission)
@@ -156,7 +174,10 @@ type syncEngine interface {
 	RunAccountLocked(context.Context, uint64, string, *uint64) error
 }
 
-func newManualSyncTrigger(rootCtx context.Context, service accountSyncService, engine syncEngine, requestTimeout time.Duration, logger *slog.Logger, workers *workerGroup) func(*gin.Context, uint64) {
+func newManualSyncTrigger(rootCtx context.Context, service accountSyncService, engine syncEngine, logger *slog.Logger, workers *workerGroup, accountTimeout time.Duration) func(*gin.Context, uint64) {
+	if accountTimeout <= 0 {
+		accountTimeout = assetsync.DefaultAccountTimeout
+	}
 	if logger == nil {
 		logger = slog.Default()
 	}
@@ -189,12 +210,13 @@ func newManualSyncTrigger(rootCtx context.Context, service accountSyncService, e
 			actor = &userID
 		}
 		service.RecordSyncTrigger(requestCtx, actor, clientIP, userAgent, accountID)
-		deadline := manualSyncTimeout(requestTimeout, len(detail.EnabledRegions))
 
 		go func() {
 			defer workers.done()
 			defer engine.Unlock(accountID)
-			workerCtx, cancel := context.WithTimeout(context.WithoutCancel(requestCtx), deadline)
+			// Planning belongs to the worker. HTTP queues with the account ceiling;
+			// the engine derives its bounded unit budget after provider discovery.
+			workerCtx, cancel := context.WithTimeout(context.WithoutCancel(requestCtx), accountTimeout)
 			stopOnShutdown := context.AfterFunc(rootCtx, cancel)
 			defer stopOnShutdown()
 			defer cancel()
@@ -238,19 +260,4 @@ func normalizeRequestTimeout(timeout time.Duration) time.Duration {
 		return defaultAWSRequestTimeout
 	}
 	return timeout
-}
-
-func manualSyncTimeout(requestTimeout time.Duration, regionCount int) time.Duration {
-	requestTimeout = normalizeRequestTimeout(requestTimeout)
-	if regionCount < 1 {
-		regionCount = 1
-	}
-	if int64(regionCount) > math.MaxInt64/4 {
-		return time.Duration(math.MaxInt64)
-	}
-	units := int64(regionCount) * 4
-	if int64(requestTimeout) > math.MaxInt64/units {
-		return time.Duration(math.MaxInt64)
-	}
-	return requestTimeout * time.Duration(units)
 }

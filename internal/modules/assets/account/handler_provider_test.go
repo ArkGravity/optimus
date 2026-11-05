@@ -18,7 +18,7 @@ func TestHandler_Create_UnsupportedProviderUsesDomainError(t *testing.T) {
 	router := gin.New()
 	router.POST("/accounts", handler.Create)
 	body, err := json.Marshal(CreateRequest{
-		Name: "prod", Provider: "gcp", CloudKeyID: 1, EnabledRegions: []string{"us-east-1"},
+		Name: "prod", Provider: "azure", CloudKeyID: 1, EnabledRegions: []string{"us-east-1"},
 	})
 	require.NoError(t, err)
 	recorder := httptest.NewRecorder()

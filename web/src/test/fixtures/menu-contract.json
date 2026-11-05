@@ -17,8 +17,8 @@
       "permission": "assets:resource:read"
     },
     {
-      "component": "assets/security-groups/List",
-      "path": "/assets/security-groups",
+      "component": "assets/firewalls/List",
+      "path": "/assets/firewalls",
       "permission": "assets:resource:read"
     },
     {

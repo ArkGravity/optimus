@@ -13,11 +13,13 @@ import (
 	"github.com/robfig/cron/v3"
 	"github.com/stretchr/testify/require"
 
+	"github.com/ArkGravity/optimus/internal/infra/crypto"
 	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
 	"github.com/ArkGravity/optimus/internal/infra/middleware"
 	"github.com/ArkGravity/optimus/internal/infra/response"
 	"github.com/ArkGravity/optimus/internal/modules/assets/account"
 	asseterrs "github.com/ArkGravity/optimus/internal/modules/assets/errs"
+	assetsync "github.com/ArkGravity/optimus/internal/modules/assets/sync"
 )
 
 type fakeAccountSyncService struct {
@@ -65,7 +67,7 @@ func TestModuleShutdown_CancelsAndWaitsForManualWorker(t *testing.T) {
 	engine := &fakeSyncEngine{locked: true, runStarted: make(chan context.Context, 1), waitCancel: true}
 	c, rec, _ := testContext(t)
 
-	newManualSyncTrigger(rootCtx, svc, engine, time.Hour, nil, &m.workers)(c, 42)
+	newManualSyncTrigger(rootCtx, svc, engine, nil, &m.workers, assetsync.DefaultAccountTimeout)(c, 42)
 	require.Equal(t, http.StatusOK, rec.Code)
 	var workerCtx context.Context
 	select {
@@ -83,7 +85,7 @@ func TestModuleShutdown_CancelsAndWaitsForManualWorker(t *testing.T) {
 	// Once shutdown begins, no later trigger can add work or retain the lock.
 	lateEngine := &fakeSyncEngine{locked: true, runStarted: make(chan context.Context, 1)}
 	lateCtx, lateRec, _ := testContext(t)
-	newManualSyncTrigger(rootCtx, svc, lateEngine, time.Hour, nil, &m.workers)(lateCtx, 42)
+	newManualSyncTrigger(rootCtx, svc, lateEngine, nil, &m.workers, assetsync.DefaultAccountTimeout)(lateCtx, 42)
 	require.Equal(t, http.StatusInternalServerError, lateRec.Code)
 	require.EqualValues(t, 1, lateEngine.unlockCalls.Load())
 	require.Empty(t, lateEngine.runStarted)
@@ -94,7 +96,7 @@ func TestManualSyncTrigger_RejectsDisabledAccountBeforeLockAndAudit(t *testing.T
 	engine := &fakeSyncEngine{locked: true, runStarted: make(chan context.Context, 1)}
 	c, rec, _ := testContext(t)
 
-	newManualSyncTrigger(context.Background(), svc, engine, time.Second, nil, &workerGroup{})(c, 42)
+	newManualSyncTrigger(context.Background(), svc, engine, nil, &workerGroup{}, assetsync.DefaultAccountTimeout)(c, 42)
 
 	require.Equal(t, http.StatusUnprocessableEntity, rec.Code)
 	require.Equal(t, int(asseterrs.CodeAssetsCloudAccountDisabled), envelopeCode(t, rec))
@@ -107,7 +109,7 @@ func TestManualSyncTrigger_RejectsBusyAccountWithoutAudit(t *testing.T) {
 	engine := &fakeSyncEngine{locked: false, runStarted: make(chan context.Context, 1)}
 	c, rec, _ := testContext(t)
 
-	newManualSyncTrigger(context.Background(), svc, engine, time.Second, nil, &workerGroup{})(c, 42)
+	newManualSyncTrigger(context.Background(), svc, engine, nil, &workerGroup{}, assetsync.DefaultAccountTimeout)(c, 42)
 
 	require.Equal(t, http.StatusConflict, rec.Code)
 	require.Equal(t, int(asseterrs.CodeAssetsSyncBusy), envelopeCode(t, rec))
@@ -121,7 +123,7 @@ func TestManualSyncTrigger_AuditsInlineAndRunsWithDetachedBoundedContext(t *test
 	c, rec, cancelRequest := testContext(t)
 	c.Set(middleware.CtxKeyUserID, uint64(7))
 
-	newManualSyncTrigger(context.Background(), svc, engine, 50*time.Millisecond, nil, &workerGroup{})(c, 42)
+	newManualSyncTrigger(context.Background(), svc, engine, nil, &workerGroup{}, assetsync.DefaultAccountTimeout)(c, 42)
 	require.Equal(t, http.StatusOK, rec.Code)
 	require.Equal(t, int(apperr.CodeOK), envelopeCode(t, rec))
 	require.Equal(t, 1, svc.auditCalls)
@@ -138,7 +140,7 @@ func TestManualSyncTrigger_AuditsInlineAndRunsWithDetachedBoundedContext(t *test
 	require.NoError(t, workerCtx.Err(), "request cancellation must not cancel the worker")
 	deadline, ok := workerCtx.Deadline()
 	require.True(t, ok)
-	require.WithinDuration(t, time.Now().Add(400*time.Millisecond), deadline, 100*time.Millisecond)
+	require.WithinDuration(t, time.Now().Add(assetsync.DefaultAccountTimeout), deadline, 100*time.Millisecond)
 
 	close(release)
 	require.Eventually(t, func() bool { return engine.unlockCalls.Load() == 1 }, time.Second, time.Millisecond)
@@ -150,7 +152,7 @@ func TestManualSyncTrigger_PropagatesLookupError(t *testing.T) {
 	engine := &fakeSyncEngine{locked: true, runStarted: make(chan context.Context, 1)}
 	c, rec, _ := testContext(t)
 
-	newManualSyncTrigger(context.Background(), svc, engine, time.Second, nil, &workerGroup{})(c, 42)
+	newManualSyncTrigger(context.Background(), svc, engine, nil, &workerGroup{}, assetsync.DefaultAccountTimeout)(c, 42)
 
 	require.Equal(t, apperr.HTTPStatus(apperr.CodeNotFound), rec.Code)
 	require.Equal(t, int(apperr.CodeNotFound), envelopeCode(t, rec))
@@ -175,4 +177,33 @@ func envelopeCode(t *testing.T, rec *httptest.ResponseRecorder) int {
 	var got response.Envelope
 	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &got))
 	return got.Code
+}
+
+func TestModuleMountsCanonicalReadRoutesBehindAuthentication(t *testing.T) {
+	m := Wire(context.Background(), Input{})
+	t.Cleanup(func() { require.NoError(t, m.Shutdown(context.Background())) })
+	router := gin.New()
+	m.MountRoutes(router.Group("/api/v1", middleware.JWTAuth(crypto.NewJWTSigner("module-routing-test-secret-32-bytes"))), nil)
+	for _, path := range []string{"/instances/gcp:instance:42", "/vpcs/gcp:vpc:42", "/vpcs/gcp:vpc:42/subnets", "/vpcs/42/subnets", "/databases/gcp:database:42", "/firewalls", "/firewalls/gcp:firewall:42", "/security-groups/42"} {
+		rec := httptest.NewRecorder()
+		router.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/api/v1/assets"+path, nil))
+		require.Equal(t, http.StatusUnauthorized, rec.Code, path)
+		require.Equal(t, int(apperr.CodeTokenInvalid), envelopeCode(t, rec))
+	}
+}
+
+func TestManualSyncTriggerHonorsConfiguredAccountCeiling(t *testing.T) {
+	svc := &fakeAccountSyncService{detail: enabledAccount("us-central1")}
+	release := make(chan struct{})
+	engine := &fakeSyncEngine{locked: true, runStarted: make(chan context.Context, 1), runReleased: release}
+	workers := &workerGroup{}
+	c, rec, _ := testContext(t)
+	newManualSyncTrigger(context.Background(), svc, engine, nil, workers, 25*time.Minute)(c, 42)
+	require.Equal(t, http.StatusOK, rec.Code)
+	ctx := <-engine.runStarted
+	deadline, ok := ctx.Deadline()
+	require.True(t, ok)
+	require.WithinDuration(t, time.Now().Add(25*time.Minute), deadline, time.Second)
+	close(release)
+	workers.wait()
 }

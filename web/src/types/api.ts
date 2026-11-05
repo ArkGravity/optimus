@@ -274,26 +274,42 @@ export interface CloudKeySummary {
   description: string
   provider: CloudProvider
   region: string
+  auth_type: 'access_key' | 'service_account_json' | 'legacy_invalid'
+  service_account_email: string
+  credential_project_id: string
+  needs_configuration: boolean
   created_by?: CredentialActor
   created_at: string
   updated_at: string
 }
-export interface CloudKeyCreateRequest {
+interface CloudKeyMetadata {
   name: string
   description?: string
-  provider: CloudProvider
   region?: string
-  access_key_id: string
-  secret_access_key: string
 }
-export interface CloudKeyUpdateRequest {
-  name?: string
-  description?: string
-  provider?: CloudProvider
-  region?: string
-  access_key_id?: string
-  secret_access_key?: string
-}
+export type CloudKeySecret =
+  | {
+    provider: 'aws' | 'aliyun'
+    auth_type: 'access_key'
+    access_key_id: string
+    secret_access_key: string
+    service_account_json?: never
+  }
+  | {
+    provider: 'gcp'
+    auth_type: 'service_account_json'
+    service_account_json: string
+    access_key_id?: never
+    secret_access_key?: never
+  }
+export type CloudKeyCreateRequest = CloudKeyMetadata & CloudKeySecret
+export type CloudKeyUpdateRequest = Partial<CloudKeyMetadata> & (CloudKeySecret | {
+  provider?: never
+  auth_type?: never
+  access_key_id?: never
+  secret_access_key?: never
+  service_account_json?: never
+})
 export interface CloudKeyListQuery {
   q?: string
   provider?: CloudProvider

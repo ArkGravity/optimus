@@ -119,10 +119,12 @@ func TestRepo_ListFiltersPaginationAndDeleted(t *testing.T) {
 	r, gdb := setupRepo(t)
 	ctx := context.Background()
 	key := dbtest.SeedCloudKey(t, gdb, "list-key")
+	gcpKey := &models.CredentialCloudKey{Name: "gcp-list-key", Provider: "gcp", AuthType: "service_account_json", ServiceAccountJSONEnc: []byte("sealed-json"), ServiceAccountEmail: "collector@example.test", CredentialProjectID: "credential-home"}
+	require.NoError(t, gdb.Create(gcpKey).Error)
 	rows := []*models.CloudAccount{
 		{Name: "prod-a", Provider: "aws", CloudKeyID: key.ID, EnabledRegions: models.StringArray{"us-east-1"}, Enabled: true},
 		{Name: "prod-b", Provider: "aws", CloudKeyID: key.ID, EnabledRegions: models.StringArray{"us-west-2"}, Enabled: false},
-		{Name: "dev", Provider: "gcp", CloudKeyID: key.ID, EnabledRegions: models.StringArray{"us-east-1"}, Enabled: true},
+		{Name: "dev", Provider: "gcp", ProjectID: "target-project", CloudKeyID: gcpKey.ID, EnabledRegions: models.StringArray{"us-central1"}, Enabled: true},
 	}
 	for _, row := range rows {
 		require.NoError(t, r.Create(ctx, row))
@@ -174,8 +176,8 @@ func TestRepo_ListAndDetailLatestSyncMetadata(t *testing.T) {
 	old := time.Now().Add(-time.Hour).UTC().Truncate(time.Microsecond)
 	latest := time.Now().UTC().Truncate(time.Microsecond)
 	for _, run := range []models.AssetsSyncRun{
-		{CloudAccountID: account.ID, Region: "us-east-1", ResourceType: "instance", StartedAt: old, Status: "failed", Trigger: "manual"},
-		{CloudAccountID: account.ID, Region: "us-east-1", ResourceType: "network", StartedAt: latest, Status: "success", Trigger: "cron"},
+		{CloudAccountID: account.ID, Region: "us-east-1", Provider: "aws", LocationType: "region", Location: "us-east-1", ScopeRevision: 1, ResourceType: "instance", StartedAt: old, Status: "failed", Trigger: "manual"},
+		{CloudAccountID: account.ID, Region: "us-east-1", Provider: "aws", LocationType: "region", Location: "us-east-1", ScopeRevision: 1, ResourceType: "network", StartedAt: latest, Status: "success", Trigger: "cron"},
 	} {
 		require.NoError(t, gdb.Create(&run).Error)
 	}

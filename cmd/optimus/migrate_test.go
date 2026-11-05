@@ -26,7 +26,7 @@ func TestRunGoose_UpAppliesAllMigrations(t *testing.T) {
 	var maxVersion int64
 	require.NoError(t,
 		db.QueryRow("SELECT MAX(version_id) FROM goose_db_version").Scan(&maxVersion))
-	require.Equal(t, int64(23), maxVersion, "fresh schema must end at 00023")
+	require.Equal(t, int64(19), maxVersion, "fresh schema must end at 00019")
 
 	rows, err := db.Query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name")
 	require.NoError(t, err)
@@ -43,6 +43,8 @@ func TestRunGoose_UpAppliesAllMigrations(t *testing.T) {
 		"credentials_ssh_keys", "credentials_kubeconfigs", "credentials_cloud_keys", "clusters",
 		"apps_chart_repos", "apps_applications", "goose_db_version",
 		"cloud_accounts", "aws_instances", "aws_vpcs", "aws_subnets", "aws_databases", "assets_sync_runs", "aws_security_groups",
+		"aliyun_instances", "aliyun_vpcs", "aliyun_vswitches", "aliyun_databases", "aliyun_security_groups",
+		"gcp_instances", "gcp_networks", "gcp_subnets", "gcp_databases", "gcp_firewalls",
 	}, tables)
 
 }

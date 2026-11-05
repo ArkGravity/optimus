@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/stretchr/testify/require"
 
 	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
@@ -72,18 +71,6 @@ func TestFor_NonPositiveTimeoutUsesDefault(t *testing.T) {
 	require.Equal(t, defaultRequestTimeout, httpClient.Timeout)
 }
 
-func TestFor_ConfigErrorIsWrapped(t *testing.T) {
-	wantErr := errors.New("config failure")
-	original := loadDefaultConfig
-	loadDefaultConfig = func(context.Context, ...func(*awsconfig.LoadOptions) error) (aws.Config, error) {
-		return aws.Config{}, wantErr
-	}
-	t.Cleanup(func() { loadDefaultConfig = original })
-	_, err := For(context.Background(), validCloudKey(), "us-east-1", time.Second)
-	assertBizError(t, err, errs.CodeAssetsAWSConfig, errs.KeyAWSConfig)
-	require.ErrorIs(t, err, wantErr)
-}
-
 func TestFor_RejectsEndpointOverrideEnvironment(t *testing.T) {
 	t.Setenv("AWS_PROFILE", "")
 	for _, envName := range endpointOverrideEnvNames {
@@ -117,9 +104,44 @@ func TestFor_ForcesStandardRetryMode(t *testing.T) {
 	require.Equal(t, 3, clients.RDS.Options().RetryMaxAttempts)
 }
 
+func TestFactoriesRejectUnusableStaticCredentials(t *testing.T) {
+	for _, key := range []*credentials.CloudKey{
+		{Provider: "aws", AuthType: "access_key"},
+		{Provider: "aws", AuthType: "access_key", AccessKeyID: "access"},
+		{Provider: "aws", AuthType: "service_account_json", AccessKeyID: "access", SecretAccessKey: "secret"},
+	} {
+		_, err := For(context.Background(), key, "us-east-1", time.Second)
+		assertBizError(t, err, errs.CodeAssetsAWSConfig, errs.KeyAWSConfig)
+		_, err = STSFor(context.Background(), key, "us-east-1", time.Second)
+		assertBizError(t, err, errs.CodeAssetsAWSConfig, errs.KeyAWSConfig)
+	}
+}
+
+func TestSTSFactoryUsesSelectedKeyAndRegionDespiteAmbientAuth(t *testing.T) {
+	t.Setenv("AWS_ACCESS_KEY_ID", "ambient-access")
+	t.Setenv("AWS_SECRET_ACCESS_KEY", "ambient-secret")
+	t.Setenv("AWS_SESSION_TOKEN", "ambient-session")
+	t.Setenv("AWS_ROLE_ARN", "arn:aws:iam::222222222222:role/ambient")
+	t.Setenv("AWS_WEB_IDENTITY_TOKEN_FILE", "/nonexistent/ambient-token")
+	t.Setenv("AWS_REGION", "eu-west-1")
+	t.Setenv("AWS_PROFILE", "nonexistent-profile")
+	first, err := STSFor(context.Background(), validCloudKey(), "us-west-2", time.Second)
+	require.NoError(t, err)
+	second, err := STSFor(context.Background(), validCloudKey(), "us-west-2", time.Second)
+	require.NoError(t, err)
+	require.NotSame(t, first, second)
+	options := first.Options()
+	require.Equal(t, "us-west-2", options.Region)
+	key, err := options.Credentials.Retrieve(context.Background())
+	require.NoError(t, err)
+	require.Equal(t, "AKIATEST", key.AccessKeyID)
+	require.Equal(t, "test-secret", key.SecretAccessKey)
+	require.Empty(t, key.SessionToken)
+}
+
 func validCloudKey() *credentials.CloudKey {
 	return &credentials.CloudKey{
-		Provider: "aws", AccessKeyID: "AKIATEST", SecretAccessKey: "test-secret",
+		Provider: "aws", AuthType: "access_key", AccessKeyID: "AKIATEST", SecretAccessKey: "test-secret",
 	}
 }
 

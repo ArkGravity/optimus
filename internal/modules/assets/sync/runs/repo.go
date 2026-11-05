@@ -18,6 +18,15 @@ func NewRepo(db *gorm.DB) *Repo { return &Repo{db: db} }
 
 func (r *Repo) List(ctx context.Context, filter ListFilter) ([]Summary, int64, error) {
 	query := r.db.WithContext(ctx).Table("assets_sync_runs")
+	if filter.Provider != "" {
+		query = query.Where("assets_sync_runs.provider = ?", filter.Provider)
+	}
+	if filter.LocationType != "" {
+		query = query.Where("assets_sync_runs.location_type = ?", filter.LocationType)
+	}
+	if filter.Location != "" {
+		query = query.Where("assets_sync_runs.location = ?", filter.Location)
+	}
 	if filter.AccountID != 0 {
 		query = query.Where("assets_sync_runs.cloud_account_id = ?", filter.AccountID)
 	}
@@ -56,6 +65,7 @@ func (r *Repo) List(ctx context.Context, filter ListFilter) ([]Summary, int64, e
 		row := rows[i]
 		items[i] = Summary{
 			ID: row.ID, CloudAccountID: row.CloudAccountID, CloudAccountName: row.CloudAccountName,
+			Provider: row.Provider, LocationType: row.LocationType, Location: row.Location, ScopeRevision: row.ScopeRevision,
 			Region: row.Region, ResourceType: row.ResourceType, StartedAt: row.StartedAt,
 			FinishedAt: row.FinishedAt, Status: row.Status, ItemsSeen: row.ItemsSeen,
 			ItemsSoftDeleted: row.ItemsSoftDeleted, Error: row.Error, ErrorCode: row.ErrorCode,
@@ -67,6 +77,10 @@ func (r *Repo) List(ctx context.Context, filter ListFilter) ([]Summary, int64, e
 
 type InsertRequest struct {
 	CloudAccountID    uint64
+	Provider          string
+	LocationType      string
+	Location          string
+	ScopeRevision     int64
 	Region            string
 	ResourceType      string
 	Trigger           string
@@ -74,8 +88,29 @@ type InsertRequest struct {
 }
 
 func (r *Repo) Insert(ctx context.Context, req InsertRequest) (uint64, error) {
+	// Older callers specify only account and region. Read authoritative account
+	// metadata, including deleted history, rather than assuming the AWS provider.
+	if req.Provider == "" || req.ScopeRevision == 0 {
+		var account models.CloudAccount
+		if err := r.db.WithContext(ctx).Unscoped().Select("id", "provider", "scope_revision").First(&account, req.CloudAccountID).Error; err != nil {
+			return 0, err
+		}
+		if req.Provider == "" {
+			req.Provider = account.Provider
+		}
+		if req.ScopeRevision == 0 {
+			req.ScopeRevision = account.ScopeRevision
+		}
+	}
+	if req.LocationType == "" {
+		req.LocationType = "region"
+	}
+	if req.Location == "" && req.LocationType == "region" {
+		req.Location = req.Region
+	}
 	row := &models.AssetsSyncRun{
-		CloudAccountID:    req.CloudAccountID,
+		CloudAccountID: req.CloudAccountID,
+		Provider:       req.Provider, LocationType: req.LocationType, Location: req.Location, ScopeRevision: req.ScopeRevision,
 		Region:            req.Region,
 		ResourceType:      req.ResourceType,
 		StartedAt:         time.Now(),

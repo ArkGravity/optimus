@@ -1,4 +1,4 @@
-import type { RouteRecordRaw } from 'vue-router'
+import type { RouteLocationNormalized, RouteRecordRaw } from 'vue-router'
 import WorkspaceView from '@/components/layout/WorkspaceView.vue'
 
 // The root renders child pages in isolated sessions while App.vue selects
@@ -68,11 +68,30 @@ export const staticRoutes: RouteRecordRaw[] = [
         meta: { permission: 'apps:release:upgrade' }
       },
       {
-        path: 'assets/vpcs/:id(\\d+)',
+        path: 'assets/security-groups',
+        name: 'assets.security-groups.compatibility',
+        component: () => import('@/views/assets/firewalls/List.vue'),
+        meta: { permission: 'assets:resource:read' },
+        // A navigation guard runs after the global permission check. A route
+        // redirect would skip that check on this compatibility record.
+        beforeEnter: to => ({ path: '/assets/firewalls', query: to.query, hash: to.hash, replace: true }),
+      },
+      {
+        path: 'assets/vpcs/:id',
         name: 'assets.vpcs.detail',
         component: () => import('@/views/assets/vpcs/Detail.vue'),
         meta: { permission: 'assets:resource:read' }
       },
+      ...(['instances', 'databases', 'firewalls'] as const).map(path => ({
+        path: `assets/${path}/:id`,
+        name: `assets.${path}.detail`,
+        component: () => import('@/views/assets/components/AssetDetail.vue'),
+        props: (route: RouteLocationNormalized) => ({
+          family: { instances: 'instance', databases: 'database', firewalls: 'firewall' }[path],
+          assetKey: typeof route.params.id === 'string' ? route.params.id : undefined,
+        }),
+        meta: { permission: 'assets:resource:read' },
+      })),
     ]
   },
   {

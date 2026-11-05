@@ -2,7 +2,6 @@ package account
 
 import (
 	"context"
-	"regexp"
 	"slices"
 	"sort"
 	"strconv"
@@ -15,12 +14,11 @@ import (
 	"github.com/ArkGravity/optimus/internal/models"
 	"github.com/ArkGravity/optimus/internal/modules/assets/errs"
 	"github.com/ArkGravity/optimus/internal/modules/audit"
+	"github.com/ArkGravity/optimus/internal/modules/credentials"
 )
 
-var regionRegex = regexp.MustCompile(`^[a-z]{2}-[a-z]+-\d$`)
-
-type CloudKeyExistenceChecker interface {
-	Exists(ctx context.Context, id uint64) (bool, error)
+type CloudKeyConsumer interface {
+	GetCloudKey(ctx context.Context, id uint64, purpose string) (*credentials.CloudKey, error)
 }
 
 type AuditRecorder interface {
@@ -28,13 +26,14 @@ type AuditRecorder interface {
 }
 
 type Service struct {
-	repo  *Repo
-	audit AuditRecorder
-	cks   CloudKeyExistenceChecker
+	repo     *Repo
+	audit    AuditRecorder
+	consumer CloudKeyConsumer
+	catalogs map[string]RegionCatalog
 }
 
-func NewService(repo *Repo, recorder AuditRecorder, checker CloudKeyExistenceChecker) *Service {
-	return &Service{repo: repo, audit: recorder, cks: checker}
+func NewService(repo *Repo, recorder AuditRecorder, consumer CloudKeyConsumer) *Service {
+	return &Service{repo: repo, audit: recorder, consumer: consumer}
 }
 
 func (s *Service) Create(ctx context.Context, actorID uint64, ip, userAgent string, req CreateRequest) (*Detail, error) {
@@ -42,18 +41,12 @@ func (s *Service) Create(ctx context.Context, actorID uint64, ip, userAgent stri
 	if err != nil {
 		return nil, err
 	}
-	if req.Provider != "aws" {
-		return nil, apperr.New(errs.CodeAssetsProviderUnsupported, errs.KeyProviderUnsupported, "only aws is supported")
-	}
-	if err := validateRegions(req.EnabledRegions); err != nil {
+	if err := validateTarget(req.Provider, req.ProjectID); err != nil {
 		return nil, err
 	}
-	exists, err := s.cks.Exists(ctx, req.CloudKeyID)
+	regions, err := normalizeRegions(req.Provider, req.EnabledRegions)
 	if err != nil {
 		return nil, err
-	}
-	if !exists {
-		return nil, apperr.New(errs.CodeAssetsCloudKeyNotFound, errs.KeyCloudKeyNotFound, "cloud key not found")
 	}
 	enabled := true
 	if req.Enabled != nil {
@@ -62,8 +55,10 @@ func (s *Service) Create(ctx context.Context, actorID uint64, ip, userAgent stri
 	row := &models.CloudAccount{
 		Name:           name,
 		Provider:       req.Provider,
+		ProjectID:      req.ProjectID,
+		ScopeRevision:  1,
 		CloudKeyID:     req.CloudKeyID,
-		EnabledRegions: models.StringArray(req.EnabledRegions),
+		EnabledRegions: models.StringArray(regions),
 		Enabled:        enabled,
 		Description:    req.Description,
 	}
@@ -71,12 +66,8 @@ func (s *Service) Create(ctx context.Context, actorID uint64, ip, userAgent stri
 		if err := advisorylock.LockCloudKey(ctx, tx, req.CloudKeyID); err != nil {
 			return err
 		}
-		exists, err := s.repo.CloudKeyExistsTx(ctx, tx, req.CloudKeyID)
-		if err != nil {
+		if err := s.repo.ValidateCloudKeyTx(ctx, tx, req.CloudKeyID, req.Provider); err != nil {
 			return err
-		}
-		if !exists {
-			return apperr.New(errs.CodeAssetsCloudKeyNotFound, errs.KeyCloudKeyNotFound, "cloud key not found")
 		}
 		conflict, err := s.repo.FindNameAliveTx(ctx, tx, name, 0)
 		if err != nil {
@@ -113,16 +104,23 @@ func (s *Service) Update(ctx context.Context, actorID uint64, ip, userAgent stri
 	fields := make(map[string]any)
 	changed := make([]string, 0, 4)
 	removedRegions := make([]string, 0)
-	if req.EnabledRegions != nil {
-		if err := validateRegions(req.EnabledRegions); err != nil {
-			return nil, err
-		}
-	}
 	regionsChanged := false
 	err := s.repo.Transaction(ctx, func(tx *gorm.DB) error {
 		row, err := s.repo.FindByIDForUpdate(ctx, tx, id)
 		if err != nil {
 			return err
+		}
+		if (req.Provider != nil && *req.Provider != row.Provider) ||
+			(req.ProjectID != nil && *req.ProjectID != row.ProjectID) ||
+			(req.CloudKeyID != nil && *req.CloudKeyID != row.CloudKeyID) {
+			return configError("provider, target project and cloud key binding are immutable")
+		}
+		if req.EnabledRegions != nil {
+			regions, err := normalizeRegions(row.Provider, req.EnabledRegions)
+			if err != nil {
+				return err
+			}
+			req.EnabledRegions = regions
 		}
 		if req.Name != nil && *req.Name != row.Name {
 			conflict, err := s.repo.FindNameAliveTx(ctx, tx, *req.Name, row.ID)
@@ -135,7 +133,10 @@ func (s *Service) Update(ctx context.Context, actorID uint64, ip, userAgent stri
 			fields["name"] = *req.Name
 			changed = append(changed, "name")
 		}
-		regionsChanged = req.EnabledRegions != nil && !slices.Equal(req.EnabledRegions, []string(row.EnabledRegions))
+		oldRegions := append([]string(nil), row.EnabledRegions...)
+		slices.Sort(oldRegions)
+		oldRegions = slices.Compact(oldRegions)
+		regionsChanged = req.EnabledRegions != nil && !slices.Equal(req.EnabledRegions, oldRegions)
 		if regionsChanged {
 			newRegions := make(map[string]struct{}, len(req.EnabledRegions))
 			for _, region := range req.EnabledRegions {
@@ -147,6 +148,7 @@ func (s *Service) Update(ctx context.Context, actorID uint64, ip, userAgent stri
 				}
 			}
 			fields["enabled_regions"] = models.StringArray(req.EnabledRegions)
+			fields["scope_revision"] = row.ScopeRevision + 1
 			changed = append(changed, "enabled_regions")
 		}
 		if req.Enabled != nil && *req.Enabled != row.Enabled {
@@ -273,23 +275,6 @@ func (s *Service) detail(ctx context.Context, id uint64) (*Detail, error) {
 	sync := latest[id]
 	detail := toDetail(*row, names[row.CloudKeyID], sync.startedAt, sync.status)
 	return &detail, nil
-}
-
-func validateRegions(regions []string) error {
-	if len(regions) == 0 {
-		return apperr.New(errs.CodeAssetsRegionInvalid, errs.KeyRegionInvalid, "at least one region is required")
-	}
-	seen := make(map[string]struct{}, len(regions))
-	for _, region := range regions {
-		if !regionRegex.MatchString(region) {
-			return apperr.New(errs.CodeAssetsRegionInvalid, errs.KeyRegionInvalid, "invalid AWS region")
-		}
-		if _, exists := seen[region]; exists {
-			return apperr.New(errs.CodeAssetsRegionInvalid, errs.KeyRegionInvalid, "duplicate AWS region")
-		}
-		seen[region] = struct{}{}
-	}
-	return nil
 }
 
 func normalizeName(name string) (string, error) {

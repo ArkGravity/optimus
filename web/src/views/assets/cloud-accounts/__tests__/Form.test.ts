@@ -5,6 +5,7 @@ import { mount } from '@vue/test-utils'
 import Form from '../Form.vue'
 
 vi.mock('@/hooks/useI18n', () => ({ useI18n: () => ({ t: (key: string) => key }) }))
+vi.mock('@/hooks/usePermission', () => ({ usePermission: () => ({ has: () => true }) }))
 vi.mock('ant-design-vue', () => ({
   message: { success: vi.fn(), error: vi.fn() },
 }))
@@ -15,10 +16,11 @@ function makeApis() {
       list: vi.fn(), get: vi.fn(), remove: vi.fn(), triggerSync: vi.fn(),
       create: vi.fn().mockResolvedValue({ id: 1 }),
       update: vi.fn().mockResolvedValue({ id: 7 }),
+      regionOptions: vi.fn().mockResolvedValue({ items: [] }),
     },
     cloudKey: {
       list: vi.fn().mockResolvedValue({
-        items: [{ id: 11, name: 'aws-prod', provider: 'aws' }], total: 1,
+        items: [{ id: 11, name: 'aws-prod', provider: 'aws', auth_type: 'access_key', needs_configuration: false }], total: 1,
       }),
     },
   }
@@ -33,7 +35,7 @@ const validate = vi.fn().mockResolvedValue(undefined)
 const AForm = defineComponent({
   props: ['model', 'rules'],
   setup(_, { expose, slots }) {
-    expose({ validate, resetFields: vi.fn() })
+    expose({ validate, resetFields: vi.fn(), clearValidate: vi.fn() })
     return () => h('form', slots.default?.())
   },
 })
@@ -52,7 +54,7 @@ const ATextarea = defineComponent({
   },
 })
 const ASelect = defineComponent({
-  name: 'ASelect', props: ['value', 'options', 'disabled', 'mode'], emits: ['update:value'],
+  name: 'ASelect', props: ['value', 'options', 'disabled', 'mode'], emits: ['update:value', 'change'],
   setup(_, { slots }) { return () => h('div', { class: 'select-stub' }, slots.default?.()) },
 })
 const ASwitch = defineComponent({
@@ -63,23 +65,26 @@ const stubs = {
   'a-modal': AModal, 'a-form': AForm,
   'a-form-item': { template: '<div><slot/></div>' },
   'a-input': AInput, 'a-textarea': ATextarea, 'a-select': ASelect, 'a-switch': ASwitch,
+  'a-button': { template: '<button><slot/></button>' },
+  'a-alert': { props: ['message'], template: '<p>{{ message }}</p>' },
 }
 
 describe('CloudAccount Form', () => {
   beforeEach(() => { validate.mockReset(); validate.mockResolvedValue(undefined) })
 
-  it('loads AWS cloud keys and sends the complete create payload', async () => {
+  it('loads usable cloud keys and sends the complete AWS create payload', async () => {
     const apis = makeApis()
     const wrapper = mount(Form, {
       props: { open: true, editing: null },
       global: { provide: { assetsAccountApi: apis.account, cloudKeyApi: apis.cloudKey }, stubs },
     })
     await nextTick(); await nextTick()
-    expect(apis.cloudKey.list).toHaveBeenCalledWith({ page: 1, page_size: 100, provider: 'aws' })
+    expect(apis.cloudKey.list).toHaveBeenCalledWith({ page: 1, page_size: 100 })
 
     await wrapper.find('.name-input').setValue('production')
     const selects = wrapper.findAllComponents(ASelect)
     selects[0]!.vm.$emit('update:value', 11)
+    selects[0]!.vm.$emit('change', 11)
     selects[1]!.vm.$emit('update:value', ['eu-central-1', 'us-east-1'])
     await wrapper.find('.description-input').setValue('primary account')
     await wrapper.find('.modal-ok').trigger('click')
@@ -97,6 +102,7 @@ describe('CloudAccount Form', () => {
     const apis = makeApis()
     const editing = {
       id: 7, name: 'old', provider: 'aws' as const, cloudkey_id: 11, cloudkey_name: 'aws-prod',
+      project_id: '', external_account_id: '', scope_revision: 1,
       regions_count: 1, enabled_regions: ['eu-west-1'], enabled: false, description: 'old desc',
       created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z',
     }
@@ -117,13 +123,16 @@ describe('CloudAccount Form', () => {
     })
   })
 
-  it('shows the immutable AWS provider and does not call the API when validation fails', async () => {
+  it('shows the derived immutable AWS provider and does not call the API when validation fails', async () => {
     validate.mockRejectedValueOnce(new Error('invalid'))
     const apis = makeApis()
     const wrapper = mount(Form, {
       props: { open: true, editing: null },
       global: { provide: { assetsAccountApi: apis.account, cloudKeyApi: apis.cloudKey }, stubs },
     })
+    await nextTick(); await nextTick()
+    wrapper.findAllComponents(ASelect)[0]!.vm.$emit('update:value', 11)
+    wrapper.findAllComponents(ASelect)[0]!.vm.$emit('change', 11)
     await nextTick()
     const provider = wrapper.findAll('input').find(input => input.element.value === 'AWS')
     expect(provider?.attributes('disabled')).toBeDefined()
@@ -142,6 +151,10 @@ describe('CloudAccount Form', () => {
       global: { provide: { assetsAccountApi: apis.account, cloudKeyApi: apis.cloudKey }, stubs },
     })
     await nextTick()
+    await wrapper.find('.name-input').setValue('aws')
+    wrapper.findAllComponents(ASelect)[0]!.vm.$emit('update:value', 11)
+    wrapper.findAllComponents(ASelect)[0]!.vm.$emit('change', 11)
+    wrapper.findAllComponents(ASelect)[1]!.vm.$emit('update:value', ['us-east-1'])
     await wrapper.find('.modal-ok').trigger('click')
     await wrapper.find('.modal-ok').trigger('click')
     await nextTick()

@@ -1,3 +1,5 @@
+<!-- Historical AWS-only view retained for regression fixtures. The seed menu and
+     browser compatibility route both resolve to assets/firewalls/List.vue. -->
 <template>
   <a-card>
     <PageHeader :title="t('assets.resource.security_group.title')" />

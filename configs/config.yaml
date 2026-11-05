@@ -60,4 +60,8 @@ assets:
   sync_cron: "*/15 * * * *"
   sync_startup_delay: 30s
   sync_run_retention_days: 90
+  # Positive Go durations. AWS keeps its independent compatibility override.
+  request_timeout: 30s
   aws_request_timeout: 30s
+  # Account ceiling; per-unit budgets remain bounded at 15m.
+  sync_timeout: 15m

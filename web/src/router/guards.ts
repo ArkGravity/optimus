@@ -32,7 +32,7 @@ export function installGuards(router: Router, meApi: MeApi) {
         dynamicRoutesReady = true
         // Re-resolve by URL so a route initially matched by the catch-all can
         // land on the dynamic route that was just registered.
-        return { path: to.fullPath, replace: true }
+        return { path: to.path, query: to.query, hash: to.hash, replace: true }
       } catch {
         dynamicRoutesReady = false
         auth.reset()

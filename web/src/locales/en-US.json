@@ -108,7 +108,16 @@
     "43104": "Cannot reach the AWS API",
     "43105": "AWS API throttled",
     "43106": "AWS API call failed",
-    "43107": "AWS SDK config load failed"
+    "43107": "AWS SDK config load failed",
+    "43201": "Cloud credentials invalid or expired",
+    "43202": "Cloud API access denied",
+    "43203": "Cannot reach the cloud API",
+    "43204": "Cloud API request throttled",
+    "43205": "Invalid asset collection configuration",
+    "43206": "Asset snapshot is incomplete",
+    "43207": "Cloud API is not enabled",
+    "43208": "Asset collection failed",
+    "43209": "Verified provider identity does not match this cloud account"
   },
   "network": {
     "error": "Network error, please try again later"
@@ -145,11 +154,12 @@
     "assets_group": "Assets Management",
     "assets": {
       "cloud_accounts": "Cloud Accounts",
-      "instances": "EC2 Instances",
+      "instances": "Instances",
       "vpcs": "VPCs",
-      "databases": "RDS Databases",
+      "databases": "Databases",
       "sync_runs": "Sync Runs",
-      "security_groups": "Security Groups"
+      "security_groups": "Security Groups",
+      "firewalls": "Firewalls"
     },
     "observability_group": "Observability Center",
     "observability": {
@@ -269,10 +279,11 @@
   "assets": {
     "menu": {
       "cloud_accounts": "Cloud Accounts",
-      "instances": "EC2 Instances",
+      "instances": "Instances",
       "vpcs": "VPCs",
-      "databases": "RDS Databases",
-      "sync_runs": "Sync Runs"
+      "databases": "Databases",
+      "sync_runs": "Sync Runs",
+      "firewalls": "Firewalls"
     },
     "account": {
       "title": "Cloud Accounts",
@@ -292,11 +303,17 @@
       },
       "sync_queued": "Added to the sync queue",
       "delete_confirm": "Delete cloud account \"{name}\"? This cascades soft-delete to all discovered resources under it.",
-      "cascaded_resources": "Cascade soft-deleted {count} resource row(s)"
+      "cascaded_resources": "Cascade soft-deleted {count} resource row(s)",
+      "project_id": "Target project ID",
+      "credential_project_info": "Credential home project (informational)",
+      "credential_read_required": "Creating an account requires permission to read cloud credentials.",
+      "load_regions": "Load regions",
+      "external_account_id": "External identity",
+      "scope_revision": "Scope revision"
     },
     "resource": {
       "instance": {
-        "title": "EC2 Instances",
+        "title": "Instances",
         "instance_id": "Instance ID",
         "name": "Name",
         "type": "Instance type",
@@ -307,7 +324,10 @@
         "subnet": "Subnet",
         "az": "Availability zone",
         "launch_time": "Launch time",
-        "tags": "Tags"
+        "tags": "Tags",
+        "observed_private_ips": "Observed private IPs",
+        "observed_public_ips": "Observed public IPs",
+        "observed_networks": "Observed networks"
       },
       "vpc": {
         "title": "VPCs",
@@ -326,7 +346,7 @@
         "az": "Availability zone"
       },
       "database": {
-        "title": "RDS Databases",
+        "title": "Databases",
         "db_instance_id": "DB instance ID",
         "engine": "Engine",
         "version": "Version",
@@ -336,7 +356,8 @@
         "port": "Port",
         "multi_az": "Multi-AZ",
         "publicly_accessible": "Publicly accessible",
-        "storage_gb": "Storage (GB)"
+        "storage_gb": "Storage (GB)",
+        "observed_endpoints": "Observed endpoints"
       },
       "common": {
         "include_deleted": "Include deleted",
@@ -366,6 +387,11 @@
           "prefix_list": "Prefix list",
           "security_group": "Security group"
         }
+      },
+      "firewall": {
+        "title": "Firewalls",
+        "inbound_entries": "Inbound rule entries",
+        "outbound_entries": "Outbound rule entries"
       }
     },
     "sync": {
@@ -396,12 +422,191 @@
         "instance": "Instance",
         "network": "Network",
         "database": "Database",
-        "security_group": "Security groups"
+        "security_group": "Firewalls",
+        "planning": "Scope planning",
+        "subnet": "Subnet",
+        "firewall": "Firewalls"
       },
       "triggers": {
         "cron": "Scheduled",
         "manual": "Manual",
         "test": "Test"
+      }
+    },
+    "provider": {
+      "unauthorized": "Cloud credentials invalid or expired",
+      "forbidden": "Cloud API access denied",
+      "unreachable": "Cannot reach the cloud API",
+      "throttled": "Cloud API request throttled",
+      "config": "Invalid asset collection configuration",
+      "partial": "Asset snapshot is incomplete",
+      "api_disabled": "Cloud API is not enabled",
+      "other": "Asset collection failed",
+      "identity_mismatch": "Verified provider identity does not match this cloud account"
+    },
+    "filters": {
+      "provider": "Provider",
+      "account_id": "Cloud account ID",
+      "project_id": "Project ID",
+      "region": "Region",
+      "zone": "Zone",
+      "q": "Search assets",
+      "vpc_id": "Network reference",
+      "network_ref": "Network reference",
+      "ip": "IP address",
+      "tag_key": "Tag key",
+      "tag_value": "Tag value",
+      "location": {
+        "global": "Global",
+        "region": "Regional",
+        "zone": "Zonal"
+      }
+    },
+    "firewall_rules": {
+      "all": "All",
+      "unavailable": "N/A",
+      "allow": "Allow",
+      "deny": "Deny",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "port_list": "Port list",
+      "priority": "Priority",
+      "action": "Action",
+      "source_ranges": "Source ranges",
+      "destination_ranges": "Destination ranges",
+      "source_network_tags": "Source network tags",
+      "target_network_tags": "Target network tags",
+      "source_service_accounts": "Source service accounts",
+      "target_service_accounts": "Target service accounts",
+      "ipv4": "IPv4",
+      "ipv6": "IPv6",
+      "security_group": "Security group",
+      "prefix_list": "Prefix list"
+    },
+    "detail": {
+      "yes": "Yes",
+      "no": "No",
+      "not_applicable": "Not applicable",
+      "forbidden": "Asset read permission is required.",
+      "invalid_key": "Invalid asset identity.",
+      "provenance_notice": "Provider provenance and configuration facts; these are not connection endpoints.",
+      "firewall_inventory_notice": "Configured rule inventory, including disabled rules. This does not evaluate effective access or quotas.",
+      "sections": {
+        "common": "Asset",
+        "instance": "Instance",
+        "vpc": "VPC",
+        "database": "Database",
+        "firewall": "Firewall",
+        "network_interface": "Network interface",
+        "connection_endpoint": "Connection endpoint",
+        "database_native": "Database native facts",
+        "database_provenance_ip": "Provider IP provenance (may be egress only)",
+        "database_provenance_dns": "Provider DNS provenance",
+        "rule_native": "Native rule references",
+        "subnet": "Subnet"
+      },
+      "fields": {
+        "asset_key": "Asset key",
+        "provider": "Provider",
+        "account": "Cloud account",
+        "project_id": "Target project",
+        "name": "Name",
+        "native_id": "Native ID",
+        "native_status": "Native status",
+        "location_type": "Location type",
+        "location": "Location",
+        "region": "Region",
+        "zone": "Zone",
+        "last_seen_at": "Last seen",
+        "deleted": "Deleted",
+        "labels": "Labels",
+        "tags": "Tags",
+        "instance_type": "Instance type",
+        "state": "State",
+        "launch_time": "Launch time",
+        "cpu_count": "CPU count",
+        "memory_mb": "Memory (MB)",
+        "image_id": "Image",
+        "os": "Operating system",
+        "network_tags": "Network tags",
+        "resource_manager_tags": "Resource Manager tags",
+        "interface_index": "Interface index",
+        "network_ref": "Network reference",
+        "subnet_ref": "Subnet reference",
+        "private_ipv4": "Private IPv4 addresses",
+        "public_ipv4": "Public IPv4 addresses",
+        "private_ipv6": "Private IPv6 addresses",
+        "public_ipv6": "Public IPv6 addresses",
+        "native_name": "Native interface name",
+        "stack_type": "Stack type",
+        "ipv6_access_type": "IPv6 access type",
+        "internal_ipv6_prefix_length": "Internal IPv6 prefix length",
+        "alias_ipv4_ranges": "Alias IPv4 ranges (range name)",
+        "alias_ipv6_ranges": "Alias IPv6 ranges (range name)",
+        "external_ipv6": "External IPv6 prefixes (name)",
+        "cidr_blocks": "CIDR blocks",
+        "is_default": "Default network",
+        "mtu": "MTU",
+        "routing_mode": "Routing mode",
+        "auto_create_subnetworks": "Automatic subnet creation",
+        "product": "Product",
+        "engine": "Engine",
+        "engine_version": "Engine version",
+        "instance_class": "Instance class",
+        "status": "Status",
+        "ha_mode": "HA mode",
+        "multi_az": "Multi-AZ",
+        "publicly_accessible": "Public access",
+        "storage_gb": "Storage (GB)",
+        "address": "Address",
+        "port": "Port",
+        "type": "Type",
+        "primary_dns_name": "Primary DNS name (native)",
+        "write_endpoint": "Write endpoint (native)",
+        "ipv6_address": "IPv6 address (native)",
+        "secondary_gce_zone": "Secondary zone",
+        "dns_name": "DNS name (native)",
+        "psc_service_attachment_link": "PSC service attachment reference",
+        "sql_network_architecture": "SQL network architecture",
+        "database_installed_version": "Installed database version",
+        "storage_type": "Storage type",
+        "connection_name": "Connection name (native)",
+        "availability_type": "Availability type",
+        "category": "Category",
+        "connection_type": "Connection type",
+        "dns_scope": "DNS scope",
+        "record_manager": "DNS record manager",
+        "description": "Description",
+        "group_id": "Security group ID",
+        "group_name": "Security group name",
+        "vpc_id": "VPC reference",
+        "owner_id": "Owner account",
+        "inbound_rule_count": "Inbound rules",
+        "outbound_rule_count": "Outbound rules",
+        "priority": "Priority",
+        "enabled": "Enabled",
+        "direction": "Direction",
+        "security_group_type": "Security group type",
+        "inner_access_policy": "Inner access policy",
+        "peering_id": "Peering reference",
+        "source_group_id": "Source security group ID",
+        "destination_group_id": "Destination security group ID",
+        "source_prefix_list_id": "Source prefix list ID",
+        "destination_prefix_list_id": "Destination prefix list ID",
+        "rule_id": "Native rule ID",
+        "nic_type": "NIC type",
+        "source_group_name": "Source security group name",
+        "source_group_owner_account": "Source security group owner",
+        "destination_group_name": "Destination security group name",
+        "destination_group_owner_account": "Destination security group owner",
+        "source_prefix_list_name": "Source prefix list name",
+        "destination_prefix_list_name": "Destination prefix list name",
+        "source_port_range": "Source port range (native)",
+        "port_range_list_id": "Port-list reference ID",
+        "port_range_list_name": "Port-list reference name",
+        "available_ip_count": "Available IP addresses",
+        "purpose": "Purpose",
+        "private_ip_google_access": "Private Google access"
       }
     }
   },
@@ -547,6 +752,9 @@
       "region": "Region",
       "access_key_id": "Access Key ID",
       "secret_access_key": "Secret Access Key",
+      "service_account_json": "Service Account JSON",
+      "service_account_email": "Service account email",
+      "credential_project_id": "Credential project ID",
       "auth_type": "Authentication type",
       "updated_at": "Updated"
     },
@@ -575,7 +783,16 @@
     "cloud_keys": {
       "title": "Cloud keys",
       "col_provider": "Provider",
-      "col_region": "Region"
+      "col_region": "Region",
+      "col_identity": "Authentication / identity",
+      "access_key_auth": "Access key",
+      "needs_configuration": "Needs configuration",
+      "repair_hint": "Replace the legacy access keys with a Service Account JSON key to use this GCP credential. Metadata edits remain available.",
+      "upload_json": "Choose a Service Account JSON file",
+      "paste_json": "Paste Service Account JSON",
+      "json_hint": "Choose a JSON file up to 64 KiB or paste its contents. The credential is sent only when you save. Leave blank to keep an existing credential.",
+      "json_too_large": "The Service Account JSON file must be 64 KiB or smaller.",
+      "json_read_failed": "Unable to read the JSON file. Choose it again or paste its contents."
     },
     "not_found": "Credential not found",
     "name_taken": "Credential name already exists",

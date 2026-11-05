@@ -43,7 +43,7 @@ func TestRepo_NameUniqueAndProviderCheck(t *testing.T) {
 		Name: "dup", Provider: "aws", AccessKeyIDEnc: []byte{1}, SecretAccessKeyEnc: []byte{2},
 	}))
 	require.Error(t, r.Create(ctx, &models.CredentialCloudKey{
-		Name: "dup", Provider: "gcp", AccessKeyIDEnc: []byte{3}, SecretAccessKeyEnc: []byte{4},
+		Name: "dup", Provider: "gcp", AuthType: "service_account_json", ServiceAccountJSONEnc: []byte{3},
 	}))
 	// CHECK constraint on provider
 	require.Error(t, r.Create(ctx, &models.CredentialCloudKey{
@@ -60,10 +60,10 @@ func TestRepo_UpdateAndDelete(t *testing.T) {
 		AccessKeyIDEnc: []byte{1}, SecretAccessKeyEnc: []byte{2},
 	}
 	require.NoError(t, r.Create(ctx, m))
-	require.NoError(t, r.Update(ctx, m.ID, map[string]any{"region": "eu-west-1", "provider": "gcp"}))
+	require.NoError(t, r.Update(ctx, m.ID, map[string]any{"region": "eu-west-1", "provider": "aliyun"}))
 	got, _ := r.Get(ctx, m.ID)
 	require.Equal(t, "eu-west-1", got.Region)
-	require.Equal(t, "gcp", got.Provider)
+	require.Equal(t, "aliyun", got.Provider)
 	require.NoError(t, r.Delete(ctx, m.ID))
 	_, err := r.Get(ctx, m.ID)
 	require.True(t, errors.Is(err, gorm.ErrRecordNotFound))
@@ -80,10 +80,16 @@ func TestRepo_List_ProviderFilter(t *testing.T) {
 		{"a1", "aws"}, {"a2", "aws"}, {"g1", "gcp"}, {"ali1", "aliyun"},
 	}
 	for _, n := range names {
-		require.NoError(t, r.Create(ctx, &models.CredentialCloudKey{
+		row := &models.CredentialCloudKey{
 			Name: n.name, Provider: n.prov,
 			AccessKeyIDEnc: []byte{1}, SecretAccessKeyEnc: []byte{2},
-		}))
+		}
+		if n.prov == "gcp" {
+			row.AuthType = "service_account_json"
+			row.AccessKeyIDEnc, row.SecretAccessKeyEnc = nil, nil
+			row.ServiceAccountJSONEnc = []byte{3}
+		}
+		require.NoError(t, r.Create(ctx, row))
 	}
 	rows, total, err := r.List(ctx, cloudkey.ListQuery{Page: 1, PageSize: 10, Provider: "aws"})
 	require.NoError(t, err)

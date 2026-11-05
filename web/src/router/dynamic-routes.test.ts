@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { buildViewResolver, flattenMenusToRoutes } from './dynamic-routes'
 import type { MeMenuNode } from '@/types/api'
+import menuContract from '@/test/fixtures/menu-contract.json'
 
 const tree: MeMenuNode[] = [
   {
@@ -23,6 +24,13 @@ const tree: MeMenuNode[] = [
 ]
 
 describe('flattenMenusToRoutes', () => {
+  it('resolves every canonical assets menu with generic firewall identity and unchanged permissions', () => {
+    const assets = menuContract.menus.filter(menu => menu.path.startsWith('/assets/'))
+    expect(assets.map(menu => menu.path)).toEqual(['/assets/cloud-accounts', '/assets/vpcs', '/assets/firewalls', '/assets/instances', '/assets/databases', '/assets/sync-runs'])
+    const routes = flattenMenusToRoutes(assets.map((menu, i) => ({ id: i + 1, code: menu.path, name: menu.path, ...menu, icon: '', sort_order: i, hidden: false, permission_code: menu.permission })), buildViewResolver())
+    expect(routes.map(route => route.path)).toEqual(assets.map(menu => menu.path))
+    expect(routes.find(route => route.path === '/assets/firewalls')?.meta?.permission).toBe('assets:resource:read')
+  })
   it('skips group nodes (empty component) and flattens leaves', () => {
     const components = new Map<string, () => Promise<unknown>>([
       ['dashboard/Index', async () => ({ default: {} })],

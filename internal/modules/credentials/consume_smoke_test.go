@@ -6,6 +6,9 @@ import (
 	"context"
 	"crypto/ed25519"
 	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/json"
 	"encoding/pem"
 	"path/filepath"
 	"testing"
@@ -133,8 +136,18 @@ func TestSmoke_WithActor_ContextPropagates(t *testing.T) {
 	defer td()
 	// Use actorID=0 on Create (no FK to users), but inject an actor in the
 	// ctx for Consume so the non-system purpose check passes.
+	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
+	require.NoError(t, err)
+	der, err := x509.MarshalPKCS8PrivateKey(privateKey)
+	require.NoError(t, err)
+	secret, err := json.Marshal(map[string]string{
+		"type": "service_account", "project_id": "consumer-test",
+		"client_email": "collector@consumer-test.iam.gserviceaccount.com",
+		"private_key":  string(pem.EncodeToMemory(&pem.Block{Type: "PRIVATE KEY", Bytes: der})),
+	})
+	require.NoError(t, err)
 	d, err := csvc.Create(context.Background(), 0, "", "", cloudkey.CreateRequest{
-		Name: "smoke-actor", Provider: "gcp", AccessKeyID: "k", SecretAccessKey: "s",
+		Name: "smoke-actor", Provider: "gcp", ServiceAccountJSON: string(secret),
 	})
 	require.NoError(t, err)
 
@@ -143,4 +156,11 @@ func TestSmoke_WithActor_ContextPropagates(t *testing.T) {
 	got, err := c.GetCloudKey(ctxWithActor, d.ID, "any-purpose")
 	require.NoError(t, err)
 	require.Equal(t, "smoke-actor", got.Name)
+	require.Equal(t, "service_account_json", got.AuthType)
+	require.JSONEq(t, string(secret), string(got.ServiceAccountJSON))
+	require.Empty(t, got.AccessKeyID)
+	require.Empty(t, got.SecretAccessKey)
+	original := got.ServiceAccountJSON
+	credentials.Wipe(got)
+	require.Equal(t, make([]byte, len(original)), original)
 }

@@ -42,20 +42,16 @@ type Fetcher interface {
 }
 
 type Engine struct {
-	db       *gorm.DB
-	runs     *runs.Repo
-	factory  ClientFactory
-	fetcher  Fetcher
-	consumer CloudKeyConsumer
-	timeout  time.Duration
-	locks    sync.Map
+	db             *gorm.DB
+	runs           *runs.Repo
+	consumer       CloudKeyConsumer
+	timeout        time.Duration
+	locks          sync.Map
+	registry       *Registry
+	accountTimeout time.Duration
 }
 
 const syncRunFinishTimeout = 5 * time.Second
-
-func NewEngine(db *gorm.DB, runRepo *runs.Repo, factory ClientFactory, fetcher Fetcher, consumer CloudKeyConsumer, timeout time.Duration) *Engine {
-	return &Engine{db: db, runs: runRepo, factory: factory, fetcher: fetcher, consumer: consumer, timeout: timeout}
-}
 
 func (e *Engine) TryLock(accountID uint64) bool {
 	_, loaded := e.locks.LoadOrStore(accountID, struct{}{})
@@ -97,6 +93,8 @@ func (e *Engine) RunAccount(ctx context.Context, accountID uint64, trigger strin
 // The asynchronous manual-sync handler uses this entry point so the worker,
 // rather than the HTTP handler, owns release of the account lock.
 func (e *Engine) RunAccountLocked(ctx context.Context, accountID uint64, trigger string, triggeredBy *uint64) error {
+	ctx, cancel := context.WithTimeout(ctx, normalizeAccountTimeout(e.accountTimeout))
+	defer cancel()
 	if triggeredBy != nil {
 		ctx = credentials.WithActor(ctx, *triggeredBy)
 	}
@@ -107,116 +105,7 @@ func (e *Engine) RunAccountLocked(ctx context.Context, accountID uint64, trigger
 		}
 		return safeDatabaseError()
 	}
-	for _, region := range account.EnabledRegions {
-		if err := ctx.Err(); err != nil {
-			return err
-		}
-		if err := e.sweepInstances(ctx, account, region, trigger, triggeredBy); err != nil {
-			return err
-		}
-		if err := ctx.Err(); err != nil {
-			return err
-		}
-		if err := e.sweepNetwork(ctx, account, region, trigger, triggeredBy); err != nil {
-			return err
-		}
-		if err := ctx.Err(); err != nil {
-			return err
-		}
-		if err := e.sweepDatabases(ctx, account, region, trigger, triggeredBy); err != nil {
-			return err
-		}
-		if err := ctx.Err(); err != nil {
-			return err
-		}
-		if err := e.sweepSecurityGroups(ctx, account, region, trigger, triggeredBy); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (e *Engine) sweepInstances(ctx context.Context, account models.CloudAccount, region, trigger string, triggeredBy *uint64) error {
-	runID, err := e.insertRun(ctx, account.ID, region, "instance", trigger, triggeredBy)
-	if err != nil {
-		return err
-	}
-	clients, err := e.clientsForSweep(ctx, account.ID, account.CloudKeyID, region, "instance", trigger, triggeredBy == nil)
-	if err != nil {
-		return e.finishUpstreamFailure(ctx, runID, err)
-	}
-	started := time.Now()
-	items, err := e.fetcher.FetchInstances(ctx, clients)
-	if err != nil {
-		return e.finishUpstreamFailure(ctx, runID, err)
-	}
-	softDeleted, err := UpsertInstances(ctx, e.db, account.ID, region, started, items)
-	if err != nil {
-		return e.finishPersistence(ctx, runID, err)
-	}
-	return e.finishRun(ctx, runID, runs.FinishRequest{Status: "success", ItemsSeen: saturatingInt32(int64(len(items))), ItemsSoftDeleted: saturatingInt32(softDeleted)})
-}
-
-func (e *Engine) sweepNetwork(ctx context.Context, account models.CloudAccount, region, trigger string, triggeredBy *uint64) error {
-	runID, err := e.insertRun(ctx, account.ID, region, "network", trigger, triggeredBy)
-	if err != nil {
-		return err
-	}
-	clients, err := e.clientsForSweep(ctx, account.ID, account.CloudKeyID, region, "network", trigger, triggeredBy == nil)
-	if err != nil {
-		return e.finishUpstreamFailure(ctx, runID, err)
-	}
-	started := time.Now()
-	vpcs, subnets, err := e.fetcher.FetchVPCsAndSubnets(ctx, clients)
-	if err != nil {
-		return e.finishUpstreamFailure(ctx, runID, err)
-	}
-	vpcDeleted, subnetDeleted, err := UpsertVPCsAndSubnets(ctx, e.db, account.ID, region, started, vpcs, subnets)
-	if err != nil {
-		return e.finishPersistence(ctx, runID, err)
-	}
-	seen := saturatingAdd(int64(len(vpcs)), int64(len(subnets)))
-	deleted := saturatingAdd(vpcDeleted, subnetDeleted)
-	return e.finishRun(ctx, runID, runs.FinishRequest{Status: "success", ItemsSeen: saturatingInt32(seen), ItemsSoftDeleted: saturatingInt32(deleted)})
-}
-
-func (e *Engine) sweepDatabases(ctx context.Context, account models.CloudAccount, region, trigger string, triggeredBy *uint64) error {
-	runID, err := e.insertRun(ctx, account.ID, region, "database", trigger, triggeredBy)
-	if err != nil {
-		return err
-	}
-	clients, err := e.clientsForSweep(ctx, account.ID, account.CloudKeyID, region, "database", trigger, triggeredBy == nil)
-	if err != nil {
-		return e.finishUpstreamFailure(ctx, runID, err)
-	}
-	started := time.Now()
-	items, err := e.fetcher.FetchDatabases(ctx, clients)
-	if err != nil {
-		return e.finishUpstreamFailure(ctx, runID, err)
-	}
-	softDeleted, err := UpsertDatabases(ctx, e.db, account.ID, region, started, items)
-	if err != nil {
-		return e.finishPersistence(ctx, runID, err)
-	}
-	return e.finishRun(ctx, runID, runs.FinishRequest{Status: "success", ItemsSeen: saturatingInt32(int64(len(items))), ItemsSoftDeleted: saturatingInt32(softDeleted)})
-}
-
-func (e *Engine) clientsForSweep(ctx context.Context, accountID, cloudKeyID uint64, region, resourceType, trigger string, systemCaller bool) (*Clients, error) {
-	purpose := syncPurpose(accountID, region, resourceType, trigger, systemCaller)
-	key, err := e.consumer.GetCloudKey(ctx, cloudKeyID, purpose)
-	if err != nil {
-		return nil, err
-	}
-	defer credentials.Wipe(key)
-	return e.factory.For(ctx, key, region, e.timeout)
-}
-
-func syncPurpose(accountID uint64, region, resourceType, trigger string, systemCaller bool) string {
-	prefix := ""
-	if systemCaller {
-		prefix = "system:"
-	}
-	return fmt.Sprintf("%sassets.sync.%s.account-%d.%s.%s", prefix, trigger, accountID, region, resourceType)
+	return e.runScopedAccount(ctx, account, trigger, triggeredBy)
 }
 
 func (e *Engine) insertRun(ctx context.Context, accountID uint64, region, resourceType, trigger string, triggeredBy *uint64) (uint64, error) {
@@ -241,11 +130,6 @@ func (e *Engine) finishRun(ctx context.Context, runID uint64, request runs.Finis
 		return safeDatabaseError()
 	}
 	return nil
-}
-
-func (e *Engine) finishUpstreamFailure(ctx context.Context, runID uint64, cause error) error {
-	code, message := safeSyncRunError(cause)
-	return e.finishRun(ctx, runID, runs.FinishRequest{Status: "failed", Error: message, ErrorCode: saturatingInt32(int64(code))})
 }
 
 func safeSyncRunError(cause error) (apperr.Code, string) {
@@ -273,13 +157,6 @@ func safeSyncRunError(cause error) (apperr.Code, string) {
 	}
 	code, _, message := awsclient.MapError(cause)
 	return code, message
-}
-
-func (e *Engine) finishPersistence(ctx context.Context, runID uint64, cause error) error {
-	if errors.Is(cause, ErrSweepIneligible) {
-		return e.finishRun(ctx, runID, runs.FinishRequest{Status: "skipped"})
-	}
-	return e.finishRun(ctx, runID, runs.FinishRequest{Status: "failed", Error: "asset persistence failed", ErrorCode: int32(apperr.CodeDBError)})
 }
 
 func (e *Engine) recordLockedSkip(ctx context.Context, accountID uint64, trigger string, triggeredBy *uint64) error {

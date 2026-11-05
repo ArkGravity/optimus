@@ -25,6 +25,18 @@ func UpsertInstances(ctx context.Context, db *gorm.DB, accountID uint64, region 
 		if err := lockEligibleAccount(tx, accountID, region); err != nil {
 			return err
 		}
+		var err error
+		softDeleted, err = UpsertInstancesTx(ctx, tx, accountID, region, sweepStart, items)
+		return err
+	})
+	return softDeleted, err
+}
+
+// UpsertInstancesTx publishes inside the caller-owned transaction. The caller must lock the collection scope first.
+func UpsertInstancesTx(ctx context.Context, tx *gorm.DB, accountID uint64, region string, sweepStart time.Time, items []models.AWSInstance) (int64, error) {
+	tx = tx.WithContext(ctx)
+	var softDeleted int64
+	err := func() error {
 		for i := range items {
 			items[i].ID = 0
 			items[i].CloudAccountID = accountID
@@ -41,7 +53,7 @@ func UpsertInstances(ctx context.Context, db *gorm.DB, accountID uint64, region 
 			Delete(&models.AWSInstance{})
 		softDeleted = result.RowsAffected
 		return result.Error
-	})
+	}()
 	return softDeleted, err
 }
 
@@ -51,6 +63,18 @@ func UpsertVPCsAndSubnets(ctx context.Context, db *gorm.DB, accountID uint64, re
 		if err := lockEligibleAccount(tx, accountID, region); err != nil {
 			return err
 		}
+		var err error
+		vpcSoftDeleted, subnetSoftDeleted, err = UpsertVPCsAndSubnetsTx(ctx, tx, accountID, region, sweepStart, vpcs, subnets)
+		return err
+	})
+	return vpcSoftDeleted, subnetSoftDeleted, err
+}
+
+// UpsertVPCsAndSubnetsTx publishes inside the caller-owned transaction. The caller must lock the collection scope first.
+func UpsertVPCsAndSubnetsTx(ctx context.Context, tx *gorm.DB, accountID uint64, region string, sweepStart time.Time, vpcs []models.AWSVPC, subnets []models.AWSSubnet) (int64, int64, error) {
+	tx = tx.WithContext(ctx)
+	var vpcSoftDeleted, subnetSoftDeleted int64
+	err := func() error {
 		for i := range vpcs {
 			vpcs[i].ID = 0
 			vpcs[i].CloudAccountID = accountID
@@ -85,7 +109,7 @@ func UpsertVPCsAndSubnets(ctx context.Context, db *gorm.DB, accountID uint64, re
 			Delete(&models.AWSSubnet{})
 		subnetSoftDeleted = subnetResult.RowsAffected
 		return subnetResult.Error
-	})
+	}()
 	return vpcSoftDeleted, subnetSoftDeleted, err
 }
 
@@ -95,6 +119,18 @@ func UpsertDatabases(ctx context.Context, db *gorm.DB, accountID uint64, region 
 		if err := lockEligibleAccount(tx, accountID, region); err != nil {
 			return err
 		}
+		var err error
+		softDeleted, err = UpsertDatabasesTx(ctx, tx, accountID, region, sweepStart, items)
+		return err
+	})
+	return softDeleted, err
+}
+
+// UpsertDatabasesTx publishes inside the caller-owned transaction. The caller must lock the collection scope first.
+func UpsertDatabasesTx(ctx context.Context, tx *gorm.DB, accountID uint64, region string, sweepStart time.Time, items []models.AWSDatabase) (int64, error) {
+	tx = tx.WithContext(ctx)
+	var softDeleted int64
+	err := func() error {
 		for i := range items {
 			items[i].ID = 0
 			items[i].CloudAccountID = accountID
@@ -111,7 +147,7 @@ func UpsertDatabases(ctx context.Context, db *gorm.DB, accountID uint64, region 
 			Delete(&models.AWSDatabase{})
 		softDeleted = result.RowsAffected
 		return result.Error
-	})
+	}()
 	return softDeleted, err
 }
 

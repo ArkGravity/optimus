@@ -4,7 +4,12 @@
 > credential. This is a manual release sign-off; it is not an automated test
 > because it talks to a real AWS account.
 
-Run after a clean `make migrate-up` and `make seed` against Postgres.
+Use a fresh disposable Dev database for the current 19-migration baseline
+(head 00019, next 00020), then run `make migrate-up` and `make seed`. An old
+00022/00023/00028 database must actually be recreated, including
+`goose_db_version`, first; containers alone retain its data and version history.
+For Aliyun/GCP and authentication checks, also use [the multi-cloud checklist](p4-multicloud-smoke.md).
+Real-provider acceptance is pending; fixture results alone are not release sign-off.
 
 ## IAM policy for the smoke credential
 
@@ -15,6 +20,7 @@ Run after a clean `make migrate-up` and `make seed` against Postgres.
     {
       "Effect": "Allow",
       "Action": [
+        "ec2:DescribeRegions",
         "ec2:DescribeInstances",
         "ec2:DescribeVpcs",
         "ec2:DescribeSubnets",
@@ -27,6 +33,11 @@ Run after a clean `make migrate-up` and `make seed` against Postgres.
 }
 ```
 
+Authenticated `DescribeRegions` needs `ec2:DescribeRegions`. Planning and every
+fresh resource unit also verify `GetCallerIdentity` with the selected valid AK/SK;
+AWS documents that this STS operation requires no IAM permissions, so no extra
+policy action is mandatory. See [AWS GetCallerIdentity](https://docs.aws.amazon.com/STS/latest/APIReference/API_GetCallerIdentity.html).
+
 ## Steps
 
 1. Sign in as an admin and create an AWS cloud key at
@@ -38,23 +49,23 @@ Run after a clean `make migrate-up` and `make seed` against Postgres.
    returns immediately and the row becomes available for another sync after
    the worker completes.
 4. Open `/assets/sync-runs`. Expect `instance`, `network`, `database`,
-   and `security_group` runs with status `success`; verify `items_seen` matches the account's
+   and `security_group` runs plus a successful `planning` run with status `success`; verify `items_seen` matches the account's
    discovered resources. A failed run exposes its error code and reveals the
    detailed error only on the error control's tooltip.
 5. Open `/assets/instances`, `/assets/vpcs`, and `/assets/databases`.
    Check account/region/search filters and pagination. Open a VPC and verify
    its subnet list; verify keyboard Enter and Space also open a selected VPC.
-6. Open `/assets/security-groups`, filter by account, region and VPC, and open
+6. Open `/assets/firewalls` (the legacy `/assets/security-groups` URL redirects), filter by account, region and VPC, and open
    a group. Compare inbound/outbound rules, IPv4/IPv6 ranges, group references,
    prefix lists, port ranges and ICMP type/code with AWS. The menu order is
-   Cloud Accounts, VPCs, Security Groups, EC2 Instances, RDS Databases, Sync Runs.
+   Cloud Accounts, VPCs, Firewalls, Instances, Databases, Sync Runs.
    No AWS write actions are exposed.
 7. Remove one enabled region from the Cloud Account. With **Include deleted**
    enabled, verify resources in that region become soft-deleted; with it
    disabled, verify they are hidden.
-8. Simulate drift in the smoke account (for example, remove an EC2 instance),
-   run another sync, and confirm the missing resource is soft-deleted only
-   after a successful full sweep.
+8. If the owner has independently changed a disposable resource, run another
+   sync and confirm the missing resource is soft-deleted only after a successful
+   full sweep. The smoke credential performs no cloud writes.
 9. While the Cloud Account exists, try deleting its cloud key. Expect error
    `43001` (`assets.cloud_account.in_use`). Delete the Cloud Account and
    verify the response reports its cascaded soft-delete count; retrying the
@@ -63,4 +74,5 @@ Run after a clean `make migrate-up` and `make seed` against Postgres.
 ## Reporting a failure
 
 Capture the response envelope's `code` and `message_key`, the related
-`assets_sync_runs` and `audit_logs` rows, and backend logs at debug level.
+`assets_sync_runs` and `audit_logs` rows, and sanitized backend logs. Never capture credentials, tokens, raw SDK payloads
+or full provider error bodies.

@@ -3,50 +3,29 @@
     <PageHeader :title="t('assets.sync.title')" />
 
     <div class="filter-row u-mb-16">
-      <a-input-number
-        v-model:value="accountID"
-        :min="1"
-        :precision="0"
-        :placeholder="t('assets.sync.filter.account')"
-        style="width: 160px"
-        @change="onAccountChange"
-      />
-      <a-select
-        v-model:value="resourceType"
-        data-testid="resource-type"
-        allow-clear
-        :placeholder="t('assets.sync.filter.resource_type')"
-        :options="resourceTypeOptions"
-        style="width: 170px"
-        @change="onResourceTypeChange"
-      />
-      <a-select
-        v-model:value="status"
-        data-testid="status"
-        allow-clear
-        :placeholder="t('assets.sync.filter.status')"
-        :options="statusOptions"
-        style="width: 150px"
-        @change="onStatusChange"
-      />
-      <a-date-picker
-        v-model:value="startedAfterInput"
-        show-time
-        allow-clear
-        :placeholder="t('assets.sync.filter.started_after')"
-        @change="onStartedAfterChange"
-      />
+      <a-select data-testid="provider" :value="controller.filters.value.provider" :options="providerOptions" allow-clear :placeholder="t('assets.filters.provider')" :aria-label="t('assets.filters.provider')" @change="onProviderChange" />
+      <a-select v-if="controller.canReadAccounts.value" data-testid="account" :value="controller.filters.value.account_id" :options="controller.accountOptions.value" :loading="controller.loadingAccounts.value" allow-clear show-search option-filter-prop="label" :placeholder="t('assets.account.title')" :aria-label="t('assets.account.title')" @change="onAccountChange" />
+      <a-input-number v-else data-testid="account-id" :value="controller.filters.value.account_id" :min="1" :precision="0" :placeholder="t('assets.filters.account_id')" :aria-label="t('assets.filters.account_id')" @change="onAccountChange" />
+      <a-select data-testid="location-type" :value="filters.location_type" :options="locationOptions" allow-clear :placeholder="t('assets.detail.fields.location_type')" :aria-label="t('assets.detail.fields.location_type')" @change="onLocationTypeChange" />
+      <a-input data-testid="location" :value="filters.location" :disabled="filters.location_type === 'global'" allow-clear :placeholder="t('assets.detail.fields.location')" :aria-label="t('assets.detail.fields.location')" @change="onLocationChange" />
+      <a-select data-testid="resource-type" :value="filters.resource_type" :options="resourceTypeOptions" allow-clear :placeholder="t('assets.sync.filter.resource_type')" :aria-label="t('assets.sync.filter.resource_type')" @change="onResourceTypeChange" />
+      <a-select data-testid="status" :value="filters.status" :options="statusOptions" allow-clear :placeholder="t('assets.sync.filter.status')" :aria-label="t('assets.sync.filter.status')" @change="onStatusChange" />
+      <a-date-picker :value="startedAfterInput" show-time allow-clear :placeholder="t('assets.sync.filter.started_after')" @change="onStartedAfterChange" />
     </div>
+    <a-alert v-if="errorMessage" type="error" :message="errorMessage" show-icon class="u-mb-16" />
 
     <a-table
       :columns="columns"
-      :data-source="table.items.value"
-      :loading="table.loading.value"
+      :data-source="items"
+      :loading="controller.loading.value"
       :pagination="false"
       row-key="id"
+      :scroll="{ x: 'max-content' }"
     >
       <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'started_at'">{{ formatTime(record.started_at) }}</template>
+        <template v-if="column.key === 'account'">{{ record.cloud_account_name || record.cloud_account_id }}</template>
+        <template v-else-if="column.key === 'location'">{{ locationLabel(record, t) }}</template>
+        <template v-else-if="column.key === 'started_at'">{{ formatTime(record.started_at) }}</template>
         <template v-else-if="column.key === 'finished_at'">{{ record.finished_at ? formatTime(record.finished_at) : '—' }}</template>
         <template v-else-if="column.key === 'duration'">{{ formatDuration(record) }}</template>
         <template v-else-if="column.key === 'resource_type'">{{ t(`assets.sync.resource_types.${record.resource_type}`) }}</template>
@@ -68,51 +47,56 @@
 
     <a-pagination
       class="u-mt-16"
-      :current="table.page.value"
-      :page-size="table.pageSize.value"
-      :total="table.total.value"
+      :current="controller.page.value"
+      :page-size="controller.pageSize.value"
+      :total="total"
       show-size-changer
       @change="onPageChange"
-      @show-size-change="onPageSizeChange"
     />
   </a-card>
 </template>
 
 <script setup lang="ts">
-import { usePageState } from '@/hooks/usePageState'
-import type { Dayjs } from 'dayjs'
-import { computed, inject, onMounted, ref } from 'vue'
-import { message } from 'ant-design-vue'
-
+import { computed, inject, ref, watch } from 'vue'
+import dayjs from 'dayjs'
 import type { AssetsSyncApi, SyncRunListParams } from '@/api/assets/sync'
+import type { AssetsAccountApi } from '@/api/assets/account'
 import PageHeader from '@/components/PageHeader.vue'
 import { useI18n } from '@/hooks/useI18n'
-import { useTable } from '@/hooks/useTable'
-import type { SyncRunResourceType, SyncRunStatus, SyncRunSummary } from '@/types/assets'
-import { isBizError } from '@/utils/http-error'
+import { usePermission } from '@/hooks/usePermission'
+import { useAssetFilters } from '@/hooks/use-asset-filters'
+import { usePageState } from '@/hooks/usePageState'
+import type { LocationType, Provider, SyncRunResourceType, SyncRunStatus, SyncRunSummary } from '@/types/assets'
+import { useListData, locationLabel } from '../components/use-asset-list'
 
 const { t } = useI18n()
+const { has } = usePermission()
 const api = inject<AssetsSyncApi>('assetsSyncApi')!
-const accountID = ref<number>()
-const resourceType = ref<SyncRunResourceType>()
-const status = ref<SyncRunStatus>()
-const startedAfterInput = ref<Dayjs | null>(null)
-
-const statusColor: Record<SyncRunStatus, string> = {
-  running: 'blue', success: 'green', failed: 'red', skipped: 'gold',
-}
-const resourceTypeOptions = computed(() => (['instance', 'network', 'database', 'security_group'] as const).map(value => ({
-  value, label: t(`assets.sync.resource_types.${value}`),
-})))
-const statusOptions = computed(() => (['running', 'success', 'failed', 'skipped'] as const).map(value => ({
-  value, label: t(`assets.sync.run_status.${value}`),
-})))
+const controller = useAssetFilters({ family: 'instance', canReadAccounts: () => has('assets:account:read'), accountApi: inject<AssetsAccountApi>('assetsAccountApi') })
+type SyncFilters = Omit<SyncRunListParams, 'provider' | 'account_id' | 'page' | 'size'>
+const filters = ref<SyncFilters>({})
+usePageState({ filters }, 'sync-filters')
+const startedAfterInput = computed(() => filters.value.started_after ? dayjs(filters.value.started_after) : null)
+watch(filters, () => { controller.page.value = 1; controller.invalidateRequests() }, { deep: true, flush: 'sync' })
+const { items, total, errorMessage, reload, onPageChange } = useListData<SyncRunSummary>(controller, () => {
+  const params: SyncRunListParams = { ...filters.value, page: controller.page.value, size: controller.pageSize.value }
+  const { provider, account_id } = controller.filters.value
+  if (provider) params.provider = provider
+  if (account_id !== undefined) params.account_id = account_id
+  return api.listRuns(params)
+})
+const providerOptions = [{ value: 'aws', label: 'AWS' }, { value: 'aliyun', label: 'Aliyun' }, { value: 'gcp', label: 'GCP' }]
+const locationOptions = computed(() => (['global', 'region', 'zone'] as const).map(value => ({ value, label: t(`assets.filters.location.${value}`) })))
+const resourceTypeOptions = computed(() => (['planning', 'instance', 'network', 'subnet', 'database', 'security_group', 'firewall'] as const).map(value => ({ value, label: t(`assets.sync.resource_types.${value}`) })))
+const statusOptions = computed(() => (['running', 'success', 'failed', 'skipped'] as const).map(value => ({ value, label: t(`assets.sync.run_status.${value}`) })))
+const statusColor: Record<SyncRunStatus, string> = { running: 'blue', success: 'green', failed: 'red', skipped: 'gold' }
 const columns = computed(() => [
   { key: 'started_at', title: t('assets.sync.started_at') },
   { key: 'finished_at', title: t('assets.sync.finished_at') },
   { key: 'duration', title: t('assets.sync.duration') },
-  { key: 'account', title: t('assets.account.title'), dataIndex: 'cloud_account_name' },
-  { key: 'region', title: t('assets.account.regions'), dataIndex: 'region' },
+  { key: 'provider', title: t('assets.filters.provider'), dataIndex: 'provider' },
+  { key: 'account', title: t('assets.account.title') },
+  { key: 'location', title: t('assets.detail.fields.location') },
   { key: 'resource_type', title: t('assets.sync.resource_type') },
   { key: 'status', title: t('assets.sync.status') },
   { key: 'items_seen', title: t('assets.sync.items_seen'), dataIndex: 'items_seen' },
@@ -120,35 +104,28 @@ const columns = computed(() => [
   { key: 'trigger', title: t('assets.sync.trigger') },
   { key: 'error', title: t('assets.sync.error') },
 ])
-const table = useTable<SyncRunSummary, SyncRunListParams>({
-  fetcher: async ({ page, pageSize, filters }) => {
-    const result = await api.listRuns({ ...filters, page, size: pageSize })
-    return { items: result.items, total: result.total }
-  },
-})
-
-function showLoadError(error: unknown) { message.error(isBizError(error) ? error.message : t('network.error')) }
-async function runTableAction(action: () => Promise<unknown>) {
-  try { await action() } catch (error) { showLoadError(error) }
+function updateFilters(patch: Partial<SyncFilters>) {
+  const next = { ...filters.value, ...patch }
+  for (const key of Object.keys(next) as Array<keyof SyncFilters>) if (next[key] === undefined || next[key] === '') delete next[key]
+  filters.value = next
+  void reload()
 }
-async function onAccountChange(value: number | null) {
-  const validID = value !== null && Number.isSafeInteger(value) && value > 0 ? value : undefined
-  if (value !== null && validID === undefined) accountID.value = undefined
-  await runTableAction(() => table.setFilters({ account_id: validID }))
+function resetScope() { const next = { ...filters.value }; delete next.location_type; delete next.location; filters.value = next }
+function onProviderChange(provider: Provider | undefined) { controller.setFilters({ provider }); resetScope(); void reload() }
+function onAccountChange(value: number | string | null | undefined) {
+  const id = value == null || value === '' ? undefined : Number(value)
+  controller.setFilters({ account_id: id !== undefined && Number.isSafeInteger(id) && id > 0 ? id : undefined })
+  resetScope(); void reload()
 }
-async function onResourceTypeChange(value: SyncRunResourceType | undefined) {
-  await runTableAction(() => table.setFilters({ resource_type: value }))
-}
-async function onStatusChange(value: SyncRunStatus | undefined) {
-  await runTableAction(() => table.setFilters({ status: value }))
-}
-async function onStartedAfterChange(value: { toDate?: () => Date } | null) {
+function onResourceTypeChange(value: SyncRunResourceType | undefined) { updateFilters({ resource_type: value }) }
+function onStatusChange(value: SyncRunStatus | undefined) { updateFilters({ status: value }) }
+function onLocationTypeChange(value: LocationType | undefined) { updateFilters({ location_type: value, location: undefined }) }
+function onLocationChange(event: Event) { updateFilters({ location: (event.target as HTMLInputElement).value.trim() || undefined }) }
+function onStartedAfterChange(value: { toDate?: () => Date } | null) {
   const date = value?.toDate?.()
-  const startedAfter = date && Number.isFinite(date.getTime()) ? date.toISOString() : undefined
-  await runTableAction(() => table.setFilters({ started_after: startedAfter }))
+  updateFilters({ started_after: date && Number.isFinite(date.getTime()) ? date.toISOString() : undefined })
 }
-async function onPageChange(page: number) { await runTableAction(() => table.setPage(page)) }
-async function onPageSizeChange(_: number, size: number) { await runTableAction(() => table.setPageSize(size)) }
+
 function formatTime(value: string) {
   const date = new Date(value)
   return Number.isFinite(date.getTime()) ? date.toLocaleString() : '—'
@@ -160,13 +137,11 @@ function formatDuration(run: SyncRunSummary) {
   return Number.isFinite(milliseconds) && milliseconds >= 0 ? `${(milliseconds / 1000).toFixed(1)}s` : '—'
 }
 
-onMounted(() => { void runTableAction(() => table.reload()) })
-usePageState({ accountID, resourceType, status, startedAfterInput })
-
 </script>
 
 <style scoped lang="scss">
 .filter-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.filter-row > :deep(.ant-select), .filter-row > :deep(.ant-input-affix-wrapper), .filter-row > :deep(.ant-input-number) { width: 180px; }
 .error-code {
   padding: 0;
   border: 0;

@@ -30,7 +30,17 @@
       row-key="id"
     >
       <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'updated_at'">
+        <template v-if="column.key === 'identity'">
+          <a-tag v-if="record.needs_configuration" color="warning">
+            {{ $t('credentials.cloud_keys.needs_configuration') }}
+          </a-tag>
+          <template v-else-if="record.provider === 'gcp'">
+            <div>{{ record.service_account_email }}</div>
+            <div>{{ $t('credentials.field.credential_project_id') }}: {{ record.credential_project_id }}</div>
+          </template>
+          <template v-else>{{ $t('credentials.cloud_keys.access_key_auth') }}</template>
+        </template>
+        <template v-else-if="column.key === 'updated_at'">
           {{ formatTime(record.updated_at) }}
         </template>
         <template v-else-if="column.key === 'actions'">
@@ -106,8 +116,9 @@ const columns = computed(() => [
   { key: 'name',        title: t('credentials.field.name'),        dataIndex: 'name' },
   { key: 'description', title: t('credentials.field.description'), dataIndex: 'description' },
   { key: 'provider',    title: t('credentials.cloud_keys.col_provider'), dataIndex: 'provider' },
+  { key: 'identity',    title: t('credentials.cloud_keys.col_identity') },
   { key: 'region',      title: t('credentials.cloud_keys.col_region'),   dataIndex: 'region' },
-  { key: 'updated_at',  title: 'Updated' },
+  { key: 'updated_at',  title: t('credentials.field.updated_at') },
   { key: 'actions',     title: '', width: 160 },
 ])
 
