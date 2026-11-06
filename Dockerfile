@@ -24,16 +24,18 @@ COPY --from=web /src/web/dist ./web/dist
 ARG VERSION=dev
 ARG TARGETOS
 ARG TARGETARCH
+ARG GO_BUILD_PARALLELISM=2
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,id=go-build-${TARGETOS}-${TARGETARCH},target=/root/.cache/go-build \
     CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
-    go build -trimpath -ldflags "-s -w -X main.Version=${VERSION}" \
+    go build -p "${GO_BUILD_PARALLELISM}" -trimpath -ldflags "-s -w -X main.Version=${VERSION}" \
       -o /out/optimus ./cmd/optimus
 
 FROM alpine:3.20 AS runtime
 RUN apk add --no-cache ca-certificates tzdata wget
 COPY --from=build /out/optimus /usr/local/bin/optimus
 COPY configs/config.yaml /etc/optimus/config.yaml
+COPY LICENSE /usr/share/licenses/optimus/LICENSE
 EXPOSE 8080
 ENTRYPOINT ["/usr/local/bin/optimus"]
 CMD ["server", "-config", "/etc/optimus/config.yaml"]

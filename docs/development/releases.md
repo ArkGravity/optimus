@@ -1,0 +1,41 @@
+# Versioned releases
+
+v0.1.0 is in preparation. The [release notes](../releases/v0.1.0.md) track operator acceptance separately from release verification and publication.
+
+## Release contract
+
+Use an annotated `vX.Y.Z` tag on the reviewed main revision. Never overwrite a published version tag, image tag or release asset; publish a new version for corrections. A moving `latest` tag is not required.
+
+Release users need no source checkout or Go/Bun installation. For v0.1.0 the exact six attachments are:
+
+- `optimus_v0.1.0_linux_amd64.tar.gz`
+- `optimus_v0.1.0_linux_arm64.tar.gz`
+- `optimus_v0.1.0_deploy.tar.gz`
+- `INSTALL.md`
+- `IMAGES.txt`
+- `SHA256SUMS`
+
+Each binary archive contains `optimus`, `configs/config.yaml`, `LICENSE` and `INSTALL.md`. Build binaries with embedded UI/migrations and `CGO_ENABLED=0`. The deployment archive contains a no-build `docker-compose.yml`, version-pinned `.env.example`, `LICENSE` and `INSTALL.md`. Its secrets require generation before startup.
+
+[INSTALL.md](../releases/INSTALL.md) is a standalone source template; substitute `@VERSION@` when packaging. `IMAGES.txt` records the final image references/digests for both registries. `SHA256SUMS` covers the other five attachments, not itself.
+
+## Delivery sequence
+
+1. Merge the release preparation PR to main. Require full CI on the exact main revision; a prose-only skipped run is insufficient. Confirm schema compatibility, license, documentation and version metadata.
+2. Create the annotated version tag on that revision. Release automation must verify tag/revision provenance and refuse existing version destinations.
+3. Build each platform's release image once, extract its binary and configuration, and package the release archives. Use native Linux amd64 and arm64 jobs to execute the exact packaged binaries, including version, fresh migrate/seed and authenticated embedded UI/API smoke. Test the actual images and deployment archive, including its secrets contract, then save those tested image outputs for publication. Cross-compilation alone is not execution evidence.
+4. Publish the saved, tested image bytes to GHCR and Docker Hub without rebuilding. Inspect both platform manifests and digests, confirm configuration/digest equality with the tested outputs and between registries, and verify anonymous reads of the published manifests. Record the final references and digests in `IMAGES.txt`. Do not substitute a different main image after testing.
+5. Render INSTALL, produce the three archives and checksum manifest, and verify the final exact attachments. Upload all six to a **draft** release with the reviewed notes and verification evidence.
+6. Review the draft's tag, attachments, checksums, image digests, installation instructions and database warning. Publish only after the final review. Set the actual release date in the changelog and notes after publication is confirmed.
+
+A tag, green source tests, operator report or draft release alone is not completed publication. If any job fails, preserve the failure evidence and fix it before proceeding; do not replace public artifacts in place.
+
+## Database and recovery requirements
+
+The initial version uses fresh head19: 31 business tables and Goose history. Old 00022/00023/00028 databases require actual recreation, including migration history; this is not an in-place upgrade. Stop writers and retain database backups with their matching vault key, config and application revision. Fresh Down operations drop data and are not rollback. See [recovery](../operations/recovery.md).
+
+Once published, these migrations are immutable. The next schema change appends 00020. Keep the API specification's version independent from the product release version; do not rewrite Swagger's API version solely to match a release tag.
+
+## Verification record
+
+Record the exact Git revision, source CI run, native platform and actual-image smoke results, archive checksums, image digests, published manifest/configuration equality, anonymous manifest reads and draft review. Do not record planned checks as passed. Real-provider acceptance should identify the operator, revision and date without exposing credentials or raw SDK responses. Production deployment remains an operator action unless separately authorized.

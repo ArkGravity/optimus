@@ -96,3 +96,8 @@ perm-check: ## Fail when docs/permissions.md is stale
 
 perm-db-check: ## Compare registered permissions against the database
 	$(GO) run ./cmd/optimus server -check-permissions
+
+.PHONY: test-release
+test-release: ## Test release guards and packaging without network or publication
+	python3 -B -m unittest discover -s scripts/release -p 'test_*.py'
+	@for script in scripts/release/*.sh; do bash -n "$$script"; done
