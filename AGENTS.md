@@ -20,8 +20,10 @@ with identical index digests. The operator has now confirmed real AWS, Aliyun
 and GCP resource acceptance of this image. This supersedes older pending
 real-provider statements below; it does not identify a new Production deployment.
 
-The active task is first-release preparation on `feat/release-v0.1.0`, based on
-`1bbb8fe`. The user approved the assessed implementation order and selected MIT.
+The active task is first-release delivery. Preparation PR #3 (`c095f36`) merged
+as `7102a3f`; its exact main CI `42259034364` passed all six jobs. The user
+approved the assessed implementation order and selected MIT. Current repair work
+is on `fix/release-annotated-checkout`, based on `7102a3f`.
 Read `docs/superpowers/plans/2026-11-05-v0.1.0-release.md` for the current tasks.
 Prepare user-facing English/Chinese documentation, tested Linux release images
 and native archives, versioned publication and a reviewable Release draft.
@@ -44,11 +46,23 @@ Uncertain creation has bounded, ownership-labelled reconciliation and explicitly
 reports unresolved uncertainty instead of claiming cleanup. Release automation
 passed final specification and quality re-reviews with no remaining findings,
 including process-group cleanup, creation uncertainty and exact draft attachments.
-Independent documentation/CLI/archive composition review also passed. Preparation
-is ready for its PR and full CI. Exact tagged-main native amd64/arm64 jobs,
-versioned registry publication and the Release draft remain pending. No release
-tag or preparation commit/PR exists yet. The historical production acceptance
-record remains `d0016d0` / schema 00022 until the operator identifies a newer rollout.
+Independent documentation/CLI/archive composition review also passed.
+Annotated `v0.1.0` exists: object `f8a132fa02ee97aa1733bb055ad0c8ccb8812eb8`,
+peeled commit `7102a3f60b84ce9dcf978596a49e3552ea907dc5`. Never move this tag.
+First release run `42260386612` failed before builds/publication because
+actions/checkout rewrote the runner-local annotated tag to a lightweight tag.
+The remote tag is correct. Repair commit-based checkout and a main-only retry
+entry for an existing stable annotated tag; preserve the selected tagged source
+and its exact successful main CI even when the workflow definition is newer.
+The repair passed independent specification and quality reviews, all 44 release
+tests and real Git/source-CI selection preflight; its PR and main CI are next.
+Native amd64/arm64 release execution,
+versioned images, six verified attachments and a Release draft remain pending.
+Owned local test images, all 36 owned BuildKit cache records and host Go cache
+were removed; all eight shared Kubernetes images and 12 pre-existing containers
+were preserved and cluster readiness verified. Ignored release archives/tools
+remain until final verification. The historical production acceptance record
+remains `d0016d0` / schema 00022 until the operator identifies a newer rollout.
 
 ### Historical delivery and verification
 
