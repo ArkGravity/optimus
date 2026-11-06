@@ -28,7 +28,7 @@ Optimus 是可自托管的基础设施控制台，将访问管理、凭据保护
 
 推荐使用 Docker Compose 部署应用与 PostgreSQL，也可使用 Linux 二进制连接现有 PostgreSQL 17。运行发布包无需安装 Go 或 Bun。
 
-**v0.1.0 正在准备发布。** [安装指南](docs/installation_zh.md) 中的版本化附件和镜像将在正式发布后可用。已发布版本请查看 [Releases](https://github.com/ArkGravity/optimus/releases)；本次发布产物的自动验证尚未完成。
+**v0.1.0 已生成经验证的 Release 草稿，等待最终审核。** Linux amd64/arm64 二进制包、部署包及两个镜像仓库均已通过 [实际产物验证](https://github.com/ArkGravity/optimus/actions/runs/42292847315/attempts/2)。[安装指南](docs/installation_zh.md) 中的下载附件将在正式发布后公开；已发布版本请查看 [Releases](https://github.com/ArkGravity/optimus/releases)。
 
 1. 按照 [Compose 或二进制安装指南](docs/installation_zh.md) 操作。共享环境启动前必须分别生成数据库密码、JWT 密钥和 vault 密钥。
 2. 本机打开 `http://127.0.0.1:8080`，远程访问使用反向代理配置的 HTTPS 地址。
@@ -42,7 +42,7 @@ Optimus 是可自托管的基础设施控制台，将访问管理、凭据保护
 
 连接 Kubernetes 时，先在 vault 中保存 kubeconfig，再创建引用它的集群。包含 `exec` 或 `auth-provider` 插件的 kubeconfig 会被拒绝。在 Kubernetes 页面选择集群后即可查看资源。
 
-操作员已于 2026-11-05 确认 `main-1bbb8fe` 的 AWS、阿里云和 GCP 实云验收。该报告与即将发布的版本化产物自动验证分别记录，详见 [发布说明](docs/releases/v0.1.0.md)。
+操作员已于 2026-11-05 确认 `main-1bbb8fe` 的 AWS、阿里云和 GCP 实云验收。该报告与版本化发行产物的自动验证分别记录，详见 [发布说明](docs/releases/v0.1.0.md)。
 
 ## 数据库基线
 

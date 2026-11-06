@@ -13,56 +13,49 @@ and `metadata = {"project": "optimus", "app_id": "optimus"}`; filter reads by
 
 ## Status
 
-Current delivery (2026-11-05): multi-cloud Assets and the fresh 19-file baseline
-were merged through PR #2 as `1bbb8fe`. Main CI `42080568763` passed all six
-jobs; both registries published `main-1bbb8fe` for linux/amd64 and linux/arm64
-with identical index digests. The operator has now confirmed real AWS, Aliyun
-and GCP resource acceptance of this image. This supersedes older pending
-real-provider statements below; it does not identify a new Production deployment.
+Current delivery (2026-11-06): **v0.1.0 is a verified GitHub Release draft**
+(ID `437039266`), awaiting the operator's final publication review. It has not
+been formally published and no Production deployment or database recreation
+was performed. The user approved the delivery sequence and selected MIT.
+Read `docs/superpowers/plans/2026-11-05-v0.1.0-release.md` for full evidence.
 
-The active task is first-release delivery. Preparation PR #3 (`c095f36`) merged
-as `7102a3f`; its exact main CI `42259034364` passed all six jobs. The user
-approved the assessed implementation order and selected MIT. Current repair work
-is on `fix/release-annotated-checkout`, based on `7102a3f`.
-Read `docs/superpowers/plans/2026-11-05-v0.1.0-release.md` for the current tasks.
-Prepare user-facing English/Chinese documentation, tested Linux release images
-and native archives, versioned publication and a reviewable Release draft.
-Preserve the existing main-image CI. Release publication requires the exact
-tagged main commit's successful CI and actual artifact verification. Never
-replace a published version tag or attachment. Keep schema 19 unchanged; once
-released, append future migrations from 00020 rather than editing published SQL.
-Clean owned test containers, images, volumes and temporary outputs after checks;
-retain shared Colima Kubernetes resources. GitHub private vulnerability reporting
-is enabled and verified. Local Linux arm64 verification on 2026-11-06 passed
-the actual versioned image, extracted native archive and source-free Compose
-smoke, all 35 release helper tests (including 39 TERM/HUP/INT cleanup scenarios), five CI
-classifier tests, actionlint and shellcheck. Owned smoke containers and volumes
-were removed and absence verified. Additional actual Docker process-group
-TERM/HUP/INT interruption checks passed during Compose startup and the earlier
-created-before-ID-returned extraction window, with expected exit statuses and no
-owned container/volume/network leaks. A real detached-worker Docker test also
-verified removal of late creation after client failure, preserving failure status.
-Uncertain creation has bounded, ownership-labelled reconciliation and explicitly
-reports unresolved uncertainty instead of claiming cleanup. Release automation
-passed final specification and quality re-reviews with no remaining findings,
-including process-group cleanup, creation uncertainty and exact draft attachments.
-Independent documentation/CLI/archive composition review also passed.
-Annotated `v0.1.0` exists: object `f8a132fa02ee97aa1733bb055ad0c8ccb8812eb8`,
-peeled commit `7102a3f60b84ce9dcf978596a49e3552ea907dc5`. Never move this tag.
-First release run `42260386612` failed before builds/publication because
-actions/checkout rewrote the runner-local annotated tag to a lightweight tag.
-The remote tag is correct. Repair commit-based checkout and a main-only retry
-entry for an existing stable annotated tag; preserve the selected tagged source
-and its exact successful main CI even when the workflow definition is newer.
-The repair passed independent specification and quality reviews, all 44 release
-tests and real Git/source-CI selection preflight; its PR and main CI are next.
-Native amd64/arm64 release execution,
-versioned images, six verified attachments and a Release draft remain pending.
-Owned local test images, all 36 owned BuildKit cache records and host Go cache
-were removed; all eight shared Kubernetes images and 12 pre-existing containers
-were preserved and cluster readiness verified. Ignored release archives/tools
-remain until final verification. The historical production acceptance record
-remains `d0016d0` / schema 00022 until the operator identifies a newer rollout.
+The immutable annotated tag object is `f8a132fa02ee97aa1733bb055ad0c8ccb8812eb8`,
+peeled to selected source `7102a3f60b84ce9dcf978596a49e3552ea907dc5`.
+Preparation PR #3 (`c095f36`) merged as that source; exact source main CI
+`42259034364` passed all six jobs. Checkout recovery PR #4 (`d3f077b`) merged
+as workflow definition `ac605a55252d655c67257a7ea5ea7eaba50eb84f`, whose main
+CI `42291597086` also passed all six jobs. Never move the version tag.
+
+Release run `42292847315`, attempt 2, passed all four jobs, including actual
+native Linux amd64/arm64 image, extracted binary and source-free Compose smoke.
+The original tested outputs were reused for the failed draft-read-back retry;
+version images and the tag were not replaced. Both registries serve v0.1.0 images.
+Independent downloads verified exactly six attachments, every checksum, archive
+contents/configuration/license/INSTALL and equality of each archive binary with
+its saved tested image. Anonymous reads verified identical index/platform/config
+digests in GHCR and Docker Hub. Shared release index:
+`sha256:9ab3c99b89b47dc98b511e3adbb240f74269d0ddad5dd672a91d7c56beb3dd7c`.
+The draft notes contain concrete source/workflow CI and verification evidence.
+
+English/Chinese documentation, MIT/security guidance and release automation
+passed independent specification, quality and documentation/CLI/archive reviews.
+All 44 helper tests, five classifier tests, actionlint, shellcheck and Python3.12
+grammar checks passed. Local real Docker TERM/HUP/INT and late-daemon creation
+checks passed; unresolved creation uncertainty is explicitly bounded/reported.
+Owned local test images, all 36 owned BuildKit records and host Go cache were
+removed; all eight shared Kubernetes images and 12 pre-existing containers were
+preserved and cluster readiness verified. Owned temporary archives, downloads,
+fixture clones, tools, logs and caches were removed and absence verified. The
+final record is on `docs/release-v0.1.0-verification`; formal publication remains
+an operator decision after reviewing the concrete draft.
+
+Preserve main-image CI and schema19/31 business tables. Published migrations are
+immutable; append future migrations at 00020. Never replace a published version
+tag, image or attachment. GitHub private vulnerability reporting is enabled and
+verified. The operator's 2026-11-05 real AWS/Aliyun/GCP acceptance of
+`main-1bbb8fe` supersedes older pending real-provider statements below but is
+separate from release-artifact verification and does not identify a newer
+Production rollout. Historical Production acceptance remains `d0016d0` / 00022.
 
 ### Historical delivery and verification
 

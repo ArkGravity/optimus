@@ -6,7 +6,7 @@ Optimus ships its Go API and Vue web UI as one binary with PostgreSQL 17. Start 
 
 - [Product overview](../README.md) · [中文概览](../README_zh.md)
 - [Install](installation.md) · [中文安装指南](installation_zh.md)
-- [v0.1.0 release notes](releases/v0.1.0.md) — release preparation
+- [v0.1.0 release notes](releases/v0.1.0.md) — verified draft awaiting final review
 - [Published releases](https://github.com/ArkGravity/optimus/releases)
 
 ## User guides
@@ -48,7 +48,7 @@ Current main uses fresh head19 with 31 business tables plus Goose history. Histo
 
 [Specifications](superpowers/specs/) and [plans](superpowers/plans/) are named `YYYY-MM-DD-<topic>`. The [multi-cloud design](superpowers/specs/2026-10-28-multicloud-assets-design.md) and [implementation plan](superpowers/plans/2026-10-28-multicloud-assets.md) describe the feature now implemented on main. Their chronological checkpoints retain the evidence and constraints applicable at the time.
 
-The operator confirmed real AWS/Aliyun/GCP acceptance of `main-1bbb8fe` on 2026-11-05. This is separate from pending v0.1.0 archive/image verification and publication. The earlier `d0016d0` / historical 00022 production acceptance remains historical evidence, not the current schema contract.
+The operator confirmed real AWS/Aliyun/GCP acceptance of `main-1bbb8fe` on 2026-11-05. This is separate from completed [v0.1.0 archive/image verification](https://github.com/ArkGravity/optimus/actions/runs/42292847315/attempts/2) and pending final Release publication. The Release remains a draft. The earlier `d0016d0` / historical 00022 production acceptance remains historical evidence, not the current schema contract.
 
 Backend/frontend documents from former split repositories are preserved here. The monorepo merge is described in the [2026-09-24 design](superpowers/specs/2026-09-24-monorepo-single-binary-design.md). Read old paths and commands using this mapping:
 

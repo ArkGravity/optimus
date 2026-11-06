@@ -58,6 +58,6 @@ PostgreSQL volumes initialized by version 16 cannot simply start under 17. Use a
 
 ## Acceptance history
 
-The operator confirmed `d0016d0` / historical schema 00022 production recreation, deployment and P0–P4 acceptance on 2026-10-28; its inventory was AWS-only. That historical report is distinct from the operator's 2026-11-05 real AWS/Aliyun/GCP acceptance of `main-1bbb8fe`. The current feature is on main. The v0.1.0 versioned release's automated artifact verification and publication are still pending. Documentation work does not deploy or recreate production databases.
+The operator confirmed `d0016d0` / historical schema 00022 production recreation, deployment and P0–P4 acceptance on 2026-10-28; its inventory was AWS-only. That historical report is distinct from the operator's 2026-11-05 real AWS/Aliyun/GCP acceptance of `main-1bbb8fe`. The current feature is on main. The v0.1.0 native amd64/arm64 artifacts and versioned images passed [release verification](https://github.com/ArkGravity/optimus/actions/runs/42292847315/attempts/2); the GitHub Release remains a draft awaiting final review. Documentation work does not deploy or recreate production databases.
 
 Use [P3](../../scripts/p3-smoke.md), [AWS](../../scripts/p4-smoke.md) and [multi-cloud](../../scripts/p4-multicloud-smoke.md) smoke checklists with disposable resources and separately supplied read-only cloud credentials. Fixture evidence and operator acceptance should remain separately attributable.
