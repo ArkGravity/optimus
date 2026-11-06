@@ -13,9 +13,10 @@ and `metadata = {"project": "optimus", "app_id": "optimus"}`; filter reads by
 
 ## Status
 
-Current delivery (2026-11-06): **v0.1.0 is a verified GitHub Release draft**
-(ID `437039266`), awaiting the operator's final publication review. It has not
-been formally published and no Production deployment or database recreation
+Current delivery (2026-11-06): **v0.1.0 is published** as
+[GitHub Release `437039266`](https://github.com/ArkGravity/optimus/releases/tag/v0.1.0)
+at `2026-11-06T21:35:24Z`, after the user explicitly reviewed the verified draft
+and authorized formal publication. No Production deployment or database recreation
 was performed. The user approved the delivery sequence and selected MIT.
 Read `docs/superpowers/plans/2026-11-05-v0.1.0-release.md` for full evidence.
 
@@ -35,7 +36,8 @@ contents/configuration/license/INSTALL and equality of each archive binary with
 its saved tested image. Anonymous reads verified identical index/platform/config
 digests in GHCR and Docker Hub. Shared release index:
 `sha256:9ab3c99b89b47dc98b511e3adbb240f74269d0ddad5dd672a91d7c56beb3dd7c`.
-The draft notes contain concrete source/workflow CI and verification evidence.
+The published notes contain concrete source/workflow CI and verification evidence.
+Publication preserved all six original attachment IDs, digests and sizes.
 
 English/Chinese documentation, MIT/security guidance and release automation
 passed independent specification, quality and documentation/CLI/archive reviews.
@@ -46,8 +48,9 @@ Owned local test images, all 36 owned BuildKit records and host Go cache were
 removed; all eight shared Kubernetes images and 12 pre-existing containers were
 preserved and cluster readiness verified. Owned temporary archives, downloads,
 fixture clones, tools, logs and caches were removed and absence verified. The
-final record is on `docs/release-v0.1.0-verification`; formal publication remains
-an operator decision after reviewing the concrete draft.
+final verification record merged through PR #5 as `ddd1481`; prose CI
+`42297015632` passed. Publication changed only Release metadata and notes; the immutable
+tag, images and attachments were not replaced.
 
 Preserve main-image CI and schema19/31 business tables. Published migrations are
 immutable; append future migrations at 00020. Never replace a published version

@@ -2,7 +2,7 @@
 
 [中文](installation_zh.md) · [Documentation](README.md)
 
-**v0.1.0 is in release preparation.** The commands below pin that version and become usable when its release is published. Check [Releases](https://github.com/ArkGravity/optimus/releases) first. The operator's real-cloud acceptance of `main-1bbb8fe` does not replace verification of these versioned artifacts.
+**[v0.1.0 was published on 2026-11-06 (UTC)](https://github.com/ArkGravity/optimus/releases/tag/v0.1.0).** The commands below pin that released version. The operator's real-cloud acceptance of `main-1bbb8fe` is separate from completed verification of these exact versioned artifacts.
 
 Use Linux amd64 or arm64. Runtime prerequisites are Docker Engine with the Docker Compose plugin for the bundled stack, or PostgreSQL 17 for a native binary. Neither installation requires Go, Bun or a source checkout.
 
