@@ -2,7 +2,7 @@
 
 [English](installation.md) · [文档索引](README.md)
 
-**v0.1.0 正在准备发布。** 以下命令固定使用此版本，正式发布后才能执行下载和拉取。请先检查 [Releases](https://github.com/ArkGravity/optimus/releases)。操作员对 `main-1bbb8fe` 的实云验收与本次版本化产物验证分别记录。
+**[v0.1.0 已于 2026-11-06（UTC）正式发布](https://github.com/ArkGravity/optimus/releases/tag/v0.1.0)。** 以下命令固定使用此已发布版本。操作员对 `main-1bbb8fe` 的实云验收与本次确切版本化产物已完成的验证分别记录。
 
 支持 Linux amd64 与 arm64。Compose 方式需要 Docker Engine 和 Docker Compose 插件；原生二进制需要 PostgreSQL 17。运行发布包无需 Go、Bun 或源码仓库。
 

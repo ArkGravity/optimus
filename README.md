@@ -28,7 +28,7 @@ Assets navigation is **Cloud Accounts → VPCs → Firewalls → Instances → D
 
 Use Docker Compose for a bundled PostgreSQL deployment, or a Linux binary with an existing PostgreSQL 17 server. Go and Bun are only needed for development.
 
-**v0.1.0 has a verified Release draft awaiting final review.** Native Linux amd64/arm64 archives, the deployment package and both registries passed [artifact verification](https://github.com/ArkGravity/optimus/actions/runs/42292847315/attempts/2). Downloads in the [installation guide](docs/installation.md) become public after Release publication; see [Releases](https://github.com/ArkGravity/optimus/releases) for published versions.
+**[v0.1.0 is published](https://github.com/ArkGravity/optimus/releases/tag/v0.1.0), released on 2026-11-06 (UTC).** Native Linux amd64/arm64 archives, the deployment package and both registries passed [artifact verification](https://github.com/ArkGravity/optimus/actions/runs/42292847315/attempts/2). Download the release attachments using the [installation guide](docs/installation.md).
 
 1. Follow the [Docker Compose or native installation guide](docs/installation.md). Generate independent database, JWT and vault secrets before starting a shared environment.
 2. Open `http://127.0.0.1:8080` locally, or the HTTPS address configured through your reverse proxy.

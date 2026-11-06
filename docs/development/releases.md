@@ -1,6 +1,6 @@
 # Versioned releases
 
-v0.1.0 has a verified draft awaiting final publication review. The [release notes](../releases/v0.1.0.md) track operator acceptance separately from [release artifact verification](https://github.com/ArkGravity/optimus/actions/runs/42292847315/attempts/2) and publication. The selected source is `7102a3f`; the trusted recovery workflow definition is `ac605a5`. See the [release plan](../superpowers/plans/2026-11-05-v0.1.0-release.md) for exact CI, digest and attachment evidence.
+[v0.1.0 was published](https://github.com/ArkGravity/optimus/releases/tag/v0.1.0) on 2026-11-06 (UTC), after explicit operator approval of the verified draft. The [release notes](../releases/v0.1.0.md) track operator acceptance separately from completed [release artifact verification](https://github.com/ArkGravity/optimus/actions/runs/42292847315/attempts/2) and publication. The selected source is `7102a3f`; the trusted recovery workflow definition is `ac605a5`. See the [release plan](../superpowers/plans/2026-11-05-v0.1.0-release.md) for exact CI, digest and attachment evidence.
 
 ## Release contract
 
@@ -53,7 +53,7 @@ source needs a new version, not replacement of an existing tag or attachment.
 
 The initial version uses fresh head19: 31 business tables and Goose history. Old 00022/00023/00028 databases require actual recreation, including migration history; this is not an in-place upgrade. Stop writers and retain database backups with their matching vault key, config and application revision. Fresh Down operations drop data and are not rollback. See [recovery](../operations/recovery.md).
 
-Once published, these migrations are immutable. The next schema change appends 00020. Keep the API specification's version independent from the product release version; do not rewrite Swagger's API version solely to match a release tag.
+These released migrations are immutable. The next schema change appends 00020. Keep the API specification's version independent from the product release version; do not rewrite Swagger's API version solely to match a release tag.
 
 ## Verification record
 
