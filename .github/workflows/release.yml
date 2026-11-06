@@ -3,13 +3,18 @@ on:
   push:
     tags: ['v*']
   workflow_dispatch:
+    inputs:
+      version:
+        description: Existing stable annotated tag to release (main only)
+        required: false
+        type: string
 
 permissions:
   contents: read
   actions: read
 
 concurrency:
-  group: release-${{ github.ref }}
+  group: release-${{ inputs.version || github.ref_name }}
   cancel-in-progress: false
 
 env:
@@ -29,12 +34,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.sha }}
           fetch-depth: 0
-      - name: Validate annotated tag and exact main CI
+      - name: Select source and validate annotated tag and exact main CI
         id: validate
         env:
           GH_TOKEN: ${{ github.token }}
-        run: bash scripts/release/validate.sh
+          RELEASE_VERSION_INPUT: ${{ inputs.version }}
+        run: |
+          mkdir -p "$TMPDIR"
+          python3 -B scripts/release/select_source.py
 
   build:
     name: Test Linux ${{ matrix.arch }} artifacts
@@ -52,7 +61,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ needs.validate.outputs.commit }}
           fetch-depth: 0
+      - name: Initialize temporary directory
+        run: mkdir -p "$TMPDIR"
       - uses: docker/setup-buildx-action@v3
       - name: Build local single-platform release image
         uses: docker/build-push-action@v6
@@ -107,9 +119,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ needs.validate.outputs.commit }}
           fetch-depth: 0
       - name: Recheck eligibility before publication
-        run: bash scripts/release/validate.sh
+        run: |
+          mkdir -p "$TMPDIR"
+          GITHUB_REF_TYPE=tag GITHUB_REF_NAME="$VERSION" GITHUB_SHA="$COMMIT" bash scripts/release/validate.sh
       - uses: actions/download-artifact@v4
         with:
           name: release-amd64
@@ -146,9 +161,9 @@ jobs:
           username: ${{ env.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Publish the exact smoke-tested image bytes
-        run: bash scripts/release/publish.sh --version "$VERSION" --commit "$COMMIT" --input tmp/release/inputs --output tmp/release/dist --dockerhub "docker.io/$DOCKERHUB_NAMESPACE/optimus"
+        run: GITHUB_REF_TYPE=tag GITHUB_REF_NAME="$VERSION" GITHUB_SHA="$COMMIT" bash scripts/release/publish.sh --version "$VERSION" --commit "$COMMIT" --input tmp/release/inputs --output tmp/release/dist --dockerhub "docker.io/$DOCKERHUB_NAMESPACE/optimus"
       - name: Checksums and draft attachments
         run: |
           python3 -B scripts/release/package.py sums --version "$VERSION" --output tmp/release/dist
           python3 -B scripts/release/package.py verify --version "$VERSION" --output tmp/release/dist
-          python3 -B scripts/release/draft.py --version "$VERSION" --artifacts tmp/release/dist
+          GITHUB_REF_TYPE=tag GITHUB_REF_NAME="$VERSION" GITHUB_SHA="$COMMIT" python3 -B scripts/release/draft.py --version "$VERSION" --artifacts tmp/release/dist

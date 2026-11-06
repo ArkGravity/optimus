@@ -30,6 +30,25 @@ Each binary archive contains `optimus`, `configs/config.yaml`, `LICENSE` and `IN
 
 A tag, green source tests, operator report or draft release alone is not completed publication. If any job fails, preserve the failure evidence and fix it before proceeding; do not replace public artifacts in place.
 
+### Retry without moving a version tag
+
+Check out raw commit IDs rather than the Actions tag ref: checkout's fallback can
+replace an annotated tag with a lightweight runner-local ref. Never move the
+remote version tag to repair this. A workflow-definition repair can be reviewed
+and merged to main, then retried from main with an existing stable tag:
+
+```bash
+gh workflow run release.yml --ref main -f version=v0.1.0
+```
+
+Manual retries are main-only and must still resolve an annotated stable tag,
+select its exact source commit, verify main ancestry and require that commit's
+six successful main CI jobs. The workflow run's own main revision can be newer;
+artifact checkout, OCI revision metadata and binary verification use the selected
+tagged source, not that newer workflow revision. A missing, lightweight, arbitrary
+branch or invalid version is rejected. A defect requiring different product
+source needs a new version, not replacement of an existing tag or attachment.
+
 ## Database and recovery requirements
 
 The initial version uses fresh head19: 31 business tables and Goose history. Old 00022/00023/00028 databases require actual recreation, including migration history; this is not an in-place upgrade. Stop writers and retain database backups with their matching vault key, config and application revision. Fresh Down operations drop data and are not rollback. See [recovery](../operations/recovery.md).
