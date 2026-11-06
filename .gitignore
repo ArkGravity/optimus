@@ -25,6 +25,7 @@ Thumbs.db
 *.swo
 *~
 *.log
+__pycache__/
 
 # Go output and persistent database data
 /bin/

@@ -13,6 +13,45 @@ and `metadata = {"project": "optimus", "app_id": "optimus"}`; filter reads by
 
 ## Status
 
+Current delivery (2026-11-05): multi-cloud Assets and the fresh 19-file baseline
+were merged through PR #2 as `1bbb8fe`. Main CI `42080568763` passed all six
+jobs; both registries published `main-1bbb8fe` for linux/amd64 and linux/arm64
+with identical index digests. The operator has now confirmed real AWS, Aliyun
+and GCP resource acceptance of this image. This supersedes older pending
+real-provider statements below; it does not identify a new Production deployment.
+
+The active task is first-release preparation on `feat/release-v0.1.0`, based on
+`1bbb8fe`. The user approved the assessed implementation order and selected MIT.
+Read `docs/superpowers/plans/2026-11-05-v0.1.0-release.md` for the current tasks.
+Prepare user-facing English/Chinese documentation, tested Linux release images
+and native archives, versioned publication and a reviewable Release draft.
+Preserve the existing main-image CI. Release publication requires the exact
+tagged main commit's successful CI and actual artifact verification. Never
+replace a published version tag or attachment. Keep schema 19 unchanged; once
+released, append future migrations from 00020 rather than editing published SQL.
+Clean owned test containers, images, volumes and temporary outputs after checks;
+retain shared Colima Kubernetes resources. GitHub private vulnerability reporting
+is enabled and verified. Local Linux arm64 verification on 2026-11-06 passed
+the actual versioned image, extracted native archive and source-free Compose
+smoke, all 35 release helper tests (including 39 TERM/HUP/INT cleanup scenarios), five CI
+classifier tests, actionlint and shellcheck. Owned smoke containers and volumes
+were removed and absence verified. Additional actual Docker process-group
+TERM/HUP/INT interruption checks passed during Compose startup and the earlier
+created-before-ID-returned extraction window, with expected exit statuses and no
+owned container/volume/network leaks. A real detached-worker Docker test also
+verified removal of late creation after client failure, preserving failure status.
+Uncertain creation has bounded, ownership-labelled reconciliation and explicitly
+reports unresolved uncertainty instead of claiming cleanup. Release automation
+passed final specification and quality re-reviews with no remaining findings,
+including process-group cleanup, creation uncertainty and exact draft attachments.
+Independent documentation/CLI/archive composition review also passed. Preparation
+is ready for its PR and full CI. Exact tagged-main native amd64/arm64 jobs,
+versioned registry publication and the Release draft remain pending. No release
+tag or preparation commit/PR exists yet. The historical production acceptance
+record remains `d0016d0` / schema 00022 until the operator identifies a newer rollout.
+
+### Historical delivery and verification
+
 P0–P4 are the supported feature scope. On 2026-10-28 the operator confirmed
 that the production database was rebuilt, the latest image was deployed, and
 all P0–P4 functions passed production acceptance. Production functional

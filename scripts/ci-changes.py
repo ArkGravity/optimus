@@ -5,8 +5,8 @@ import subprocess
 
 def prose_only(paths):
     return bool(paths) and all(
-        path in ("README.md", "AGENTS.md")
-        or (path.startswith(("docs/", "scripts/")) and path.endswith(".md"))
+        path in ("README.md", "README_zh.md", "AGENTS.md")
+        or (path.startswith(("docs/", "scripts/")) and not path.startswith("docs/releases/") and path.endswith(".md"))
         for path in paths
     )
 
