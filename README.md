@@ -28,7 +28,7 @@ Assets navigation is **Cloud Accounts → VPCs → Firewalls → Instances → D
 
 Use Docker Compose for a bundled PostgreSQL deployment, or a Linux binary with an existing PostgreSQL 17 server. Go and Bun are only needed for development.
 
-**v0.1.0 is in release preparation.** The versioned downloads and images in the [installation guide](docs/installation.md) become available after release publication. See [Releases](https://github.com/ArkGravity/optimus/releases) for published versions; release artifact verification is still pending.
+**v0.1.0 has a verified Release draft awaiting final review.** Native Linux amd64/arm64 archives, the deployment package and both registries passed [artifact verification](https://github.com/ArkGravity/optimus/actions/runs/42292847315/attempts/2). Downloads in the [installation guide](docs/installation.md) become public after Release publication; see [Releases](https://github.com/ArkGravity/optimus/releases) for published versions.
 
 1. Follow the [Docker Compose or native installation guide](docs/installation.md). Generate independent database, JWT and vault secrets before starting a shared environment.
 2. Open `http://127.0.0.1:8080` locally, or the HTTPS address configured through your reverse proxy.
@@ -42,7 +42,7 @@ For cloud inventory, create a **Cloud Key** with AWS/Aliyun AK/SK or GCP Service
 
 For Kubernetes, store a kubeconfig in the vault and add a cluster referencing it. Kubeconfigs with `exec` or `auth-provider` plugins are rejected. Choose the cluster inside Kubernetes pages to begin inspection.
 
-The operator confirmed real AWS, Aliyun and GCP acceptance of `main-1bbb8fe` on 2026-11-05. This operator report is separate from automated verification of the upcoming versioned release artifacts. See the [release notes](docs/releases/v0.1.0.md).
+The operator confirmed real AWS, Aliyun and GCP acceptance of `main-1bbb8fe` on 2026-11-05. This operator report is separate from automated verification of the versioned release artifacts. See the [release notes](docs/releases/v0.1.0.md).
 
 ## Database baseline
 

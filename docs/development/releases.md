@@ -1,6 +1,6 @@
 # Versioned releases
 
-v0.1.0 is in preparation. The [release notes](../releases/v0.1.0.md) track operator acceptance separately from release verification and publication.
+v0.1.0 has a verified draft awaiting final publication review. The [release notes](../releases/v0.1.0.md) track operator acceptance separately from [release artifact verification](https://github.com/ArkGravity/optimus/actions/runs/42292847315/attempts/2) and publication. The selected source is `7102a3f`; the trusted recovery workflow definition is `ac605a5`. See the [release plan](../superpowers/plans/2026-11-05-v0.1.0-release.md) for exact CI, digest and attachment evidence.
 
 ## Release contract
 
