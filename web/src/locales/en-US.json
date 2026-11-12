@@ -1,10 +1,5 @@
 {
   "workspace": {
-    "tabs": "Open pages",
-    "actions": "Tab actions",
-    "close_others": "Close other tabs",
-    "close_all": "Close all tabs",
-    "select_menu": "Select a page from the sidebar to get started",
     "unsaved": "You have unsaved changes. Leave this page and discard them?"
   },
   "common": {
@@ -126,7 +121,6 @@
     "dashboard": "Dashboard",
     "system_group": "System Management",
     "credentials_group": "Credential Management",
-    "k8s_group": "Kubernetes",
     "system": {
       "users": "Users",
       "roles": "Roles",
@@ -164,6 +158,11 @@
     "observability_group": "Observability Center",
     "observability": {
       "overview": "Coming Soon"
+    },
+    "containers_group": "Container Management",
+    "containers": {
+      "kubernetes": "Kubernetes",
+      "docker": "Docker"
     }
   },
   "perm": {
@@ -234,6 +233,9 @@
       },
       "log": {
         "read": "Stream pod logs"
+      },
+      "storage": {
+        "read": "Read storage resources"
       }
     },
     "apps": {
@@ -273,7 +275,13 @@
       "k8s": "Kubernetes",
       "apps": "Application Management",
       "assets": "Assets",
-      "applications": "Applications"
+      "applications": "Applications",
+      "docker": "Docker"
+    },
+    "docker": {
+      "environment": {
+        "read": "View Docker environments"
+      }
     }
   },
   "assets": {
@@ -919,6 +927,9 @@
     },
     "list": {
       "truncated": "Showing first {limit}; narrow by namespace or search to see more."
+    },
+    "storage": {
+      "unsupported_kind": "Unsupported storage resource type"
     }
   },
   "apps": {
@@ -1060,6 +1071,29 @@
       "btn": {
         "submit": "Upgrade"
       }
+    }
+  },
+  "containers": {
+    "resources": "Kubernetes resources",
+    "resource_type": "Resource type",
+    "nodes": "Nodes",
+    "namespaces": "Namespaces",
+    "storage": "Storage",
+    "configs": "Configs",
+    "search": "Search name or namespace",
+    "docker_empty": "No Docker environments yet",
+    "fields": {
+      "name": "Name",
+      "namespace": "Namespace",
+      "capacity": "Capacity",
+      "access_modes": "Access modes",
+      "reclaim_policy": "Reclaim policy",
+      "status": "Status",
+      "claim": "Claim",
+      "storage_class": "Storage class",
+      "volume": "Volume",
+      "provisioner": "Provisioner",
+      "binding_mode": "Binding mode"
     }
   }
 }

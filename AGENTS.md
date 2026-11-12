@@ -13,6 +13,22 @@ and `metadata = {"project": "optimus", "app_id": "optimus"}`; filter reads by
 
 ## Status
 
+Container navigation work (2026-11-12): the user requested removal of global
+workspace tabs and a Container Management group with Kubernetes/Docker children.
+The active plan is `docs/superpowers/plans/2026-11-12-container-navigation.md`;
+the workspace contract is `docs/workspace-tabs.md`. Local implementation passed
+315 frontend tests, lint/typecheck/locale/build, affected Go race/database suites,
+normal/tagged lint, generated checks and fixture-backed Chrome layout checks.
+Storage adds read-only PV/PVC/StorageClass inventory; Docker is an empty page.
+Existing installations need updated-binary `optimus seed` for built-in menus and
+role grants; custom roles require explicit new Storage/Docker grants. The user
+accepted the feature and heading-removal follow-up, and explicitly authorized
+commit and direct v0.1.1 publication without waiting for or reviewing CI results
+or release artifacts. The communicated delivery is a source-only GitHub Release;
+the existing automated artifact-publishing gates remain unchanged. Track actual
+publication in `docs/superpowers/plans/2026-11-12-v0.1.1-release.md`.
+No application database update or deployment was performed.
+
 Current delivery (2026-11-06): **v0.1.0 is published** as
 [GitHub Release `437039266`](https://github.com/ArkGravity/optimus/releases/tag/v0.1.0)
 at `2026-11-06T21:35:24Z`, after the user explicitly reviewed the verified draft
@@ -460,7 +476,7 @@ Integration variants require Colima Docker and the `dbtest` build tag.
 - Custom surfaces use Ant Design theme tokens via `AppTheme`.
   `web/public/optimus-logo.png` is shared by the sidebar, login and favicon
   (see `docs/branding.md`). See `docs/workspace-tabs.md` before extending
-  workspace tab state retention: only approved filter/pagination/scroll state
+  page state retention: only approved filter/pagination/scroll state
   is retained in memory; streams, polling and sensitive content are never cached.
 
 ## UI and API Contracts

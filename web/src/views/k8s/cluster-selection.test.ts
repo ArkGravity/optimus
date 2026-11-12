@@ -2,6 +2,7 @@ import { flushPromises, shallowMount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { describe, expect, it, vi } from 'vitest'
 import { useK8sStore } from '@/stores/k8s'
+import { useAuthStore } from '@/stores/auth'
 import Workloads from './workloads/List.vue'
 import Network from './network/List.vue'
 import Config from './config/List.vue'
@@ -18,6 +19,7 @@ describe.each([
   it('stays on the page without a cluster and loads after an explicit selection', async () => {
     const pinia = createPinia()
     setActivePinia(pinia)
+    useAuthStore().setPermissions(['k8s:config:read', 'k8s:cluster_resource:read'])
     const list = vi.fn().mockResolvedValue({ items: [], truncated: false })
     const namespaceList = vi.fn().mockResolvedValue({ items: [{ name: 'default' }] })
     const wrapper = shallowMount(component, {
@@ -32,7 +34,7 @@ describe.each([
         },
         stubs: {
           'a-select': true, 'a-select-option': true, 'a-button': true,
-          'a-table': true, 'a-tabs': true, 'a-tab-pane': true,
+          'a-table': true, 'a-radio-group': true, 'a-radio-button': true, 'a-input': true,
           'a-descriptions': true, 'a-descriptions-item': true,
           'a-empty': true, 'a-tag': true, 'a-modal': true,
           'a-card': { template: '<div><slot name="title"/><slot/></div>' },

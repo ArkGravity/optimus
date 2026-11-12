@@ -1,37 +1,41 @@
 <template>
   <div class="workloads-page">
-    <a-card>
-      <template #title>
-        <a-space wrap>
-          <span>{{ $t('menu.k8s.workloads') }}</span>
-          <ClusterPicker />
-          <a-select
-            v-model:value="namespaceModel"
-            :placeholder="$t('k8s.cluster.namespace_all')"
-            style="width: 220px;"
-            allow-clear
-            @change="onNamespaceChange"
-          >
-            <a-select-option value="">{{ $t('k8s.cluster.namespace_all') }}</a-select-option>
-            <a-select-option
-              v-for="n in k8s.namespaces"
-              :key="n"
-              :value="n"
-            >
-              {{ n }}
-            </a-select-option>
-          </a-select>
-          <a-button
-            :loading="loading"
-            @click="load(currentKind)"
-          >
-            <template #icon>
-              <reload-outlined />
-            </template>
-            {{ $t('common.refresh') }}
-          </a-button>
-        </a-space>
+    <a-card class="resource-card">
+      <template #title>{{ $t('menu.k8s.workloads') }}</template>
+      <template #extra>
+        <a-radio-group v-model:value="currentKind" class="resource-kind" :aria-label="$t('containers.resource_type')">
+          <a-radio-button v-for="kind in KINDS" :key="kind" :value="kind">{{ $t(`k8s.workload.${KIND_SINGULAR[kind]}`) }}</a-radio-button>
+        </a-radio-group>
       </template>
+      <a-space class="resource-toolbar" wrap>
+        <ClusterPicker />
+        <a-select
+          v-model:value="namespaceModel"
+          :placeholder="$t('k8s.cluster.namespace_all')"
+          style="width: 220px;"
+          allow-clear
+          @change="onNamespaceChange"
+        >
+          <a-select-option value="">{{ $t('k8s.cluster.namespace_all') }}</a-select-option>
+          <a-select-option
+            v-for="n in k8s.namespaces"
+            :key="n"
+            :value="n"
+          >
+            {{ n }}
+          </a-select-option>
+        </a-select>
+        <a-input v-model:value="search" allow-clear :placeholder="$t('containers.search')" style="width: 240px" />
+        <a-button
+          :loading="loading"
+          @click="load(currentKind)"
+        >
+          <template #icon>
+            <reload-outlined />
+          </template>
+          {{ $t('common.refresh') }}
+        </a-button>
+      </a-space>
 
       <a-alert
         v-if="k8s.currentClusterId === null"
@@ -39,30 +43,20 @@
         type="info"
         show-icon
       />
-      <a-tabs v-else v-model:active-key="currentKind">
-        <a-tab-pane
-          v-for="k in KINDS"
-          :key="k"
-          :tab="$t(`k8s.workload.${KIND_SINGULAR[k]}`)"
-        >
-          <a-alert
-            v-if="truncated && currentKind === k"
-            :message="$t('k8s.list.truncated', { limit: 500 })"
-            type="info"
-            show-icon
-            style="margin-bottom: 8px;"
-          />
+      <template v-else>
+        <a-alert v-if="truncated" :message="$t('k8s.list.truncated', { limit: 500 })" type="info" show-icon style="margin-bottom: 8px" />
           <a-table
-            :columns="columnsByKind[k]"
-            :data-source="currentKind === k ? items : []"
-            :loading="loading && currentKind === k"
+            :key="currentKind"
+            :columns="columnsByKind[currentKind]"
+            :data-source="filteredItems"
+            :loading="loading"
             :row-key="rowKey"
-            :pagination="false"
+            :pagination="{ pageSize: 20, showSizeChanger: true }"
+            :scroll="{ x: 'max-content' }"
             :custom-row="customRow"
             size="small"
           />
-        </a-tab-pane>
-      </a-tabs>
+      </template>
     </a-card>
 
     <ResourceDrawer
@@ -206,14 +200,16 @@
 </template>
 
 <script setup lang="ts">
+import { useResourceScope, matchesResource } from '@/hooks/useResourceScope'
 import { usePageState } from '@/hooks/usePageState'
-import { computed, inject, onBeforeMount, ref, watch } from 'vue'
+import { computed, inject, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue'
 import ClusterPicker from '@/components/layout/ClusterPicker.vue'
 import { message } from 'ant-design-vue'
 import { ReloadOutlined } from '@ant-design/icons-vue'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
+import { usePermission } from '@/hooks/usePermission'
 import { useI18n } from '@/hooks/useI18n'
 import { useK8sStore } from '@/stores/k8s'
 import { isBizError } from '@/utils/http-error'
@@ -225,16 +221,9 @@ import type { PodSummary, WorkloadKind, WorkloadSummary } from '@/types/api'
 
 dayjs.extend(relativeTime)
 
-/**
- * Workloads page (Plan T22).
- *
- * Single page with 7 antd tabs (deployment/statefulset/daemonset/job/cronjob/
- * replicaset/pod). Each tab shares one `<a-table>`-per-pane bound to the
- * current kind. Without a cluster, the page shows a selection prompt.
- * Cluster, namespace and tab changes reload the resource list.
- */
 const k8s = useK8sStore()
 const { t } = useI18n()
+const { has } = usePermission()
 
 const workloadApi = inject<WorkloadApi>('workloadApi')!
 const k8sNsApi = inject<K8sNamespaceApi>('k8sNsApi')!
@@ -266,6 +255,9 @@ const currentKind = ref<WorkloadKind>('deployments')
 const items = ref<WorkloadSummary[]>([])
 const truncated = ref(false)
 const loading = ref(false)
+const search = ref('')
+const filteredItems = computed(() => items.value.filter(row => matchesResource(row, search.value)))
+const captureScope = useResourceScope(currentKind)
 
 const drawerOpen = ref(false)
 const drawerKind = ref<string>('')
@@ -304,17 +296,21 @@ const podContainers = computed<string[]>(() => {
 
 async function load(kind: WorkloadKind): Promise<void> {
   if (!k8s.currentClusterId) return
+  const isCurrent = captureScope()
   loading.value = true
+  items.value = []
+  truncated.value = false
   try {
     const res = await workloadApi.list(k8s.currentClusterId, kind, {
       namespace: k8s.currentNamespace || undefined,
     })
+    if (!isCurrent()) return
     items.value = res.items
     truncated.value = res.truncated
   } catch (e) {
-    message.error(isBizError(e) ? e.message : t('network.error'))
+    if (isCurrent()) message.error(isBizError(e) ? e.message : t('network.error'))
   } finally {
-    loading.value = false
+    if (isCurrent()) loading.value = false
   }
 }
 
@@ -327,17 +323,21 @@ function customRow(record: WorkloadSummary) {
 
 async function openDetail(record: WorkloadSummary): Promise<void> {
   if (!k8s.currentClusterId) return
-  drawerKind.value = KIND_SINGULAR[currentKind.value]
+  const isCurrent = captureScope('detail')
+  const kind = KIND_SINGULAR[currentKind.value]
   try {
-    drawerDetail.value = await workloadApi.get(
+    const detail = await workloadApi.get(
       k8s.currentClusterId,
       currentKind.value,
       record.namespace,
       record.name,
     )
+    if (!isCurrent()) return
+    drawerKind.value = kind
+    drawerDetail.value = detail
     drawerOpen.value = true
   } catch (e) {
-    message.error(isBizError(e) ? e.message : t('network.error'))
+    if (isCurrent()) message.error(isBizError(e) ? e.message : t('network.error'))
   }
 }
 
@@ -352,8 +352,15 @@ function formatAge(iso?: string): string {
   return dayjs(iso).fromNow(true)
 }
 
-usePageState({ currentKind })
+usePageState({ currentKind, search })
 
+watch([currentKind, () => k8s.currentNamespace, () => k8s.currentClusterId], () => {
+  drawerOpen.value = false
+  drawerDetail.value = null
+  items.value = []
+  loading.value = false
+  truncated.value = false
+}, { flush: 'sync' })
 watch(currentKind, kind => void load(kind))
 watch(
   () => k8s.currentClusterId,
@@ -362,27 +369,22 @@ watch(
     drawerDetail.value = null
     items.value = []
     if (id !== null) {
-      void k8s.ensureNamespaces(cid => k8sNsApi.list(cid))
+      if (has('k8s:cluster_resource:read')) void k8s.ensureNamespaces(cid => k8sNsApi.list(cid)).catch(() => undefined)
       void load(currentKind.value)
     }
   },
 )
 
+onBeforeUnmount(() => {
+  drawerOpen.value = false
+  drawerDetail.value = null
+})
+
 onBeforeMount(() => {
   if (k8s.currentClusterId === null) {
     return
   }
-  void k8s.ensureNamespaces(cid => k8sNsApi.list(cid))
+  if (has('k8s:cluster_resource:read')) void k8s.ensureNamespaces(cid => k8sNsApi.list(cid)).catch(() => undefined)
   void load(currentKind.value)
 })
 </script>
-
-<style scoped lang="scss">
-.workloads-page {
-  // Tighten the in-card tab body — antd's default padding wastes vertical
-  // space when the page is mostly a table.
-  :deep(.ant-tabs-content-holder) {
-    padding-top: 4px;
-  }
-}
-</style>

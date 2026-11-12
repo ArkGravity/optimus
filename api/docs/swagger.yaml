@@ -1385,6 +1385,46 @@ definitions:
           type: string
         type: array
     type: object
+  internal_modules_k8s_storage.ListResponse:
+    properties:
+      continue:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/internal_modules_k8s_storage.Summary'
+        type: array
+      truncated:
+        type: boolean
+    type: object
+  internal_modules_k8s_storage.Summary:
+    properties:
+      access_modes:
+        items:
+          type: string
+        type: array
+      age:
+        type: string
+      binding_mode:
+        type: string
+      capacity:
+        type: string
+      claim:
+        type: string
+      name:
+        type: string
+      namespace:
+        type: string
+      provisioner:
+        type: string
+      reclaim_policy:
+        type: string
+      status:
+        type: string
+      storage_class:
+        type: string
+      volume:
+        type: string
+    type: object
   internal_modules_menu.CreateRequest:
     properties:
       code:
@@ -3959,6 +3999,52 @@ paths:
       security:
       - BearerAuth: []
       summary: Ping cluster (apiserver health probe)
+      tags:
+      - k8s
+  /k8s/clusters/{id}/storage/{kind}:
+    get:
+      parameters:
+      - description: Cluster ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Resource kind
+        enum:
+        - persistentvolumes
+        - persistentvolumeclaims
+        - storageclasses
+        in: path
+        name: kind
+        required: true
+        type: string
+      - description: PVC namespace; empty lists all namespaces
+        in: query
+        name: namespace
+        type: string
+      - description: Page limit (default 500, maximum 2000)
+        in: query
+        name: limit
+        type: integer
+      - description: Kubernetes continuation token
+        in: query
+        name: continue
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_k8s_storage.ListResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: List read-only Kubernetes storage resources
       tags:
       - k8s
   /me:

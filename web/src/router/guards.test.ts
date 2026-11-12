@@ -8,6 +8,8 @@ import { useAuthStore } from '@/stores/auth'
 import { installGuards } from './guards'
 import { staticRoutes } from './static-routes'
 
+vi.mock('@/views/containers/Kubernetes.vue', () => ({ default: { template: '<div />' } }))
+
 const user = { id: 1, username: 'admin' } as MeUser
 const dashboardMenu: MeMenuNode = {
   id: 1,
@@ -33,6 +35,31 @@ function setup() {
 }
 
 describe('router guards', () => {
+  it.each([
+    ['/containers/kubernetes/nodes', 'k8s:cluster_resource:read'],
+    ['/containers/kubernetes/namespaces', 'k8s:cluster_resource:read'],
+    ['/containers/kubernetes/workloads', 'k8s:workload:read'],
+    ['/containers/kubernetes/storage', 'k8s:storage:read'],
+    ['/containers/kubernetes/configs', 'k8s:secret:read'],
+    ['/containers/kubernetes/configs', 'k8s:config:read'],
+  ])('checks direct resource URL %s with %s', async (path, permission) => {
+    for (const allowed of [false, true]) {
+      const { router, meApi, auth } = setup()
+      auth.setActiveTokens('access', 'refresh')
+      vi.mocked(meApi.permissions).mockResolvedValue(allowed ? [permission] : ['docker:environment:read'])
+      await router.push(path)
+      await router.isReady()
+      expect(router.currentRoute.value.path).toBe(allowed ? path : '/403')
+    }
+  })
+  it.each([false, true])('checks the old Kubernetes URL before compatibility navigation (allowed=%s)', async allowed => {
+    const { router, meApi, auth } = setup()
+    auth.setActiveTokens('access', 'refresh')
+    vi.mocked(meApi.permissions).mockResolvedValue(allowed ? ['k8s:workload:read'] : [])
+    await router.push('/k8s/workloads?kind=pods#list')
+    await router.isReady()
+    expect(router.currentRoute.value.fullPath).toBe(allowed ? '/containers/kubernetes/workloads?kind=pods#list' : '/403')
+  })
   it.each([
     { allowed: false, hasMenu: false },
     { allowed: false, hasMenu: true },

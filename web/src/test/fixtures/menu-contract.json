@@ -37,29 +37,14 @@
       "permission": "assets:sync:read"
     },
     {
-      "component": "k8s/clusters/List",
-      "path": "/k8s/clusters",
-      "permission": "k8s:cluster:read"
+      "component": "containers/Kubernetes",
+      "path": "/containers/kubernetes",
+      "permission": ""
     },
     {
-      "component": "k8s/workloads/List",
-      "path": "/k8s/workloads",
-      "permission": "k8s:workload:read"
-    },
-    {
-      "component": "k8s/network/List",
-      "path": "/k8s/network",
-      "permission": "k8s:network:read"
-    },
-    {
-      "component": "k8s/config/List",
-      "path": "/k8s/config",
-      "permission": "k8s:config:read"
-    },
-    {
-      "component": "k8s/cluster-resources/List",
-      "path": "/k8s/cluster-resources",
-      "permission": "k8s:cluster_resource:read"
+      "component": "containers/Docker",
+      "path": "/containers/docker",
+      "permission": "docker:environment:read"
     },
     {
       "component": "apps/applications/List",

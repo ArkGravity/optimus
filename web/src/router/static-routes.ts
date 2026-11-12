@@ -1,5 +1,6 @@
 import type { RouteLocationNormalized, RouteRecordRaw } from 'vue-router'
 import WorkspaceView from '@/components/layout/WorkspaceView.vue'
+import { kubernetesSections } from '@/views/containers/sections'
 
 // The root renders child pages in isolated sessions while App.vue selects
 // the surrounding layout. Sessions retain approved controls, not components.
@@ -39,8 +40,28 @@ export const staticRoutes: RouteRecordRaw[] = [
       {
         path: 'workspace',
         name: 'workspace',
-        component: () => import('@/components/layout/WorkspaceEmpty.vue')
+        redirect: '/dashboard'
       },
+      ...kubernetesSections.map(section => ({
+        path: `containers/kubernetes/${section.key}`,
+        name: `containers.kubernetes.${section.key}`,
+        component: () => import('@/views/containers/Kubernetes.vue'),
+        meta: { permissionsAny: [...section.permissions], kubernetesSection: section.key },
+      })),
+      ...[
+        ['clusters', 'clusters', 'k8s:cluster:read'],
+        ['nodes', 'nodes', 'k8s:cluster_resource:read'],
+        ['workloads', 'workloads', 'k8s:workload:read'],
+        ['network', 'network', 'k8s:network:read'],
+        ['config', 'configs', 'k8s:config:read'],
+        ['cluster-resources', 'namespaces', 'k8s:cluster_resource:read'],
+      ].map(([legacy, section, permission]) => ({
+        path: `k8s/${legacy}`,
+        name: `k8s.${legacy}.compatibility`,
+        component: () => import('@/views/containers/Kubernetes.vue'),
+        meta: { permission },
+        beforeEnter: (to: RouteLocationNormalized) => ({ path: `/containers/kubernetes/${section}`, query: to.query, hash: to.hash, replace: true }),
+      })),
       {
         path: 'profile',
         name: 'profile',

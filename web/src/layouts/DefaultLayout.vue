@@ -14,7 +14,6 @@
       <a-layout-header class="header">
         <AppHeader />
       </a-layout-header>
-      <WorkspaceTabs />
       <a-layout-content class="content">
         <router-view />
       </a-layout-content>
@@ -27,7 +26,6 @@ import { ref, watch } from 'vue'
 import { useAppStore } from '@/stores/app'
 import AppSidebar from '@/components/AppSidebar.vue'
 import AppHeader from '@/components/AppHeader.vue'
-import WorkspaceTabs from '@/components/layout/WorkspaceTabs.vue'
 
 const app = useAppStore()
 const collapsed = ref(app.sidebarCollapsed)

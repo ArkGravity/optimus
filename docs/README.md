@@ -7,6 +7,7 @@ Optimus ships its Go API and Vue web UI as one binary with PostgreSQL 17. Start 
 - [Product overview](../README.md) · [中文概览](../README_zh.md)
 - [Install](installation.md) · [中文安装指南](installation_zh.md)
 - [v0.1.0 release notes](releases/v0.1.0.md) — published 2026-11-06 (UTC)
+- [v0.1.1 release notes](releases/v0.1.1.md) — direct source release, 2026-11-12
 - [Published releases](https://github.com/ArkGravity/optimus/releases)
 
 ## User guides
@@ -39,7 +40,7 @@ Current main uses fresh head19 with 31 business tables plus Goose history. Histo
 
 - [API specification](api/swagger.json), generated with `make swag`, also served at `/swagger/index.html`.
 - [Permission catalog](permissions.md), generated from `internal/infra/permissions/codes.go` by `make dump-perms`.
-- [Workspace layout and menu tabs](workspace-tabs.md), including retained-state/lifecycle rules.
+- [Single-page workspace and container navigation](workspace-tabs.md), including retained-state/lifecycle rules.
 - [Brand mark](branding.md), identifying the shared logo.
 - [Menu contract fixture](../web/src/test/fixtures/menu-contract.json), reviewed test data for backend paths/components/permissions, not a runtime menu source. Update it with backend menu changes and run web tests.
 - [Standalone release installation template](releases/INSTALL.md), rendered with the selected version during packaging.

@@ -145,6 +145,9 @@ func bindPermsToRole(ctx context.Context, tx *gorm.DB, roleID uint64, perms []mo
 }
 
 func ensureInitialMenus(ctx context.Context, tx *gorm.DB) error {
+	if err := migrateContainerMenus(ctx, tx); err != nil {
+		return err
+	}
 	// Rename the reserved menu in place so references keep the original ID.
 	var legacy, canonical models.Menu
 	legacyErr := tx.WithContext(ctx).Where("code = ?", "assets.security_groups").First(&legacy).Error
@@ -180,12 +183,9 @@ func ensureInitialMenus(ctx context.Context, tx *gorm.DB) error {
 			{Code: "assets.databases", Name: "menu.assets.databases", Path: "/assets/databases", Component: "assets/databases/List", PermissionCode: sp("assets:resource:read")},
 			{Code: "assets.sync_runs", Name: "menu.assets.sync_runs", Path: "/assets/sync-runs", Component: "assets/sync-runs/List", PermissionCode: sp("assets:sync:read")},
 		}},
-		{Code: "k8s", Name: "menu.k8s_group", Path: "/k8s", Component: "", Icon: "cluster", Children: []spec{
-			{Code: "k8s.clusters", Name: "menu.k8s.clusters", Path: "/k8s/clusters", Component: "k8s/clusters/List", PermissionCode: sp("k8s:cluster:read")},
-			{Code: "k8s.workloads", Name: "menu.k8s.workloads", Path: "/k8s/workloads", Component: "k8s/workloads/List", PermissionCode: sp("k8s:workload:read")},
-			{Code: "k8s.network", Name: "menu.k8s.network", Path: "/k8s/network", Component: "k8s/network/List", PermissionCode: sp("k8s:network:read")},
-			{Code: "k8s.config", Name: "menu.k8s.config", Path: "/k8s/config", Component: "k8s/config/List", PermissionCode: sp("k8s:config:read")},
-			{Code: "k8s.cluster_resources", Name: "menu.k8s.cluster_resources", Path: "/k8s/cluster-resources", Component: "k8s/cluster-resources/List", PermissionCode: sp("k8s:cluster_resource:read")},
+		{Code: "containers", Name: "menu.containers_group", Path: "/containers", Component: "", Icon: "cluster", Children: []spec{
+			{Code: "containers.kubernetes", Name: "menu.containers.kubernetes", Path: "/containers/kubernetes", Component: "containers/Kubernetes"},
+			{Code: "containers.docker", Name: "menu.containers.docker", Path: "/containers/docker", Component: "containers/Docker", PermissionCode: sp("docker:environment:read")},
 		}},
 		// P3 apps: chart-repo CRUD + application lifecycle (helm-driven).
 		// Role grants are not edited here — the existing wildcard logic
@@ -257,6 +257,51 @@ func ensureInitialMenus(ctx context.Context, tx *gorm.DB) error {
 		return nil
 	}
 	return insert(nil, tree, 0)
+}
+
+// Preserve the original parent/list IDs and custom children during regrouping.
+// Reserved-code collisions fail inside the enclosing seed transaction.
+func migrateContainerMenus(ctx context.Context, tx *gorm.DB) error {
+	for _, rename := range [][2]string{{"k8s", "containers"}, {"k8s.clusters", "containers.kubernetes"}} {
+		var old models.Menu
+		err := tx.WithContext(ctx).Where("code = ?", rename[0]).First(&old).Error
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			continue
+		}
+		if err != nil {
+			return err
+		}
+		var count int64
+		if err := tx.WithContext(ctx).Unscoped().Model(&models.Menu{}).Where("code = ?", rename[1]).Count(&count).Error; err != nil {
+			return err
+		}
+		if count != 0 {
+			return errors.New("container menu collision: reconcile reserved menu codes before seeding")
+		}
+		if err := tx.WithContext(ctx).Model(&old).Update("code", rename[1]).Error; err != nil {
+			return err
+		}
+	}
+	var obsolete []models.Menu
+	if err := tx.WithContext(ctx).Where("code IN ?", []string{"k8s.workloads", "k8s.network", "k8s.config", "k8s.cluster_resources"}).Find(&obsolete).Error; err != nil {
+		return err
+	}
+	if len(obsolete) == 0 {
+		return nil
+	}
+	var destination models.Menu
+	if err := tx.WithContext(ctx).Where("code = ?", "containers.kubernetes").First(&destination).Error; err != nil {
+		return err
+	}
+	for _, menu := range obsolete {
+		if err := tx.WithContext(ctx).Model(&models.Menu{}).Where("parent_id = ?", menu.ID).Update("parent_id", destination.ID).Error; err != nil {
+			return err
+		}
+		if err := tx.WithContext(ctx).Delete(&menu).Error; err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func ensureAdminUser(ctx context.Context, tx *gorm.DB, opts Options) (string, error) {

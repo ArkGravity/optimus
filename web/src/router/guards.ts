@@ -45,6 +45,10 @@ export function installGuards(router: Router, meApi: MeApi) {
     if (perm && !usePermission().has(perm)) {
       return { name: 'forbidden' }
     }
+    const permissionsAny = to.meta?.permissionsAny as string[] | undefined
+    if (permissionsAny && !permissionsAny.some(permission => usePermission().has(permission))) {
+      return { name: 'forbidden' }
+    }
     return true
   })
 }

@@ -1,6 +1,7 @@
 import type { Component } from 'vue'
 import type { RouteRecordRaw, Router } from 'vue-router'
 import type { MeMenuNode } from '@/types/api'
+import { kubernetesPermissions } from '@/views/containers/sections'
 
 type Loader = () => Promise<unknown>
 
@@ -23,6 +24,7 @@ export function flattenMenusToRoutes(
             component: loader as unknown as Component,
             meta: {
               permission: n.permission_code ?? undefined,
+              ...(n.code === 'containers.kubernetes' ? { permissionsAny: kubernetesPermissions } : {}),
               icon: n.icon,
               menuName: n.name
             }

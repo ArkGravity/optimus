@@ -26,6 +26,7 @@ import { makeK8sNodeApi } from '@/api/k8s/node'
 import { makeK8sEventApi } from '@/api/k8s/event'
 import { makeWorkloadApi } from '@/api/k8s/workload'
 import { makeK8sNetworkApi } from '@/api/k8s/network'
+import { createK8sStorageApi } from '@/api/k8s/storage'
 import { makeConfigMapApi } from '@/api/k8s/configmap'
 import { makeSecretApi } from '@/api/k8s/secret'
 import { makeYamlApi } from '@/api/k8s/yaml'
@@ -75,6 +76,7 @@ app.provide('k8sNodeApi', makeK8sNodeApi(client))
 app.provide('k8sEventApi', makeK8sEventApi(client))
 app.provide('workloadApi', makeWorkloadApi(client))
 app.provide('k8sNetworkApi', makeK8sNetworkApi(client))
+app.provide('k8sStorageApi', createK8sStorageApi(client))
 app.provide('configMapApi', makeConfigMapApi(client))
 app.provide('secretApi', makeSecretApi(client))
 app.provide('yamlApi', makeYamlApi(client))

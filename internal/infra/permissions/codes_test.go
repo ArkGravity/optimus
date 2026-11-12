@@ -95,6 +95,7 @@ func TestRegistry_K8sCodes(t *testing.T) {
 		"k8s:secret:reveal",
 		"k8s:cluster_resource:read",
 		"k8s:log:read",
+		"k8s:storage:read",
 	}
 	got := map[string]bool{}
 	for _, p := range All {

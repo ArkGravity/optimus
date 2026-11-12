@@ -1,6 +1,7 @@
 export const permissionCategoryOrder = [
   'assets',
   'k8s',
+  'docker',
   'apps',
   'credentials',
   'system'

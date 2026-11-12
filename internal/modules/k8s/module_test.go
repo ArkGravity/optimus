@@ -20,7 +20,7 @@ import (
 	"github.com/ArkGravity/optimus/internal/modules/rbac"
 )
 
-// TestMountRoutes_Snapshot guards the 21-route surface of /api/v1/k8s
+// TestMountRoutes_Snapshot guards the read-only resource surface of /api/v1/k8s
 // against silent drift — adding, renaming, or removing a route here forces
 // the FE / docs / permission story to be re-checked.
 //
@@ -61,6 +61,7 @@ func TestMountRoutes_Snapshot(t *testing.T) {
 		"GET /api/v1/k8s/clusters/:id/secrets",
 		"GET /api/v1/k8s/clusters/:id/secrets/:ns/:name",
 		"GET /api/v1/k8s/clusters/:id/secrets/:ns/:name/data",
+		"GET /api/v1/k8s/clusters/:id/storage/:kind",
 		"GET /api/v1/k8s/clusters/:id/workloads/:kind",
 		"GET /api/v1/k8s/clusters/:id/workloads/:kind/:ns/:name",
 		"GET /api/v1/k8s/clusters/:id/yaml",

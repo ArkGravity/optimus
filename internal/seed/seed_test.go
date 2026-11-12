@@ -43,6 +43,85 @@ func TestRun_IsIdempotent(t *testing.T) {
 	require.Equal(t, int64(3), roles, "expected admin + viewer + editor builtin roles")
 }
 
+func TestRun_ContainerMenusUpgradePreservesIDsCustomChildrenAndGrants(t *testing.T) {
+	gdb, teardown := db.StartTestPostgres(t, filepath.Join("..", "..", "migrations"))
+	defer teardown()
+	ctx := context.Background()
+	_, err := permissions.Register(ctx, gdb, permissions.All)
+	require.NoError(t, err)
+	opts := seed.Options{AdminUsername: "admin", AdminEmail: "admin@example.com", BcryptCost: 4}
+	_, err = seed.Run(ctx, gdb, opts)
+	require.NoError(t, err)
+	var parent, product models.Menu
+	require.NoError(t, gdb.Where("code = ?", "containers").First(&parent).Error)
+	require.NoError(t, gdb.Where("code = ?", "containers.kubernetes").First(&product).Error)
+	require.NoError(t, gdb.Model(&parent).Updates(map[string]any{"code": "k8s", "name": "menu.k8s_group", "path": "/k8s"}).Error)
+	require.NoError(t, gdb.Model(&product).Updates(map[string]any{"code": "k8s.clusters", "path": "/k8s/clusters", "component": "k8s/clusters/List", "permission_code": "k8s:cluster:read"}).Error)
+	var custom []models.Menu
+	for _, code := range []string{"k8s.workloads", "k8s.network", "k8s.config", "k8s.cluster_resources"} {
+		old := models.Menu{Code: code, Name: code, ParentID: &parent.ID}
+		require.NoError(t, gdb.Create(&old).Error)
+		child := models.Menu{Code: "custom." + code, Name: "custom", ParentID: &old.ID}
+		require.NoError(t, gdb.Create(&child).Error)
+		custom = append(custom, child)
+	}
+	var grantsBefore []models.RolePermission
+	customRole := models.Role{Code: "custom_container_reader", Name: "Custom container reader"}
+	require.NoError(t, gdb.Create(&customRole).Error)
+	var networkPermission models.Permission
+	require.NoError(t, gdb.Where("code = ?", "k8s:network:read").First(&networkPermission).Error)
+	customGrant := models.RolePermission{RoleID: customRole.ID, PermissionID: networkPermission.ID}
+	require.NoError(t, gdb.Create(&customGrant).Error)
+	require.NoError(t, gdb.Select("role_id, permission_id").Order("role_id, permission_id").Find(&grantsBefore).Error)
+	for range 2 {
+		_, err = seed.Run(ctx, gdb, opts)
+		require.NoError(t, err)
+	}
+	var currentParent, currentProduct models.Menu
+	require.NoError(t, gdb.Where("code = ?", "containers").First(&currentParent).Error)
+	require.NoError(t, gdb.Where("code = ?", "containers.kubernetes").First(&currentProduct).Error)
+	require.Equal(t, parent.ID, currentParent.ID)
+	require.Equal(t, product.ID, currentProduct.ID)
+	require.Equal(t, "/containers/kubernetes", currentProduct.Path)
+	require.Nil(t, currentProduct.PermissionCode)
+	for _, child := range custom {
+		var got models.Menu
+		require.NoError(t, gdb.First(&got, child.ID).Error)
+		require.Equal(t, &product.ID, got.ParentID)
+	}
+	var oldCount int64
+	require.NoError(t, gdb.Model(&models.Menu{}).Where("code LIKE ?", "k8s%").Count(&oldCount).Error)
+	require.Zero(t, oldCount)
+	var grantsAfter []models.RolePermission
+	require.NoError(t, gdb.Select("role_id, permission_id").Order("role_id, permission_id").Find(&grantsAfter).Error)
+	require.Equal(t, grantsBefore, grantsAfter)
+	var retainedGrant models.RolePermission
+	require.NoError(t, gdb.Where("role_id = ? AND permission_id = ?", customRole.ID, networkPermission.ID).First(&retainedGrant).Error)
+	require.True(t, customGrant.CreatedAt.Equal(retainedGrant.CreatedAt), "custom grants must not be rewritten")
+}
+
+func TestRun_ContainerMenuCollisionRollsBack(t *testing.T) {
+	gdb, teardown := db.StartTestPostgres(t, filepath.Join("..", "..", "migrations"))
+	defer teardown()
+	ctx := context.Background()
+	_, err := permissions.Register(ctx, gdb, permissions.All)
+	require.NoError(t, err)
+	oldParent := models.Menu{Code: "k8s", Name: "old"}
+	require.NoError(t, gdb.Create(&oldParent).Error)
+	oldProduct := models.Menu{Code: "k8s.clusters", Name: "old", ParentID: &oldParent.ID}
+	require.NoError(t, gdb.Create(&oldProduct).Error)
+	collision := models.Menu{Code: "containers.kubernetes", Name: "operator-owned"}
+	require.NoError(t, gdb.Create(&collision).Error)
+	_, err = seed.Run(ctx, gdb, seed.Options{AdminUsername: "admin", BcryptCost: 4})
+	require.ErrorContains(t, err, "container menu collision")
+	var after models.Menu
+	require.NoError(t, gdb.First(&after, oldParent.ID).Error)
+	require.Equal(t, "k8s", after.Code, "parent rename must roll back with child collision")
+	var roles int64
+	require.NoError(t, gdb.Model(&models.Role{}).Count(&roles).Error)
+	require.Zero(t, roles, "permission and role initialization is atomic with menus")
+}
+
 func TestRun_AdminRoleHasAllPermissions(t *testing.T) {
 	gdb, teardown := db.StartTestPostgres(t, filepath.Join("..", "..", "migrations"))
 	defer teardown()
@@ -187,7 +266,7 @@ func TestRun_SeedsInitialMenuTree(t *testing.T) {
 		"assets", "assets.cloud_accounts", "assets.vpcs", "assets.firewalls", "assets.instances", "assets.databases", "assets.sync_runs",
 		"system", "system.users", "system.roles", "system.permissions", "system.menus", "system.audit_logs",
 		"credentials", "credentials.ssh_keys", "credentials.kubeconfigs", "credentials.cloud_keys",
-		"k8s", "k8s.clusters", "k8s.workloads", "k8s.network", "k8s.config", "k8s.cluster_resources",
+		"containers", "containers.kubernetes", "containers.docker",
 		"apps", "apps.applications", "apps.chart_repos",
 		"observability", "observability.overview",
 	}
@@ -214,7 +293,7 @@ func TestRun_SeedsInitialMenuTree(t *testing.T) {
 		topLevelCodes = append(topLevelCodes, menu.Code)
 	}
 	require.Equal(t,
-		[]string{"dashboard", "assets", "k8s", "apps", "observability", "credentials", "system"},
+		[]string{"dashboard", "assets", "containers", "apps", "observability", "credentials", "system"},
 		topLevelCodes,
 	)
 
@@ -236,12 +315,12 @@ func TestRun_SeedsInitialMenuTree(t *testing.T) {
 	require.Equal(t, "observability/overview/Index", children[0].Component)
 	require.Nil(t, children[0].PermissionCode)
 
-	// Parent linkage: k8s.* children must have parent_id = k8s.id.
+	// Parent linkage: the container group contains Kubernetes and Docker.
 	var k8sParent models.Menu
-	require.NoError(t, gdb.Where("code = ?", "k8s").First(&k8sParent).Error)
+	require.NoError(t, gdb.Where("code = ?", "containers").First(&k8sParent).Error)
 	var k8sChildren int64
 	gdb.Model(&models.Menu{}).Where("parent_id = ?", k8sParent.ID).Count(&k8sChildren)
-	require.Equal(t, int64(5), k8sChildren)
+	require.Equal(t, int64(2), k8sChildren)
 
 	// Parent linkage: apps.* children must have parent_id = apps.id (P3).
 	var appsParent models.Menu

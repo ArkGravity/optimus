@@ -1,37 +1,42 @@
 <template>
   <div class="config-page">
-    <a-card>
-      <template #title>
-        <a-space wrap>
-          <span>{{ $t('menu.k8s.config') }}</span>
-          <ClusterPicker />
-          <a-select
-            v-model:value="namespaceModel"
-            :placeholder="$t('k8s.cluster.namespace_all')"
-            style="width: 220px;"
-            allow-clear
-            @change="onNamespaceChange"
-          >
-            <a-select-option value="">{{ $t('k8s.cluster.namespace_all') }}</a-select-option>
-            <a-select-option
-              v-for="n in k8s.namespaces"
-              :key="n"
-              :value="n"
-            >
-              {{ n }}
-            </a-select-option>
-          </a-select>
-          <a-button
-            :loading="loading"
-            @click="load(currentKind)"
-          >
-            <template #icon>
-              <reload-outlined />
-            </template>
-            {{ $t('common.refresh') }}
-          </a-button>
-        </a-space>
+    <a-card class="resource-card">
+      <template #title>{{ $t('containers.configs') }}</template>
+      <template #extra>
+        <a-radio-group v-model:value="currentKind" class="resource-kind" :aria-label="$t('containers.resource_type')">
+          <a-radio-button v-if="has('k8s:config:read')" value="configmaps">ConfigMap</a-radio-button>
+          <a-radio-button v-if="has('k8s:secret:read')" value="secrets">Secrets</a-radio-button>
+        </a-radio-group>
       </template>
+      <a-space class="resource-toolbar" wrap>
+        <ClusterPicker />
+        <a-select
+          v-model:value="namespaceModel"
+          :placeholder="$t('k8s.cluster.namespace_all')"
+          style="width: 220px;"
+          allow-clear
+          @change="onNamespaceChange"
+        >
+          <a-select-option value="">{{ $t('k8s.cluster.namespace_all') }}</a-select-option>
+          <a-select-option
+            v-for="n in k8s.namespaces"
+            :key="n"
+            :value="n"
+          >
+            {{ n }}
+          </a-select-option>
+        </a-select>
+        <a-input v-model:value="search" allow-clear :placeholder="$t('containers.search')" style="width: 240px" />
+        <a-button
+          :loading="loading"
+          @click="load(currentKind)"
+        >
+          <template #icon>
+            <reload-outlined />
+          </template>
+          {{ $t('common.refresh') }}
+        </a-button>
+      </a-space>
 
       <a-alert
         v-if="k8s.currentClusterId === null"
@@ -39,39 +44,27 @@
         type="info"
         show-icon
       />
-      <a-tabs v-else v-model:active-key="currentKind">
-        <a-tab-pane key="configmaps" :tab="$t('k8s.config.configmap')">
-          <a-alert
-            v-if="truncated && currentKind === 'configmaps'"
-            :message="$t('k8s.list.truncated', { limit: 500 })"
-            type="info"
-            show-icon
-            style="margin-bottom: 8px;"
-          />
+      <template v-else>
+        <a-alert v-if="truncated" :message="$t('k8s.list.truncated', { limit: 500 })" type="info" show-icon style="margin-bottom: 8px" />
           <a-table
+            v-if="currentKind === 'configmaps'"
             :columns="configmapColumns"
-            :data-source="currentKind === 'configmaps' ? (items as ConfigMapSummary[]) : []"
-            :loading="loading && currentKind === 'configmaps'"
+            :data-source="filteredItems"
+            :loading="loading"
             :row-key="rowKey"
-            :pagination="false"
+            :pagination="{ pageSize: 20, showSizeChanger: true }"
+            :scroll="{ x: 'max-content' }"
             :custom-row="customRow"
             size="small"
           />
-        </a-tab-pane>
-        <a-tab-pane key="secrets" :tab="$t('k8s.config.secret')">
-          <a-alert
-            v-if="truncated && currentKind === 'secrets'"
-            :message="$t('k8s.list.truncated', { limit: 500 })"
-            type="info"
-            show-icon
-            style="margin-bottom: 8px;"
-          />
           <a-table
+            v-if="currentKind === 'secrets'"
             :columns="secretColumns"
-            :data-source="currentKind === 'secrets' ? (items as SecretSummary[]) : []"
-            :loading="loading && currentKind === 'secrets'"
+            :data-source="filteredItems"
+            :loading="loading"
             :row-key="rowKey"
-            :pagination="false"
+            :pagination="{ pageSize: 20, showSizeChanger: true }"
+            :scroll="{ x: 'max-content' }"
             :custom-row="customRow"
             size="small"
           >
@@ -88,8 +81,7 @@
               </template>
             </template>
           </a-table>
-        </a-tab-pane>
-      </a-tabs>
+      </template>
     </a-card>
 
     <ResourceDrawer
@@ -209,14 +201,16 @@
 </template>
 
 <script setup lang="ts">
+import { useResourceScope, matchesResource } from '@/hooks/useResourceScope'
 import { usePageState } from '@/hooks/usePageState'
-import { computed, inject, onBeforeMount, ref, watch } from 'vue'
+import { computed, inject, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue'
 import ClusterPicker from '@/components/layout/ClusterPicker.vue'
 import { message } from 'ant-design-vue'
 import { ReloadOutlined } from '@ant-design/icons-vue'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
+import { usePermission } from '@/hooks/usePermission'
 import { useI18n } from '@/hooks/useI18n'
 import { useK8sStore } from '@/stores/k8s'
 import { isBizError } from '@/utils/http-error'
@@ -234,12 +228,6 @@ import type {
 
 dayjs.extend(relativeTime)
 
-/**
- * Config + Secret page (Plan T23). Two tabs. Both kinds are namespaced. The
- * Secret tab gets an extra perm-gated Reveal action which decodes data into a
- * separate modal — the YAML tab (already in ResourceDrawer) keeps showing the
- * raw base64 with its own warning banner.
- */
 type ConfigKind = 'configmaps' | 'secrets'
 
 const k8s = useK8sStore()
@@ -249,10 +237,14 @@ const configMapApi = inject<ConfigMapApi>('configMapApi')!
 const secretApi = inject<SecretApi>('secretApi')!
 const k8sNsApi = inject<K8sNamespaceApi>('k8sNsApi')!
 
-const currentKind = ref<ConfigKind>('configmaps')
+const { has, set: permissionSet } = usePermission()
+const currentKind = ref<ConfigKind>(has('k8s:config:read') ? 'configmaps' : 'secrets')
 const items = ref<ConfigMapSummary[] | SecretSummary[]>([])
 const truncated = ref(false)
 const loading = ref(false)
+const search = ref('')
+const filteredItems = computed(() => items.value.filter(row => matchesResource(row, search.value)))
+const captureScope = useResourceScope(currentKind)
 
 const drawerOpen = ref(false)
 const drawerKind = ref<string>('')
@@ -292,26 +284,31 @@ function asSecret(detail: unknown): SecretDetail | undefined {
 }
 
 async function load(kind: ConfigKind): Promise<void> {
-  if (!k8s.currentClusterId) return
+  if (!k8s.currentClusterId || !has(kind === 'configmaps' ? 'k8s:config:read' : 'k8s:secret:read')) return
+  const isCurrent = captureScope()
   loading.value = true
+  items.value = []
+  truncated.value = false
   try {
     if (kind === 'configmaps') {
       const res = await configMapApi.list(k8s.currentClusterId, {
         namespace: k8s.currentNamespace || undefined,
       })
+      if (!isCurrent()) return
       items.value = res.items
       truncated.value = res.truncated
     } else {
       const res = await secretApi.list(k8s.currentClusterId, {
         namespace: k8s.currentNamespace || undefined,
       })
+      if (!isCurrent()) return
       items.value = res.items
       truncated.value = res.truncated
     }
   } catch (e) {
-    message.error(isBizError(e) ? e.message : t('network.error'))
+    if (isCurrent()) message.error(isBizError(e) ? e.message : t('network.error'))
   } finally {
-    loading.value = false
+    if (isCurrent()) loading.value = false
   }
 }
 
@@ -324,29 +321,35 @@ function customRow(record: ConfigMapSummary | SecretSummary) {
 
 async function openDetail(record: ConfigMapSummary | SecretSummary): Promise<void> {
   if (!k8s.currentClusterId) return
+  const isCurrent = captureScope('detail')
+  const kind = currentKind.value
+  let detail: ConfigMapDetail | SecretDetail
   try {
     if (currentKind.value === 'configmaps') {
-      drawerKind.value = 'configmap'
-      drawerDetail.value = await configMapApi.get(k8s.currentClusterId, record.namespace, record.name)
+      detail = await configMapApi.get(k8s.currentClusterId, record.namespace, record.name)
     } else {
-      drawerKind.value = 'secret'
-      drawerDetail.value = await secretApi.get(k8s.currentClusterId, record.namespace, record.name)
+      detail = await secretApi.get(k8s.currentClusterId, record.namespace, record.name)
     }
+    if (!isCurrent()) return
+    drawerKind.value = kind === 'configmaps' ? 'configmap' : 'secret'
+    drawerDetail.value = detail
     drawerOpen.value = true
   } catch (e) {
-    message.error(isBizError(e) ? e.message : t('network.error'))
+    if (isCurrent()) message.error(isBizError(e) ? e.message : t('network.error'))
   }
 }
 
 async function reveal(record: SecretSummary): Promise<void> {
   if (!k8s.currentClusterId) return
+  const isCurrent = captureScope('reveal')
   try {
     const res = await secretApi.data(k8s.currentClusterId, record.namespace, record.name)
+    if (!isCurrent()) return
     revealedRows.value = Object.entries(res.data).map(([k, v]) => ({ key: k, value: v }))
     revealingName.value = record.name
     revealOpen.value = true
   } catch (e: unknown) {
-    message.error(isBizError(e) ? e.message : t('network.error'))
+    if (isCurrent()) message.error(isBizError(e) ? e.message : t('network.error'))
   }
 }
 
@@ -359,8 +362,29 @@ function formatAge(iso?: string): string {
   return dayjs(iso).fromNow(true)
 }
 
-usePageState({ currentKind })
+usePageState({ currentKind, search })
+if (!has(currentKind.value === 'configmaps' ? 'k8s:config:read' : 'k8s:secret:read')) {
+  currentKind.value = has('k8s:config:read') ? 'configmaps' : 'secrets'
+}
 
+watch([currentKind, () => k8s.currentNamespace, () => k8s.currentClusterId], () => {
+  drawerOpen.value = false
+  drawerDetail.value = null
+  items.value = []
+  loading.value = false
+  truncated.value = false
+}, { flush: 'sync' })
+watch([currentKind, () => k8s.currentClusterId, () => k8s.currentNamespace], () => {
+  revealOpen.value = false
+  revealedRows.value = []
+  revealingName.value = ''
+}, { flush: 'sync' })
+watch(revealOpen, open => { if (!open) revealedRows.value = [] })
+watch(permissionSet, () => {
+  if (!has(currentKind.value === 'configmaps' ? 'k8s:config:read' : 'k8s:secret:read')) {
+    currentKind.value = has('k8s:config:read') ? 'configmaps' : 'secrets'
+  }
+})
 watch(currentKind, kind => void load(kind))
 watch(
   () => k8s.currentClusterId,
@@ -369,25 +393,22 @@ watch(
     drawerDetail.value = null
     items.value = []
     if (id !== null) {
-      void k8s.ensureNamespaces(cid => k8sNsApi.list(cid))
+      if (has('k8s:cluster_resource:read')) void k8s.ensureNamespaces(cid => k8sNsApi.list(cid)).catch(() => undefined)
       void load(currentKind.value)
     }
   },
 )
 
+onBeforeUnmount(() => {
+  drawerOpen.value = false
+  drawerDetail.value = null
+})
+
 onBeforeMount(() => {
   if (k8s.currentClusterId === null) {
     return
   }
-  void k8s.ensureNamespaces(cid => k8sNsApi.list(cid))
+  if (has('k8s:cluster_resource:read')) void k8s.ensureNamespaces(cid => k8sNsApi.list(cid)).catch(() => undefined)
   void load(currentKind.value)
 })
 </script>
-
-<style scoped lang="scss">
-.config-page {
-  :deep(.ant-tabs-content-holder) {
-    padding-top: 4px;
-  }
-}
-</style>

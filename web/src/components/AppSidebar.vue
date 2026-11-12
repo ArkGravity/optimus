@@ -68,6 +68,8 @@ import { DownOutlined, RightOutlined } from '@ant-design/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useMenuStore } from '@/stores/menu'
 import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
+import { kubernetesPermissions } from '@/views/containers/sections'
 import { useI18n } from '@/hooks/useI18n'
 import type { MeMenuNode } from '@/types/api'
 import type { ItemType } from 'ant-design-vue'
@@ -75,6 +77,7 @@ import type { ItemType } from 'ant-design-vue'
 defineProps<{ collapsed: boolean }>()
 defineEmits<{ toggle: [] }>()
 const app = useAppStore()
+const auth = useAuthStore()
 // The light menu variant inherits the global dark algorithm's neutral tokens;
 // Ant Design's dark menu variant uses a separate, fixed navy palette.
 const menu = useMenuStore()
@@ -83,10 +86,16 @@ const router = useRouter()
 const { t } = useI18n()
 
 function buildItems(nodes: MeMenuNode[]): ItemType[] {
-  return nodes.map(n => {
+  return nodes.flatMap(n => {
+    if (n.code === 'containers.kubernetes' && !kubernetesPermissions.some(permission => auth.permissions.includes(permission))) return []
+    if (n.component && n.permission_code && !auth.permissions.includes(n.permission_code)) return []
     const base = { key: n.code, label: t(n.name), title: t(n.name) }
-    if (n.children?.length) return { ...base, children: buildItems(n.children) } as ItemType
-    return base as ItemType
+    if (n.children?.length) {
+      const children = buildItems(n.children)
+      if (!children.length && !n.component) return []
+      return [{ ...base, children } as ItemType]
+    }
+    return [base as ItemType]
   })
 }
 

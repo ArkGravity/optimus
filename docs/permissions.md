@@ -44,6 +44,12 @@ Auto-generated from `internal/infra/permissions/codes.go`. Run `make dump-perms`
 | `credentials:ssh_key:use` | `perm.credentials.ssh_key.use` | Use SSH credentials |
 | `credentials:ssh_key:write` | `perm.credentials.ssh_key.write` | Create/update SSH credentials |
 
+## docker
+
+| Code | Name (i18n) | Description |
+|---|---|---|
+| `docker:environment:read` | `perm.docker.environment.read` | Read Docker management placeholder |
+
 ## k8s
 
 | Code | Name (i18n) | Description |
@@ -56,6 +62,7 @@ Auto-generated from `internal/infra/permissions/codes.go`. Run `make dump-perms`
 | `k8s:network:read` | `perm.k8s.network.read` | Read services and ingresses |
 | `k8s:secret:read` | `perm.k8s.secret.read` | Read secret metadata and keys |
 | `k8s:secret:reveal` | `perm.k8s.secret.reveal` | Decode secret data values |
+| `k8s:storage:read` | `perm.k8s.storage.read` | Read persistent volumes, claims and storage classes |
 | `k8s:workload:read` | `perm.k8s.workload.read` | Read workload resources |
 
 ## system

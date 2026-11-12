@@ -1,41 +1,46 @@
 <template>
   <div class="cluster-resources-page">
-    <a-card>
-      <template #title>
-        <a-space wrap>
-          <span>{{ $t('menu.k8s.cluster_resources') }}</span>
-          <ClusterPicker />
-          <!-- Namespace selector is only meaningful on the Events tab; for
-               Namespace + Node it would be confusing (a namespace can't filter
-               a list of namespaces). -->
-          <a-select
-            v-if="currentKind === 'events'"
-            v-model:value="namespaceModel"
-            :placeholder="$t('k8s.cluster.namespace_all')"
-            style="width: 220px;"
-            allow-clear
-            @change="onNamespaceChange"
-          >
-            <a-select-option value="">{{ $t('k8s.cluster.namespace_all') }}</a-select-option>
-            <a-select-option
-              v-for="n in k8s.namespaces"
-              :key="n"
-              :value="n"
-            >
-              {{ n }}
-            </a-select-option>
-          </a-select>
-          <a-button
-            :loading="loading"
-            @click="load(currentKind)"
-          >
-            <template #icon>
-              <reload-outlined />
-            </template>
-            {{ $t('common.refresh') }}
-          </a-button>
-        </a-space>
+    <a-card class="resource-card">
+      <template #title>{{ $t(section === 'nodes' ? 'containers.nodes' : 'containers.namespaces') }}</template>
+      <template #extra>
+        <a-radio-group v-if="section !== 'nodes'" v-model:value="currentKind" class="resource-kind" :aria-label="$t('containers.resource_type')">
+          <a-radio-button value="namespaces">{{ $t('containers.namespaces') }}</a-radio-button>
+          <a-radio-button value="events">{{ $t('k8s.cluster_resource.event') }}</a-radio-button>
+        </a-radio-group>
       </template>
+      <a-space class="resource-toolbar" wrap>
+        <ClusterPicker />
+        <!-- Namespace selector is only meaningful on the Events tab; for
+             Namespace + Node it would be confusing (a namespace can't filter
+             a list of namespaces). -->
+        <a-select
+          v-if="currentKind === 'events'"
+          v-model:value="namespaceModel"
+          :placeholder="$t('k8s.cluster.namespace_all')"
+          style="width: 220px;"
+          allow-clear
+          @change="onNamespaceChange"
+        >
+          <a-select-option value="">{{ $t('k8s.cluster.namespace_all') }}</a-select-option>
+          <a-select-option
+            v-for="n in k8s.namespaces"
+            :key="n"
+            :value="n"
+          >
+            {{ n }}
+          </a-select-option>
+        </a-select>
+        <a-input v-model:value="search" allow-clear :placeholder="$t('containers.search')" style="width: 240px" />
+        <a-button
+          :loading="loading"
+          @click="load(currentKind)"
+        >
+          <template #icon>
+            <reload-outlined />
+          </template>
+          {{ $t('common.refresh') }}
+        </a-button>
+      </a-space>
 
       <a-alert
         v-if="k8s.currentClusterId === null"
@@ -43,61 +48,41 @@
         type="info"
         show-icon
       />
-      <a-tabs v-else v-model:active-key="currentKind">
-        <a-tab-pane key="namespaces" :tab="$t('k8s.cluster_resource.namespace')">
-          <a-alert
-            v-if="truncated && currentKind === 'namespaces'"
-            :message="$t('k8s.list.truncated', { limit: 500 })"
-            type="info"
-            show-icon
-            style="margin-bottom: 8px;"
-          />
+      <template v-else>
+        <a-alert v-if="truncated" :message="$t('k8s.list.truncated', { limit: 500 })" type="info" show-icon style="margin-bottom: 8px" />
           <a-table
+            v-if="currentKind === 'namespaces'"
             :columns="namespaceColumns"
-            :data-source="currentKind === 'namespaces' ? (items as NamespaceSummary[]) : []"
-            :loading="loading && currentKind === 'namespaces'"
+            :data-source="filteredItems"
+            :loading="loading"
             :row-key="rowKeyName"
-            :pagination="false"
+            :pagination="{ pageSize: 20, showSizeChanger: true }"
+            :scroll="{ x: 'max-content' }"
             :custom-row="customRowNamespace"
             size="small"
           />
-        </a-tab-pane>
-        <a-tab-pane key="nodes" :tab="$t('k8s.cluster_resource.node')">
-          <a-alert
-            v-if="truncated && currentKind === 'nodes'"
-            :message="$t('k8s.list.truncated', { limit: 500 })"
-            type="info"
-            show-icon
-            style="margin-bottom: 8px;"
-          />
           <a-table
+            v-if="currentKind === 'nodes'"
             :columns="nodeColumns"
-            :data-source="currentKind === 'nodes' ? (items as NodeSummary[]) : []"
-            :loading="loading && currentKind === 'nodes'"
+            :data-source="filteredItems"
+            :loading="loading"
             :row-key="rowKeyName"
-            :pagination="false"
+            :pagination="{ pageSize: 20, showSizeChanger: true }"
+            :scroll="{ x: 'max-content' }"
             :custom-row="customRowNode"
             size="small"
           />
-        </a-tab-pane>
-        <a-tab-pane key="events" :tab="$t('k8s.cluster_resource.event')">
-          <a-alert
-            v-if="truncated && currentKind === 'events'"
-            :message="$t('k8s.list.truncated', { limit: 500 })"
-            type="info"
-            show-icon
-            style="margin-bottom: 8px;"
-          />
           <a-table
+            v-if="currentKind === 'events'"
             :columns="eventColumns"
-            :data-source="currentKind === 'events' ? (items as EventSummary[]) : []"
-            :loading="loading && currentKind === 'events'"
+            :data-source="filteredItems"
+            :loading="loading"
             :row-key="rowKeyEvent"
-            :pagination="false"
+            :pagination="{ pageSize: 20, showSizeChanger: true }"
+            :scroll="{ x: 'max-content' }"
             size="small"
           />
-        </a-tab-pane>
-      </a-tabs>
+      </template>
     </a-card>
 
     <ResourceDrawer
@@ -162,14 +147,16 @@
 </template>
 
 <script setup lang="ts">
+import { useResourceScope, matchesResource } from '@/hooks/useResourceScope'
 import { usePageState } from '@/hooks/usePageState'
-import { computed, inject, onBeforeMount, ref, watch } from 'vue'
+import { computed, inject, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue'
 import ClusterPicker from '@/components/layout/ClusterPicker.vue'
 import { message } from 'ant-design-vue'
 import { ReloadOutlined } from '@ant-design/icons-vue'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
+import { usePermission } from '@/hooks/usePermission'
 import { useI18n } from '@/hooks/useI18n'
 import { useK8sStore } from '@/stores/k8s'
 import { isBizError } from '@/utils/http-error'
@@ -186,27 +173,24 @@ import type {
 
 dayjs.extend(relativeTime)
 
-/**
- * Cluster-resources page (Plan T23). Three tabs: Namespaces, Nodes, Events.
- *
- * - Namespace + Node are cluster-scoped — no namespace selector.
- * - Events are technically namespaced but we expose an OPTIONAL filter (blank
- *   = cluster-wide). The selector hides itself for the other two tabs.
- * - Events tab has no drawer; the row IS the detail.
- */
 type ClusterResourceKind = 'namespaces' | 'nodes' | 'events'
 
 const k8s = useK8sStore()
 const { t } = useI18n()
+const { has } = usePermission()
 
 const k8sNsApi = inject<K8sNamespaceApi>('k8sNsApi')!
 const k8sNodeApi = inject<K8sNodeApi>('k8sNodeApi')!
 const k8sEventApi = inject<K8sEventApi>('k8sEventApi')!
 
-const currentKind = ref<ClusterResourceKind>('namespaces')
+const { section = 'namespaces' } = defineProps<{ section?: 'nodes' | 'namespaces' }>()
+const currentKind = ref<ClusterResourceKind>(section)
 const items = ref<NamespaceSummary[] | NodeSummary[] | EventSummary[]>([])
 const truncated = ref(false)
 const loading = ref(false)
+const search = ref('')
+const filteredItems = computed(() => items.value.filter(row => matchesResource(row, search.value)))
+const captureScope = useResourceScope(currentKind)
 
 const drawerOpen = ref(false)
 const drawerKind = ref<string>('')
@@ -242,27 +226,33 @@ function asNode(detail: unknown): NodeSummary | undefined {
 
 async function load(kind: ClusterResourceKind): Promise<void> {
   if (!k8s.currentClusterId) return
+  const isCurrent = captureScope()
   loading.value = true
+  items.value = []
+  truncated.value = false
   try {
     if (kind === 'namespaces') {
       const res = await k8sNsApi.list(k8s.currentClusterId)
+      if (!isCurrent()) return
       items.value = res.items
       truncated.value = res.truncated
     } else if (kind === 'nodes') {
       const res = await k8sNodeApi.list(k8s.currentClusterId)
+      if (!isCurrent()) return
       items.value = res.items
       truncated.value = res.truncated
     } else {
       const res = await k8sEventApi.list(k8s.currentClusterId, {
         namespace: k8s.currentNamespace || undefined,
       })
+      if (!isCurrent()) return
       items.value = res.items
       truncated.value = res.truncated
     }
   } catch (e) {
-    message.error(isBizError(e) ? e.message : t('network.error'))
+    if (isCurrent()) message.error(isBizError(e) ? e.message : t('network.error'))
   } finally {
-    loading.value = false
+    if (isCurrent()) loading.value = false
   }
 }
 
@@ -288,12 +278,16 @@ function openNamespace(record: NamespaceSummary): void {
 
 async function openNode(record: NodeSummary): Promise<void> {
   if (!k8s.currentClusterId) return
-  drawerKind.value = 'node'
+  const isCurrent = captureScope('detail')
+  const kind = 'node'
   try {
-    drawerDetail.value = await k8sNodeApi.get(k8s.currentClusterId, record.name)
+    const detail = await k8sNodeApi.get(k8s.currentClusterId, record.name)
+    if (!isCurrent()) return
+    drawerKind.value = kind
+    drawerDetail.value = detail
     drawerOpen.value = true
   } catch (e) {
-    message.error(isBizError(e) ? e.message : t('network.error'))
+    if (isCurrent()) message.error(isBizError(e) ? e.message : t('network.error'))
   }
 }
 
@@ -306,8 +300,17 @@ function formatAge(iso?: string): string {
   return dayjs(iso).fromNow(true)
 }
 
-usePageState({ currentKind })
+usePageState({ currentKind, search })
+if (section === 'nodes') currentKind.value = 'nodes'
+else if (currentKind.value === 'nodes') currentKind.value = 'namespaces'
 
+watch([currentKind, () => k8s.currentNamespace, () => k8s.currentClusterId], () => {
+  drawerOpen.value = false
+  drawerDetail.value = null
+  items.value = []
+  loading.value = false
+  truncated.value = false
+}, { flush: 'sync' })
 watch(currentKind, kind => void load(kind))
 watch(
   () => k8s.currentClusterId,
@@ -316,26 +319,23 @@ watch(
     drawerDetail.value = null
     items.value = []
     if (id !== null) {
-      void k8s.ensureNamespaces(cid => k8sNsApi.list(cid))
+      if (has('k8s:cluster_resource:read')) void k8s.ensureNamespaces(cid => k8sNsApi.list(cid)).catch(() => undefined)
       void load(currentKind.value)
     }
   },
 )
+
+onBeforeUnmount(() => {
+  drawerOpen.value = false
+  drawerDetail.value = null
+})
 
 onBeforeMount(() => {
   if (k8s.currentClusterId === null) {
     return
   }
   // Namespace cache is needed for the Events tab filter.
-  void k8s.ensureNamespaces(cid => k8sNsApi.list(cid))
+  if (has('k8s:cluster_resource:read')) void k8s.ensureNamespaces(cid => k8sNsApi.list(cid)).catch(() => undefined)
   void load(currentKind.value)
 })
 </script>
-
-<style scoped lang="scss">
-.cluster-resources-page {
-  :deep(.ant-tabs-content-holder) {
-    padding-top: 4px;
-  }
-}
-</style>

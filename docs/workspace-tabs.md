@@ -1,29 +1,38 @@
-# Compact workspace and menu tabs
+# Single-page workspace and container navigation
 
-Implementation scope approved on 2026-09-17: compact content spacing and
-application tabs for menu navigation. This uses existing backend routes and
-permissions; no API or menu-contract change is required.
+The 2026-11-12 navigation update replaces the application menu-tab bar. Clicking
+a sidebar menu opens that page directly; browser Back/Forward remains available.
+Only one page is mounted at a time. There is no close-tab or empty-workspace flow.
 
-- The viewport contains the header, horizontally scrollable menu tabs and one
-  scrolling content surface. Outer spacing is 8px; first-level cards use 16px
-  padding. Filters wrap on narrow screens; tables scroll horizontally as needed.
-- A menu path identifies one tab. Reopening it activates the same tab. Titles
-  are translation keys, so language changes update existing tabs immediately.
-- Detail and action routes remain normal routes under their nearest menu tab;
-  clicking that tab returns to its list. They do not create multiple detail tabs.
-- Closing the active tab selects its right neighbor, then its left neighbor.
-  Closing all opens an empty workspace. Navigation cancellation leaves tabs intact.
-- Tabs and approved filter/pagination/scroll state live in memory only. A browser
-  reload starts a new workspace. Logout clears everything. Revoked/removed menu
-  entries are removed from the tab list and their saved state is discarded.
-- Pages unmount on navigation. No KeepAlive, API result caching, form/credential
-  storage or hidden polling is introduced. Returning to a list restores controls
-  and pagination, then fetches current data. Kubernetes resource tabs restore
-  the resource kind, but always use the shared current cluster/namespace.
-- Installation, upgrade and profile forms warn before navigating away with
-  unsaved changes. Existing modal save/cancel flows remain unchanged.
+Safe filter, pagination and scroll controls remain in memory per route. They
+are cleared on logout or changes to permissions/menus; a reload starts a fresh
+workspace. Pages fetch current data on each visit. API responses, form drafts,
+credentials, Secret data and active streams are never saved in page state.
+Installation, upgrade and profile forms retain their unsaved-change guards.
 
-`usePageState` must receive only explicitly approved filter/navigation refs.
-Do not pass passwords, Secret data, values YAML, form drafts or API responses.
-`useTable` restores only pagination and filters, never rows. New list-specific
-controls can opt in via `usePageState` without retaining their page component.
+Container Management / 容器管理 has two built-in sidebar children:
+
+- Kubernetes: `/containers/kubernetes`, with permission-filtered buttons for
+  Clusters, Nodes, Namespaces, Workloads, Network, Storage and Configs. Each
+  section has a direct URL under `/containers/kubernetes/<section>`.
+- Docker: `/containers/docker`, an empty page reserved for future work,
+  gated by `docker:environment:read`. No Docker API is provided yet.
+
+Resource-type switches appear at the top right of each resource card. Storage
+offers PV, PVC and StorageClass with `k8s:storage:read`; only PVC uses a namespace
+filter. Configs offers ConfigMap and Secrets, each with its existing permission.
+Nodes and Namespaces keep `k8s:cluster_resource:read`; Events remain available
+in the Namespaces card. Existing workload, network, cluster and Secret-reveal
+permissions remain unchanged. Resource pages use the shared selected cluster and
+namespace; an absent cluster selection shows a prompt and never auto-selects.
+Late list/detail/reveal responses are discarded after scope changes or unmount.
+
+For existing installations, run `optimus seed` with the updated binary to update
+the built-in menus and built-in role grants. Seed preserves the old parent and
+Clusters menu IDs, moves custom descendants off retired built-in menu rows and
+rejects reserved-code collisions atomically. Custom roles must receive the new
+Storage/Docker permissions explicitly. Published migrations are unchanged.
+Legacy `/k8s/...` page URLs check their existing permission before forwarding to
+the corresponding new page; Kubernetes HTTP APIs remain under `/api/v1/k8s`.
+
+Implementation and verification: [container navigation plan](superpowers/plans/2026-11-12-container-navigation.md).

@@ -3845,6 +3845,81 @@
                 }
             }
         },
+        "/k8s/clusters/{id}/storage/{kind}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "k8s"
+                ],
+                "summary": "List read-only Kubernetes storage resources",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Cluster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "persistentvolumes",
+                            "persistentvolumeclaims",
+                            "storageclasses"
+                        ],
+                        "type": "string",
+                        "description": "Resource kind",
+                        "name": "kind",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "PVC namespace; empty lists all namespaces",
+                        "name": "namespace",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page limit (default 500, maximum 2000)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Kubernetes continuation token",
+                        "name": "continue",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_k8s_storage.ListResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/me": {
             "get": {
                 "security": [
@@ -7175,6 +7250,67 @@
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "internal_modules_k8s_storage.ListResponse": {
+            "type": "object",
+            "properties": {
+                "continue": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_modules_k8s_storage.Summary"
+                    }
+                },
+                "truncated": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "internal_modules_k8s_storage.Summary": {
+            "type": "object",
+            "properties": {
+                "access_modes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "age": {
+                    "type": "string"
+                },
+                "binding_mode": {
+                    "type": "string"
+                },
+                "capacity": {
+                    "type": "string"
+                },
+                "claim": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "namespace": {
+                    "type": "string"
+                },
+                "provisioner": {
+                    "type": "string"
+                },
+                "reclaim_policy": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "storage_class": {
+                    "type": "string"
+                },
+                "volume": {
+                    "type": "string"
                 }
             }
         },

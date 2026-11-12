@@ -19,6 +19,7 @@ import (
 	logmod "github.com/ArkGravity/optimus/internal/modules/k8s/log"
 	"github.com/ArkGravity/optimus/internal/modules/k8s/network"
 	"github.com/ArkGravity/optimus/internal/modules/k8s/secret"
+	"github.com/ArkGravity/optimus/internal/modules/k8s/storage"
 	"github.com/ArkGravity/optimus/internal/modules/k8s/workload"
 	yamlmod "github.com/ArkGravity/optimus/internal/modules/k8s/yaml"
 	"github.com/ArkGravity/optimus/internal/modules/rbac"
@@ -40,6 +41,7 @@ type Module struct {
 	netH           *network.Handler
 	cfgH           *config.Handler
 	secH           *secret.Handler
+	storageH       *storage.Handler
 	yamlH          *yamlmod.Handler
 	logH           *logmod.Handler
 }
@@ -68,6 +70,7 @@ func New(db *gorm.DB, consumer credentials.Consumer, rec *audit.Recorder, cache 
 		netH:           network.NewHandler(network.NewService(factory)),
 		cfgH:           config.NewHandler(config.NewService(factory)),
 		secH:           secret.NewHandler(secret.NewService(factory)),
+		storageH:       storage.NewHandler(storage.NewService(factory)),
 		yamlH:          yamlmod.NewHandler(factory, cache),
 		logH:           logmod.NewHandler(factory),
 	}
@@ -82,7 +85,7 @@ func (m *Module) SetAppsCounter(c cluster.AppsApplicationCounter) {
 	m.Cluster.SetAppsCounter(c)
 }
 
-// MountRoutes registers all 21 k8s routes under `protected` (which must
+// MountRoutes registers the k8s routes under `protected` (which must
 // already be JWT-gated). Permission gating happens via nested sub-groups
 // with middleware.RequirePermission — see cmd/optimus/server.go's
 // mountUserRoutes for the rationale (variadic args to GET/POST do NOT
@@ -109,6 +112,8 @@ func (m *Module) MountRoutes(protected *gin.RouterGroup, cache *rbac.PermissionC
 
 	// ---- per-cluster live resources ---------------------------------------
 	live := k.Group("/clusters/:id")
+	storageRead := live.Group("", middleware.RequirePermission(cache, "k8s:storage:read"))
+	storageRead.GET("/storage/:kind", m.storageH.List())
 
 	csrd := live.Group("", middleware.RequirePermission(cache, "k8s:cluster_resource:read"))
 	csrd.GET("/namespaces", m.csH.ListNamespaces())

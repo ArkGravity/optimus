@@ -1,10 +1,5 @@
 {
   "workspace": {
-    "tabs": "已打开的页面",
-    "actions": "标签页操作",
-    "close_others": "关闭其他标签",
-    "close_all": "关闭全部标签",
-    "select_menu": "请从左侧菜单选择页面",
     "unsaved": "有尚未保存的修改，确定离开并放弃这些修改吗？"
   },
   "common": {
@@ -126,7 +121,6 @@
     "dashboard": "仪表盘",
     "system_group": "系统管理",
     "credentials_group": "凭证管理",
-    "k8s_group": "Kubernetes",
     "system": {
       "users": "用户管理",
       "roles": "角色管理",
@@ -164,6 +158,11 @@
     "observability_group": "可观测中心",
     "observability": {
       "overview": "功能预留"
+    },
+    "containers_group": "容器管理",
+    "containers": {
+      "kubernetes": "Kubernetes",
+      "docker": "Docker"
     }
   },
   "perm": {
@@ -234,6 +233,9 @@
       },
       "log": {
         "read": "查看 Pod 日志流"
+      },
+      "storage": {
+        "read": "查看存储资源"
       }
     },
     "apps": {
@@ -273,7 +275,13 @@
       "k8s": "Kubernetes",
       "apps": "应用管理",
       "assets": "资产管理",
-      "applications": "应用管理"
+      "applications": "应用管理",
+      "docker": "Docker"
+    },
+    "docker": {
+      "environment": {
+        "read": "查看 Docker 环境"
+      }
     }
   },
   "assets": {
@@ -919,6 +927,9 @@
     },
     "list": {
       "truncated": "只展示前 {limit} 条；请用命名空间或搜索缩小范围。"
+    },
+    "storage": {
+      "unsupported_kind": "不支持的存储资源类型"
     }
   },
   "apps": {
@@ -1060,6 +1071,29 @@
       "btn": {
         "submit": "升级"
       }
+    }
+  },
+  "containers": {
+    "resources": "Kubernetes 资源",
+    "resource_type": "资源类型",
+    "nodes": "节点",
+    "namespaces": "命名空间",
+    "storage": "存储",
+    "configs": "配置",
+    "search": "搜索名称或命名空间",
+    "docker_empty": "暂无 Docker 环境",
+    "fields": {
+      "name": "名称",
+      "namespace": "命名空间",
+      "capacity": "容量",
+      "access_modes": "访问模式",
+      "reclaim_policy": "回收策略",
+      "status": "状态",
+      "claim": "绑定声明",
+      "storage_class": "存储类",
+      "volume": "存储卷",
+      "provisioner": "供应商",
+      "binding_mode": "绑定模式"
     }
   }
 }
