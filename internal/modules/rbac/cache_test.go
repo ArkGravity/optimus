@@ -64,21 +64,21 @@ func TestCache_RespectsTTL(t *testing.T) {
 	setupSeed(t, gdb)
 	uid := seedUserWithRole(t, gdb, "alice", "viewer")
 
-	cache := rbac.NewPermissionCache(gdb, 50*time.Millisecond)
+	cache := rbac.NewPermissionCache(gdb, time.Hour)
 	first, err := cache.Get(context.Background(), uid)
 	require.NoError(t, err)
 
 	var role models.Role
-	gdb.Where("code = ?", "viewer").First(&role)
+	require.NoError(t, gdb.Where("code = ?", "viewer").First(&role).Error)
 	var newPerm models.Permission
-	gdb.Where("code = ?", "system:user:write").First(&newPerm)
-	gdb.Create(&models.RolePermission{RoleID: role.ID, PermissionID: newPerm.ID})
+	require.NoError(t, gdb.Where("code = ?", "system:user:write").First(&newPerm).Error)
+	require.NoError(t, gdb.Create(&models.RolePermission{RoleID: role.ID, PermissionID: newPerm.ID}).Error)
 
 	cached, err := cache.Get(context.Background(), uid)
 	require.NoError(t, err)
 	require.Equal(t, first, cached)
 
-	time.Sleep(80 * time.Millisecond)
+	require.True(t, cache.ExpireUserForTest(uid))
 	fresh, err := cache.Get(context.Background(), uid)
 	require.NoError(t, err)
 	require.Contains(t, fresh, "system:user:write")

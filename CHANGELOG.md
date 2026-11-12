@@ -5,6 +5,7 @@
 - Repair the RBAC menu integration expectation for Container Management.
 - Make custom-grant timestamp preservation checks use persisted database
   precision, with a deterministic nanosecond fixture.
+- Remove the permission-cache TTL test's dependence on database timing.
 - Carry the accepted v0.1.1 container navigation and read-only Kubernetes storage
   functionality through the complete native artifact release pipeline. See
   [v0.1.2 notes](docs/releases/v0.1.2.md).
