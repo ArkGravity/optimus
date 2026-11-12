@@ -66,5 +66,5 @@ Progress: implementation complete; local verification passed.
   containers were retained, and the shared Colima node remained Ready.
 
 No application database, published migration, release or Production deployment
-was changed during implementation. The accepted change is now authorized for
-commit and v0.1.1 publication under the linked release plan.
+was changed during implementation. The accepted change was committed as
+`bdab35a` and published in the v0.1.1 source Release under the linked release plan.

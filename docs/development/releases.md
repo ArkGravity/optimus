@@ -1,5 +1,12 @@
 # Versioned releases
 
+[v0.1.1](../releases/v0.1.1.md) was published on 2026-11-12 as a source-only
+Release after operator acceptance and an explicit request to publish directly
+without waiting for or reviewing CI or release artifacts. It has no binary
+attachments and asserts no versioned-image availability. This one-off direct
+publication did not change the automated artifact release workflow or the
+standard sequence below.
+
 [v0.1.0 was published](https://github.com/ArkGravity/optimus/releases/tag/v0.1.0) on 2026-11-06 (UTC), after explicit operator approval of the verified draft. The [release notes](../releases/v0.1.0.md) track operator acceptance separately from completed [release artifact verification](https://github.com/ArkGravity/optimus/actions/runs/42292847315/attempts/2) and publication. The selected source is `7102a3f`; the trusted recovery workflow definition is `ac605a5`. See the [release plan](../superpowers/plans/2026-11-05-v0.1.0-release.md) for exact CI, digest and attachment evidence.
 
 ## Release contract

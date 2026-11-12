@@ -13,6 +13,17 @@ and `metadata = {"project": "optimus", "app_id": "optimus"}`; filter reads by
 
 ## Status
 
+Current delivery (2026-11-12): **v0.1.1 is published** as
+[GitHub Release `443447913`](https://github.com/ArkGravity/optimus/releases/tag/v0.1.1)
+at `2026-11-12T20:04:08Z`. The user accepted the container-navigation work and
+authorized direct formal publication without waiting for or reviewing CI or
+release artifacts. This is a source-only Release; no binary attachments or
+versioned-image availability is asserted. Source main commit is
+`bdab35a1beef238f0738d66a100e54dbf6481b77`; immutable annotated tag object is
+`442c8100757b424364c5495820f13c2b00042c0c`. Existing release workflow gates remain
+unchanged. No Production deployment or application database operation occurred.
+See `docs/superpowers/plans/2026-11-12-v0.1.1-release.md`.
+
 Container navigation work (2026-11-12): the user requested removal of global
 workspace tabs and a Container Management group with Kubernetes/Docker children.
 The active plan is `docs/superpowers/plans/2026-11-12-container-navigation.md`;
@@ -29,7 +40,7 @@ the existing automated artifact-publishing gates remain unchanged. Track actual
 publication in `docs/superpowers/plans/2026-11-12-v0.1.1-release.md`.
 No application database update or deployment was performed.
 
-Current delivery (2026-11-06): **v0.1.0 is published** as
+Previous delivery (2026-11-06): **v0.1.0 is published** as
 [GitHub Release `437039266`](https://github.com/ArkGravity/optimus/releases/tag/v0.1.0)
 at `2026-11-06T21:35:24Z`, after the user explicitly reviewed the verified draft
 and authorized formal publication. No Production deployment or database recreation
