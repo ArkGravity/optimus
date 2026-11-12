@@ -13,16 +13,34 @@ and `metadata = {"project": "optimus", "app_id": "optimus"}`; filter reads by
 
 ## Status
 
-Active release repair (2026-11-12): the user explicitly authorized fixing the
-v0.1.1 delivery failures and publishing v0.1.2 with comprehensive checks after
-publication. Follow `docs/superpowers/plans/2026-11-12-v0.1.2-release.md`.
-Repair the outdated RBAC group expectation and persisted-timestamp comparison;
-wait for exact-main CI, native release builds, images and all six attachments.
-Formal publication is authorized after verification of the concrete draft.
-The prior skip-verification request no longer applies. Preserve existing
-published tags/assets; do not deploy or modify application databases.
+Current delivery (2026-11-12): **v0.1.2 is published and independently verified**
+as [GitHub Release `443492677`](https://github.com/ArkGravity/optimus/releases/tag/v0.1.2)
+at `2026-11-12T21:10:00Z`. Selected source is
+`c610ee11de8ad3a889f784897d9eaa534ce22f2a`; immutable annotated tag object is
+`d6c9f82e01fb577960eae14f52e4e7bdb24deef9`. The user explicitly authorized repair,
+formal publication and comprehensive post-publication checks.
 
-Current delivery (2026-11-12): **v0.1.1 is published** as
+The RBAC group expectation, persisted timestamp comparison and timing-sensitive
+cache TTL test are fixed. Exact-source main CI `43301709420` passed all six
+executed jobs. Release `43303096304` attempt 2 passed all four jobs; both native
+build/runtime jobs from attempt 1 were reused after the publisher's initial
+draft read-back failure. Independently downloaded six attachments passed every
+checksum/archive/config/license/INSTALL check and binary equality with saved
+tested images. Anonymous GHCR/Docker Hub reads confirmed identical amd64/arm64
+index/platform/configuration digests and exact source/version labels. Shared
+index: `sha256:9ca79bf2a2f038270b17e95cdaee0510621cbee05ffb022901049ecb9b7457e9`.
+
+After publication, anonymous latest/public downloads preserved all six original
+asset IDs, sizes and hashes, and registry digests remained unchanged. Actual
+published arm64 image/native/source-free Compose smoke passed, including the new
+container menus, permissions and routes. Owned test resources/downloads were
+removed, retaining six shared Kubernetes containers and all nine original image
+IDs. The pre-existing development PostgreSQL container was absent at final
+inventory; this task did not target it for deletion or modify its database.
+Existing published versions were not replaced; no Production operation occurred.
+Full evidence: `docs/superpowers/plans/2026-11-12-v0.1.2-release.md`.
+
+Previous source delivery (2026-11-12): **v0.1.1 is published** as
 [GitHub Release `443447913`](https://github.com/ArkGravity/optimus/releases/tag/v0.1.1)
 at `2026-11-12T20:04:08Z`. The user accepted the container-navigation work and
 authorized direct formal publication without waiting for or reviewing CI or

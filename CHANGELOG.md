@@ -1,6 +1,8 @@
 # Changelog
 
-## v0.1.2 — release preparation
+## v0.1.2 — 2026-11-12
+
+Published with verified Linux amd64/arm64 archives and images in both registries.
 
 - Repair the RBAC menu integration expectation for Container Management.
 - Make custom-grant timestamp preservation checks use persisted database

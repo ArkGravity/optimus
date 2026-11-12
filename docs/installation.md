@@ -2,7 +2,7 @@
 
 [中文](installation_zh.md) · [Documentation](README.md)
 
-**[v0.1.0 was published on 2026-11-06 (UTC)](https://github.com/ArkGravity/optimus/releases/tag/v0.1.0).** The commands below pin that released version. The operator's real-cloud acceptance of `main-1bbb8fe` is separate from completed verification of these exact versioned artifacts.
+**[v0.1.2 was published on 2026-11-12 (UTC)](https://github.com/ArkGravity/optimus/releases/tag/v0.1.2).** The commands below pin that released version. The operator's real-cloud acceptance of `main-1bbb8fe` is separate from completed verification of these exact versioned artifacts.
 
 Use Linux amd64 or arm64. Runtime prerequisites are Docker Engine with the Docker Compose plugin for the bundled stack, or PostgreSQL 17 for a native binary. Neither installation requires Go, Bun or a source checkout.
 
@@ -12,9 +12,9 @@ The release has six attachments:
 
 | File | Purpose |
 | --- | --- |
-| `optimus_v0.1.0_linux_amd64.tar.gz` | Linux x86-64 binary |
-| `optimus_v0.1.0_linux_arm64.tar.gz` | Linux ARM64 binary |
-| `optimus_v0.1.0_deploy.tar.gz` | Published-image Compose stack |
+| `optimus_v0.1.2_linux_amd64.tar.gz` | Linux x86-64 binary |
+| `optimus_v0.1.2_linux_arm64.tar.gz` | Linux ARM64 binary |
+| `optimus_v0.1.2_deploy.tar.gz` | Published-image Compose stack |
 | `INSTALL.md` | Standalone installation instructions |
 | `IMAGES.txt` | Published image references and digests |
 | `SHA256SUMS` | Attachment checksums |
@@ -22,10 +22,10 @@ The release has six attachments:
 Download from the version's GitHub release, not a moving branch. For example, for Compose:
 
 ```bash
-curl -fLO https://github.com/ArkGravity/optimus/releases/download/v0.1.0/optimus_v0.1.0_deploy.tar.gz
-curl -fLO https://github.com/ArkGravity/optimus/releases/download/v0.1.0/SHA256SUMS
+curl -fLO https://github.com/ArkGravity/optimus/releases/download/v0.1.2/optimus_v0.1.2_deploy.tar.gz
+curl -fLO https://github.com/ArkGravity/optimus/releases/download/v0.1.2/SHA256SUMS
 sha256sum --ignore-missing -c SHA256SUMS
-tar -xzf optimus_v0.1.0_deploy.tar.gz
+tar -xzf optimus_v0.1.2_deploy.tar.gz
 ```
 
 Run the checksum command in the directory holding the downloaded files and require every downloaded listed file to pass. SHA256SUMS detects corruption relative to the published manifest; obtain both from the trusted release page.
@@ -40,12 +40,12 @@ cp .env.example .env
 chmod 600 .env
 openssl rand -hex 32
 openssl rand -base64 48
-docker run --rm ghcr.io/arkgravity/optimus:v0.1.0 vault-keygen
+docker run --rm ghcr.io/arkgravity/optimus:v0.1.2 vault-keygen
 ```
 
 Record the three independently generated outputs securely. Edit `.env` before startup:
 
-- Set `COMPOSE_PROJECT_NAME=optimus-prod`, `IMAGE_REPOSITORY=ghcr.io/arkgravity` (or `docker.io/logic3579`) and `OPTIMUS_VERSION=v0.1.0`.
+- Set `COMPOSE_PROJECT_NAME=optimus-prod`, `IMAGE_REPOSITORY=ghcr.io/arkgravity` (or `docker.io/logic3579`) and `OPTIMUS_VERSION=v0.1.2`.
 - Use the first output as `POSTGRES_PASSWORD`, and use exactly the same password, user and database in `OPTIMUS_DATABASE_DSN`. For this stack the DSN host is `postgres`.
 - Use the second output as `OPTIMUS_JWT_SECRET` (at least 32 bytes).
 - Use the `vault-keygen` output as `OPTIMUS_VAULT_MASTER_KEY`: base64 encoding of exactly 32 bytes. Generate this once for the database, back it up and keep it stable. Do not casually rotate it.
@@ -53,7 +53,7 @@ Record the three independently generated outputs securely. Edit `.env` before st
 - Set the bootstrap username/email if needed. The embedded UI is same-origin and needs no CORS entry; extra origins use a comma-separated allowlist.
 - Use `OPTIMUS_LOG_LEVEL=info` for ordinary operation. Protect `.env` and seed logs.
 
-The release image is available at both `ghcr.io/arkgravity/optimus:v0.1.0` and `docker.io/logic3579/optimus:v0.1.0`; Docker selects amd64 or arm64 automatically. Check `IMAGES.txt` for recorded digests. Anonymous registry access must be available, or authenticate before pulling.
+The release image is available at both `ghcr.io/arkgravity/optimus:v0.1.2` and `docker.io/logic3579/optimus:v0.1.2`; Docker selects amd64 or arm64 automatically. Check `IMAGES.txt` for recorded digests. Anonymous registry access must be available, or authenticate before pulling.
 
 **For an existing database, stop here and read [recovery](operations/recovery.md).** This release's fresh schema cannot be applied over historical 00022/00023/00028.
 
@@ -109,6 +109,8 @@ The server serves the UI at `/`, API at `/api/v1` and Swagger at `/swagger/index
 The application does not use ambient cloud authentication. GCP's `GOOGLE_API_USE_CLIENT_CERTIFICATE` must be unset or case-insensitive `false`; other values fail configuration.
 
 ## Maintenance
+
+Existing v0.1.0/v0.1.1 databases already using head19 need no recreation for this update. Preserve the matching vault key and configuration, update the image/binary, and run `optimus seed` to refresh built-in menus and grants. Custom roles need `k8s:storage:read` and `docker:environment:read` for the new entries.
 
 Keep the Compose project name and persistent volume identity stable. Changing `.env` does not change the password already stored in an initialized PostgreSQL volume. Do not use `docker compose down -v` to rotate passwords, upgrade or recover data. Back up PostgreSQL with the matching vault key and application configuration; see [recovery and database transitions](operations/recovery.md) before changing versions.
 

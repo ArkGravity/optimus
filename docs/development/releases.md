@@ -1,5 +1,11 @@
 # Versioned releases
 
+[v0.1.2](../releases/v0.1.2.md) was published on 2026-11-12 with Linux
+amd64/arm64 binary archives, a deployment archive and versioned images in both
+registries. Exact-source main CI, native runtime smoke, independent attachment
+and registry verification, and public post-publication checks passed. See the
+[release record](../superpowers/plans/2026-11-12-v0.1.2-release.md).
+
 [v0.1.1](../releases/v0.1.1.md) was published on 2026-11-12 as a source-only
 Release after operator acceptance and an explicit request to publish directly
 without waiting for or reviewing CI or release artifacts. It has no binary
@@ -13,11 +19,11 @@ standard sequence below.
 
 Use an annotated `vX.Y.Z` tag on the reviewed main revision. Never overwrite a published version tag, image tag or release asset; publish a new version for corrections. A moving `latest` tag is not required.
 
-Release users need no source checkout or Go/Bun installation. For v0.1.0 the exact six attachments are:
+Artifact releases need no source checkout or Go/Bun installation. For v0.1.2 the exact six attachments are:
 
-- `optimus_v0.1.0_linux_amd64.tar.gz`
-- `optimus_v0.1.0_linux_arm64.tar.gz`
-- `optimus_v0.1.0_deploy.tar.gz`
+- `optimus_v0.1.2_linux_amd64.tar.gz`
+- `optimus_v0.1.2_linux_arm64.tar.gz`
+- `optimus_v0.1.2_deploy.tar.gz`
 - `INSTALL.md`
 - `IMAGES.txt`
 - `SHA256SUMS`

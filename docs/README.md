@@ -8,7 +8,7 @@ Optimus ships its Go API and Vue web UI as one binary with PostgreSQL 17. Start 
 - [Install](installation.md) · [中文安装指南](installation_zh.md)
 - [v0.1.0 release notes](releases/v0.1.0.md) — published 2026-11-06 (UTC)
 - [v0.1.1 release notes](releases/v0.1.1.md) — direct source release, 2026-11-12
-- [v0.1.2 release notes](releases/v0.1.2.md) — artifact-delivery repair in progress
+- [v0.1.2 release notes](releases/v0.1.2.md) — published 2026-11-12; verified binary archives and dual-registry images
 - [Published releases](https://github.com/ArkGravity/optimus/releases)
 
 ## User guides

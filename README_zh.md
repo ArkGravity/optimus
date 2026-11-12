@@ -28,7 +28,7 @@ Optimus 是可自托管的基础设施控制台，将访问管理、凭据保护
 
 推荐使用 Docker Compose 部署应用与 PostgreSQL，也可使用 Linux 二进制连接现有 PostgreSQL 17。运行发布包无需安装 Go 或 Bun。
 
-**[v0.1.0 已于 2026-11-06（UTC）正式发布](https://github.com/ArkGravity/optimus/releases/tag/v0.1.0)。** Linux amd64/arm64 二进制包、部署包及两个镜像仓库均已通过 [实际产物验证](https://github.com/ArkGravity/optimus/actions/runs/42292847315/attempts/2)。请按 [安装指南](docs/installation_zh.md) 下载发行附件。
+**[v0.1.2 已于 2026-11-12（UTC）正式发布](https://github.com/ArkGravity/optimus/releases/tag/v0.1.2)。** Linux amd64/arm64 二进制包、部署包及两个镜像仓库均已通过 [实际产物验证](https://github.com/ArkGravity/optimus/actions/runs/43303096304/attempts/2) 和发布后独立复核。请按 [安装指南](docs/installation_zh.md) 下载发行附件。
 
 1. 按照 [Compose 或二进制安装指南](docs/installation_zh.md) 操作。共享环境启动前必须分别生成数据库密码、JWT 密钥和 vault 密钥。
 2. 本机打开 `http://127.0.0.1:8080`，远程访问使用反向代理配置的 HTTPS 地址。

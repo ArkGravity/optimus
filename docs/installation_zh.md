@@ -2,7 +2,7 @@
 
 [English](installation.md) · [文档索引](README.md)
 
-**[v0.1.0 已于 2026-11-06（UTC）正式发布](https://github.com/ArkGravity/optimus/releases/tag/v0.1.0)。** 以下命令固定使用此已发布版本。操作员对 `main-1bbb8fe` 的实云验收与本次确切版本化产物已完成的验证分别记录。
+**[v0.1.2 已于 2026-11-12（UTC）正式发布](https://github.com/ArkGravity/optimus/releases/tag/v0.1.2)。** 以下命令固定使用此已发布版本。操作员对 `main-1bbb8fe` 的实云验收与本次确切版本化产物已完成的验证分别记录。
 
 支持 Linux amd64 与 arm64。Compose 方式需要 Docker Engine 和 Docker Compose 插件；原生二进制需要 PostgreSQL 17。运行发布包无需 Go、Bun 或源码仓库。
 
@@ -12,9 +12,9 @@
 
 | 文件 | 用途 |
 | --- | --- |
-| `optimus_v0.1.0_linux_amd64.tar.gz` | Linux x86-64 二进制 |
-| `optimus_v0.1.0_linux_arm64.tar.gz` | Linux ARM64 二进制 |
-| `optimus_v0.1.0_deploy.tar.gz` | 使用发布镜像的 Compose 部署包 |
+| `optimus_v0.1.2_linux_amd64.tar.gz` | Linux x86-64 二进制 |
+| `optimus_v0.1.2_linux_arm64.tar.gz` | Linux ARM64 二进制 |
+| `optimus_v0.1.2_deploy.tar.gz` | 使用发布镜像的 Compose 部署包 |
 | `INSTALL.md` | 独立安装说明 |
 | `IMAGES.txt` | 镜像引用与摘要 |
 | `SHA256SUMS` | 附件校验和 |
@@ -22,10 +22,10 @@
 从对应版本的 GitHub Release 下载。例如：
 
 ```bash
-curl -fLO https://github.com/ArkGravity/optimus/releases/download/v0.1.0/optimus_v0.1.0_deploy.tar.gz
-curl -fLO https://github.com/ArkGravity/optimus/releases/download/v0.1.0/SHA256SUMS
+curl -fLO https://github.com/ArkGravity/optimus/releases/download/v0.1.2/optimus_v0.1.2_deploy.tar.gz
+curl -fLO https://github.com/ArkGravity/optimus/releases/download/v0.1.2/SHA256SUMS
 sha256sum --ignore-missing -c SHA256SUMS
-tar -xzf optimus_v0.1.0_deploy.tar.gz
+tar -xzf optimus_v0.1.2_deploy.tar.gz
 ```
 
 在下载目录执行校验，确认所有已下载的清单文件均通过。校验和用于检测文件与清单是否一致；二者都应来自可信发布页。
@@ -40,12 +40,12 @@ cp .env.example .env
 chmod 600 .env
 openssl rand -hex 32
 openssl rand -base64 48
-docker run --rm ghcr.io/arkgravity/optimus:v0.1.0 vault-keygen
+docker run --rm ghcr.io/arkgravity/optimus:v0.1.2 vault-keygen
 ```
 
 安全保存三次独立生成的结果，启动前编辑 `.env`：
 
-- 设置 `COMPOSE_PROJECT_NAME=optimus-prod`、`IMAGE_REPOSITORY=ghcr.io/arkgravity`（或 `docker.io/logic3579`）、`OPTIMUS_VERSION=v0.1.0`。
+- 设置 `COMPOSE_PROJECT_NAME=optimus-prod`、`IMAGE_REPOSITORY=ghcr.io/arkgravity`（或 `docker.io/logic3579`）、`OPTIMUS_VERSION=v0.1.2`。
 - 第一次输出用于 `POSTGRES_PASSWORD`，并同步写入 `OPTIMUS_DATABASE_DSN`，确保用户名、密码、数据库名完全一致。容器内 DSN 的主机名是 `postgres`。
 - 第二次输出用于 `OPTIMUS_JWT_SECRET`，至少 32 字节。
 - `vault-keygen` 输出用于 `OPTIMUS_VAULT_MASTER_KEY`，它是 32 字节密钥的 base64 编码。每个数据库初始化时生成一次，安全备份并长期保持一致，不要随意更换。
@@ -53,7 +53,7 @@ docker run --rm ghcr.io/arkgravity/optimus:v0.1.0 vault-keygen
 - 可修改初始化管理员用户名和邮箱。内嵌 UI 与 API 同源，无需 CORS 项；额外浏览器来源使用逗号分隔的白名单。
 - 日常运行使用 `OPTIMUS_LOG_LEVEL=info`，保护 `.env` 和 seed 日志。
 
-镜像为 `ghcr.io/arkgravity/optimus:v0.1.0` 和 `docker.io/logic3579/optimus:v0.1.0`，Docker 自动选择 amd64/arm64。摘要以 `IMAGES.txt` 为准；仓库需允许匿名拉取，否则先认证。
+镜像为 `ghcr.io/arkgravity/optimus:v0.1.2` 和 `docker.io/logic3579/optimus:v0.1.2`，Docker 自动选择 amd64/arm64。摘要以 `IMAGES.txt` 为准；仓库需允许匿名拉取，否则先认证。
 
 **使用已有数据库前，必须先阅读 [恢复与数据库切换指南](operations/recovery.md)。** 历史 00022/00023/00028 不能直接运行本版本重新编号的迁移。
 
@@ -109,6 +109,8 @@ export OPTIMUS_SERVER_HOST=127.0.0.1
 应用不使用环境中隐式的云认证。GCP 的 `GOOGLE_API_USE_CLIENT_CERTIFICATE` 只能未设置或为大小写不敏感的 `false`，其他值会导致配置失败。
 
 ## 维护
+
+已经使用 head19 的 v0.1.0/v0.1.1 数据库无需为本次更新重建。保留对应的 vault 密钥与配置，更新镜像或程序后执行 `optimus seed` 刷新内置菜单与授权；自定义角色需补授 `k8s:storage:read` 和 `docker:environment:read`。
 
 保持 Compose 项目名和持久化卷一致。修改 `.env` 不会改变已初始化 PostgreSQL 卷内的密码。不要用 `docker compose down -v` 轮换密码、升级或恢复，它会删除持久数据。备份数据库时同时保留对应 vault 密钥、应用版本及配置，版本切换前阅读 [恢复指南](operations/recovery.md)。
 
