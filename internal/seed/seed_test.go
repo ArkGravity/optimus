@@ -6,6 +6,7 @@ import (
 	"context"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 
@@ -70,8 +71,15 @@ func TestRun_ContainerMenusUpgradePreservesIDsCustomChildrenAndGrants(t *testing
 	require.NoError(t, gdb.Create(&customRole).Error)
 	var networkPermission models.Permission
 	require.NoError(t, gdb.Where("code = ?", "k8s:network:read").First(&networkPermission).Error)
-	customGrant := models.RolePermission{RoleID: customRole.ID, PermissionID: networkPermission.ID}
+	customGrant := models.RolePermission{
+		RoleID: customRole.ID, PermissionID: networkPermission.ID,
+		CreatedAt: time.Date(2026, time.November, 12, 0, 0, 0, 123456789, time.UTC),
+	}
 	require.NoError(t, gdb.Create(&customGrant).Error)
+	// Compare database snapshots so sub-microsecond precision loss at insertion
+	// cannot be mistaken for a grant rewrite during seed.
+	var persistedGrant models.RolePermission
+	require.NoError(t, gdb.Where("role_id = ? AND permission_id = ?", customRole.ID, networkPermission.ID).First(&persistedGrant).Error)
 	require.NoError(t, gdb.Select("role_id, permission_id").Order("role_id, permission_id").Find(&grantsBefore).Error)
 	for range 2 {
 		_, err = seed.Run(ctx, gdb, opts)
@@ -97,7 +105,7 @@ func TestRun_ContainerMenusUpgradePreservesIDsCustomChildrenAndGrants(t *testing
 	require.Equal(t, grantsBefore, grantsAfter)
 	var retainedGrant models.RolePermission
 	require.NoError(t, gdb.Where("role_id = ? AND permission_id = ?", customRole.ID, networkPermission.ID).First(&retainedGrant).Error)
-	require.True(t, customGrant.CreatedAt.Equal(retainedGrant.CreatedAt), "custom grants must not be rewritten")
+	require.True(t, persistedGrant.CreatedAt.Equal(retainedGrant.CreatedAt), "custom grants must not be rewritten")
 }
 
 func TestRun_ContainerMenuCollisionRollsBack(t *testing.T) {

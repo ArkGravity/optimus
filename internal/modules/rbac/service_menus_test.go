@@ -26,10 +26,10 @@ func TestMeService_ListMenus_ViewerSeesOnlyPermittedNodes(t *testing.T) {
 	require.NoError(t, err)
 
 	u := &models.User{Username: "viewer1", Email: "v@x", PasswordHash: "x", Status: "enabled"}
-	gdb.Create(u)
+	require.NoError(t, gdb.Create(u).Error)
 	var viewer models.Role
-	gdb.Where("code = ?", "viewer").First(&viewer)
-	gdb.Create(&models.UserRole{UserID: u.ID, RoleID: viewer.ID})
+	require.NoError(t, gdb.Where("code = ?", "viewer").First(&viewer).Error)
+	require.NoError(t, gdb.Create(&models.UserRole{UserID: u.ID, RoleID: viewer.ID}).Error)
 
 	svc := rbac.NewMeService(gdb, rbac.NewPermissionCache(gdb, time.Minute), nopUserWriter{})
 	tree, err := svc.ListMenus(context.Background(), u.ID)
@@ -50,7 +50,22 @@ func TestMeService_ListMenus_ViewerSeesOnlyPermittedNodes(t *testing.T) {
 	require.True(t, foundDashboard)
 	require.False(t, foundSystem)
 	require.False(t, foundCredentials)
-	require.Equal(t, []string{"dashboard", "assets", "k8s", "apps", "observability"}, codes(tree))
+	require.Equal(t, []string{"dashboard", "assets", "containers", "apps", "observability"}, codes(tree))
+	for _, top := range tree {
+		if top.Code != "containers" {
+			continue
+		}
+		require.Equal(t, "menu.containers_group", top.Name)
+		require.Equal(t, "/containers", top.Path)
+		require.Equal(t, []string{"containers.kubernetes", "containers.docker"}, codes(top.Children))
+		require.Equal(t, "/containers/kubernetes", top.Children[0].Path)
+		require.Equal(t, "containers/Kubernetes", top.Children[0].Component)
+		require.Nil(t, top.Children[0].PermissionCode)
+		require.Equal(t, "/containers/docker", top.Children[1].Path)
+		require.Equal(t, "containers/Docker", top.Children[1].Component)
+		require.NotNil(t, top.Children[1].PermissionCode)
+		require.Equal(t, "docker:environment:read", *top.Children[1].PermissionCode)
+	}
 }
 
 func codes(nodes []rbac.MeMenuNode) []string {

@@ -13,6 +13,15 @@ and `metadata = {"project": "optimus", "app_id": "optimus"}`; filter reads by
 
 ## Status
 
+Active release repair (2026-11-12): the user explicitly authorized fixing the
+v0.1.1 delivery failures and publishing v0.1.2 with comprehensive checks after
+publication. Follow `docs/superpowers/plans/2026-11-12-v0.1.2-release.md`.
+Repair the outdated RBAC group expectation and persisted-timestamp comparison;
+wait for exact-main CI, native release builds, images and all six attachments.
+Formal publication is authorized after verification of the concrete draft.
+The prior skip-verification request no longer applies. Preserve existing
+published tags/assets; do not deploy or modify application databases.
+
 Current delivery (2026-11-12): **v0.1.1 is published** as
 [GitHub Release `443447913`](https://github.com/ArkGravity/optimus/releases/tag/v0.1.1)
 at `2026-11-12T20:04:08Z`. The user accepted the container-navigation work and
