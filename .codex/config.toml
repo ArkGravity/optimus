@@ -11,13 +11,8 @@ default_tools_approval_mode = "approve" # auto / prompt / approve
 url = "https://mcp.context7.com/mcp"
 env_http_headers = { "CONTEXT7_API_KEY" = "CONTEXT7_API_KEY" }
 
-[mcp_servers.serena]
-startup_timeout_sec = 15
-command = "serena"
-args = ["start-mcp-server", "--project-from-cwd", "--context=codex"]
-
-[plugins."superpowers@openai-curated"]
+[plugins."build-web-apps@openai-curated"]
 enabled = true
 
-[plugins."build-web-apps@openai-curated"]
+[plugins."superpowers@openai-curated"]
 enabled = true
