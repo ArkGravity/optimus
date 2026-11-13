@@ -7,9 +7,8 @@ startup_timeout_sec = 15
 tool_timeout_sec = 60
 default_tools_approval_mode = "approve" # auto / prompt / approve
 
-[mcp_servers.context7]
-url = "https://mcp.context7.com/mcp"
-env_http_headers = { "CONTEXT7_API_KEY" = "CONTEXT7_API_KEY" }
+[plugins."context7@context7-marketplace"]
+enabled = true
 
 [plugins."build-web-apps@openai-curated"]
 enabled = true

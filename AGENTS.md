@@ -667,9 +667,12 @@ variables or log raw SDK payloads, SA JSON, JWTs or AK/SK.
 
 ## Codex Environment
 
-`.codex/config.toml` configures mem0 and Context7 over HTTP, local Serena, and
-the superpowers and build-web-apps plugins. Export `MEM0_API_KEY` and
-`CONTEXT7_API_KEY` before starting Codex; install `serena` on PATH. Start Codex
+`.codex/config.toml` configures mem0 over HTTP and enables the Context7,
+superpowers and build-web-apps plugins. The Context7 plugin is disabled in the
+global Codex configuration and enabled for this repository. Authenticate it
+through the plugin's OAuth flow, then start a new Codex thread; do not add a
+duplicate `[mcp_servers.context7]` entry. Export `MEM0_API_KEY` before starting
+Codex; install `serena` on PATH. Start Codex
 from the repository root so Serena selects it. Preserve the mem0 scope from
 First Read; before updating a memory by ID, verify its user and application
 scope. Keep metadata minimal and verify the saved text, scope and metadata after
