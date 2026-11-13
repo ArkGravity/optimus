@@ -1,9 +1,14 @@
 # Native GKE authentication
 
-The operator confirmed v0.1.2 Prod acceptance steps 1–6 and control-plane
+At design time the operator confirmed v0.1.2 Prod acceptance steps 1–6 and control-plane
 connectivity. Helm acceptance is pending because the imported GKE kubeconfig
 uses an exec plugin. The operator authorized code changes and selected reuse
 of the existing GCP Service Account JSON credentials.
+
+Delivery follow-up: the operator deployed and successfully verified implementation
+commit `709db86` in Prod, then authorized PR creation and merge to main. See the
+[implementation plan](../plans/2026-11-13-gke-authentication.md) for the separate
+local and operator evidence.
 
 ## Connection contract
 
@@ -46,11 +51,13 @@ permissions; Helm also needs Secret and chart-resource writes in a test namespac
 
 ## Scope and evidence
 
-No Production actions, real-cloud calls, commit, push or release are included.
+No agent-operated Production actions, real-cloud calls or release publication
+are included. Commit/push and subsequent PR/merge are authorized by the operator.
 Verify migration19-to20/fresh20, binding/deletion/conversion/rotation, existing
 kubeconfig compatibility, TLS/redirect/context/token refresh/error handling,
 Kubernetes and Helm wiring, frontend forms/locales and generated Swagger.
-Real GKE/Helm acceptance remains operator work after deployment.
+The operator's successful branch verification supersedes the initial pending
+GKE acceptance status; later deployments retain their own environment checks.
 
 Official references:
 - https://docs.cloud.google.com/kubernetes-engine/docs/how-to/api-server-authentication

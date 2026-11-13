@@ -3,13 +3,15 @@
 Design: [GKE authentication](../specs/2026-11-13-gke-authentication-design.md).
 Authorized: local implementation using existing GCP Service Account credentials.
 The operator subsequently authorized committing and pushing this feature branch
-for their Prod deployment and verification. Main merge, release publication and
-agent-operated Production actions remain outside this request.
+for their Prod deployment and verification. They now confirm successful Prod
+verification and explicitly authorize PR creation and merge to main. Release
+publication and agent-operated Production actions remain outside this request.
 Implementation branch: `feat/gke-authentication`, based on `e9d7a4c`. The operator
 requires future code changes to use a new branch or worktree unless explicitly
 instructed otherwise. Existing uncommitted edits were carried onto this branch;
 main's commit was not changed.
-Prod connectivity and acceptance steps 1–6 are operator-confirmed; step 7 pending.
+Prod connectivity and acceptance steps 1–6 were operator-confirmed before this
+feature. The operator now confirms successful verification of the GKE branch.
 
 - [x] Append migration00020 and typed GKE credential bindings; enforce valid keys,
    reference lifecycle and metadata-only editing without secret retrieval.
@@ -19,9 +21,10 @@ Prod connectivity and acceptance steps 1–6 are operator-confirmed; step 7 pend
 - [x] Verify focused unit/database races, UI checks, generated artifacts and build;
    document deployment requirements and remaining live acceptance.
 
-Status: local implementation and verification complete; commit and push are
-authorized for the feature branch. No agent-operated deployment or application
-database operation was performed. Live GKE/Helm acceptance remains pending.
+Status: implementation commit `709db86e80935ded60e1215db63b84ecfa6c3031` is
+committed, pushed and operator-verified in Prod. PR creation and merge are
+authorized. No agent-operated deployment or application database operation was
+performed; operator acceptance and local fixture results are separate evidence.
 
 ## Verification
 
@@ -55,15 +58,27 @@ database operation was performed. Live GKE/Helm acceptance remains pending.
   guarded deletion, metadata editing, SPA/Swagger and reference cleanup. This
   made no Google or Kubernetes API requests and used only generated fixture keys.
   The smoke server and unique database were removed; a final run used the final
-  binary/Swagger output. This remains local fixture evidence, not GKE acceptance.
+  binary/Swagger output. This remains local fixture evidence; the operator's
+  subsequent Prod verification is recorded separately below.
 - Removed only `optimus-gke-tests-20261113` and its anonymous volume
   `c1abcd3913f34a5d83564e1cc0c9d494e23d3a97a179ccb00e7ee3ccfb58d69c`.
   Final inventory retained all 12 original shared Kubernetes containers and the
   pre-existing PostgreSQL image; no Docker volumes remained. Built binary/UI and
   normal ignored build caches remain available locally.
-- Final branch is `feat/gke-authentication`; main still points to `e9d7a4c`.
-  Commit and push are authorized by the operator's follow-up request. No main
-  merge, tag, release, registry or agent-operated Production action is included.
+- During implementation the branch was `feat/gke-authentication` and main
+  remained at `e9d7a4c`. Commit/push completed as `709db86`; the operator's
+  subsequent verification and PR/merge authorization supersede the earlier
+  delivery boundary. No tag, release or agent-operated Production action is
+  included. Normal main-image CI remains unchanged.
+
+## Operator acceptance and PR delivery
+
+On 2026-11-13 the operator reported successfully validating the deployed
+`feat/gke-authentication` branch at implementation commit `709db86`. This is
+operator-reported Prod evidence, not an agent-run cloud test. The operator then
+requested creating a PR and merging this branch to main. Only acceptance and
+delivery documentation is updated after that tested implementation; runtime
+code and migration00020 remain unchanged. Merge follows successful PR checks.
 
 Operator usage and required Google/resource permissions:
 [native GKE connections](../../operations/gke.md).

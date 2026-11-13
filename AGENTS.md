@@ -17,24 +17,27 @@ Cross-check checkpoints with Git status/history.
 
 ## Status
 
-Current local work (2026-11-13): native GKE authentication on
+Current GKE delivery (2026-11-13): native GKE authentication on
 `feat/gke-authentication`, based on `e9d7a4c`, using existing GCP Service Account
 Cloud Keys. Active design/plan: `docs/superpowers/specs/2026-11-13-gke-authentication-design.md`
 and `docs/superpowers/plans/2026-11-13-gke-authentication.md`. New source migration
 00020 appends GKE credential bindings to published head19 without replacing any
-published migration; next new migration is 00021. The operator explicitly
-authorizes committing and pushing this feature branch for their Prod validation.
-Main merge, release publication and agent-operated deployment are not authorized.
-The operator confirms v0.1.2 Prod redeployment, acceptance steps 1–6
-and GKE control-plane reachability; Helm acceptance (step 7) remains pending,
-and observation/backup sign-off (step 8) has not been reported.
+published migration; next new migration is 00021. Implementation commit
+`709db86e80935ded60e1215db63b84ecfa6c3031` was pushed to the feature branch.
+The operator now confirms successful Prod verification of this branch and
+explicitly authorizes PR creation and merge to main. Release publication and
+agent-operated deployment are outside this request. Earlier v0.1.2 Prod
+acceptance steps 1–6 remain confirmed; observation/backup sign-off (step 8)
+has not been reported.
 Local GKE implementation is complete: full Go race/database suite, frontend
 321 tests/checks/build, focused normal/tagged lint, generated checks, 44 release
 helper tests and actual embedded binary fixture smoke passed. All 19 published
-migration bytes and main's commit remain unchanged. The dedicated test container,
+migration bytes were preserved; main remained unchanged during implementation.
+The dedicated test container,
 anonymous volume and smoke database/server were removed; all 12 original shared
-Kubernetes containers and the existing PostgreSQL image were retained. Live GKE
-acceptance remains pending; no release or agent-operated Prod action was performed.
+Kubernetes containers and the existing PostgreSQL image were retained. Operator
+Prod verification is separate from these local fixture results. No release or
+agent-operated Prod action was performed.
 
 Current delivery (2026-11-12): **v0.1.2 is published and independently verified**
 as [GitHub Release `443492677`](https://github.com/ArkGravity/optimus/releases/tag/v0.1.2)

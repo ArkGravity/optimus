@@ -61,8 +61,12 @@ missing cluster and connection failures. They do not expose Google response
 bodies, Service Account JSON or access tokens. Application JWT authentication
 and Optimus feature permissions remain independent of Google authorization.
 
-Real GKE/Helm acceptance must be performed after deployment. Fixture tests verify
-transport, refresh and client integration without real cloud credentials.
+On 2026-11-13 the operator confirmed successful Prod verification of the native
+GKE feature branch at implementation commit `709db86`. Local fixture tests
+separately verify transport, refresh and client integration without real cloud
+credentials. Validate the selected identity and required resource permissions
+for each deployment; the operator's report does not replace those environment
+prerequisites.
 
 References: [API authentication](https://docs.cloud.google.com/kubernetes-engine/docs/how-to/api-server-authentication),
 [cluster metadata API](https://docs.cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.locations.clusters/get),
