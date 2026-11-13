@@ -6,6 +6,8 @@ Read this file and the active design/plan before substantial changes. See
 [docs/README.md](docs/README.md) for document ownership and the mapping from
 historical paths to the current layout. This is the sole project
 operating-contract file. Keep code comments in English.
+Unless the operator explicitly instructs otherwise, implement code changes on
+a new branch or worktree; never edit code directly on main.
 Use mem0 with `user_id = "logic"` and native `app_id = "optimus"`. Pass both
 as top-level fields when writing; when searching or listing, include both in
 `filters`, combined with AND. Do not duplicate project scope in metadata or add
@@ -14,6 +16,25 @@ essential information not already represented by native fields or memory text.
 Cross-check checkpoints with Git status/history.
 
 ## Status
+
+Current local work (2026-11-13): native GKE authentication on
+`feat/gke-authentication`, based on `e9d7a4c`, using existing GCP Service Account
+Cloud Keys. Active design/plan: `docs/superpowers/specs/2026-11-13-gke-authentication-design.md`
+and `docs/superpowers/plans/2026-11-13-gke-authentication.md`. New source migration
+00020 appends GKE credential bindings to published head19 without replacing any
+published migration; next new migration is 00021. The operator explicitly
+authorizes committing and pushing this feature branch for their Prod validation.
+Main merge, release publication and agent-operated deployment are not authorized.
+The operator confirms v0.1.2 Prod redeployment, acceptance steps 1–6
+and GKE control-plane reachability; Helm acceptance (step 7) remains pending,
+and observation/backup sign-off (step 8) has not been reported.
+Local GKE implementation is complete: full Go race/database suite, frontend
+321 tests/checks/build, focused normal/tagged lint, generated checks, 44 release
+helper tests and actual embedded binary fixture smoke passed. All 19 published
+migration bytes and main's commit remain unchanged. The dedicated test container,
+anonymous volume and smoke database/server were removed; all 12 original shared
+Kubernetes containers and the existing PostgreSQL image were retained. Live GKE
+acceptance remains pending; no release or agent-operated Prod action was performed.
 
 Current delivery (2026-11-12): **v0.1.2 is published and independently verified**
 as [GitHub Release `443492677`](https://github.com/ArkGravity/optimus/releases/tag/v0.1.2)
@@ -108,8 +129,8 @@ final verification record merged through PR #5 as `ddd1481`; prose CI
 `42297015632` passed. Publication changed only Release metadata and notes; the immutable
 tag, images and attachments were not replaced.
 
-Preserve main-image CI and schema19/31 business tables. Published migrations are
-immutable; append future migrations at 00020. Never replace a published version
+Preserve main-image CI, published baseline19 and all 31 business tables. Published
+migrations are immutable; GKE appends 00020, with future migrations from 00021. Never replace a published version
 tag, image or attachment. GitHub private vulnerability reporting is enabled and
 verified. The operator's 2026-11-05 real AWS/Aliyun/GCP acceptance of
 `main-1bbb8fe` supersedes older pending real-provider statements below but is
@@ -386,7 +407,7 @@ Run from the repository root:
 - `make swag` / `make swagger-diff`
 - `make dump-perms` / `make perm-check`
 - `make migrate-up` / `make migrate-down`
-- `make migrate-new name=<snake_case>` (sequential numbering, next is 00020)
+- `make migrate-new name=<snake_case>` (sequential numbering, next is 00021)
 - `make seed`
 
 Frontend commands run from `web/`: `bun install`, `bun run dev`,

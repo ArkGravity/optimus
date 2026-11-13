@@ -17,6 +17,7 @@ import (
 	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
 	"github.com/ArkGravity/optimus/internal/modules/credentials"
 	"github.com/ArkGravity/optimus/internal/modules/k8s/cluster"
+	"github.com/ArkGravity/optimus/internal/modules/k8s/connection"
 )
 
 const defaultRequestTimeout = 10 * time.Second
@@ -76,6 +77,12 @@ func (f *Factory) RestConfig(ctx context.Context, clusterID uint64, purpose stri
 	kc, err := f.consumer.GetKubeconfig(ctx, m.KubeconfigID, purpose)
 	if err != nil {
 		return nil, err
+	}
+	if err := cluster.ValidateCredential(kc, m.Context); err != nil {
+		return nil, err
+	}
+	if kc.AuthType == "gke_service_account" {
+		return connection.GKEConfig(ctx, f.consumer, kc, m.Context, purpose)
 	}
 	return buildRestConfig(kc.YAML, m.Context)
 }

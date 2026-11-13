@@ -11,6 +11,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 
 	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
+	"github.com/ArkGravity/optimus/internal/infra/gke"
 	"github.com/ArkGravity/optimus/internal/models"
 	"github.com/ArkGravity/optimus/internal/modules/audit"
 	"github.com/ArkGravity/optimus/internal/modules/k8s/cluster/inuse"
@@ -69,6 +70,12 @@ func (s *Service) Get(ctx context.Context, id uint64) (*Detail, error) {
 // --- mutations -------------------------------------------------------------
 
 func (s *Service) Create(ctx context.Context, actorID uint64, ip, ua string, req CreateRequest) (*Detail, error) {
+	if req.AuthType == AuthGKE {
+		return s.createGKE(ctx, actorID, ip, ua, req)
+	}
+	if (req.AuthType != "" && req.AuthType != AuthKubeconfig) || req.CloudKeyID != nil || req.GKE != nil {
+		return nil, invalidGKE()
+	}
 	if be := validateKubeconfig([]byte(req.Kubeconfig)); be != nil {
 		return nil, be
 	}
@@ -109,6 +116,12 @@ func (s *Service) Update(ctx context.Context, actorID uint64, ip, ua string, id 
 			return nil, apperr.New(apperr.CodeNotFound, "credentials.not_found", "credential not found")
 		}
 		return nil, err
+	}
+	if m.AuthType == AuthGKE {
+		return s.updateGKE(ctx, actorID, ip, ua, id, req)
+	}
+	if (req.AuthType != nil && *req.AuthType != AuthKubeconfig) || req.CloudKeyID != nil || req.GKE != nil {
+		return nil, invalidGKE()
 	}
 
 	fields := map[string]any{}
@@ -218,6 +231,9 @@ type ConsumeRecord struct {
 	Name             string
 	DefaultNamespace string
 	YAML             []byte
+	AuthType         string
+	CloudKeyID       *uint64
+	GKE              *gke.Config
 }
 
 func (s *Service) Consume(ctx context.Context, actor *uint64, id uint64, purpose string) (*ConsumeRecord, error) {
@@ -250,6 +266,9 @@ func (s *Service) Consume(ctx context.Context, actor *uint64, id uint64, purpose
 		Name:             m.Name,
 		DefaultNamespace: m.DefaultNamespace,
 		YAML:             yaml,
+		AuthType:         m.AuthType,
+		CloudKeyID:       m.CloudKeyID,
+		GKE:              gkeConfig(*m),
 	}, nil
 }
 
@@ -283,8 +302,14 @@ func toSummary(m models.CredentialKubeconfig) Summary {
 		Name:             m.Name,
 		Description:      m.Description,
 		DefaultNamespace: m.DefaultNamespace,
+		AuthType:         m.AuthType,
+		CloudKeyID:       m.CloudKeyID,
+		GKE:              gkeConfig(m),
 		CreatedAt:        m.CreatedAt,
 		UpdatedAt:        m.UpdatedAt,
+	}
+	if m.AuthType == AuthGKE {
+		out.DefaultContext = gke.Context
 	}
 	if m.CreatedByUserID != nil {
 		out.CreatedBy = &Actor{ID: *m.CreatedByUserID}

@@ -1,5 +1,21 @@
 basePath: /api/v1
 definitions:
+  github_com_ArkGravity_optimus_internal_infra_gke.Config:
+    properties:
+      cluster:
+        type: string
+      endpoint:
+        enum:
+        - default
+        - public
+        - private
+        - dns
+        type: string
+      location:
+        type: string
+      project:
+        type: string
+    type: object
   github_com_ArkGravity_optimus_internal_infra_response.Envelope:
     properties:
       code:
@@ -1278,31 +1294,117 @@ definitions:
       service_account_json:
         type: string
     type: object
+  internal_modules_credentials_kubeconfig.Actor:
+    properties:
+      display_name:
+        type: string
+      id:
+        type: integer
+      username:
+        type: string
+    type: object
   internal_modules_credentials_kubeconfig.CreateRequest:
     properties:
+      auth_type:
+        enum:
+        - kubeconfig
+        - gke_service_account
+        type: string
+      cloud_key_id:
+        type: integer
       default_namespace:
         maxLength: 64
         type: string
       description:
         maxLength: 4096
         type: string
+      gke:
+        $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_gke.Config'
       kubeconfig:
         type: string
       name:
         maxLength: 128
         type: string
     required:
-    - kubeconfig
     - name
+    type: object
+  internal_modules_credentials_kubeconfig.Detail:
+    properties:
+      auth_type:
+        type: string
+      cloud_key_id:
+        type: integer
+      created_at:
+        type: string
+      created_by:
+        $ref: '#/definitions/internal_modules_credentials_kubeconfig.Actor'
+      default_context:
+        type: string
+      default_namespace:
+        type: string
+      description:
+        type: string
+      gke:
+        $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_gke.Config'
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  internal_modules_credentials_kubeconfig.ListResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/internal_modules_credentials_kubeconfig.Summary'
+        type: array
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total:
+        type: integer
+    type: object
+  internal_modules_credentials_kubeconfig.Summary:
+    properties:
+      auth_type:
+        type: string
+      cloud_key_id:
+        type: integer
+      created_at:
+        type: string
+      created_by:
+        $ref: '#/definitions/internal_modules_credentials_kubeconfig.Actor'
+      default_context:
+        type: string
+      default_namespace:
+        type: string
+      description:
+        type: string
+      gke:
+        $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_gke.Config'
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
     type: object
   internal_modules_credentials_kubeconfig.UpdateRequest:
     properties:
+      auth_type:
+        type: string
+      cloud_key_id:
+        type: integer
       default_namespace:
         maxLength: 64
         type: string
       description:
         maxLength: 4096
         type: string
+      gke:
+        $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_gke.Config'
       kubeconfig:
         type: string
       name:
@@ -3557,7 +3659,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_credentials_kubeconfig.ListResponse'
+              type: object
       security:
       - BearerAuth: []
       summary: List kubeconfigs
@@ -3566,6 +3673,9 @@ paths:
     post:
       consumes:
       - application/json
+      description: Use auth_type=kubeconfig (default) with kubeconfig YAML, or auth_type=gke_service_account
+        with cloud_key_id and gke target metadata. GKE connections use context gke
+        and acquire tokens automatically. No exec plugins are executed.
       parameters:
       - description: credential payload
         in: body
@@ -3579,7 +3689,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_credentials_kubeconfig.Detail'
+              type: object
       security:
       - BearerAuth: []
       summary: Create kubeconfig
@@ -3618,7 +3733,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_credentials_kubeconfig.Detail'
+              type: object
       security:
       - BearerAuth: []
       summary: Get kubeconfig
@@ -3627,6 +3747,9 @@ paths:
     put:
       consumes:
       - application/json
+      description: Authentication mode and GKE target are immutable. GKE connections
+        support metadata edits and rebinding a valid GCP Service Account cloud_key_id;
+        uploaded kubeconfigs support YAML rotation.
       parameters:
       - description: credential ID
         in: path
@@ -3645,7 +3768,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_credentials_kubeconfig.Detail'
+              type: object
       security:
       - BearerAuth: []
       summary: Update kubeconfig

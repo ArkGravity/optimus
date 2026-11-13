@@ -813,7 +813,26 @@
     "kubeconfig": {
       "exec_forbidden": "Kubeconfig 中的用户使用了 exec 认证插件，禁止上传。",
       "authprovider_forbidden": "Kubeconfig 中的用户使用了 auth-provider 认证插件，禁止上传。",
-      "in_use": "Kubeconfig 仍被集群引用，请先删除引用集群。"
+      "in_use": "Kubeconfig 仍被集群引用，请先删除引用集群。",
+      "invalid_gke": "GKE 连接配置无效。"
+    },
+    "gke": {
+      "authentication": "认证方式",
+      "kubeconfig": "上传 kubeconfig",
+      "service_account": "GKE Service Account",
+      "hint": "选择已有 GCP Service Account 凭据，Optimus 自动获取集群地址、证书并续期访问令牌。添加集群时使用 gke 上下文。更换目标集群需创建新凭据。",
+      "cloud_key": "GCP 凭据",
+      "project": "目标 Project ID 或项目编号",
+      "location": "区域或可用区",
+      "cluster": "GKE 集群名称",
+      "endpoint": "控制面端点",
+      "endpoint_default": "集群默认",
+      "endpoint_public": "公网 IP",
+      "endpoint_private": "私网 IP",
+      "endpoint_dns": "DNS"
+    },
+    "cloud_key": {
+      "in_use_by_kubeconfigs": "该云凭据仍被 Kubernetes 凭据引用。"
     }
   },
   "k8s": {
@@ -930,6 +949,13 @@
     },
     "storage": {
       "unsupported_kind": "不支持的存储资源类型"
+    },
+    "gke": {
+      "invalid_config": "GKE 连接配置无效。",
+      "unauthorized": "GKE 认证失败，请检查所选 Service Account 凭据。",
+      "forbidden": "GKE 拒绝访问，请检查 Service Account 权限（包括 container.clusters.get）。",
+      "not_found": "未找到 GKE 集群，请检查项目、区域和集群名称。",
+      "unreachable": "无法连接 GKE 或 Google 认证服务。"
     }
   },
   "apps": {

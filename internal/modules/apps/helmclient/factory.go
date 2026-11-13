@@ -18,6 +18,7 @@ import (
 	"github.com/ArkGravity/optimus/internal/modules/apps"
 	"github.com/ArkGravity/optimus/internal/modules/credentials"
 	"github.com/ArkGravity/optimus/internal/modules/k8s/cluster"
+	"github.com/ArkGravity/optimus/internal/modules/k8s/connection"
 )
 
 // ClusterLookup is the narrow seam Factory needs to resolve a cluster ID into
@@ -78,11 +79,16 @@ func (f *Factory) NewForCluster(
 	// 3. Defense-in-depth: rerun the P1 kubeconfig validation on every build.
 	//    Catches a kubeconfig that was somehow mutated post-create to add an
 	//    exec / auth-provider plugin.
-	if err := cluster.ValidateContextAndAuth(kc.YAML, c.Context); err != nil {
+	if err := cluster.ValidateCredential(kc, c.Context); err != nil {
 		return nil, err
 	}
 	// 4. Parse kubeconfig and bind to the named context.
-	restCfg, err := buildRESTConfig(kc.YAML, c.Context)
+	var restCfg *rest.Config
+	if kc.AuthType == "gke_service_account" {
+		restCfg, err = connection.GKEConfig(ctx, f.consumer, kc, c.Context, consumerPurpose)
+	} else {
+		restCfg, err = buildRESTConfig(kc.YAML, c.Context)
+	}
 	if err != nil {
 		return nil, apps.MapError(err)
 	}

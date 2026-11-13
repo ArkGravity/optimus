@@ -35,6 +35,9 @@
         <template v-if="column.key === 'updated_at'">
           {{ formatTime(record.updated_at) }}
         </template>
+        <template v-else-if="column.key === 'auth_type'">
+          {{ $t(record.auth_type === 'gke_service_account' ? 'credentials.gke.service_account' : 'credentials.gke.kubeconfig') }}
+        </template>
         <template v-else-if="column.key === 'actions'">
           <a-space>
             <a v-permission="'credentials:kubeconfig:write'" @click="openEdit(record)">
@@ -99,6 +102,7 @@ const table = useTable<KubeconfigSummary, KubeconfigListQuery>({
 
 const columns = computed(() => [
   { key: 'name',              title: t('credentials.field.name'),        dataIndex: 'name' },
+  { key: 'auth_type',         title: t('credentials.gke.authentication') },
   { key: 'description',       title: t('credentials.field.description'), dataIndex: 'description' },
   { key: 'default_namespace', title: t('credentials.kubeconfigs.col_default_namespace'), dataIndex: 'default_namespace' },
   { key: 'updated_at',        title: 'Updated' },

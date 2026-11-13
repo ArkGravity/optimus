@@ -42,7 +42,7 @@ func (h *Handler) parseID(c *gin.Context) (uint64, bool) {
 // @Param    page_size         query    int    false "page size (default 20)"
 // @Param    q                 query    string false "search by name or description"
 // @Param    default_namespace query    string false "filter by default namespace (exact)"
-// @Success  200 {object} response.Envelope
+// @Success  200 {object} response.Envelope{data=ListResponse}
 // @Router   /credentials/kubeconfigs [get]
 func (h *Handler) list(c *gin.Context) {
 	var q ListQuery
@@ -64,7 +64,7 @@ func (h *Handler) list(c *gin.Context) {
 // @Security BearerAuth
 // @Produce  json
 // @Param    id path int true "credential ID"
-// @Success  200 {object} response.Envelope
+// @Success  200 {object} response.Envelope{data=Detail}
 // @Router   /credentials/kubeconfigs/{id} [get]
 func (h *Handler) get(c *gin.Context) {
 	id, ok := h.parseID(c)
@@ -79,14 +79,15 @@ func (h *Handler) get(c *gin.Context) {
 	response.Success(c, out)
 }
 
-// create stores a new kubeconfig. YAML is sealed before persisting.
+// create stores an uploaded kubeconfig or an explicit GKE connection binding.
 // @Summary  Create kubeconfig
+// @Description Use auth_type=kubeconfig (default) with kubeconfig YAML, or auth_type=gke_service_account with cloud_key_id and gke target metadata. GKE connections use context gke and acquire tokens automatically. No exec plugins are executed.
 // @Tags     credentials
 // @Security BearerAuth
 // @Accept   json
 // @Produce  json
 // @Param    body body     CreateRequest true "credential payload"
-// @Success  200 {object} response.Envelope
+// @Success  200 {object} response.Envelope{data=Detail}
 // @Router   /credentials/kubeconfigs [post]
 func (h *Handler) create(c *gin.Context) {
 	var req CreateRequest
@@ -104,13 +105,14 @@ func (h *Handler) create(c *gin.Context) {
 
 // update mutates metadata and/or rotates the YAML body.
 // @Summary  Update kubeconfig
+// @Description Authentication mode and GKE target are immutable. GKE connections support metadata edits and rebinding a valid GCP Service Account cloud_key_id; uploaded kubeconfigs support YAML rotation.
 // @Tags     credentials
 // @Security BearerAuth
 // @Accept   json
 // @Produce  json
 // @Param    id   path     int           true "credential ID"
 // @Param    body body     UpdateRequest true "credential payload"
-// @Success  200 {object} response.Envelope
+// @Success  200 {object} response.Envelope{data=Detail}
 // @Router   /credentials/kubeconfigs/{id} [put]
 func (h *Handler) update(c *gin.Context) {
 	id, ok := h.parseID(c)

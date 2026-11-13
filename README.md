@@ -46,7 +46,7 @@ The operator confirmed real AWS, Aliyun and GCP acceptance of `main-1bbb8fe` on 
 
 ## Database baseline
 
-Current main uses a fresh 19-migration baseline: 31 business tables plus Goose history. Existing databases at historical schema 00022, 00023 or 00028 cannot upgrade in place using these renumbered migrations. Read the [database transition and recovery guide](docs/operations/recovery.md) before using an existing database. Recreating a container does not recreate its PostgreSQL data.
+Published v0.1.0–v0.1.2 use a fresh 19-migration baseline: 31 business tables plus Goose history. Native [GKE source support](docs/operations/gke.md) appends migration00020 and upgrades head19 in place. Existing databases at historical schema 00022, 00023 or 00028 cannot upgrade in place using these renumbered migrations. Read the [database transition and recovery guide](docs/operations/recovery.md) before using an existing database. Recreating a container does not recreate its PostgreSQL data.
 
 ## Documentation and development
 

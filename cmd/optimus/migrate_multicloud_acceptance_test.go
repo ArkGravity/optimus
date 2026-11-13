@@ -75,12 +75,12 @@ func TestMulticloudFreshBaselineAndSeedAcceptance(t *testing.T) {
 				snapshots[table] = row
 			}
 			for range 2 {
-				require.NoError(t, goose.UpTo(database, ".", 19))
+				require.NoError(t, goose.UpTo(database, ".", 20))
 				_, err = seed.Run(context.Background(), gdb, opts)
 				require.NoError(t, err)
 				version, err := goose.GetDBVersion(database)
 				require.NoError(t, err)
-				require.EqualValues(t, 19, version)
+				require.EqualValues(t, 20, version)
 				for table, want := range snapshots {
 					var actual string
 					require.NoError(t, database.QueryRow(fmt.Sprintf(`SELECT row_to_json(r)::text FROM %s r WHERE id=7001`, table)).Scan(&actual))
@@ -146,7 +146,7 @@ func TestMulticloudValidServiceAccountBaselineAcceptance(t *testing.T) {
 	require.NoError(t, runGoose(database, "up"))
 	version, err := goose.GetDBVersion(database)
 	require.NoError(t, err)
-	require.EqualValues(t, 19, version)
+	require.EqualValues(t, 20, version)
 	var stored []byte
 	require.NoError(t, database.QueryRow(`SELECT service_account_json_enc FROM credentials_cloud_keys WHERE id=$1`, id).Scan(&stored))
 	require.Equal(t, sealed, stored)
@@ -239,7 +239,7 @@ func TestFreshBaselinePopulatedDownAndReinitialize(t *testing.T) {
 	}
 	version, err = goose.GetDBVersion(database)
 	require.NoError(t, err)
-	require.EqualValues(t, 19, version)
+	require.EqualValues(t, 20, version)
 	var menus int64
 	require.NoError(t, gdb.Model(&models.Menu{}).Where("code = ?", "assets.firewalls").Count(&menus).Error)
 	require.EqualValues(t, 1, menus)

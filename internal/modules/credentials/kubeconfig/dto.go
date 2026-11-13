@@ -1,15 +1,26 @@
 package kubeconfig
 
-import "time"
+import (
+	"time"
+
+	"github.com/ArkGravity/optimus/internal/infra/gke"
+)
+
+const AuthKubeconfig = "kubeconfig"
+const AuthGKE = "gke_service_account"
 
 type Summary struct {
-	ID               uint64    `json:"id"`
-	Name             string    `json:"name"`
-	Description      string    `json:"description"`
-	DefaultNamespace string    `json:"default_namespace"`
-	CreatedBy        *Actor    `json:"created_by,omitempty"`
-	CreatedAt        time.Time `json:"created_at"`
-	UpdatedAt        time.Time `json:"updated_at"`
+	ID               uint64      `json:"id"`
+	Name             string      `json:"name"`
+	Description      string      `json:"description"`
+	DefaultNamespace string      `json:"default_namespace"`
+	AuthType         string      `json:"auth_type"`
+	CloudKeyID       *uint64     `json:"cloud_key_id,omitempty"`
+	GKE              *gke.Config `json:"gke,omitempty"`
+	DefaultContext   string      `json:"default_context,omitempty"`
+	CreatedBy        *Actor      `json:"created_by,omitempty"`
+	CreatedAt        time.Time   `json:"created_at"`
+	UpdatedAt        time.Time   `json:"updated_at"`
 }
 
 type Detail = Summary
@@ -21,17 +32,23 @@ type Actor struct {
 }
 
 type CreateRequest struct {
-	Name             string `json:"name"              binding:"required,max=128"`
-	Description      string `json:"description"       binding:"max=4096"`
-	DefaultNamespace string `json:"default_namespace" binding:"max=64"`
-	Kubeconfig       string `json:"kubeconfig"        binding:"required"`
+	Name             string      `json:"name"              binding:"required,max=128"`
+	Description      string      `json:"description"       binding:"max=4096"`
+	DefaultNamespace string      `json:"default_namespace" binding:"max=64"`
+	Kubeconfig       string      `json:"kubeconfig"`
+	AuthType         string      `json:"auth_type" binding:"omitempty,oneof=kubeconfig gke_service_account"`
+	CloudKeyID       *uint64     `json:"cloud_key_id"`
+	GKE              *gke.Config `json:"gke"`
 }
 
 type UpdateRequest struct {
-	Name             *string `json:"name,omitempty"              binding:"omitempty,max=128"`
-	Description      *string `json:"description,omitempty"       binding:"omitempty,max=4096"`
-	DefaultNamespace *string `json:"default_namespace,omitempty" binding:"omitempty,max=64"`
-	Kubeconfig       *string `json:"kubeconfig,omitempty"`
+	Name             *string     `json:"name,omitempty"              binding:"omitempty,max=128"`
+	Description      *string     `json:"description,omitempty"       binding:"omitempty,max=4096"`
+	DefaultNamespace *string     `json:"default_namespace,omitempty" binding:"omitempty,max=64"`
+	Kubeconfig       *string     `json:"kubeconfig,omitempty"`
+	AuthType         *string     `json:"auth_type,omitempty"`
+	CloudKeyID       *uint64     `json:"cloud_key_id,omitempty"`
+	GKE              *gke.Config `json:"gke,omitempty"`
 }
 
 type ListQuery struct {

@@ -11,7 +11,7 @@ import (
 )
 
 func TestEmbeddedFreshBaselineLayout(t *testing.T) {
-	names := []string{"create_users", "create_roles", "create_permissions", "create_user_roles", "create_role_permissions", "create_menus", "create_refresh_tokens", "create_audit_logs", "create_credentials_ssh_keys", "create_credentials_kubeconfigs", "create_credentials_cloud_keys", "create_clusters", "create_apps_chart_repos", "create_apps_applications", "create_cloud_accounts", "create_aws_assets", "create_aliyun_assets", "create_gcp_assets", "create_assets_sync_runs"}
+	names := []string{"create_users", "create_roles", "create_permissions", "create_user_roles", "create_role_permissions", "create_menus", "create_refresh_tokens", "create_audit_logs", "create_credentials_ssh_keys", "create_credentials_kubeconfigs", "create_credentials_cloud_keys", "create_clusters", "create_apps_chart_repos", "create_apps_applications", "create_cloud_accounts", "create_aws_assets", "create_aliyun_assets", "create_gcp_assets", "create_assets_sync_runs", "gke_kubernetes_credentials"}
 	entries, err := FS.ReadDir(".")
 	require.NoError(t, err)
 	var actual []string
@@ -29,7 +29,7 @@ func TestEmbeddedFreshBaselineLayout(t *testing.T) {
 	t.Cleanup(func() { goose.SetBaseFS(nil) })
 	collected, err := goose.CollectMigrations(".", 0, math.MaxInt64)
 	require.NoError(t, err)
-	require.Len(t, collected, 19)
+	require.Len(t, collected, 20)
 	for i, migration := range collected {
 		require.EqualValues(t, i+1, migration.Version)
 	}

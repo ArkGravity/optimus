@@ -240,26 +240,39 @@ export interface SshKeyListQuery {
 }
 
 // Kubeconfigs
+export interface GKEConnection {
+  project: string
+  location: string
+  cluster: string
+  endpoint: 'default' | 'public' | 'private' | 'dns'
+}
 export interface KubeconfigSummary {
   id: number
   name: string
   description: string
   default_namespace: string
+  auth_type?: 'kubeconfig' | 'gke_service_account'
+  cloud_key_id?: number
+  gke?: GKEConnection
+  default_context?: string
   created_by?: CredentialActor
   created_at: string
   updated_at: string
 }
-export interface KubeconfigCreateRequest {
+export type KubeconfigCreateRequest = {
   name: string
   description?: string
   default_namespace?: string
-  kubeconfig: string
-}
+} & (
+  | { auth_type?: 'kubeconfig'; kubeconfig: string }
+  | { auth_type: 'gke_service_account'; cloud_key_id: number; gke: GKEConnection }
+)
 export interface KubeconfigUpdateRequest {
   name?: string
   description?: string
   default_namespace?: string
   kubeconfig?: string
+  cloud_key_id?: number
 }
 export interface KubeconfigListQuery {
   q?: string

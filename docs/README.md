@@ -34,8 +34,9 @@ Use disposable resources for checklists and never publish credentials or provide
 
 - [Database transitions, backup and recovery](operations/recovery.md)
 - [Installation and configuration](installation.md)
+- [Native GKE connections](operations/gke.md) — source feature, not included in v0.1.2
 
-Current main uses fresh head19 with 31 business tables plus Goose history. Historical 00022/00023/00028 databases cannot upgrade in place using renumbered files. Preserve the database backup and matching vault key before a separately authorized recreation. See the [recovery guide](operations/recovery.md), including historical acceptance and current operator reports.
+Published v0.1.0–v0.1.2 use fresh head19 with 31 business tables plus Goose history. The GKE source feature appends 00020 and upgrades head19 in place. Historical 00022/00023/00028 databases cannot upgrade in place using renumbered files. Preserve the database backup and matching vault key before a separately authorized recreation. See the [recovery guide](operations/recovery.md), including historical acceptance and current operator reports.
 
 ## Reference
 
@@ -59,6 +60,6 @@ Backend/frontend documents from former split repositories are preserved here. Th
 - `cmd/server`, `cmd/migrate`, `cmd/seed` and `cmd/vault-keygen` are now `cmd/optimus` subcommands (`optimus server|migrate|seed|vault-keygen`).
 - The Go module is `github.com/ArkGravity/optimus`, formerly `optimus-be`.
 - Pre-split commit IDs refer to the deleted original `logic3579/optimus` repository and do not resolve here. Split-era backend/frontend history is preserved.
-- Historical migration numbers through 00028 describe earlier development/production layouts. Current source ends at 00019; append 00020 for new schema work.
+- Historical migration numbers through 00028 describe earlier development/production layouts. Published baseline19 is immutable; GKE source appends 00020, with new schema work starting at 00021.
 
 Current user and operational instructions belong in the guides above. Preserve designs/plans as chronological history and use [AGENTS.md](../AGENTS.md) as the sole project operating-contract file.

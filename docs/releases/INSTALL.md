@@ -32,7 +32,7 @@ Edit `.env` before startup. Set `COMPOSE_PROJECT_NAME=optimus-prod`, `IMAGE_REPO
 
 Keep HTTP_BIND and POSTGRES_BIND at `127.0.0.1`. Put a TLS reverse proxy in front for remote access and set OPTIMUS_SERVER_TRUSTED_PROXIES only to its IP/CIDR. The embedded UI needs no extra CORS origin. Protect .env and seed logs. Authenticate to the selected registry first if anonymous pulls are unavailable.
 
-**Existing database warning:** current migrations form a fresh head19 baseline (31 business tables plus Goose history). Historical 00022/00023/00028 databases cannot upgrade in place. Stop writers, retain a tested backup with matching vault key/configuration/application revision, and authorize actual database recreation including Goose history before migrate/seed. Container recreation alone keeps old data. No automatic historical-data conversion is provided. Down migrations drop data and are not recovery. Never use `docker compose down -v` as an upgrade or password-rotation procedure.
+**Existing database warning:** migrations preserve the published fresh head19 baseline and append 00020 for native GKE connections (31 business tables plus Goose history). Existing head19 databases upgrade in place; do not recreate them. Historical 00022/00023/00028 databases cannot upgrade in place. Stop writers, retain a tested backup with matching vault key/configuration/application revision, and authorize actual database recreation including Goose history before migrate/seed. Container recreation alone keeps old data. No automatic historical-data conversion is provided. Migration20 Down refuses existing GKE bindings; earlier Down migrations drop data and are not recovery. Never use `docker compose down -v` as an upgrade or password-rotation procedure.
 
 ```bash
 docker compose pull
@@ -75,7 +75,7 @@ Create a Cloud Key using AWS/Aliyun AK/SK or GCP Service Account JSON. Create a 
 
 GCP's GOOGLE_API_USE_CLIENT_CERTIFICATE must be unset or case-insensitive false. Collection uses explicit selected credentials and provides no cloud write/manage APIs. Never share raw cloud payloads, secrets, JWTs or kubeconfigs in reports.
 
-A usable recovery set is the database backup plus its matching vault key, configuration and application revision. Restore them together on an isolated target first. PostgreSQL volumes retain their original password after .env changes. Do not delete volumes to rotate passwords. Published migrations are immutable; a future schema change appends 00020.
+A usable recovery set is the database backup plus its matching vault key, configuration and application revision. Restore them together on an isolated target first. PostgreSQL volumes retain their original password after .env changes. Do not delete volumes to rotate passwords. Published baseline19 migrations are immutable; native GKE appends 00020 and the next new migration is 00021.
 
 Full guides: https://github.com/ArkGravity/optimus/blob/@VERSION@/docs/installation.md and https://github.com/ArkGravity/optimus/blob/@VERSION@/docs/operations/recovery.md
 

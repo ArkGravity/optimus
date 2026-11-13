@@ -66,7 +66,7 @@ source needs a new version, not replacement of an existing tag or attachment.
 
 The initial version uses fresh head19: 31 business tables and Goose history. Old 00022/00023/00028 databases require actual recreation, including migration history; this is not an in-place upgrade. Stop writers and retain database backups with their matching vault key, config and application revision. Fresh Down operations drop data and are not rollback. See [recovery](../operations/recovery.md).
 
-These released migrations are immutable. The next schema change appends 00020. Keep the API specification's version independent from the product release version; do not rewrite Swagger's API version solely to match a release tag.
+These released migrations are immutable. Native GKE source appends 00020, upgrading head19 in place; the next schema change is 00021. Keep the API specification's version independent from the product release version; do not rewrite Swagger's API version solely to match a release tag.
 
 ## Verification record
 

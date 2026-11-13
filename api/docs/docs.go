@@ -3140,7 +3140,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_credentials_kubeconfig.ListResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -3151,6 +3163,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
+                "description": "Use auth_type=kubeconfig (default) with kubeconfig YAML, or auth_type=gke_service_account with cloud_key_id and gke target metadata. GKE connections use context gke and acquire tokens automatically. No exec plugins are executed.",
                 "consumes": [
                     "application/json"
                 ],
@@ -3176,7 +3189,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_credentials_kubeconfig.Detail"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -3209,7 +3234,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_credentials_kubeconfig.Detail"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -3220,6 +3257,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
+                "description": "Authentication mode and GKE target are immutable. GKE connections support metadata edits and rebinding a valid GCP Service Account cloud_key_id; uploaded kubeconfigs support YAML rotation.",
                 "consumes": [
                     "application/json"
                 ],
@@ -3252,7 +3290,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/internal_modules_credentials_kubeconfig.Detail"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -5190,6 +5240,29 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "github_com_ArkGravity_optimus_internal_infra_gke.Config": {
+            "type": "object",
+            "properties": {
+                "cluster": {
+                    "type": "string"
+                },
+                "endpoint": {
+                    "type": "string",
+                    "enum": [
+                        "default",
+                        "public",
+                        "private",
+                        "dns"
+                    ]
+                },
+                "location": {
+                    "type": "string"
+                },
+                "project": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_ArkGravity_optimus_internal_infra_response.Envelope": {
             "type": "object",
             "properties": {
@@ -7103,13 +7176,36 @@ const docTemplate = `{
                 }
             }
         },
+        "internal_modules_credentials_kubeconfig.Actor": {
+            "type": "object",
+            "properties": {
+                "display_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "internal_modules_credentials_kubeconfig.CreateRequest": {
             "type": "object",
             "required": [
-                "kubeconfig",
                 "name"
             ],
             "properties": {
+                "auth_type": {
+                    "type": "string",
+                    "enum": [
+                        "kubeconfig",
+                        "gke_service_account"
+                    ]
+                },
+                "cloud_key_id": {
+                    "type": "integer"
+                },
                 "default_namespace": {
                     "type": "string",
                     "maxLength": 64
@@ -7117,6 +7213,9 @@ const docTemplate = `{
                 "description": {
                     "type": "string",
                     "maxLength": 4096
+                },
+                "gke": {
+                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_gke.Config"
                 },
                 "kubeconfig": {
                     "type": "string"
@@ -7127,9 +7226,111 @@ const docTemplate = `{
                 }
             }
         },
+        "internal_modules_credentials_kubeconfig.Detail": {
+            "type": "object",
+            "properties": {
+                "auth_type": {
+                    "type": "string"
+                },
+                "cloud_key_id": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "$ref": "#/definitions/internal_modules_credentials_kubeconfig.Actor"
+                },
+                "default_context": {
+                    "type": "string"
+                },
+                "default_namespace": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "gke": {
+                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_gke.Config"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_modules_credentials_kubeconfig.ListResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_modules_credentials_kubeconfig.Summary"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_modules_credentials_kubeconfig.Summary": {
+            "type": "object",
+            "properties": {
+                "auth_type": {
+                    "type": "string"
+                },
+                "cloud_key_id": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "$ref": "#/definitions/internal_modules_credentials_kubeconfig.Actor"
+                },
+                "default_context": {
+                    "type": "string"
+                },
+                "default_namespace": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "gke": {
+                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_gke.Config"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
         "internal_modules_credentials_kubeconfig.UpdateRequest": {
             "type": "object",
             "properties": {
+                "auth_type": {
+                    "type": "string"
+                },
+                "cloud_key_id": {
+                    "type": "integer"
+                },
                 "default_namespace": {
                     "type": "string",
                     "maxLength": 64
@@ -7137,6 +7338,9 @@ const docTemplate = `{
                 "description": {
                     "type": "string",
                     "maxLength": 4096
+                },
+                "gke": {
+                    "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_gke.Config"
                 },
                 "kubeconfig": {
                     "type": "string"

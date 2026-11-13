@@ -232,6 +232,9 @@ func (s *Service) Delete(ctx context.Context, actorID uint64, ip, ua string, id 
 		if err != nil {
 			return err
 		}
+		if err := s.checkKubeconfigReferences(ctx, tx, id); err != nil {
+			return err
+		}
 		if s.accountsInUseCounter != nil {
 			var n int64
 			if counter, ok := s.accountsInUseCounter.(transactionalAccountsInUseCounter); ok {
@@ -352,6 +355,9 @@ func (s *Service) seal(data []byte) ([]byte, error) {
 }
 
 func (s *Service) checkConversionReferences(ctx context.Context, tx *gorm.DB, id uint64) error {
+	if err := s.checkKubeconfigReferences(ctx, tx, id); err != nil {
+		return err
+	}
 	var count int64
 	var err error
 	if counter, ok := s.accountsInUseCounter.(transactionalAccountsInUseCounter); ok {
@@ -373,6 +379,17 @@ func (s *Service) checkConversionReferences(ctx context.Context, tx *gorm.DB, id
 	}
 	if count > 0 {
 		return apperr.New(apperr.CodeAssetsCloudAccountInUse, "assets.cloud_account.in_use", fmt.Sprintf("cloud key referenced by %d cloud account(s)", count))
+	}
+	return nil
+}
+
+func (s *Service) checkKubeconfigReferences(ctx context.Context, tx *gorm.DB, id uint64) error {
+	n, err := s.repo.CountKubeconfigsTx(ctx, tx, id)
+	if err != nil {
+		return err
+	}
+	if n > 0 {
+		return apperr.New(apperr.CodeConflict, "credentials.cloud_key.in_use_by_kubeconfigs", "cloud key is referenced by Kubernetes credentials")
 	}
 	return nil
 }
