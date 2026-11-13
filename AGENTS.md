@@ -6,10 +6,12 @@ Read this file and the active design/plan before substantial changes. See
 [docs/README.md](docs/README.md) for document ownership and the mapping from
 historical paths to the current layout. This is the sole project
 operating-contract file. Keep code comments in English.
-Use mem0 with `user_id = "logic"`. Write with top-level `app_id = "optimus"`
-and `metadata = {"project": "optimus", "app_id": "optimus"}`; filter reads by
-`user_id` and `metadata.project = "optimus"`. Prefix memory text with
-`[optimus]`. Cross-check checkpoints with Git status/history.
+Use mem0 with `user_id = "logic"` and native `app_id = "optimus"`. Pass both
+as top-level fields when writing; when searching or listing, include both in
+`filters`, combined with AND. Do not duplicate project scope in metadata or add
+project-name prefixes to memory text. Omit metadata by default; add only
+essential information not already represented by native fields or memory text.
+Cross-check checkpoints with Git status/history.
 
 ## Status
 
@@ -669,7 +671,7 @@ variables or log raw SDK payloads, SA JSON, JWTs or AK/SK.
 the superpowers and build-web-apps plugins. Export `MEM0_API_KEY` and
 `CONTEXT7_API_KEY` before starting Codex; install `serena` on PATH. Start Codex
 from the repository root so Serena selects it. Preserve the mem0 scope from
-First Read; when updating metadata, read and preserve existing fields, send the
-complete merged object, and verify the saved result. Update this file and the
-current checkpoint after milestones.
+First Read; before updating a memory by ID, verify its user and application
+scope. Keep metadata minimal and verify the saved text, scope and metadata after
+updates. Update this file and the current checkpoint after milestones.
 Local `.serena/`, `.omo/`, `.worktrees/` and agent caches are ignored.
