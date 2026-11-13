@@ -313,7 +313,7 @@ func (s *Service) validateRef(ctx context.Context, actorID uint64, kubeconfigID 
 	if err != nil {
 		return err // 40401 / 40002 / etc from P1
 	}
-	return ValidateContextAndAuth(rec.YAML, contextName)
+	return ValidateCredential(rec, contextName)
 }
 
 func (s *Service) writeAudit(ctx context.Context, actor *uint64, action string, id uint64, ip, ua string, payload map[string]any) {

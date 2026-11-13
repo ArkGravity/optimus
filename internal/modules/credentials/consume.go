@@ -12,6 +12,8 @@ package credentials
 import (
 	"context"
 
+	"github.com/ArkGravity/optimus/internal/infra/gke"
+
 	"github.com/ArkGravity/optimus/internal/modules/credentials/cloudkey"
 	"github.com/ArkGravity/optimus/internal/modules/credentials/kubeconfig"
 	"github.com/ArkGravity/optimus/internal/modules/credentials/sshkey"
@@ -38,6 +40,9 @@ type Kubeconfig struct {
 	Name             string
 	DefaultNamespace string
 	YAML             []byte
+	AuthType         string
+	CloudKeyID       *uint64
+	GKE              *gke.Config
 }
 
 // CloudKey is the decrypted shape returned by Consumer.GetCloudKey.
@@ -112,6 +117,9 @@ func (c *consumer) GetKubeconfig(ctx context.Context, id uint64, purpose string)
 		Name:             rec.Name,
 		DefaultNamespace: rec.DefaultNamespace,
 		YAML:             rec.YAML,
+		AuthType:         rec.AuthType,
+		CloudKeyID:       rec.CloudKeyID,
+		GKE:              rec.GKE,
 	}, nil
 }
 

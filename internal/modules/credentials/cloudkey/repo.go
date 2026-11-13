@@ -118,3 +118,9 @@ func (r *Repo) DeleteTx(ctx context.Context, tx *gorm.DB, id uint64) (int64, err
 func (r *Repo) Transaction(ctx context.Context, fn func(tx *gorm.DB) error) error {
 	return r.db.WithContext(ctx).Transaction(fn)
 }
+
+func (r *Repo) CountKubeconfigsTx(ctx context.Context, tx *gorm.DB, id uint64) (int64, error) {
+	var count int64
+	err := tx.WithContext(ctx).Model(&models.CredentialKubeconfig{}).Where("cloud_key_id = ?", id).Count(&count).Error
+	return count, err
+}

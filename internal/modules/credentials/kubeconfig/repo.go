@@ -45,6 +45,22 @@ func (r *Repo) Create(ctx context.Context, m *models.CredentialKubeconfig) error
 	return r.db.WithContext(ctx).Create(m).Error
 }
 
+func (r *Repo) CreateTx(ctx context.Context, tx *gorm.DB, m *models.CredentialKubeconfig) error {
+	return tx.WithContext(ctx).Create(m).Error
+}
+
+func (r *Repo) FindByNameTx(ctx context.Context, tx *gorm.DB, name string) (*models.CredentialKubeconfig, error) {
+	var m models.CredentialKubeconfig
+	err := tx.WithContext(ctx).Where("name = ?", name).First(&m).Error
+	return &m, err
+}
+
+func (r *Repo) CloudKeyMetadataTx(ctx context.Context, tx *gorm.DB, id uint64) (*models.CredentialCloudKey, error) {
+	var m models.CredentialCloudKey
+	err := tx.WithContext(ctx).Select("id", "provider", "auth_type").First(&m, id).Error
+	return &m, err
+}
+
 func (r *Repo) Get(ctx context.Context, id uint64) (*models.CredentialKubeconfig, error) {
 	var m models.CredentialKubeconfig
 	if err := r.db.WithContext(ctx).First(&m, id).Error; err != nil {
@@ -91,10 +107,14 @@ func (r *Repo) List(ctx context.Context, q ListQuery) ([]models.CredentialKubeco
 }
 
 func (r *Repo) Update(ctx context.Context, id uint64, fields map[string]any) error {
+	return r.UpdateTx(ctx, r.db, id, fields)
+}
+
+func (r *Repo) UpdateTx(ctx context.Context, tx *gorm.DB, id uint64, fields map[string]any) error {
 	if len(fields) == 0 {
 		return nil
 	}
-	return r.db.WithContext(ctx).
+	return tx.WithContext(ctx).
 		Model(&models.CredentialKubeconfig{}).
 		Where("id = ?", id).
 		Updates(fields).Error

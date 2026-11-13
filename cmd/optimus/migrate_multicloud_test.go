@@ -165,7 +165,7 @@ func TestNativeAssetMigrationsPreserveAWSAndDowngradeOnlyOwnTables(t *testing.T)
 	require.NoError(t, runGoose(database, "up"))
 	version, err := goose.GetDBVersion(database)
 	require.NoError(t, err)
-	require.EqualValues(t, 19, version)
+	require.EqualValues(t, 20, version)
 	assertPreserved()
 	require.NoError(t, goose.DownTo(database, ".", 17))
 	for _, table := range nativeAssetTables {

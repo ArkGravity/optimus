@@ -813,7 +813,26 @@
     "kubeconfig": {
       "exec_forbidden": "Kubeconfig user uses an exec auth plugin, which is not supported.",
       "authprovider_forbidden": "Kubeconfig user uses an auth-provider plugin, which is not supported.",
-      "in_use": "Kubeconfig is referenced by clusters; remove the clusters first."
+      "in_use": "Kubeconfig is referenced by clusters; remove the clusters first.",
+      "invalid_gke": "Invalid GKE connection configuration."
+    },
+    "gke": {
+      "authentication": "Authentication",
+      "kubeconfig": "Uploaded kubeconfig",
+      "service_account": "GKE Service Account",
+      "hint": "Select a GCP Service Account credential. Optimus retrieves the cluster endpoint and certificate and renews access tokens automatically. Use context gke when adding the cluster. Changing the target requires a new credential.",
+      "cloud_key": "GCP credential",
+      "project": "Target Project ID or number",
+      "location": "Region or zone",
+      "cluster": "GKE cluster name",
+      "endpoint": "Control plane endpoint",
+      "endpoint_default": "Cluster default",
+      "endpoint_public": "Public IP",
+      "endpoint_private": "Private IP",
+      "endpoint_dns": "DNS"
+    },
+    "cloud_key": {
+      "in_use_by_kubeconfigs": "Cloud credential is referenced by Kubernetes credentials."
     }
   },
   "k8s": {
@@ -930,6 +949,13 @@
     },
     "storage": {
       "unsupported_kind": "Unsupported storage resource type"
+    },
+    "gke": {
+      "invalid_config": "Invalid GKE connection configuration.",
+      "unauthorized": "GKE authentication failed. Check the selected Service Account credential.",
+      "forbidden": "GKE access denied. Check Service Account permissions, including container.clusters.get.",
+      "not_found": "GKE cluster not found. Check project, location and cluster name.",
+      "unreachable": "Cannot connect to GKE or Google authentication services."
     }
   },
   "apps": {

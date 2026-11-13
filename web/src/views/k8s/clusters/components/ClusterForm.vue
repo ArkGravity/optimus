@@ -113,19 +113,28 @@ const rules = computed(() => ({
 }))
 
 const loadingKubeconfigs = ref(false)
-const kubeconfigOptions = ref<{ value: number; label: string }[]>([])
+const kubeconfigOptions = ref<{ value: number; label: string; context?: string }[]>([])
 
 async function loadKubeconfigs() {
   loadingKubeconfigs.value = true
   try {
     const r = await kubeconfigApi.list({ page: 1, page_size: 200 })
-    kubeconfigOptions.value = r.items.map(k => ({ value: k.id, label: k.name }))
+    kubeconfigOptions.value = r.items.map(k => ({ value: k.id, label: k.name, context: k.default_context }))
   } catch (e) {
     message.error(isBizError(e) ? e.message : t('network.error'))
   } finally {
     loadingKubeconfigs.value = false
   }
 }
+
+watch(() => form.kubeconfig_id, (id, previousId) => {
+  const context = kubeconfigOptions.value.find(option => option.value === id)?.context
+  if (context) form.context = context
+  else {
+    const previous = kubeconfigOptions.value.find(option => option.value === previousId)?.context
+    if (previous && form.context === previous) form.context = ''
+  }
+})
 
 watch(
   () => props.open,

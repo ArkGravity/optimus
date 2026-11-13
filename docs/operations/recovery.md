@@ -4,7 +4,14 @@ Optimus credentials are encrypted with a vault master key. A usable recovery set
 
 ## Fresh baseline for v0.1.0
 
-Current main uses exactly 19 sequential migrations ending at `00019_create_assets_sync_runs.sql`. Initialization creates 31 business tables plus `goose_db_version` (32 tables total), with head version 19. The next new migration is 00020; published migrations are immutable.
+Published v0.1.0–v0.1.2 use exactly 19 sequential migrations ending at `00019_create_assets_sync_runs.sql`. Initialization creates 31 business tables plus `goose_db_version` (32 tables total), with head version 19. Published migrations are immutable.
+
+The native GKE source feature appends `00020_gke_kubernetes_credentials.sql`.
+Existing head19 databases upgrade in place with the updated binary's migrate
+command; no database recreation is required. There are still 31 business tables.
+The next new migration is 00021. Migration20 Down refuses to discard GKE bindings:
+remove those connections through their normal reference-protected lifecycle
+before an explicitly planned downgrade. See [GKE connections](gke.md).
 
 Historical databases at schema 00022, 00023 or 00028 **cannot upgrade in place** with these renumbered files. They must actually be recreated, including `goose_db_version`. Recreating an application/PostgreSQL container does not remove the existing named volume or its schema history. Do not attempt to repair this by changing Goose version rows.
 
@@ -14,7 +21,7 @@ For an explicitly planned transition:
 2. Back up required database contents and securely retain the matching vault key, application/configuration revision and deployment identity. Verify the backup on a disposable target.
 3. Choose and authorize the target database recreation. This removes existing application data; decide how required data will be retained or restored before proceeding. No automatic business-data transfer from the historical baseline is provided.
 4. Recreate the target database or remove all its objects, including Goose history, using the operator's database procedure.
-5. Run the selected version's migrate and seed, check head19, then verify login and credential/resource behavior before reopening access.
+5. Run the selected version's migrate and seed, check its expected head (19 for v0.1.0–v0.1.2, 20 for native GKE source), then verify login and credential/resource behavior before reopening access.
 
 Do not run destructive recreation commands on a persistent environment as a shortcut. This guide deliberately does not prescribe `docker compose down -v`: it erases persistent data. Container recreation alone is also insufficient for the baseline transition.
 
@@ -35,6 +42,10 @@ Seed preserves the former built-in Security Groups menu row ID, permission grant
 Legacy-invalid GCP credential records remain readable as `auth_type=legacy_invalid` / `needs_configuration`; replace their secret with valid Service Account JSON before collection. GCP uses an explicit target Project ID, possibly different from the credential's home project. Cloud Account provider, credential binding and target project are immutable; create a new account to change them. Rotate secret material on the existing credential to retain a binding.
 
 Credential deletion is blocked with `43001` while any live Cloud Account references it, including disabled accounts. Delete the account first. Only historical deleted-account references are detached during physical credential deletion and its atomic audit event. Kubeconfig deletion likewise refuses live cluster references.
+
+Cloud Key deletion or provider/auth-type conversion is also blocked while a GKE
+Kubernetes credential references it. Rotate the existing GCP key or rebind/remove
+the GKE credential first; do not bypass the foreign key or erase reference rows.
 
 | Setting | Environment variable | Default |
 | --- | --- | --- |

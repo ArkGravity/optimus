@@ -204,8 +204,8 @@ def smoke(image, version, arch, artifacts, workspace, protect_cleanup):
             if not password:
                 raise RuntimeError("seed did not print one structured initial password")
             http_smoke(f"http://127.0.0.1:{http_port}", version, password)
-            if sql("SELECT count(*) FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE'") != "32" or sql("SELECT max(version_id) FROM goose_db_version WHERE is_applied") != "19":
-                raise RuntimeError("fresh baseline must contain 31 business tables and Goose head19")
+            if sql("SELECT count(*) FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE'") != "32" or sql("SELECT max(version_id) FROM goose_db_version WHERE is_applied") != "20":
+                raise RuntimeError("fresh baseline must contain 31 business tables and Goose head20")
             snapshot_query = "SELECT (SELECT count(*) FROM users WHERE username='admin'),(SELECT count(*) FROM menus),(SELECT count(DISTINCT code) FROM menus)"
             snapshot = sql(snapshot_query)
             if not snapshot.startswith("1|") or snapshot.split("|")[1] != snapshot.split("|")[2]:
