@@ -1,9 +1,11 @@
 # Versioned releases
 
-[v0.1.4](../releases/v0.1.4.md) adds Docker host/image/container management and
-Inventory UX polish (migration 00021). Publication evidence is recorded in
-[v0.1.4 release record](../superpowers/plans/2026-11-18-v0.1.4-release.md)
-after formal release.
+[v0.1.4](../releases/v0.1.4.md) was published on 2026-11-18 with Linux
+amd64/arm64 binary archives, a deployment archive and versioned images in both
+registries after Production acceptance. Exact-source main CI, native runtime
+smoke, independent attachment and registry verification, and public
+post-publication checks passed. See the
+[release record](../superpowers/plans/2026-11-18-v0.1.4-release.md).
 
 [v0.1.3](../releases/v0.1.3.md) was published on 2026-11-18 with Linux
 amd64/arm64 binary archives, a deployment archive and versioned images in both
