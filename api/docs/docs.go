@@ -3634,6 +3634,226 @@ const docTemplate = `{
                 }
             }
         },
+        "/docker/hosts": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "docker"
+                ],
+                "summary": "List Docker hosts",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "page (default 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page size (default 20)",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "name / description / host substring",
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "docker"
+                ],
+                "summary": "Create Docker host",
+                "parameters": [
+                    {
+                        "description": "host payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_modules_docker_host.CreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    }
+                }
+            }
+        },
+        "/docker/hosts/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "docker"
+                ],
+                "summary": "Get Docker host",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "host ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "docker"
+                ],
+                "summary": "Update Docker host",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "host ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "host payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_modules_docker_host.UpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "docker"
+                ],
+                "summary": "Delete Docker host",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "host ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    }
+                }
+            }
+        },
+        "/docker/hosts/{id}/test": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "docker"
+                ],
+                "summary": "Test Docker host connection",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "host ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    }
+                }
+            }
+        },
         "/health": {
             "get": {
                 "produces": [
@@ -7395,6 +7615,99 @@ const docTemplate = `{
                 },
                 "private_key": {
                     "type": "string"
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 64
+                }
+            }
+        },
+        "internal_modules_docker_host.CreateRequest": {
+            "type": "object",
+            "required": [
+                "auth_type",
+                "host",
+                "name"
+            ],
+            "properties": {
+                "auth_type": {
+                    "type": "string",
+                    "enum": [
+                        "ssh_key",
+                        "password"
+                    ]
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 4096
+                },
+                "host": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 128
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 1024
+                },
+                "port": {
+                    "type": "integer",
+                    "maximum": 65535,
+                    "minimum": 1
+                },
+                "socket_path": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "ssh_key_id": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 64
+                }
+            }
+        },
+        "internal_modules_docker_host.UpdateRequest": {
+            "type": "object",
+            "properties": {
+                "auth_type": {
+                    "type": "string",
+                    "enum": [
+                        "ssh_key",
+                        "password"
+                    ]
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 4096
+                },
+                "host": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 128
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 1024
+                },
+                "port": {
+                    "type": "integer",
+                    "maximum": 65535,
+                    "minimum": 1
+                },
+                "socket_path": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "ssh_key_id": {
+                    "type": "integer"
                 },
                 "username": {
                     "type": "string",

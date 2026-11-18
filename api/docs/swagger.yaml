@@ -1447,6 +1447,74 @@ definitions:
         maxLength: 64
         type: string
     type: object
+  internal_modules_docker_host.CreateRequest:
+    properties:
+      auth_type:
+        enum:
+        - ssh_key
+        - password
+        type: string
+      description:
+        maxLength: 4096
+        type: string
+      host:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 128
+        type: string
+      password:
+        maxLength: 1024
+        type: string
+      port:
+        maximum: 65535
+        minimum: 1
+        type: integer
+      socket_path:
+        maxLength: 255
+        type: string
+      ssh_key_id:
+        type: integer
+      username:
+        maxLength: 64
+        type: string
+    required:
+    - auth_type
+    - host
+    - name
+    type: object
+  internal_modules_docker_host.UpdateRequest:
+    properties:
+      auth_type:
+        enum:
+        - ssh_key
+        - password
+        type: string
+      description:
+        maxLength: 4096
+        type: string
+      host:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 128
+        type: string
+      password:
+        maxLength: 1024
+        type: string
+      port:
+        maximum: 65535
+        minimum: 1
+        type: integer
+      socket_path:
+        maxLength: 255
+        type: string
+      ssh_key_id:
+        type: integer
+      username:
+        maxLength: 64
+        type: string
+    type: object
   internal_modules_k8s_cluster.CreateRequest:
     properties:
       context:
@@ -3966,6 +4034,141 @@ paths:
       summary: Update SSH credential
       tags:
       - credentials
+  /docker/hosts:
+    get:
+      parameters:
+      - description: page (default 1)
+        in: query
+        name: page
+        type: integer
+      - description: page size (default 20)
+        in: query
+        name: page_size
+        type: integer
+      - description: name / description / host substring
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: List Docker hosts
+      tags:
+      - docker
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: host payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/internal_modules_docker_host.CreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Create Docker host
+      tags:
+      - docker
+  /docker/hosts/{id}:
+    delete:
+      parameters:
+      - description: host ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Delete Docker host
+      tags:
+      - docker
+    get:
+      parameters:
+      - description: host ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Get Docker host
+      tags:
+      - docker
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: host ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: host payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/internal_modules_docker_host.UpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Update Docker host
+      tags:
+      - docker
+  /docker/hosts/{id}/test:
+    post:
+      parameters:
+      - description: host ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Test Docker host connection
+      tags:
+      - docker
   /health:
     get:
       produces:

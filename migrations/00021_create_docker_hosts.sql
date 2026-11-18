@@ -18,6 +18,7 @@ CREATE TABLE docker_hosts (
     updated_at         TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
     deleted_at         TIMESTAMPTZ,
     CONSTRAINT docker_hosts_auth_shape CHECK (
+        deleted_at IS NOT NULL OR
         (auth_type = 'ssh_key' AND ssh_key_id IS NOT NULL AND password_enc IS NULL) OR
         (auth_type = 'password' AND ssh_key_id IS NULL AND password_enc IS NOT NULL)
     ),
