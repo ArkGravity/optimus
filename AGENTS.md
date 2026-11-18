@@ -434,7 +434,7 @@ Run from the repository root:
 - `make swag` / `make swagger-diff`
 - `make dump-perms` / `make perm-check`
 - `make migrate-up` / `make migrate-down`
-- `make migrate-new name=<snake_case>` (sequential numbering, next is 00021)
+- `make migrate-new name=<snake_case>` (sequential numbering, next is 00022)
 - `make seed`
 
 Frontend commands run from `web/`: `bun install`, `bun run dev`,
