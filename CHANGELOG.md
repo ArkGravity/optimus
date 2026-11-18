@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.1.4 — 2026-11-18
+
+Published with verified Linux amd64/arm64 archives and images in both registries
+after Production acceptance of the Docker and Inventory UX revision.
+
+- Add Docker hosts over SSH with image and container Engine operations, probe
+  before save, and additive migration 00021.
+- Align Inventory UX: Provider-first Cloud Accounts, Native ID-only VPC detail
+  navigation, shared detail Back, and filter Reset. See
+  [v0.1.4 notes](docs/releases/v0.1.4.md).
+
 ## v0.1.3 — 2026-11-18
 
 Published with verified Linux amd64/arm64 archives and images in both registries.

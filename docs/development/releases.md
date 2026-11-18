@@ -1,5 +1,10 @@
 # Versioned releases
 
+[v0.1.4](../releases/v0.1.4.md) adds Docker host/image/container management and
+Inventory UX polish (migration 00021). Publication evidence is recorded in
+[v0.1.4 release record](../superpowers/plans/2026-11-18-v0.1.4-release.md)
+after formal release.
+
 [v0.1.3](../releases/v0.1.3.md) was published on 2026-11-18 with Linux
 amd64/arm64 binary archives, a deployment archive and versioned images in both
 registries. Exact-source main CI, native runtime smoke, independent attachment
@@ -72,7 +77,11 @@ source needs a new version, not replacement of an existing tag or attachment.
 
 The initial version uses fresh head19: 31 business tables and Goose history. Old 00022/00023/00028 databases require actual recreation, including migration history; this is not an in-place upgrade. Stop writers and retain database backups with their matching vault key, config and application revision. Fresh Down operations drop data and are not rollback. See [recovery](../operations/recovery.md).
 
-These released migrations are immutable. Native GKE source appends 00020, upgrading head19 in place; the next schema change is 00021. Keep the API specification's version independent from the product release version; do not rewrite Swagger's API version solely to match a release tag.
+These released migrations are immutable. Native GKE appends 00020 and Docker
+hosts append 00021, each upgrading the prior head in place; the next schema
+change is 00022. Keep the API specification's version independent from the
+product release version; do not rewrite Swagger's API version solely to match a
+release tag.
 
 ## Verification record
 
