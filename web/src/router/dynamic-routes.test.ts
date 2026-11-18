@@ -32,6 +32,12 @@ describe('flattenMenusToRoutes', () => {
     expect(routes[0]?.meta?.permission).toBeUndefined()
     expect(routes[0]?.meta?.permissionsAny).toEqual(['assets:account:read', 'assets:resource:read', 'assets:sync:read'])
   })
+  it('resolves the Docker workspace and gates it by the Docker read permission', () => {
+    const docker = menuContract.menus.filter(menu => menu.path === '/containers/docker')
+    const routes = flattenMenusToRoutes(docker.map((menu, i) => ({ id: i + 1, code: 'containers.docker', name: menu.path, ...menu, icon: '', sort_order: i, hidden: false, permission_code: menu.permission || undefined })), buildViewResolver())
+    expect(routes.map(route => route.path)).toEqual(['/containers/docker'])
+    expect(routes[0]?.meta?.permissionsAny).toEqual(['docker:environment:read'])
+  })
   it('skips group nodes (empty component) and flattens leaves', () => {
     const components = new Map<string, () => Promise<unknown>>([
       ['dashboard/Index', async () => ({ default: {} })],

@@ -1,7 +1,7 @@
 import type { RouteLocationNormalized, RouteRecordRaw } from 'vue-router'
 import WorkspaceView from '@/components/layout/WorkspaceView.vue'
 import { inventorySections } from '@/views/assets/sections'
-import { kubernetesSections } from '@/views/containers/sections'
+import { dockerSections, kubernetesSections } from '@/views/containers/sections'
 
 // The root renders child pages in isolated sessions while App.vue selects
 // the surrounding layout. Sessions retain approved controls, not components.
@@ -48,6 +48,12 @@ export const staticRoutes: RouteRecordRaw[] = [
         name: `containers.kubernetes.${section.key}`,
         component: () => import('@/views/containers/Kubernetes.vue'),
         meta: { permissionsAny: [...section.permissions], kubernetesSection: section.key },
+      })),
+      ...dockerSections.map(section => ({
+        path: `containers/docker/${section.key}`,
+        name: `containers.docker.${section.key}`,
+        component: () => import('@/views/containers/Docker.vue'),
+        meta: { permissionsAny: [...section.permissions], dockerSection: section.key },
       })),
       ...[
         ['clusters', 'clusters', 'k8s:cluster:read'],

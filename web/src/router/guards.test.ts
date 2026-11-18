@@ -10,6 +10,7 @@ import { staticRoutes } from './static-routes'
 
 vi.mock('@/views/containers/Kubernetes.vue', () => ({ default: { template: '<div />' } }))
 vi.mock('@/views/assets/Inventory.vue', () => ({ default: { template: '<div />' } }))
+vi.mock('@/views/containers/Docker.vue', () => ({ default: { template: '<div />' } }))
 
 const user = { id: 1, username: 'admin' } as MeUser
 const dashboardMenu: MeMenuNode = {
@@ -54,6 +55,16 @@ describe('router guards', () => {
       const { router, meApi, auth } = setup()
       auth.setActiveTokens('access', 'refresh')
       vi.mocked(meApi.permissions).mockResolvedValue(allowed ? [permission] : ['docker:environment:read'])
+      await router.push(path)
+      await router.isReady()
+      expect(router.currentRoute.value.path).toBe(allowed ? path : '/403')
+    }
+  })
+  it.each(['/containers/docker/hosts', '/containers/docker/images', '/containers/docker/containers'])('checks direct Docker URL %s with docker:environment:read', async path => {
+    for (const allowed of [false, true]) {
+      const { router, meApi, auth } = setup()
+      auth.setActiveTokens('access', 'refresh')
+      vi.mocked(meApi.permissions).mockResolvedValue(allowed ? ['docker:environment:read'] : ['docker:environment:write'])
       await router.push(path)
       await router.isReady()
       expect(router.currentRoute.value.path).toBe(allowed ? path : '/403')

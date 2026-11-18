@@ -15,8 +15,16 @@ Container Management / 容器管理 has two built-in sidebar children:
 - Kubernetes: `/containers/kubernetes`, with permission-filtered buttons for
   Clusters, Nodes, Namespaces, Workloads, Network, Storage and Configs. Each
   section has a direct URL under `/containers/kubernetes/<section>`.
-- Docker: `/containers/docker`, an empty page reserved for future work,
-  gated by `docker:environment:read`. No Docker API is provided yet.
+- Docker: `/containers/docker`, with buttons for Hosts, Images and Containers.
+  Each section has a direct URL under `/containers/docker/<section>` and every
+  section requires `docker:environment:read`. Mutation controls (host
+  create/edit/delete, image delete/prune, container start/stop/restart/delete)
+  additionally require `docker:environment:write`; connection tests are reads.
+  Images and Containers share the selected host from HostPicker; an absent
+  selection shows a prompt and never auto-selects. Deleting the selected host,
+  or a persisted host that no longer exists, clears the selection. Image and
+  container lists are live Docker API reads; late responses are discarded after
+  host or permission changes. Host passwords are write-only and never shown.
 
 Resource-type switches appear at the top right of each resource card. Storage
 offers PV, PVC and StorageClass with `k8s:storage:read`; only PVC uses a namespace

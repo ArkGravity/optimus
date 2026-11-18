@@ -9,3 +9,13 @@ export const kubernetesSections = [
 ] as const
 
 export const kubernetesPermissions = [...new Set(kubernetesSections.flatMap(section => [...section.permissions]))]
+
+// Every section is readable with docker:environment:read; the write
+// permission only gates mutation controls inside the sections.
+export const dockerSections = [
+  { key: 'hosts', label: 'docker.sections.hosts', permissions: ['docker:environment:read'] },
+  { key: 'images', label: 'docker.sections.images', permissions: ['docker:environment:read'] },
+  { key: 'containers', label: 'docker.sections.containers', permissions: ['docker:environment:read'] },
+] as const
+
+export const dockerPermissions = [...new Set(dockerSections.flatMap(section => [...section.permissions]))]

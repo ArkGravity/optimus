@@ -36,6 +36,9 @@ import { makeAppsReleaseApi } from '@/api/apps/release'
 import { makeAssetsAccountApi } from '@/api/assets/account'
 import { makeAssetsResourceApi } from '@/api/assets/resource'
 import { makeAssetsSyncApi } from '@/api/assets/sync'
+import { makeDockerHostApi } from '@/api/docker/host'
+import { makeDockerImageApi } from '@/api/docker/image'
+import { makeDockerContainerApi } from '@/api/docker/container'
 import { useAuthStore } from '@/stores/auth'
 import { useMenuStore } from '@/stores/menu'
 import { useAppStore } from '@/stores/app'
@@ -86,6 +89,9 @@ app.provide('appsReleaseApi', makeAppsReleaseApi(client))
 app.provide('assetsAccountApi', makeAssetsAccountApi(client))
 app.provide('assetsResourceApi', makeAssetsResourceApi(client))
 app.provide('assetsSyncApi', makeAssetsSyncApi(client))
+app.provide('dockerHostApi', makeDockerHostApi(client))
+app.provide('dockerImageApi', makeDockerImageApi(client))
+app.provide('dockerContainerApi', makeDockerContainerApi(client))
 
 installGuards(router, meApi)
 app.use(router)
