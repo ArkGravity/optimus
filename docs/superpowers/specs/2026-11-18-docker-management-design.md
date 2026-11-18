@@ -52,7 +52,7 @@ Create/edit form:
 - ssh_key: select existing SSH key; username defaults from the key and may be overridden
 - password: username + password (write-only; never returned)
 - socket path (default `/var/run/docker.sock`)
-- optional test-connection before or after save
+- Test connection (and Save) probe before persisting; Save fails closed on probe failure
 
 List columns: name, address (`host:port`), auth (SSH key name or Password),
 username, socket, status (Unknown / Reachable / Unreachable from last check),

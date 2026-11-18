@@ -2,7 +2,7 @@ import type { AxiosInstance } from 'axios'
 import type { Envelope } from '@/types/api'
 import type {
   DockerHost, DockerHostCreateRequest, DockerHostUpdateRequest,
-  DockerHostListQuery, DockerHostListResponse, DockerHostTestResult,
+  DockerHostListQuery, DockerHostListResponse, DockerHostProbeRequest, DockerHostTestResult,
 } from '@/types/docker'
 
 /** Docker host CRUD client. Maps 1:1 to /api/v1/docker/hosts. */
@@ -27,6 +27,10 @@ export function makeDockerHostApi(client: AxiosInstance) {
     },
     remove: async (id: number) => {
       await client.delete<Envelope<null>>(`${base}/${id}`)
+    },
+    probe: async (body: DockerHostProbeRequest) => {
+      const r = await client.post<Envelope<DockerHostTestResult>>(`${base}/probe`, body)
+      return r.data.data
     },
     test: async (id: number) => {
       const r = await client.post<Envelope<DockerHostTestResult>>(`${base}/${id}/test`)

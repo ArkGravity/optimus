@@ -22,6 +22,7 @@ func (h *Handler) HandleCreate() gin.HandlerFunc { return h.create }
 func (h *Handler) HandleUpdate() gin.HandlerFunc { return h.update }
 func (h *Handler) HandleDelete() gin.HandlerFunc { return h.delete }
 func (h *Handler) HandleTest() gin.HandlerFunc   { return h.test }
+func (h *Handler) HandleProbe() gin.HandlerFunc  { return h.probe }
 
 func actor(c *gin.Context) uint64 { return c.GetUint64(middleware.CtxKeyUserID) }
 
@@ -149,6 +150,29 @@ func (h *Handler) delete(c *gin.Context) {
 		return
 	}
 	response.Success(c, gin.H{"ok": true})
+}
+
+// probe dials with submitted connection parameters without saving a host.
+// @Summary  Probe Docker host connection
+// @Tags     docker
+// @Security BearerAuth
+// @Accept   json
+// @Produce  json
+// @Param    body body ProbeRequest true "connection parameters"
+// @Success  200 {object} response.Envelope
+// @Router   /docker/hosts/probe [post]
+func (h *Handler) probe(c *gin.Context) {
+	var req ProbeRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.Error(c, apperr.New(apperr.CodeValidation, "common.validation", err.Error()))
+		return
+	}
+	out, err := h.svc.Probe(c.Request.Context(), actor(c), req)
+	if err != nil {
+		response.Error(c, err)
+		return
+	}
+	response.Success(c, out)
 }
 
 // test opens an SSH tunnel to the host's Docker socket, queries the Engine

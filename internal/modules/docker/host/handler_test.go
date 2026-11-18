@@ -19,6 +19,7 @@ func TestHandler_RejectsBadInputBeforeService(t *testing.T) {
 	r := gin.New()
 	r.GET("/hosts/:id", h.HandleGet())
 	r.POST("/hosts/:id/test", h.HandleTest())
+	r.POST("/hosts/probe", h.HandleProbe())
 	r.POST("/hosts", h.HandleCreate())
 
 	cases := []struct {
@@ -27,6 +28,7 @@ func TestHandler_RejectsBadInputBeforeService(t *testing.T) {
 	}{
 		{http.MethodGet, "/hosts/abc", "", http.StatusBadRequest, 40001},
 		{http.MethodPost, "/hosts/0/test", "", http.StatusBadRequest, 40001},
+		{http.MethodPost, "/hosts/probe", `{"host":"h","auth_type":"agent"}`, http.StatusBadRequest, 40002},
 		{http.MethodPost, "/hosts", `{"name":"a","host":"h","auth_type":"agent"}`, http.StatusBadRequest, 40002},
 		{http.MethodPost, "/hosts", `{"name":"a","host":"h","auth_type":"password","port":70000}`, http.StatusBadRequest, 40002},
 	}

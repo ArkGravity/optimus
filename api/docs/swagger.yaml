@@ -1618,6 +1618,37 @@ definitions:
     - host
     - name
     type: object
+  internal_modules_docker_host.ProbeRequest:
+    properties:
+      auth_type:
+        enum:
+        - ssh_key
+        - password
+        type: string
+      host:
+        maxLength: 255
+        type: string
+      host_id:
+        type: integer
+      password:
+        maxLength: 1024
+        type: string
+      port:
+        maximum: 65535
+        minimum: 1
+        type: integer
+      socket_path:
+        maxLength: 255
+        type: string
+      ssh_key_id:
+        type: integer
+      username:
+        maxLength: 64
+        type: string
+    required:
+    - auth_type
+    - host
+    type: object
   internal_modules_docker_host.UpdateRequest:
     properties:
       auth_type:
@@ -4606,6 +4637,29 @@ paths:
       security:
       - BearerAuth: []
       summary: Test Docker host connection
+      tags:
+      - docker
+  /docker/hosts/probe:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: connection parameters
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/internal_modules_docker_host.ProbeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Probe Docker host connection
       tags:
       - docker
   /health:

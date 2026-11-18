@@ -315,6 +315,77 @@ func (s *Service) Delete(ctx context.Context, actorID uint64, ip, ua string, id 
 	return err
 }
 
+// Probe dials with submitted parameters and returns the Engine version outcome
+// without writing host rows or last-check columns.
+func (s *Service) Probe(ctx context.Context, actorID uint64, req ProbeRequest) (*TestResult, error) {
+	m := &models.DockerHost{
+		Host:       strings.TrimSpace(req.Host),
+		Port:       req.Port,
+		SocketPath: strings.TrimSpace(req.SocketPath),
+		AuthType:   req.AuthType,
+		Username:   strings.TrimSpace(req.Username),
+	}
+	if m.Port == 0 {
+		m.Port = defaultPort
+	}
+	if m.SocketPath == "" {
+		m.SocketPath = dockerssh.DefaultSocketPath
+	}
+	if err := validateEndpoint(m.Host, m.SocketPath); err != nil {
+		return nil, err
+	}
+
+	var mat dockerssh.Material
+	switch req.AuthType {
+	case dockerssh.AuthSSHKey:
+		if req.Password != "" {
+			return nil, validation("docker.host.password_not_allowed", "password is only accepted for password authentication")
+		}
+		key, err := s.sshKeyMeta(ctx, req.SSHKeyID)
+		if err != nil {
+			return nil, err
+		}
+		m.SSHKeyID = &key.ID
+		if m.Username == "" {
+			m.Username = key.Username
+		}
+		mat, err = s.material(ctx, actorID, m, "docker.host.probe")
+		if err != nil {
+			return nil, err
+		}
+	case dockerssh.AuthPassword:
+		if req.SSHKeyID != nil {
+			return nil, validation("docker.host.ssh_key_not_allowed", "ssh_key_id is only accepted for SSH key authentication")
+		}
+		if m.Username == "" {
+			return nil, validation("docker.host.username_required", "username is required for password authentication")
+		}
+		switch {
+		case req.Password != "":
+			mat = dockerssh.Material{Password: []byte(req.Password)}
+		case req.HostID != nil:
+			existing, err := s.load(ctx, *req.HostID)
+			if err != nil {
+				return nil, err
+			}
+			if existing.AuthType != dockerssh.AuthPassword || len(existing.PasswordEnc) == 0 {
+				return nil, validation("docker.host.password_required", "password is required for password authentication")
+			}
+			m.PasswordEnc = existing.PasswordEnc
+			mat, err = s.material(ctx, actorID, m, "docker.host.probe")
+			if err != nil {
+				return nil, err
+			}
+		default:
+			return nil, validation("docker.host.password_required", "password is required for password authentication")
+		}
+	default:
+		return nil, validation("docker.host.auth_type_invalid", "auth_type must be ssh_key or password")
+	}
+
+	return s.runProbe(ctx, m, mat)
+}
+
 // Test dials the host, queries the Engine version, and persists the outcome.
 // Connection failures are reported in the result, never as raw errors.
 func (s *Service) Test(ctx context.Context, actorID uint64, ip, ua string, id uint64) (*TestResult, error) {
@@ -463,10 +534,44 @@ func (s *Service) writeAudit(ctx context.Context, actorID uint64, action string,
 	})
 }
 
+func (s *Service) runProbe(ctx context.Context, m *models.DockerHost, mat dockerssh.Material) (*TestResult, error) {
+	probeCtx, cancel := context.WithTimeout(ctx, dockerssh.Timeout)
+	defer cancel()
+	cli, cleanup, err := s.dial(probeCtx, m, mat)
+	mat.Wipe()
+	res := &TestResult{CheckedAt: time.Now()}
+	if err != nil {
+		be, ok := apperr.AsBiz(dockerssh.AppError(err))
+		if !ok {
+			return nil, dockerssh.AppError(err)
+		}
+		res.Message = be.Message
+		return res, nil
+	}
+	v, verr := cli.ServerVersion(probeCtx)
+	cleanup()
+	if verr != nil {
+		be, ok := apperr.AsBiz(dockerssh.AppError(verr))
+		if !ok {
+			return nil, dockerssh.AppError(verr)
+		}
+		res.Message = be.Message
+		return res, nil
+	}
+	res.OK = true
+	res.ServerVersion = v.Version
+	res.APIVersion = v.APIVersion
+	return res, nil
+}
+
 func validateConnection(name, host, socket string) error {
 	if name == "" {
 		return validation("docker.host.name_required", "name is required")
 	}
+	return validateEndpoint(host, socket)
+}
+
+func validateEndpoint(host, socket string) error {
 	if net.ParseIP(host) == nil && (len(host) > 253 || !hostnamePattern.MatchString(host)) {
 		return validation("docker.host.host_invalid", "host must be a hostname or IP address")
 	}

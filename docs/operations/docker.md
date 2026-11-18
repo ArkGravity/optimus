@@ -12,8 +12,10 @@ connection metadata is stored.
    returned by the API.
 2. Enter the SSH address and port, and confirm the socket path if it is not the
    default.
-3. Use **Test** (or save with post-save test) to record Reachable/Unreachable.
-   Host key fingerprint pinning is not enforced in this version.
+3. Use **Test connection** before Save. Save itself probes first and only
+   persists the host after a successful probe; the saved host's Reachable/
+   Unreachable status is then recorded. Host key fingerprint pinning is not
+   enforced in this version.
 4. On Images and Containers, select the host with HostPicker. The picker never
    auto-selects.
 

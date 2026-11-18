@@ -1160,7 +1160,7 @@
       "test": "Test",
       "test_ok": "Connected to Docker {version}",
       "test_failed": "Connection test failed",
-      "test_after_save": "Test the connection after saving",
+      "test_connection": "Test connection",
       "confirm_delete": "Delete Docker host {name}?",
       "created": "Host added",
       "updated": "Host updated",

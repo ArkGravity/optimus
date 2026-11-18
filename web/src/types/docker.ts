@@ -34,6 +34,17 @@ export interface DockerHostCreateRequest {
 
 export type DockerHostUpdateRequest = Partial<DockerHostCreateRequest>
 
+export interface DockerHostProbeRequest {
+  host_id?: number
+  host: string
+  port?: number
+  socket_path?: string
+  auth_type: DockerAuthType
+  ssh_key_id?: number
+  username?: string
+  password?: string
+}
+
 export interface DockerHostListQuery {
   page?: number
   page_size?: number

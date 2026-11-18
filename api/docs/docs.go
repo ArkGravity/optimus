@@ -3714,6 +3714,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/docker/hosts/probe": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "docker"
+                ],
+                "summary": "Probe Docker host connection",
+                "parameters": [
+                    {
+                        "description": "connection parameters",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_modules_docker_host.ProbeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope"
+                        }
+                    }
+                }
+            }
+        },
         "/docker/hosts/{id}": {
             "get": {
                 "security": [
@@ -8274,6 +8312,49 @@ const docTemplate = `{
                 "name": {
                     "type": "string",
                     "maxLength": 128
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 1024
+                },
+                "port": {
+                    "type": "integer",
+                    "maximum": 65535,
+                    "minimum": 1
+                },
+                "socket_path": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "ssh_key_id": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 64
+                }
+            }
+        },
+        "internal_modules_docker_host.ProbeRequest": {
+            "type": "object",
+            "required": [
+                "auth_type",
+                "host"
+            ],
+            "properties": {
+                "auth_type": {
+                    "type": "string",
+                    "enum": [
+                        "ssh_key",
+                        "password"
+                    ]
+                },
+                "host": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "host_id": {
+                    "type": "integer"
                 },
                 "password": {
                     "type": "string",

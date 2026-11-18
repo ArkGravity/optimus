@@ -318,6 +318,52 @@ func TestDelete_SoftDeletesDropsPasswordAndFreesName(t *testing.T) {
 	f.createPasswordHost(t, "gone")
 }
 
+func TestProbe_UsesSubmittedMaterialWithoutPersisting(t *testing.T) {
+	f := newFixture(t)
+	key := f.createKey(t, "probe-key", "deploy")
+	pw := f.createPasswordHost(t, "probe-pw")
+
+	ok, err := f.svc.Probe(t.Context(), 0, host.ProbeRequest{
+		Host: "10.0.0.9", AuthType: "password", Username: "root", Password: hostPassword,
+	})
+	require.NoError(t, err)
+	require.True(t, ok.OK)
+	require.Equal(t, "27.3.1", ok.ServerVersion)
+
+	kept, err := f.svc.Probe(t.Context(), 0, host.ProbeRequest{
+		HostID: &pw.ID, Host: pw.Host, AuthType: "password", Username: pw.Username,
+	})
+	require.NoError(t, err)
+	require.True(t, kept.OK)
+
+	keyRes, err := f.svc.Probe(t.Context(), 0, host.ProbeRequest{
+		Host: "10.0.0.9", AuthType: "ssh_key", SSHKeyID: uptr(key.ID),
+	})
+	require.NoError(t, err)
+	require.True(t, keyRes.OK)
+	require.Len(t, f.dialer.seen, 3)
+	require.Equal(t, hostPassword, string(f.dialer.seen[0].Password))
+	require.Equal(t, hostPassword, string(f.dialer.seen[1].Password))
+	require.Contains(t, string(f.dialer.seen[2].PrivateKey), "OPENSSH PRIVATE KEY")
+
+	got, err := f.svc.Get(t.Context(), pw.ID)
+	require.NoError(t, err)
+	require.Nil(t, got.LastCheckOK)
+
+	f.dialer.err = &dockerssh.Error{Kind: dockerssh.KindAuth}
+	fail, err := f.svc.Probe(t.Context(), 0, host.ProbeRequest{
+		Host: "10.0.0.9", AuthType: "password", Username: "root", Password: "bad",
+	})
+	require.NoError(t, err)
+	require.False(t, fail.OK)
+	require.Equal(t, "SSH authentication failed", fail.Message)
+
+	_, err = f.svc.Probe(t.Context(), 0, host.ProbeRequest{
+		Host: "10.0.0.9", AuthType: "password", Username: "root",
+	})
+	requireBiz(t, err, apperr.CodeValidation, "docker.host.password_required")
+}
+
 func TestTest_PersistsSuccessAndSafeFailure(t *testing.T) {
 	f := newFixture(t)
 	key := f.createKey(t, "k", "deploy")

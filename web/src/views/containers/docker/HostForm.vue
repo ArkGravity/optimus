@@ -5,7 +5,6 @@
     :confirm-loading="saving"
     width="640px"
     destroy-on-close
-    @ok="onOk"
     @cancel="emit('update:open', false)"
   >
     <a-form ref="formRef" :model="form" layout="vertical" :rules="rules">
@@ -54,8 +53,14 @@
       <a-form-item :label="$t('docker.host.socket_path')" name="socket_path">
         <a-input v-model:value="form.socket_path" :maxlength="255" :placeholder="DEFAULT_SOCKET" />
       </a-form-item>
-      <a-checkbox v-model:checked="testAfterSave">{{ $t('docker.host.test_after_save') }}</a-checkbox>
     </a-form>
+    <template #footer>
+      <a-button @click="emit('update:open', false)">{{ $t('common.cancel') }}</a-button>
+      <a-button class="test-connection" :loading="testing" @click="onTest">
+        {{ $t('docker.host.test_connection') }}
+      </a-button>
+      <a-button type="primary" :loading="saving" @click="onOk">{{ $t('common.save') }}</a-button>
+    </template>
   </a-modal>
 </template>
 
@@ -66,7 +71,9 @@ import { useI18n } from '@/hooks/useI18n'
 import { errorText } from './scope'
 import type { DockerHostApi } from '@/api/docker/host'
 import type { SshKeyApi } from '@/api/credentials/ssh-key'
-import type { DockerAuthType, DockerHost, DockerHostUpdateRequest } from '@/types/docker'
+import type {
+  DockerAuthType, DockerHost, DockerHostProbeRequest, DockerHostUpdateRequest,
+} from '@/types/docker'
 
 const DEFAULT_SOCKET = '/var/run/docker.sock'
 const props = defineProps<{ open: boolean; initial?: DockerHost | null }>()
@@ -77,7 +84,7 @@ const hostApi = inject<DockerHostApi>('dockerHostApi')!
 const sshKeyApi = inject<SshKeyApi>('sshKeyApi')!
 const formRef = ref<FormInstance>()
 const saving = ref(false)
-const testAfterSave = ref(true)
+const testing = ref(false)
 const isEdit = computed(() => !!props.initial)
 // Editing a password host may leave the password blank to keep the stored one.
 const keepsPassword = computed(() => props.initial?.auth_type === 'password')
@@ -143,7 +150,6 @@ watch(() => props.open, open => {
   form.password = ''
   if (!open) return
   keys.value = []
-  testAfterSave.value = !props.initial
   const initial = props.initial
   Object.assign(form, blank(), initial ? {
     name: initial.name,
@@ -172,6 +178,48 @@ function updatePatch(initial: DockerHost): DockerHostUpdateRequest {
   return patch
 }
 
+function probeBody(): DockerHostProbeRequest {
+  const body: DockerHostProbeRequest = {
+    host: form.host,
+    port: form.port,
+    socket_path: form.socket_path || undefined,
+    auth_type: form.auth_type,
+    username: form.username || undefined,
+  }
+  if (form.auth_type === 'ssh_key') body.ssh_key_id = form.ssh_key_id
+  if (form.auth_type === 'password' && form.password) body.password = form.password
+  if (props.initial && form.auth_type === 'password' && !form.password) body.host_id = props.initial.id
+  return body
+}
+
+async function runProbe(announceSuccess: boolean): Promise<boolean> {
+  const result = await hostApi.probe(probeBody())
+  if (result.ok) {
+    if (announceSuccess) {
+      message.success(t('docker.host.test_ok', { version: result.server_version || '-' }))
+    }
+    return true
+  }
+  message.error(result.message || t('docker.host.test_failed'))
+  return false
+}
+
+async function onTest() {
+  try {
+    await formRef.value?.validate()
+  } catch {
+    return
+  }
+  testing.value = true
+  try {
+    await runProbe(true)
+  } catch (error) {
+    message.error(errorText(error, t('network.error')))
+  } finally {
+    testing.value = false
+  }
+}
+
 async function onOk() {
   try {
     await formRef.value?.validate()
@@ -180,6 +228,7 @@ async function onOk() {
   }
   saving.value = true
   try {
+    if (!(await runProbe(false))) return
     let id: number
     if (props.initial) {
       id = props.initial.id
@@ -201,16 +250,12 @@ async function onOk() {
       id = created.id
       message.success(t('docker.host.created'))
     }
-    emit('update:open', false)
-    if (testAfterSave.value) {
-      try {
-        const result = await hostApi.test(id)
-        if (result.ok) message.success(t('docker.host.test_ok', { version: result.server_version || '-' }))
-        else message.error(result.message || t('docker.host.test_failed'))
-      } catch (error) {
-        message.error(errorText(error, t('network.error')))
-      }
+    try {
+      await hostApi.test(id)
+    } catch {
+      // Probe already succeeded; persisting last-check is best-effort.
     }
+    emit('update:open', false)
     emit('saved')
   } catch (error) {
     message.error(errorText(error, t('network.error')))

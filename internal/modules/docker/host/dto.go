@@ -66,6 +66,20 @@ type ListResponse struct {
 	PageSize int       `json:"page_size"`
 }
 
+// ProbeRequest dials with the submitted connection parameters without creating
+// or updating a host row. HostID is optional: when editing a password host and
+// Password is empty, the sealed password from that host is reused.
+type ProbeRequest struct {
+	HostID     *uint64 `json:"host_id"`
+	Host       string  `json:"host"        binding:"required,max=255"`
+	Port       int     `json:"port"        binding:"omitempty,min=1,max=65535"`
+	SocketPath string  `json:"socket_path" binding:"max=255"`
+	AuthType   string  `json:"auth_type"   binding:"required,oneof=ssh_key password"`
+	SSHKeyID   *uint64 `json:"ssh_key_id"`
+	Username   string  `json:"username"    binding:"max=64"`
+	Password   string  `json:"password"    binding:"max=1024"`
+}
+
 // TestResult reports one connection probe. Message is a fixed safe text.
 type TestResult struct {
 	OK            bool      `json:"ok"`

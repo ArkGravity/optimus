@@ -1160,7 +1160,7 @@
       "test": "测试",
       "test_ok": "已连接 Docker {version}",
       "test_failed": "连接测试失败",
-      "test_after_save": "保存后测试连接",
+      "test_connection": "测试连接",
       "confirm_delete": "确定删除 Docker 主机 {name}？",
       "created": "主机已添加",
       "updated": "主机已更新",

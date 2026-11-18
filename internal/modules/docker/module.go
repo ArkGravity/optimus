@@ -58,6 +58,7 @@ func (m *Module) MountRoutes(protected *gin.RouterGroup, cache *rbac.PermissionC
 
 	wr := hosts.Group("", middleware.RequirePermission(cache, "docker:environment:write"))
 	wr.POST("", m.hostHandler.HandleCreate())
+	wr.POST("/probe", m.hostHandler.HandleProbe())
 	wr.PUT("/:id", m.hostHandler.HandleUpdate())
 	wr.DELETE("/:id", m.hostHandler.HandleDelete())
 	wr.DELETE("/:id/images/:imageId", m.imageHandler.HandleDelete())
