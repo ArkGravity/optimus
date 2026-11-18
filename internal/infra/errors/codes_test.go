@@ -103,7 +103,9 @@ func TestDocker44xxxCodes(t *testing.T) {
 	require.Equal(t, apperr.Code(44102), apperr.CodeDockerHostAuthFailed)
 	require.Equal(t, apperr.Code(44103), apperr.CodeDockerEngineError)
 	require.Equal(t, apperr.Code(44104), apperr.CodeDockerHostConfigInvalid)
+	require.Equal(t, apperr.Code(44105), apperr.CodeDockerResourceConflict)
 	require.Equal(t, 409, apperr.HTTPStatus(apperr.CodeDockerHostInUse))
+	require.Equal(t, 409, apperr.HTTPStatus(apperr.CodeDockerResourceConflict))
 	require.Equal(t, 422, apperr.HTTPStatus(apperr.CodeDockerHostConfigInvalid))
 	require.Equal(t, 500, apperr.HTTPStatus(apperr.CodeDockerHostUnreachable))
 }

@@ -110,4 +110,5 @@ const (
 	CodeDockerHostAuthFailed    Code = 44102 // SSH authentication rejected
 	CodeDockerEngineError       Code = 44103 // Docker Engine API request failed
 	CodeDockerHostConfigInvalid Code = 44104 // stored host or credential material unusable
+	CodeDockerResourceConflict  Code = 44105 // Engine refused: image in use, container running, etc.
 )

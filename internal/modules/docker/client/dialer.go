@@ -106,6 +106,9 @@ func Classify(err error) Kind {
 	if errors.Is(err, context.DeadlineExceeded) {
 		return KindTimeout
 	}
+	if dockerclient.IsErrConnectionFailed(err) {
+		return KindSocket
+	}
 	return KindEngine
 }
 

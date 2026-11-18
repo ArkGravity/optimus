@@ -48,7 +48,7 @@ func HTTPStatus(c Code) int {
 	case c == CodeRateLimited:
 		return 429
 	case c == CodeAssetsCloudAccountInUse || c == CodeAssetsSyncBusy || c == CodeAssetsIdentityMismatch ||
-		c == CodeDockerHostInUse:
+		c == CodeDockerHostInUse || c == CodeDockerResourceConflict:
 		return 409
 	case c == CodeAssetsCloudAccountNotFound || c == CodeAssetsVPCNotFound:
 		return 404
