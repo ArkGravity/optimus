@@ -3,6 +3,7 @@ package sshkey
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -12,6 +13,7 @@ import (
 	apperr "github.com/ArkGravity/optimus/internal/infra/errors"
 	"github.com/ArkGravity/optimus/internal/models"
 	"github.com/ArkGravity/optimus/internal/modules/audit"
+	"github.com/ArkGravity/optimus/internal/modules/docker/host/inuse"
 )
 
 // Cipher is the subset of vault.Cipher the service depends on. Defined as an
@@ -200,20 +202,47 @@ func (s *Service) Update(ctx context.Context, actorID uint64, ip, ua string, id 
 	return s.Get(ctx, id)
 }
 
+// Delete refuses while live Docker hosts reference the key, detaches
+// soft-deleted host references, and deletes the key with its audit event in
+// one transaction.
 func (s *Service) Delete(ctx context.Context, actorID uint64, ip, ua string, id uint64) error {
-	m, err := s.repo.Get(ctx, id)
+	err := s.repo.Transaction(ctx, func(tx *gorm.DB) error {
+		m, err := s.repo.GetForUpdate(ctx, tx, id)
+		if err != nil {
+			return err
+		}
+		n, err := inuse.CountBySSHKeyID(ctx, tx, id)
+		if err != nil {
+			return err
+		}
+		if n > 0 {
+			return apperr.New(apperr.CodeDockerHostInUse, "credentials.ssh_key.in_use_by_docker_hosts",
+				fmt.Sprintf("SSH key is referenced by %d Docker host(s)", n))
+		}
+		if err := inuse.DetachDeletedBySSHKeyID(ctx, tx, id); err != nil {
+			return err
+		}
+		if err := s.repo.DeleteTx(ctx, tx, id); err != nil {
+			return err
+		}
+		if s.audit != nil {
+			return s.audit.WithTx(tx).Record(ctx, audit.Event{
+				UserID: ptrIfNonZero(actorID), Action: "credentials.delete",
+				TargetType: "credentials.ssh_key", TargetID: strconv.FormatUint(id, 10),
+				Payload: map[string]any{"name": m.Name}, IP: ip, UserAgent: ua,
+			})
+		}
+		return nil
+	})
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return apperr.New(apperr.CodeNotFound, "credentials.not_found", "credential not found")
 		}
-		return err
+		if _, ok := apperr.AsBiz(err); ok {
+			return err
+		}
+		return apperr.Wrap(err, apperr.CodeDBError, "common.database_error", "database operation failed")
 	}
-	if err := s.repo.Delete(ctx, id); err != nil {
-		return err
-	}
-	s.writeAudit(ctx, ptrIfNonZero(actorID), "credentials.delete", id, ip, ua, map[string]any{
-		"name": m.Name,
-	})
 	return nil
 }
 

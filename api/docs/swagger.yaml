@@ -1447,6 +1447,295 @@ definitions:
         maxLength: 64
         type: string
     type: object
+  internal_modules_docker_container.Detail:
+    properties:
+      command:
+        items:
+          type: string
+        type: array
+      created:
+        type: string
+      env:
+        items:
+          type: string
+        type: array
+      id:
+        type: string
+      image:
+        type: string
+      image_id:
+        type: string
+      mounts:
+        items:
+          $ref: '#/definitions/internal_modules_docker_container.Mount'
+        type: array
+      name:
+        type: string
+      networks:
+        items:
+          $ref: '#/definitions/internal_modules_docker_container.Network'
+        type: array
+      ports:
+        items:
+          type: string
+        type: array
+      restart_count:
+        type: integer
+      restart_policy:
+        $ref: '#/definitions/internal_modules_docker_container.RestartPolicy'
+      short_id:
+        type: string
+      state:
+        $ref: '#/definitions/internal_modules_docker_container.State'
+    type: object
+  internal_modules_docker_container.ListResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/internal_modules_docker_container.Summary'
+        type: array
+      total:
+        type: integer
+    type: object
+  internal_modules_docker_container.Mount:
+    properties:
+      destination:
+        type: string
+      mode:
+        type: string
+      name:
+        type: string
+      rw:
+        type: boolean
+      source:
+        type: string
+      type:
+        type: string
+    type: object
+  internal_modules_docker_container.Network:
+    properties:
+      gateway:
+        type: string
+      ip_address:
+        type: string
+      ipv6_address:
+        type: string
+      mac_address:
+        type: string
+      name:
+        type: string
+    type: object
+  internal_modules_docker_container.RestartPolicy:
+    properties:
+      maximum_retry_count:
+        type: integer
+      name:
+        type: string
+    type: object
+  internal_modules_docker_container.State:
+    properties:
+      dead:
+        type: boolean
+      error:
+        type: string
+      exit_code:
+        type: integer
+      finished_at:
+        type: string
+      health:
+        type: string
+      oom_killed:
+        type: boolean
+      paused:
+        type: boolean
+      restarting:
+        type: boolean
+      running:
+        type: boolean
+      started_at:
+        type: string
+      status:
+        type: string
+    type: object
+  internal_modules_docker_container.Summary:
+    properties:
+      command:
+        type: string
+      created:
+        type: string
+      id:
+        type: string
+      image:
+        type: string
+      image_id:
+        type: string
+      name:
+        type: string
+      ports:
+        items:
+          type: string
+        type: array
+      short_id:
+        type: string
+      state:
+        type: string
+      status:
+        type: string
+    type: object
+  internal_modules_docker_host.CreateRequest:
+    properties:
+      auth_type:
+        enum:
+        - ssh_key
+        - password
+        type: string
+      description:
+        maxLength: 4096
+        type: string
+      host:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 128
+        type: string
+      password:
+        maxLength: 1024
+        type: string
+      port:
+        maximum: 65535
+        minimum: 1
+        type: integer
+      socket_path:
+        maxLength: 255
+        type: string
+      ssh_key_id:
+        type: integer
+      username:
+        maxLength: 64
+        type: string
+    required:
+    - auth_type
+    - host
+    - name
+    type: object
+  internal_modules_docker_host.ProbeRequest:
+    properties:
+      auth_type:
+        enum:
+        - ssh_key
+        - password
+        type: string
+      host:
+        maxLength: 255
+        type: string
+      host_id:
+        type: integer
+      password:
+        maxLength: 1024
+        type: string
+      port:
+        maximum: 65535
+        minimum: 1
+        type: integer
+      socket_path:
+        maxLength: 255
+        type: string
+      ssh_key_id:
+        type: integer
+      username:
+        maxLength: 64
+        type: string
+    required:
+    - auth_type
+    - host
+    type: object
+  internal_modules_docker_host.UpdateRequest:
+    properties:
+      auth_type:
+        enum:
+        - ssh_key
+        - password
+        type: string
+      description:
+        maxLength: 4096
+        type: string
+      host:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 128
+        type: string
+      password:
+        maxLength: 1024
+        type: string
+      port:
+        maximum: 65535
+        minimum: 1
+        type: integer
+      socket_path:
+        maxLength: 255
+        type: string
+      ssh_key_id:
+        type: integer
+      username:
+        maxLength: 64
+        type: string
+    type: object
+  internal_modules_docker_image.DeleteResponse:
+    properties:
+      deleted:
+        items:
+          type: string
+        type: array
+      untagged:
+        items:
+          type: string
+        type: array
+    type: object
+  internal_modules_docker_image.ListResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/internal_modules_docker_image.Summary'
+        type: array
+      total:
+        type: integer
+    type: object
+  internal_modules_docker_image.PruneRequest:
+    properties:
+      all:
+        type: boolean
+    type: object
+  internal_modules_docker_image.PruneResponse:
+    properties:
+      deleted:
+        items:
+          type: string
+        type: array
+      space_reclaimed:
+        type: integer
+      untagged:
+        items:
+          type: string
+        type: array
+    type: object
+  internal_modules_docker_image.Summary:
+    properties:
+      created:
+        type: string
+      dangling:
+        type: boolean
+      id:
+        type: string
+      repo_tags:
+        items:
+          type: string
+        type: array
+      short_id:
+        type: string
+      size:
+        type: integer
+    type: object
   internal_modules_k8s_cluster.CreateRequest:
     properties:
       context:
@@ -3966,6 +4255,413 @@ paths:
       summary: Update SSH credential
       tags:
       - credentials
+  /docker/hosts:
+    get:
+      parameters:
+      - description: page (default 1)
+        in: query
+        name: page
+        type: integer
+      - description: page size (default 20)
+        in: query
+        name: page_size
+        type: integer
+      - description: name / description / host substring
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: List Docker hosts
+      tags:
+      - docker
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: host payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/internal_modules_docker_host.CreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Create Docker host
+      tags:
+      - docker
+  /docker/hosts/{id}:
+    delete:
+      parameters:
+      - description: host ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Delete Docker host
+      tags:
+      - docker
+    get:
+      parameters:
+      - description: host ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Get Docker host
+      tags:
+      - docker
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: host ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: host payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/internal_modules_docker_host.UpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Update Docker host
+      tags:
+      - docker
+  /docker/hosts/{id}/containers:
+    get:
+      parameters:
+      - description: host ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_docker_container.ListResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: List Docker containers
+      tags:
+      - docker
+  /docker/hosts/{id}/containers/{containerId}:
+    delete:
+      parameters:
+      - description: host ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: container ID or name
+        in: path
+        name: containerId
+        required: true
+        type: string
+      - description: kill and remove a running container
+        in: query
+        name: force
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Delete Docker container
+      tags:
+      - docker
+    get:
+      parameters:
+      - description: host ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: container ID or name
+        in: path
+        name: containerId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_docker_container.Detail'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get Docker container
+      tags:
+      - docker
+  /docker/hosts/{id}/containers/{containerId}/restart:
+    post:
+      parameters:
+      - description: host ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: container ID or name
+        in: path
+        name: containerId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Restart Docker container
+      tags:
+      - docker
+  /docker/hosts/{id}/containers/{containerId}/start:
+    post:
+      parameters:
+      - description: host ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: container ID or name
+        in: path
+        name: containerId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Start Docker container
+      tags:
+      - docker
+  /docker/hosts/{id}/containers/{containerId}/stop:
+    post:
+      parameters:
+      - description: host ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: container ID or name
+        in: path
+        name: containerId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Stop Docker container
+      tags:
+      - docker
+  /docker/hosts/{id}/images:
+    get:
+      parameters:
+      - description: host ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_docker_image.ListResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: List Docker images
+      tags:
+      - docker
+  /docker/hosts/{id}/images/{imageId}:
+    delete:
+      parameters:
+      - description: host ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 'image ID (hex, optional sha256: prefix)'
+        in: path
+        name: imageId
+        required: true
+        type: string
+      - description: force removal of in-use or multi-tag images
+        in: query
+        name: force
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_docker_image.DeleteResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Delete Docker image
+      tags:
+      - docker
+  /docker/hosts/{id}/images/prune:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: host ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: prune scope (default dangling only)
+        in: body
+        name: body
+        schema:
+          $ref: '#/definitions/internal_modules_docker_image.PruneRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/internal_modules_docker_image.PruneResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Prune Docker images
+      tags:
+      - docker
+  /docker/hosts/{id}/test:
+    post:
+      parameters:
+      - description: host ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Test Docker host connection
+      tags:
+      - docker
+  /docker/hosts/probe:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: connection parameters
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/internal_modules_docker_host.ProbeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_ArkGravity_optimus_internal_infra_response.Envelope'
+      security:
+      - BearerAuth: []
+      summary: Probe Docker host connection
+      tags:
+      - docker
   /health:
     get:
       produces:

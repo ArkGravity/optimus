@@ -257,8 +257,8 @@ elif args[0] == "compose":
         else: print(json.dumps({"password":"synthetic-test-password"}))
     elif "exec" in args:
         query = args[-1]
-        if "information_schema" in query: print("32")
-        elif "max(version_id)" in query: print("20")
+        if "information_schema" in query: print("33")
+        elif "max(version_id)" in query: print("21")
         else: print("1|35|35")
     elif "run" in args:
         if args[-1] == "version": print("v1.2.3")

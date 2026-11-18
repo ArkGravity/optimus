@@ -36,6 +36,7 @@ Use disposable resources for checklists and never publish credentials or provide
 - [Database transitions, backup and recovery](operations/recovery.md)
 - [Installation and configuration](installation.md)
 - [Native GKE connections](operations/gke.md) — included in v0.1.3
+- [Docker hosts over SSH](operations/docker.md) — source feature; migration 00021
 
 Published v0.1.0–v0.1.2 use fresh head19 with 31 business tables plus Goose history. v0.1.3 appends 00020 and upgrades head19 in place. Historical 00022/00023/00028 databases cannot upgrade in place using renumbered files. Preserve the database backup and matching vault key before a separately authorized recreation. See the [recovery guide](operations/recovery.md), including historical acceptance and current operator reports.
 

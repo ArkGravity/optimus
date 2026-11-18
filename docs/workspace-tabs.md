@@ -15,8 +15,16 @@ Container Management / 容器管理 has two built-in sidebar children:
 - Kubernetes: `/containers/kubernetes`, with permission-filtered buttons for
   Clusters, Nodes, Namespaces, Workloads, Network, Storage and Configs. Each
   section has a direct URL under `/containers/kubernetes/<section>`.
-- Docker: `/containers/docker`, an empty page reserved for future work,
-  gated by `docker:environment:read`. No Docker API is provided yet.
+- Docker: `/containers/docker`, with buttons for Hosts, Images and Containers.
+  Each section has a direct URL under `/containers/docker/<section>` and every
+  section requires `docker:environment:read`. Mutation controls (host
+  create/edit/delete, image delete/prune, container start/stop/restart/delete)
+  additionally require `docker:environment:write`; connection tests are reads.
+  Images and Containers share the selected host from HostPicker; an absent
+  selection shows a prompt and never auto-selects. Deleting the selected host,
+  or a persisted host that no longer exists, clears the selection. Image and
+  container lists are live Docker API reads; late responses are discarded after
+  host or permission changes. Host passwords are write-only and never shown.
 
 Resource-type switches appear at the top right of each resource card. Storage
 offers PV, PVC and StorageClass with `k8s:storage:read`; only PVC uses a namespace
@@ -27,13 +35,16 @@ permissions remain unchanged. Resource pages use the shared selected cluster and
 namespace; an absent cluster selection shows a prompt and never auto-selects.
 Late list/detail/reveal responses are discarded after scope changes or unmount.
 
-For existing installations, run `optimus seed` with the updated binary to update
-the built-in menus and built-in role grants. Seed preserves the old parent and
-Clusters menu IDs, moves custom descendants off retired built-in menu rows and
-rejects reserved-code collisions atomically. Custom roles must receive the new
-Storage/Docker permissions explicitly. Published migrations are unchanged.
+For existing installations, run migrate (head includes `00021_create_docker_hosts.sql`)
+then `optimus seed` with the updated binary to update built-in menus and
+built-in role grants (admin/editor receive `docker:environment:write` through
+normal seed rules). Seed preserves the old parent and Clusters menu IDs, moves
+custom descendants off retired built-in menu rows and rejects reserved-code
+collisions atomically. Custom roles must receive Storage/Docker permissions
+explicitly. Migrations 00001–00020 remain immutable; 00021 is additive.
 Legacy `/k8s/...` page URLs check their existing permission before forwarding to
 the corresponding new page; Kubernetes HTTP APIs remain under `/api/v1/k8s`.
+Docker HTTP APIs are under `/api/v1/docker`.
 
 Assets Management / 资产管理 has one built-in sidebar child:
 

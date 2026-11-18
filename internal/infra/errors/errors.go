@@ -47,7 +47,8 @@ func HTTPStatus(c Code) int {
 		return 500
 	case c == CodeRateLimited:
 		return 429
-	case c == CodeAssetsCloudAccountInUse || c == CodeAssetsSyncBusy || c == CodeAssetsIdentityMismatch:
+	case c == CodeAssetsCloudAccountInUse || c == CodeAssetsSyncBusy || c == CodeAssetsIdentityMismatch ||
+		c == CodeDockerHostInUse || c == CodeDockerResourceConflict:
 		return 409
 	case c == CodeAssetsCloudAccountNotFound || c == CodeAssetsVPCNotFound:
 		return 404
@@ -55,7 +56,8 @@ func HTTPStatus(c Code) int {
 		c == CodeAssetsRegionInvalid ||
 		c == CodeAssetsProviderUnsupported ||
 		c == CodeAssetsCloudAccountDisabled ||
-		c == CodeAssetsCloudKeyNotFound || c == CodeAssetsConfig:
+		c == CodeAssetsCloudKeyNotFound || c == CodeAssetsConfig ||
+		c == CodeDockerHostConfigInvalid:
 		return 422
 	case c >= 40400 && c < 40500:
 		return 404

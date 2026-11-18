@@ -104,4 +104,11 @@ const (
 	CodeAssetsAWSOther        Code = 43106 // any other API error
 	CodeAssetsAWSConfig       Code = 43107 // config.LoadDefaultConfig failed
 
+	// 44xxx Docker domain. 44001-44099 host metadata; 44100-44199 SSH/Engine runtime.
+	CodeDockerHostInUse         Code = 44001 // ssh key delete blocked: referenced by live Docker host
+	CodeDockerHostUnreachable   Code = 44101 // TCP/SSH transport, socket or timeout failure
+	CodeDockerHostAuthFailed    Code = 44102 // SSH authentication rejected
+	CodeDockerEngineError       Code = 44103 // Docker Engine API request failed
+	CodeDockerHostConfigInvalid Code = 44104 // stored host or credential material unusable
+	CodeDockerResourceConflict  Code = 44105 // Engine refused: image in use, container running, etc.
 )

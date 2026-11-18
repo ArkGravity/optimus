@@ -75,12 +75,12 @@ func TestMulticloudFreshBaselineAndSeedAcceptance(t *testing.T) {
 				snapshots[table] = row
 			}
 			for range 2 {
-				require.NoError(t, goose.UpTo(database, ".", 20))
+				require.NoError(t, goose.UpTo(database, ".", 21))
 				_, err = seed.Run(context.Background(), gdb, opts)
 				require.NoError(t, err)
 				version, err := goose.GetDBVersion(database)
 				require.NoError(t, err)
-				require.EqualValues(t, 20, version)
+				require.EqualValues(t, 21, version)
 				for table, want := range snapshots {
 					var actual string
 					require.NoError(t, database.QueryRow(fmt.Sprintf(`SELECT row_to_json(r)::text FROM %s r WHERE id=7001`, table)).Scan(&actual))
@@ -146,7 +146,7 @@ func TestMulticloudValidServiceAccountBaselineAcceptance(t *testing.T) {
 	require.NoError(t, runGoose(database, "up"))
 	version, err := goose.GetDBVersion(database)
 	require.NoError(t, err)
-	require.EqualValues(t, 20, version)
+	require.EqualValues(t, 21, version)
 	var stored []byte
 	require.NoError(t, database.QueryRow(`SELECT service_account_json_enc FROM credentials_cloud_keys WHERE id=$1`, id).Scan(&stored))
 	require.Equal(t, sealed, stored)
@@ -180,6 +180,7 @@ func TestFreshBaselinePopulatedDownAndReinitialize(t *testing.T) {
 		`INSERT INTO refresh_tokens(user_id,token_hash,expires_at) SELECT id,'baseline-token',now()+interval '1 hour' FROM users LIMIT 1`,
 		`INSERT INTO audit_logs(user_id,action) SELECT id,'baseline-test' FROM users LIMIT 1`,
 		`INSERT INTO credentials_ssh_keys(name,username,private_key_enc) VALUES ('ssh','fixture','sealed')`,
+		`INSERT INTO docker_hosts(name,host,port,socket_path,auth_type,ssh_key_id,username) SELECT 'docker-host','127.0.0.1',22,'/var/run/docker.sock','ssh_key',id,'fixture' FROM credentials_ssh_keys LIMIT 1`,
 		`INSERT INTO credentials_kubeconfigs(name,kubeconfig_enc) VALUES ('kube','sealed')`,
 		`INSERT INTO clusters(name,kubeconfig_id,context) SELECT 'cluster',id,'fixture' FROM credentials_kubeconfigs LIMIT 1`,
 		`INSERT INTO apps_chart_repos(name,type,url) VALUES ('repo','http','https://example.test')`,
@@ -217,7 +218,7 @@ func TestFreshBaselinePopulatedDownAndReinitialize(t *testing.T) {
 	}
 	require.NoError(t, rows.Err())
 	require.NoError(t, rows.Close())
-	require.Len(t, tables, 31)
+	require.Len(t, tables, 32)
 	for _, table := range tables {
 		var count int
 		require.NoError(t, database.QueryRow(fmt.Sprintf(`SELECT count(*) FROM %s`, table)).Scan(&count))
@@ -239,7 +240,7 @@ func TestFreshBaselinePopulatedDownAndReinitialize(t *testing.T) {
 	}
 	version, err = goose.GetDBVersion(database)
 	require.NoError(t, err)
-	require.EqualValues(t, 20, version)
+	require.EqualValues(t, 21, version)
 	var menus int64
 	require.NoError(t, gdb.Model(&models.Menu{}).Where("code = ?", "assets.inventory").Count(&menus).Error)
 	require.EqualValues(t, 1, menus)

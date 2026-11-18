@@ -36,6 +36,7 @@ import (
 	"github.com/ArkGravity/optimus/internal/modules/auth"
 	"github.com/ArkGravity/optimus/internal/modules/credentials"
 	"github.com/ArkGravity/optimus/internal/modules/credentials/vault"
+	"github.com/ArkGravity/optimus/internal/modules/docker"
 	"github.com/ArkGravity/optimus/internal/modules/health"
 	"github.com/ArkGravity/optimus/internal/modules/k8s"
 	"github.com/ArkGravity/optimus/internal/modules/menu"
@@ -205,6 +206,11 @@ func runServer(args []string) {
 	// shared recorder.
 	k8sModule := k8s.New(gdb, credsModule.Consumer, auditRec, permCache)
 	k8sModule.MountRoutes(protected, permCache)
+
+	// Docker management: SSH-connected hosts. SSH keys come through the
+	// credentials Consumer; host passwords use the shared vault cipher.
+	dockerModule := docker.New(gdb, cipher, credsModule.Consumer, auditRec)
+	dockerModule.MountRoutes(protected, permCache)
 
 	// P3 applications: chart-repo CRUD + application CRUD + helm-driven
 	// release lifecycle. Wiring order matters because three cross-package

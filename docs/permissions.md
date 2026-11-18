@@ -48,7 +48,8 @@ Auto-generated from `internal/infra/permissions/codes.go`. Run `make dump-perms`
 
 | Code | Name (i18n) | Description |
 |---|---|---|
-| `docker:environment:read` | `perm.docker.environment.read` | Read Docker management placeholder |
+| `docker:environment:read` | `perm.docker.environment.read` | Read Docker hosts, images and containers |
+| `docker:environment:write` | `perm.docker.environment.write` | Manage Docker hosts, images and containers |
 
 ## k8s
 
