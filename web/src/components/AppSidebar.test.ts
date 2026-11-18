@@ -37,4 +37,26 @@ describe('container sidebar', () => {
     expect(wrapper.find('.ant-menu-submenu').exists()).toBe(false)
     wrapper.unmount()
   })
+
+  it('selects Inventory for asset detail URLs and hides it without an assets read permission', async () => {
+    const pinia = createPinia()
+    setActivePinia(pinia)
+    const auth = useAuthStore()
+    auth.setPermissions(['assets:resource:read'])
+    useMenuStore().setTree([{
+      id: 1, code: 'assets', name: 'menu.assets_group', path: '/assets', component: '', icon: '', sort_order: 0, hidden: false,
+      children: [
+        { id: 2, code: 'assets.inventory', name: 'menu.assets.inventory', path: '/assets/inventory', component: 'assets/Inventory', icon: '', sort_order: 1, hidden: false },
+      ],
+    }])
+    const router = createRouter({ history: createMemoryHistory(), routes: [{ path: '/:pathMatch(.*)*', component: { template: '<div />' } }] })
+    await router.push('/assets/instances/aws:instance:7')
+    const wrapper = mount(AppSidebar, { props: { collapsed: false }, global: { plugins: [pinia, router], components: { AMenu: Menu }, mocks: { $t: (key: string) => key } } })
+    await flushPromises()
+    expect(wrapper.get('.ant-menu-item-selected').text()).toBe('menu.assets.inventory')
+    auth.setPermissions([])
+    await flushPromises()
+    expect(wrapper.find('.ant-menu-submenu').exists()).toBe(false)
+    wrapper.unmount()
+  })
 })

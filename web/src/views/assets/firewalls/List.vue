@@ -1,7 +1,6 @@
 <template>
   <a-card>
     <PageHeader :title="t('assets.resource.firewall.title')" />
-    <p>{{ t('assets.detail.firewall_inventory_notice') }}</p>
     <AssetFilters class="u-mb-16" :controller="controller" @change="reload" />
     <a-alert v-if="errorMessage" type="error" :message="errorMessage" show-icon class="u-mb-16" />
     <a-table :columns="columns" :data-source="items" :loading="controller.loading.value" :pagination="false" row-key="asset_key" :scroll="{ x: 'max-content' }">

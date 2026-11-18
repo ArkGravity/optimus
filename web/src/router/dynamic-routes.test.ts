@@ -24,12 +24,13 @@ const tree: MeMenuNode[] = [
 ]
 
 describe('flattenMenusToRoutes', () => {
-  it('resolves every canonical assets menu with generic firewall identity and unchanged permissions', () => {
+  it('resolves the inventory workspace and gates it by any assets read permission', () => {
     const assets = menuContract.menus.filter(menu => menu.path.startsWith('/assets/'))
-    expect(assets.map(menu => menu.path)).toEqual(['/assets/cloud-accounts', '/assets/vpcs', '/assets/firewalls', '/assets/instances', '/assets/databases', '/assets/sync-runs'])
-    const routes = flattenMenusToRoutes(assets.map((menu, i) => ({ id: i + 1, code: menu.path, name: menu.path, ...menu, icon: '', sort_order: i, hidden: false, permission_code: menu.permission })), buildViewResolver())
-    expect(routes.map(route => route.path)).toEqual(assets.map(menu => menu.path))
-    expect(routes.find(route => route.path === '/assets/firewalls')?.meta?.permission).toBe('assets:resource:read')
+    expect(assets.map(menu => menu.path)).toEqual(['/assets/inventory'])
+    const routes = flattenMenusToRoutes(assets.map((menu, i) => ({ id: i + 1, code: 'assets.inventory', name: menu.path, ...menu, icon: '', sort_order: i, hidden: false, permission_code: menu.permission || undefined })), buildViewResolver())
+    expect(routes.map(route => route.path)).toEqual(['/assets/inventory'])
+    expect(routes[0]?.meta?.permission).toBeUndefined()
+    expect(routes[0]?.meta?.permissionsAny).toEqual(['assets:account:read', 'assets:resource:read', 'assets:sync:read'])
   })
   it('skips group nodes (empty component) and flattens leaves', () => {
     const components = new Map<string, () => Promise<unknown>>([

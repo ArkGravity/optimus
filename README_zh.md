@@ -22,7 +22,7 @@ Optimus 是可自托管的基础设施控制台，将访问管理、凭据保护
 | 阿里云 | ECS 实例、VPC/子网、安全组、RDS |
 | GCP | Compute Engine 实例、VPC/子网、防火墙规则、Cloud SQL |
 
-资产菜单顺序为 **云账号 → VPC → 防火墙 → 实例 → 数据库 → 同步记录**。采集使用明确选择的凭据，不提供云资源写入或管理 API。Dashboard 和 Observability Center 目前为 Coming Soon 占位页。
+资产菜单为 **资产管理 → 资产清单**。资产清单在页面内切换云账号、VPC、防火墙、实例、数据库和同步记录，列表仍按云厂商和账号跨账号筛选。旧的列表地址会跳到对应分区。采集使用明确选择的凭据，不提供云资源写入或管理 API。Dashboard 和 Observability Center 目前为 Coming Soon 占位页。
 
 ## 安装与首次登录
 

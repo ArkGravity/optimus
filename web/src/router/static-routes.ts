@@ -1,5 +1,6 @@
 import type { RouteLocationNormalized, RouteRecordRaw } from 'vue-router'
 import WorkspaceView from '@/components/layout/WorkspaceView.vue'
+import { inventorySections } from '@/views/assets/sections'
 import { kubernetesSections } from '@/views/containers/sections'
 
 // The root renders child pages in isolated sessions while App.vue selects
@@ -88,15 +89,29 @@ export const staticRoutes: RouteRecordRaw[] = [
         component: () => import('@/views/apps/applications/Upgrade.vue'),
         meta: { permission: 'apps:release:upgrade' }
       },
-      {
-        path: 'assets/security-groups',
-        name: 'assets.security-groups.compatibility',
-        component: () => import('@/views/assets/firewalls/List.vue'),
-        meta: { permission: 'assets:resource:read' },
+      ...inventorySections.map(section => ({
+        path: `assets/inventory/${section.key}`,
+        name: `assets.inventory.${section.key}`,
+        component: () => import('@/views/assets/Inventory.vue'),
+        meta: { permissionsAny: [...section.permissions], assetsSection: section.key },
+      })),
+      ...([
+        ['cloud-accounts', 'accounts', 'assets:account:read'],
+        ['vpcs', 'vpcs', 'assets:resource:read'],
+        ['firewalls', 'firewalls', 'assets:resource:read'],
+        ['instances', 'instances', 'assets:resource:read'],
+        ['databases', 'databases', 'assets:resource:read'],
+        ['sync-runs', 'sync-runs', 'assets:sync:read'],
+        ['security-groups', 'firewalls', 'assets:resource:read'],
+      ] as const).map(([legacy, section, permission]) => ({
+        path: `assets/${legacy}`,
+        name: `assets.${legacy}.compatibility`,
+        component: () => import('@/views/assets/Inventory.vue'),
+        meta: { permission },
         // A navigation guard runs after the global permission check. A route
         // redirect would skip that check on this compatibility record.
-        beforeEnter: to => ({ path: '/assets/firewalls', query: to.query, hash: to.hash, replace: true }),
-      },
+        beforeEnter: (to: RouteLocationNormalized) => ({ path: `/assets/inventory/${section}`, query: to.query, hash: to.hash, replace: true }),
+      })),
       {
         path: 'assets/vpcs/:id',
         name: 'assets.vpcs.detail',

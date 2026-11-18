@@ -147,6 +147,7 @@
     },
     "assets_group": "资产管理",
     "assets": {
+      "inventory": "资产清单",
       "cloud_accounts": "云账号",
       "instances": "实例",
       "vpcs": "VPC",
@@ -459,6 +460,7 @@
       "region": "区域",
       "zone": "可用区",
       "q": "搜索资产",
+      "more": "更多筛选",
       "vpc_id": "网络引用",
       "network_ref": "网络引用",
       "ip": "IP 地址",

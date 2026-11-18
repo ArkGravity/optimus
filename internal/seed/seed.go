@@ -166,6 +166,9 @@ func ensureInitialMenus(ctx context.Context, tx *gorm.DB) error {
 			return err
 		}
 	}
+	if err := renameMenuCode(ctx, tx, "assets.cloud_accounts", "assets.inventory", "assets inventory menu collision: reconcile reserved menu codes before seeding"); err != nil {
+		return err
+	}
 	type spec struct {
 		Code, Name, Path, Component, Icon string
 		PermissionCode                    *string
@@ -176,12 +179,7 @@ func ensureInitialMenus(ctx context.Context, tx *gorm.DB) error {
 	tree := []spec{
 		{Code: "dashboard", Name: "menu.dashboard", Path: "/dashboard", Component: "dashboard/Index", Icon: "dashboard"},
 		{Code: "assets", Name: "menu.assets_group", Path: "/assets", Component: "", Icon: "cloud-server", PermissionCode: sp("assets:resource:read"), ChildSortStart: 1, Children: []spec{
-			{Code: "assets.cloud_accounts", Name: "menu.assets.cloud_accounts", Path: "/assets/cloud-accounts", Component: "assets/cloud-accounts/List", PermissionCode: sp("assets:account:read")},
-			{Code: "assets.vpcs", Name: "menu.assets.vpcs", Path: "/assets/vpcs", Component: "assets/vpcs/List", PermissionCode: sp("assets:resource:read")},
-			{Code: "assets.firewalls", Name: "menu.assets.firewalls", Path: "/assets/firewalls", Component: "assets/firewalls/List", PermissionCode: sp("assets:resource:read")},
-			{Code: "assets.instances", Name: "menu.assets.instances", Path: "/assets/instances", Component: "assets/instances/List", PermissionCode: sp("assets:resource:read")},
-			{Code: "assets.databases", Name: "menu.assets.databases", Path: "/assets/databases", Component: "assets/databases/List", PermissionCode: sp("assets:resource:read")},
-			{Code: "assets.sync_runs", Name: "menu.assets.sync_runs", Path: "/assets/sync-runs", Component: "assets/sync-runs/List", PermissionCode: sp("assets:sync:read")},
+			{Code: "assets.inventory", Name: "menu.assets.inventory", Path: "/assets/inventory", Component: "assets/Inventory"},
 		}},
 		{Code: "containers", Name: "menu.containers_group", Path: "/containers", Component: "", Icon: "cluster", Children: []spec{
 			{Code: "containers.kubernetes", Name: "menu.containers.kubernetes", Path: "/containers/kubernetes", Component: "containers/Kubernetes"},
@@ -256,7 +254,54 @@ func ensureInitialMenus(ctx context.Context, tx *gorm.DB) error {
 		}
 		return nil
 	}
-	return insert(nil, tree, 0)
+	if err := insert(nil, tree, 0); err != nil {
+		return err
+	}
+	return retireAssetsFamilyMenus(ctx, tx)
+}
+
+func renameMenuCode(ctx context.Context, tx *gorm.DB, from, to, collision string) error {
+	var old models.Menu
+	err := tx.WithContext(ctx).Where("code = ?", from).First(&old).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	var count int64
+	if err := tx.WithContext(ctx).Unscoped().Model(&models.Menu{}).Where("code = ?", to).Count(&count).Error; err != nil {
+		return err
+	}
+	if count != 0 {
+		return errors.New(collision)
+	}
+	return tx.WithContext(ctx).Model(&old).Update("code", to).Error
+}
+
+func retireAssetsFamilyMenus(ctx context.Context, tx *gorm.DB) error {
+	var obsolete []models.Menu
+	if err := tx.WithContext(ctx).Where("code IN ?", []string{
+		"assets.vpcs", "assets.firewalls", "assets.instances", "assets.databases", "assets.sync_runs",
+	}).Find(&obsolete).Error; err != nil {
+		return err
+	}
+	if len(obsolete) == 0 {
+		return nil
+	}
+	var destination models.Menu
+	if err := tx.WithContext(ctx).Where("code = ?", "assets.inventory").First(&destination).Error; err != nil {
+		return err
+	}
+	for _, menu := range obsolete {
+		if err := tx.WithContext(ctx).Model(&models.Menu{}).Where("parent_id = ?", menu.ID).Update("parent_id", destination.ID).Error; err != nil {
+			return err
+		}
+		if err := tx.WithContext(ctx).Delete(&menu).Error; err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Preserve the original parent/list IDs and custom children during regrouping.

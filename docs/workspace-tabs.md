@@ -35,4 +35,29 @@ Storage/Docker permissions explicitly. Published migrations are unchanged.
 Legacy `/k8s/...` page URLs check their existing permission before forwarding to
 the corresponding new page; Kubernetes HTTP APIs remain under `/api/v1/k8s`.
 
+Assets Management / 资产管理 has one built-in sidebar child:
+
+- Inventory / 资产清单: `/assets/inventory`, with permission-filtered buttons for
+  Cloud Accounts, VPCs, Firewalls, Instances, Databases and Sync Runs. Each
+  section has a direct URL under `/assets/inventory/<section>`. Lists stay
+  cross-account and keep the existing provider and account filters. The menu
+  row is visible when the user has any of `assets:account:read`,
+  `assets:resource:read` or `assets:sync:read`. Those permission codes and the
+  assets HTTP APIs are unchanged.
+
+Detail URLs stay at `/assets/vpcs/:id`, `/assets/instances/:id`,
+`/assets/databases/:id` and `/assets/firewalls/:id`. Opening one keeps the
+Inventory menu selected. Legacy list URLs `/assets/cloud-accounts`,
+`/assets/vpcs`, `/assets/firewalls`, `/assets/instances`, `/assets/databases`,
+`/assets/sync-runs` and `/assets/security-groups` check their existing
+permission, then replace the address with the matching inventory section and
+keep the query and hash.
+
+For existing installations, run `optimus seed` with the updated binary. Seed
+renames `assets.cloud_accounts` to `assets.inventory` in place, moves custom
+children off the retired VPC, firewall, instance, database and sync-run rows,
+then deletes those rows. A reserved-code collision rolls the seed transaction
+back. Custom roles keep their existing assets grants. Published migrations are
+unchanged.
+
 Implementation and verification: [container navigation plan](superpowers/plans/2026-11-12-container-navigation.md).
