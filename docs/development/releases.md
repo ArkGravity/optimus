@@ -1,5 +1,11 @@
 # Versioned releases
 
+[v0.1.3](../releases/v0.1.3.md) was published on 2026-11-18 with Linux
+amd64/arm64 binary archives, a deployment archive and versioned images in both
+registries. Exact-source main CI, native runtime smoke, independent attachment
+and registry verification, and public post-publication checks passed. See the
+[release record](../superpowers/plans/2026-11-18-v0.1.3-release.md).
+
 [v0.1.2](../releases/v0.1.2.md) was published on 2026-11-12 with Linux
 amd64/arm64 binary archives, a deployment archive and versioned images in both
 registries. Exact-source main CI, native runtime smoke, independent attachment

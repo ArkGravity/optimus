@@ -1,6 +1,8 @@
 # Changelog
 
-## v0.1.3 — release preparation
+## v0.1.3 — 2026-11-18
+
+Published with verified Linux amd64/arm64 archives and images in both registries.
 
 - Fold Assets navigation into one Inventory workspace and keep lists
   cross-account.

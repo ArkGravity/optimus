@@ -28,7 +28,7 @@ Assets navigation is **Assets Management → Inventory**. Inventory switches Clo
 
 Use Docker Compose for a bundled PostgreSQL deployment, or a Linux binary with an existing PostgreSQL 17 server. Go and Bun are only needed for development.
 
-**[v0.1.2 is published](https://github.com/ArkGravity/optimus/releases/tag/v0.1.2), released on 2026-11-12 (UTC).** Native Linux amd64/arm64 archives, the deployment package and both registries passed [artifact verification](https://github.com/ArkGravity/optimus/actions/runs/43303096304/attempts/2) and independent post-publication checks. Download the release attachments using the [installation guide](docs/installation.md).
+**[v0.1.3 is published](https://github.com/ArkGravity/optimus/releases/tag/v0.1.3), released on 2026-11-18 (UTC).** Native Linux amd64/arm64 archives, the deployment package and both registries passed [artifact verification](https://github.com/ArkGravity/optimus/actions/runs/44377265594) and independent post-publication checks. Download the release attachments using the [installation guide](docs/installation.md).
 
 1. Follow the [Docker Compose or native installation guide](docs/installation.md). Generate independent database, JWT and vault secrets before starting a shared environment.
 2. Open `http://127.0.0.1:8080` locally, or the HTTPS address configured through your reverse proxy.
@@ -46,7 +46,7 @@ The operator confirmed real AWS, Aliyun and GCP acceptance of `main-1bbb8fe` on 
 
 ## Database baseline
 
-Published v0.1.0–v0.1.2 use a fresh 19-migration baseline: 31 business tables plus Goose history. Native [GKE source support](docs/operations/gke.md) appends migration00020 and upgrades head19 in place. Existing databases at historical schema 00022, 00023 or 00028 cannot upgrade in place using these renumbered migrations. Read the [database transition and recovery guide](docs/operations/recovery.md) before using an existing database. Recreating a container does not recreate its PostgreSQL data.
+Published v0.1.0–v0.1.2 use a fresh 19-migration baseline: 31 business tables plus Goose history. v0.1.3 appends [migration 00020](docs/operations/gke.md) for native GKE authentication and upgrades head19 in place. Existing databases at historical schema 00022, 00023 or 00028 cannot upgrade in place using these renumbered migrations. Read the [database transition and recovery guide](docs/operations/recovery.md) before using an existing database. Recreating a container does not recreate its PostgreSQL data.
 
 ## Documentation and development
 
