@@ -11,7 +11,9 @@ import { BizError } from '@/utils/http-error'
 vi.mock('@/hooks/useI18n', () => ({ useI18n: () => ({ t: (key: string) => key }) }))
 const permission = reactive({ allowed: true })
 vi.mock('@/hooks/usePermission', () => ({ usePermission: () => ({ has: () => permission.allowed }) }))
-const stubs = { 'a-card': { template: '<section><slot/></section>' }, 'a-spin': { template: '<div><slot/></div>' }, 'a-alert': { props: ['message'], template: '<p role="alert">{{ message }}</p>' }, 'a-button': { template: '<button><slot/></button>' }, PageHeader: { props: ['title'], template: '<header>{{ title }}<slot/></header>' } }
+const push = vi.fn()
+vi.mock('vue-router', () => ({ useRouter: () => ({ push }) }))
+const stubs = { 'a-card': { template: '<section><slot/></section>' }, 'a-spin': { template: '<div><slot/></div>' }, 'a-alert': { props: ['message'], template: '<p role="alert">{{ message }}</p>' }, 'a-button': { template: '<button v-bind="$attrs"><slot/></button>' }, PageHeader: { props: ['title'], template: '<header>{{ title }}<slot/></header>' } }
 function deferred<T>() { let resolve!: (value: T) => void; let reject!: (reason: Error) => void; const promise = new Promise<T>((yes, no) => { resolve = yes; reject = no }); return { promise, resolve, reject } }
 function setup(props: { family: 'instance' | 'vpc' | 'database' | 'firewall'; assetKey: string | number; open?: boolean }, api: Partial<AssetsResourceApi> = {}) {
   const resourceApi = { getInstance: vi.fn().mockResolvedValue(instance), getVPC: vi.fn().mockResolvedValue(vpc), getDatabase: vi.fn().mockResolvedValue(database), getFirewall: vi.fn().mockResolvedValue(firewall), listSubnets: vi.fn().mockResolvedValue({ items: [], total: 0 }), ...api }
@@ -19,8 +21,20 @@ function setup(props: { family: 'instance' | 'vpc' | 'database' | 'firewall'; as
   const wrapper = mount(AssetDetail, { props, global: { provide: { assetsResourceApi: resourceApi, [pageStateKey as symbol]: state }, stubs } })
   return { wrapper, api: resourceApi, state }
 }
-beforeEach(() => { permission.allowed = true })
+beforeEach(() => { permission.allowed = true; push.mockReset() })
 describe('shared asset details', () => {
+  it.each([
+    ['instance', '/assets/inventory/instances'],
+    ['vpc', '/assets/inventory/vpcs'],
+    ['database', '/assets/inventory/databases'],
+    ['firewall', '/assets/inventory/firewalls'],
+  ] as const)('offers a Back action to the %s inventory list', async (family, path) => {
+    const { wrapper } = setup({ family, assetKey: `${family === 'vpc' ? 'gcp:vpc:1' : `gcp:${family}:42`}` })
+    await flushPromises()
+    await wrapper.get('[data-testid="asset-detail-back"]').trigger('click')
+    expect(push).toHaveBeenCalledWith(path)
+    wrapper.unmount()
+  })
   it('renders all NIC addresses and external references with indexed alias facts and distinct tag families', async () => {
     const { wrapper, api, state } = setup({ family: 'instance', assetKey: 'gcp:instance:42' })
     await flushPromises()

@@ -11,6 +11,7 @@
       <a-select data-testid="resource-type" :value="filters.resource_type" :options="resourceTypeOptions" allow-clear :placeholder="t('assets.sync.filter.resource_type')" :aria-label="t('assets.sync.filter.resource_type')" @change="onResourceTypeChange" />
       <a-select data-testid="status" :value="filters.status" :options="statusOptions" allow-clear :placeholder="t('assets.sync.filter.status')" :aria-label="t('assets.sync.filter.status')" @change="onStatusChange" />
       <a-date-picker :value="startedAfterInput" show-time allow-clear :placeholder="t('assets.sync.filter.started_after')" @change="onStartedAfterChange" />
+      <a-button data-testid="reset-filters" @click="resetFilters">{{ t('common.reset') }}</a-button>
     </div>
     <a-alert v-if="errorMessage" type="error" :message="errorMessage" show-icon class="u-mb-16" />
 
@@ -111,6 +112,11 @@ function updateFilters(patch: Partial<SyncFilters>) {
   void reload()
 }
 function resetScope() { const next = { ...filters.value }; delete next.location_type; delete next.location; filters.value = next }
+function resetFilters() {
+  controller.resetFilters()
+  filters.value = {}
+  void reload()
+}
 function onProviderChange(provider: Provider | undefined) { controller.setFilters({ provider }); resetScope(); void reload() }
 function onAccountChange(value: number | string | null | undefined) {
   const id = value == null || value === '' ? undefined : Number(value)

@@ -40,6 +40,7 @@
         :options="enabledOptions"
         @change="onEnabledChange"
       />
+      <a-button data-testid="reset-filters" @click="resetFilters">{{ t('common.reset') }}</a-button>
     </div>
 
     <a-table
@@ -170,8 +171,8 @@ async function setTableFilters(patch: Partial<AssetsAccountListParams>) {
 async function setTablePage(page: number) { table.page.value = page; await loadAccounts() }
 async function setTablePageSize(size: number) { table.pageSize.value = size; table.page.value = 1; await loadAccounts() }
 const columns = computed(() => [
-  { key: 'name', title: t('assets.account.name'), dataIndex: 'name' },
   { key: 'provider', title: t('assets.account.provider'), dataIndex: 'provider' },
+  { key: 'name', title: t('assets.account.name'), dataIndex: 'name' },
   { key: 'project_id', title: t('assets.account.project_id'), dataIndex: 'project_id' },
   { key: 'external_account_id', title: t('assets.account.external_account_id'), dataIndex: 'external_account_id' },
   { key: 'scope_revision', title: t('assets.account.scope_revision'), dataIndex: 'scope_revision' },
@@ -203,6 +204,14 @@ async function onEnabledChange(value: boolean | undefined) {
   await runTableAction(() => table.setFilters({ enabled: value }))
 }
 async function onProviderChange(value: Provider | undefined) { await runTableAction(() => table.setFilters({ provider: value })) }
+async function resetFilters() {
+  searchInput.value = ''
+  providerFilter.value = undefined
+  enabledFilter.value = undefined
+  table.filters.value = {}
+  table.page.value = 1
+  await reloadTable()
+}
 async function onPageChange(page: number, size = table.pageSize.value) {
   if (size !== table.pageSize.value) await runTableAction(() => table.setPageSize(size))
   else await runTableAction(() => table.setPage(page))

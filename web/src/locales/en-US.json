@@ -298,7 +298,7 @@
     "account": {
       "title": "Cloud Accounts",
       "name": "Name",
-      "provider": "Cloud provider",
+      "provider": "Provider",
       "cloudkey": "Cloud key",
       "regions": "Regions",
       "enabled": "Enabled",

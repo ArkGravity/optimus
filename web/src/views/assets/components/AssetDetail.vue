@@ -1,6 +1,9 @@
 <template>
   <a-card v-if="open" data-testid="asset-detail">
-    <PageHeader :title="t(`assets.detail.sections.${family}`)"><slot name="actions" /></PageHeader>
+    <PageHeader :title="t(`assets.detail.sections.${family}`)">
+      <a-button data-testid="asset-detail-back" @click="goBack">{{ t('common.button.back') }}</a-button>
+      <slot name="actions" />
+    </PageHeader>
     <a-alert v-if="error" type="error" :message="error" show-icon />
     <a-spin :spinning="loading">
       <template v-if="detail">
@@ -14,6 +17,7 @@
 
 <script setup lang="ts">
 import { computed, inject, onBeforeUnmount, ref, shallowRef, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import type { AssetsResourceApi } from '@/api/assets/resource'
 import PageHeader from '@/components/PageHeader.vue'
 import { useI18n } from '@/hooks/useI18n'
@@ -24,11 +28,20 @@ import FirewallRules from './FirewallRules.vue'
 import VPCSubnets from './VPCSubnets.vue'
 import { detailSections, parseDetailKey, type DetailFamily, type DetailRecord } from './detail-fields'
 
+const listPathByFamily: Record<DetailFamily, string> = {
+  instance: '/assets/inventory/instances',
+  vpc: '/assets/inventory/vpcs',
+  database: '/assets/inventory/databases',
+  firewall: '/assets/inventory/firewalls',
+}
+
 const props = withDefaults(defineProps<{ family: DetailFamily; assetKey?: string | number; open?: boolean }>(), { open: true, assetKey: undefined })
 const { t } = useI18n()
+const router = useRouter()
 const { has } = usePermission()
 const canRead = computed(() => has('assets:resource:read'))
 const api = inject<AssetsResourceApi>('assetsResourceApi')!
+function goBack() { void router.push(listPathByFamily[props.family]) }
 const detail = shallowRef<DetailRecord>()
 const loading = ref(false)
 const error = ref('')

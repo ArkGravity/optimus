@@ -43,6 +43,7 @@
         <span v-if="advancedCount && !moreOpen" class="more-filters-count">{{ advancedCount }}</span>
       </button>
       <span v-if="locationType" data-testid="location-context">{{ t(`assets.filters.location.${locationType}`) }}</span>
+      <a-button data-testid="reset-filters" @click="resetFilters">{{ t('common.reset') }}</a-button>
     </div>
     <div v-show="moreOpen" class="filter-row more-filter-fields" data-testid="more-filter-fields">
       <span v-for="field in scopeFields" :key="field" class="filter-control">
@@ -124,6 +125,11 @@ function setAccount(value: number | string | null | undefined) { update({ accoun
 function setValue(field: 'state', value: string | undefined) { update({ [field]: value }) }
 function setText(field: keyof AssetFilterState, event: Event) { update({ [field]: (event.target as HTMLInputElement).value.trim() || undefined }) }
 function setDeleted(event: { target?: { checked?: boolean } }) { update({ include_deleted: event.target?.checked || undefined }) }
+function resetFilters() {
+  props.controller.resetFilters()
+  moreOpen.value = false
+  emit('change')
+}
 </script>
 
 <style scoped>
