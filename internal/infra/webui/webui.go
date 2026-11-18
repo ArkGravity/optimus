@@ -117,7 +117,14 @@ func knownAssetsPage(p string) bool {
 	}
 	if len(parts) == 3 {
 		switch parts[2] {
-		case "cloud-accounts", "vpcs", "firewalls", "instances", "databases", "sync-runs", "security-groups":
+		case "inventory", "cloud-accounts", "vpcs", "firewalls", "instances", "databases", "sync-runs", "security-groups":
+			return true
+		}
+		return false
+	}
+	if len(parts) == 4 && parts[2] == "inventory" {
+		switch parts[3] {
+		case "accounts", "vpcs", "firewalls", "instances", "databases", "sync-runs":
 			return true
 		}
 		return false

@@ -9,6 +9,7 @@ import { installGuards } from './guards'
 import { staticRoutes } from './static-routes'
 
 vi.mock('@/views/containers/Kubernetes.vue', () => ({ default: { template: '<div />' } }))
+vi.mock('@/views/assets/Inventory.vue', () => ({ default: { template: '<div />' } }))
 
 const user = { id: 1, username: 'admin' } as MeUser
 const dashboardMenu: MeMenuNode = {
@@ -42,6 +43,12 @@ describe('router guards', () => {
     ['/containers/kubernetes/storage', 'k8s:storage:read'],
     ['/containers/kubernetes/configs', 'k8s:secret:read'],
     ['/containers/kubernetes/configs', 'k8s:config:read'],
+    ['/assets/inventory/accounts', 'assets:account:read'],
+    ['/assets/inventory/vpcs', 'assets:resource:read'],
+    ['/assets/inventory/firewalls', 'assets:resource:read'],
+    ['/assets/inventory/instances', 'assets:resource:read'],
+    ['/assets/inventory/databases', 'assets:resource:read'],
+    ['/assets/inventory/sync-runs', 'assets:sync:read'],
   ])('checks direct resource URL %s with %s', async (path, permission) => {
     for (const allowed of [false, true]) {
       const { router, meApi, auth } = setup()
@@ -72,9 +79,17 @@ describe('router guards', () => {
     await router.push('/assets/security-groups?provider=aws&page=2#rules')
     await router.isReady()
     if (allowed) {
-      expect(router.currentRoute.value.fullPath).toBe('/assets/firewalls?provider=aws&page=2#rules')
-      expect(router.currentRoute.value.meta.permission).toBe('assets:resource:read')
+      expect(router.currentRoute.value.fullPath).toBe('/assets/inventory/firewalls?provider=aws&page=2#rules')
+      expect(router.currentRoute.value.meta.permissionsAny).toEqual(['assets:resource:read'])
     } else expect(router.currentRoute.value.name).toBe('forbidden')
+  })
+  it.each([false, true])('checks the old cloud account URL before compatibility navigation (allowed=%s)', async allowed => {
+    const { router, meApi, auth } = setup()
+    auth.setActiveTokens('access', 'refresh')
+    vi.mocked(meApi.permissions).mockResolvedValue(allowed ? ['assets:account:read'] : [])
+    await router.push('/assets/cloud-accounts?provider=gcp#accounts')
+    await router.isReady()
+    expect(router.currentRoute.value.fullPath).toBe(allowed ? '/assets/inventory/accounts?provider=gcp#accounts' : '/403')
   })
   it('sends an unauthenticated root visit to login', async () => {
     const { router, meApi } = setup()

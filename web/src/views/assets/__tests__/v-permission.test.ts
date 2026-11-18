@@ -15,6 +15,7 @@ function vueFiles(dir: string, files: string[] = []): string[] {
 }
 
 const expectedGates: Record<string, string[]> = {
+  'Inventory.vue': [],
   'cloud-accounts/Form.vue': [],
   'components/AssetFilters.vue': [],
   'components/AssetDetail.vue': [],

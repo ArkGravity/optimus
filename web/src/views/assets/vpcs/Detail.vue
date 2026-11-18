@@ -1,6 +1,6 @@
 <template>
   <AssetDetail family="vpc" :asset-key="assetKey">
-    <template #actions><a-button @click="router.back()">{{ t('common.button.back') }}</a-button></template>
+    <template #actions><a-button @click="router.push('/assets/inventory/vpcs')">{{ t('common.button.back') }}</a-button></template>
   </AssetDetail>
 </template>
 

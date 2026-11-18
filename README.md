@@ -22,7 +22,7 @@ Optimus is a self-hosted infrastructure console for teams that need one place to
 | Aliyun | ECS instances, VPCs/subnets, Security Groups, RDS |
 | GCP | Compute Engine instances, VPCs/subnets, firewall rules, Cloud SQL |
 
-Assets navigation is **Cloud Accounts → VPCs → Firewalls → Instances → Databases → Sync Runs**. Collection uses selected credentials and does not provide cloud resource write or management APIs. Dashboard and Observability Center are Coming Soon placeholders.
+Assets navigation is **Assets Management → Inventory**. Inventory switches Cloud Accounts, VPCs, Firewalls, Instances, Databases and Sync Runs inside the page. Lists stay cross-account. Older list addresses forward to the matching section. Collection uses selected credentials and does not provide cloud resource write or management APIs. Dashboard and Observability Center are Coming Soon placeholders.
 
 ## Install and sign in
 

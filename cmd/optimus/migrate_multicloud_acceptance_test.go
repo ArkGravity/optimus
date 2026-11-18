@@ -43,10 +43,10 @@ func TestMulticloudFreshBaselineAndSeedAcceptance(t *testing.T) {
 			_, err = seed.Run(context.Background(), gdb, opts)
 			require.NoError(t, err)
 			var menu models.Menu
-			require.NoError(t, gdb.Where("code = ?", "assets.firewalls").First(&menu).Error)
+			require.NoError(t, gdb.Where("code = ?", "assets.inventory").First(&menu).Error)
 			legacyID := menu.ID
 			if legacyMenu {
-				require.NoError(t, gdb.Model(&menu).Update("code", "assets.security_groups").Error)
+				require.NoError(t, gdb.Model(&menu).Update("code", "assets.cloud_accounts").Error)
 			}
 			custom := models.Role{Code: "operator-custom", Name: "operator"}
 			require.NoError(t, gdb.Create(&custom).Error)
@@ -107,7 +107,7 @@ func TestMulticloudFreshBaselineAndSeedAcceptance(t *testing.T) {
 				require.Equal(t, "aws", runProvider)
 				require.Equal(t, "us-east-1", location)
 				var canonical models.Menu
-				require.NoError(t, gdb.Where("code = ?", "assets.firewalls").First(&canonical).Error)
+				require.NoError(t, gdb.Where("code = ?", "assets.inventory").First(&canonical).Error)
 				require.Equal(t, legacyID, canonical.ID)
 				var gotChild models.Menu
 				require.NoError(t, gdb.First(&gotChild, child.ID).Error)
@@ -115,8 +115,8 @@ func TestMulticloudFreshBaselineAndSeedAcceptance(t *testing.T) {
 				var count int64
 				require.NoError(t, gdb.Model(&models.RolePermission{}).Where("role_id = ? AND permission_id = ?", custom.ID, permission.ID).Count(&count).Error)
 				require.EqualValues(t, 1, count)
-				require.NoError(t, gdb.Model(&models.Menu{}).Where("code IN ?", []string{"assets.security_groups", "assets.firewalls"}).Count(&count).Error)
-				require.EqualValues(t, 1, count)
+				require.NoError(t, gdb.Model(&models.Menu{}).Where("code IN ?", []string{"assets.cloud_accounts", "assets.security_groups", "assets.firewalls", "assets.vpcs", "assets.instances", "assets.databases", "assets.sync_runs"}).Count(&count).Error)
+				require.Zero(t, count)
 			}
 		})
 	}
@@ -241,6 +241,6 @@ func TestFreshBaselinePopulatedDownAndReinitialize(t *testing.T) {
 	require.NoError(t, err)
 	require.EqualValues(t, 20, version)
 	var menus int64
-	require.NoError(t, gdb.Model(&models.Menu{}).Where("code = ?", "assets.firewalls").Count(&menus).Error)
+	require.NoError(t, gdb.Model(&models.Menu{}).Where("code = ?", "assets.inventory").Count(&menus).Error)
 	require.EqualValues(t, 1, menus)
 }

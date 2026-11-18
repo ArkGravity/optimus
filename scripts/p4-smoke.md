@@ -43,21 +43,24 @@ policy action is mandatory. See [AWS GetCallerIdentity](https://docs.aws.amazon.
 1. Sign in as an admin and create an AWS cloud key at
    `/credentials/cloud-keys`. Use a smoke-only access key and select a region
    with known resources.
-2. Create a Cloud Account at `/assets/cloud-accounts`. Select that cloud key,
-   enable the matching region, and leave the account enabled.
+2. Open **Assets Management → Inventory** and create a Cloud Account at
+   `/assets/inventory/accounts` (the legacy `/assets/cloud-accounts` address
+   forwards here). Select that cloud key, enable the matching region, and
+   leave the account enabled.
 3. Click **Sync now** (or wait for the configured cron). Confirm the request
    returns immediately and the row becomes available for another sync after
    the worker completes.
-4. Open `/assets/sync-runs`. Expect `instance`, `network`, `database`,
+4. Open `/assets/inventory/sync-runs`. Expect `instance`, `network`, `database`,
    and `security_group` runs plus a successful `planning` run with status `success`; verify `items_seen` matches the account's
    discovered resources. A failed run exposes its error code and reveals the
    detailed error only on the error control's tooltip.
-5. Open `/assets/instances`, `/assets/vpcs`, and `/assets/databases`.
+5. Open `/assets/inventory/instances`, `/assets/inventory/vpcs`, and `/assets/inventory/databases`.
    Check account/region/search filters and pagination. Open a VPC and verify
    its subnet list; verify keyboard Enter and Space also open a selected VPC.
-6. Open `/assets/firewalls` (the legacy `/assets/security-groups` URL redirects), filter by account, region and VPC, and open
+6. Open `/assets/inventory/firewalls` (legacy `/assets/firewalls` and
+   `/assets/security-groups` forward here), filter by account, region and VPC, and open
    a group. Compare inbound/outbound rules, IPv4/IPv6 ranges, group references,
-   prefix lists, port ranges and ICMP type/code with AWS. The menu order is
+   prefix lists, port ranges and ICMP type/code with AWS. Inventory buttons are
    Cloud Accounts, VPCs, Firewalls, Instances, Databases, Sync Runs.
    No AWS write actions are exposed.
 7. Remove one enabled region from the Cloud Account. With **Include deleted**

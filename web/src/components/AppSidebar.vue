@@ -69,6 +69,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useMenuStore } from '@/stores/menu'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
+import { highlightsInventory, inventoryPermissions } from '@/views/assets/sections'
 import { kubernetesPermissions } from '@/views/containers/sections'
 import { useI18n } from '@/hooks/useI18n'
 import type { MeMenuNode } from '@/types/api'
@@ -88,6 +89,7 @@ const { t } = useI18n()
 function buildItems(nodes: MeMenuNode[]): ItemType[] {
   return nodes.flatMap(n => {
     if (n.code === 'containers.kubernetes' && !kubernetesPermissions.some(permission => auth.permissions.includes(permission))) return []
+    if (n.code === 'assets.inventory' && !inventoryPermissions.some(permission => auth.permissions.includes(permission))) return []
     if (n.component && n.permission_code && !auth.permissions.includes(n.permission_code)) return []
     const base = { key: n.code, label: t(n.name), title: t(n.name) }
     if (n.children?.length) {
@@ -113,9 +115,12 @@ const codeByPath = computed(() => {
   return map
 })
 
-const currentKey = computed(() => [...codeByPath.value.entries()]
-  .filter(([path]) => route.path === path || route.path.startsWith(`${path}/`))
-  .sort(([a], [b]) => b.length - a.length)[0]?.[1] ?? '')
+const currentKey = computed(() => {
+  if (highlightsInventory(route.path) && [...codeByPath.value.values()].includes('assets.inventory')) return 'assets.inventory'
+  return [...codeByPath.value.entries()]
+    .filter(([path]) => route.path === path || route.path.startsWith(`${path}/`))
+    .sort(([a], [b]) => b.length - a.length)[0]?.[1] ?? ''
+})
 const openKeys = ref<string[]>([])
 watch(currentKey, key => {
   function ancestors(nodes: MeMenuNode[], parents: string[] = []): string[] | undefined {

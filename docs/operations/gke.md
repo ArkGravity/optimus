@@ -1,9 +1,8 @@
 # Native GKE connections
 
-This source feature is not part of the published v0.1.2 binary or image.
-Use a build containing native GKE authentication and apply its additive
-00020 migration to an existing head19 database. Preserve the database and vault
-key; no recreation, new environment secret or installed gcloud plugin is needed.
+Native GKE authentication ships in v0.1.3. Apply its additive 00020 migration
+to an existing head19 database. Preserve the database and vault key; no
+recreation, new environment secret or installed gcloud plugin is needed.
 
 ## Connect a cluster
 

@@ -7,34 +7,9 @@
       "permission": ""
     },
     {
-      "component": "assets/cloud-accounts/List",
-      "path": "/assets/cloud-accounts",
-      "permission": "assets:account:read"
-    },
-    {
-      "component": "assets/vpcs/List",
-      "path": "/assets/vpcs",
-      "permission": "assets:resource:read"
-    },
-    {
-      "component": "assets/firewalls/List",
-      "path": "/assets/firewalls",
-      "permission": "assets:resource:read"
-    },
-    {
-      "component": "assets/instances/List",
-      "path": "/assets/instances",
-      "permission": "assets:resource:read"
-    },
-    {
-      "component": "assets/databases/List",
-      "path": "/assets/databases",
-      "permission": "assets:resource:read"
-    },
-    {
-      "component": "assets/sync-runs/List",
-      "path": "/assets/sync-runs",
-      "permission": "assets:sync:read"
+      "component": "assets/Inventory",
+      "path": "/assets/inventory",
+      "permission": ""
     },
     {
       "component": "containers/Kubernetes",

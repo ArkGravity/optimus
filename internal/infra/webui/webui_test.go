@@ -106,6 +106,9 @@ func TestEmbedded_MissingHashedAssetDoesNotFallBack(t *testing.T) {
 func assetPagePaths() []string {
 	paths := []string{
 		"/assets",
+		"/assets/inventory",
+		"/assets/inventory/accounts", "/assets/inventory/vpcs", "/assets/inventory/firewalls",
+		"/assets/inventory/instances", "/assets/inventory/databases", "/assets/inventory/sync-runs",
 		"/assets/cloud-accounts", "/assets/vpcs", "/assets/firewalls",
 		"/assets/instances", "/assets/databases", "/assets/sync-runs",
 		"/assets/security-groups",
@@ -191,6 +194,7 @@ func TestUnknownAssetsPathsRemainNotFound(t *testing.T) {
 		"/assets/chunks/stale-123.js", "/assets/instances/index-abc.js",
 		"/assets/instances/42.js", "/assets/instances/42.js.map",
 		"/assets/instances/42/extra", "/assets/instances/gcp:instance:42/index.js",
+		"/assets/inventory/nope", "/assets/inventory/accounts/extra", "/assets/inventory/aws:instance:1",
 		"/assets/cloud-accounts/new", "/assets/cloud-accounts/42", "/assets/sync-runs/42",
 		"/assets/security-groups/42", "/assets/subnets/42",
 		"/assets/instances/aws:vpc:42", "/assets/vpcs/gcp:instance:42",

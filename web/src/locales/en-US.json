@@ -147,6 +147,7 @@
     },
     "assets_group": "Assets Management",
     "assets": {
+      "inventory": "Inventory",
       "cloud_accounts": "Cloud Accounts",
       "instances": "Instances",
       "vpcs": "VPCs",
@@ -459,6 +460,7 @@
       "region": "Region",
       "zone": "Zone",
       "q": "Search assets",
+      "more": "More filters",
       "vpc_id": "Network reference",
       "network_ref": "Network reference",
       "ip": "IP address",
