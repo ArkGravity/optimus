@@ -281,7 +281,8 @@
     },
     "docker": {
       "environment": {
-        "read": "View Docker environments"
+        "read": "View Docker hosts, images and containers",
+        "write": "Manage Docker hosts, images and containers"
       }
     }
   },

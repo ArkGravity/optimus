@@ -281,7 +281,8 @@
     },
     "docker": {
       "environment": {
-        "read": "查看 Docker 环境"
+        "read": "查看 Docker 宿主机、镜像和容器",
+        "write": "管理 Docker 宿主机、镜像和容器"
       }
     }
   },

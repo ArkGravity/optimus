@@ -62,7 +62,8 @@ var All = []Permission{
 	// credentials: http
 
 	// P2 k8s management
-	{Code: "docker:environment:read", Name: "perm.docker.environment.read", Category: "docker", Description: "Read Docker management placeholder"},
+	{Code: "docker:environment:read", Name: "perm.docker.environment.read", Category: "docker", Description: "Read Docker hosts, images and containers"},
+	{Code: "docker:environment:write", Name: "perm.docker.environment.write", Category: "docker", Description: "Manage Docker hosts, images and containers"},
 	{Code: "k8s:storage:read", Name: "perm.k8s.storage.read", Category: "k8s", Description: "Read persistent volumes, claims and storage classes"},
 	{Code: "k8s:cluster:read", Name: "perm.k8s.cluster.read", Category: "k8s", Description: "Read clusters"},
 	{Code: "k8s:cluster:write", Name: "perm.k8s.cluster.write", Category: "k8s", Description: "Create/update/delete clusters"},
