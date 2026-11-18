@@ -35,13 +35,16 @@ permissions remain unchanged. Resource pages use the shared selected cluster and
 namespace; an absent cluster selection shows a prompt and never auto-selects.
 Late list/detail/reveal responses are discarded after scope changes or unmount.
 
-For existing installations, run `optimus seed` with the updated binary to update
-the built-in menus and built-in role grants. Seed preserves the old parent and
-Clusters menu IDs, moves custom descendants off retired built-in menu rows and
-rejects reserved-code collisions atomically. Custom roles must receive the new
-Storage/Docker permissions explicitly. Published migrations are unchanged.
+For existing installations, run migrate (head includes `00021_create_docker_hosts.sql`)
+then `optimus seed` with the updated binary to update built-in menus and
+built-in role grants (admin/editor receive `docker:environment:write` through
+normal seed rules). Seed preserves the old parent and Clusters menu IDs, moves
+custom descendants off retired built-in menu rows and rejects reserved-code
+collisions atomically. Custom roles must receive Storage/Docker permissions
+explicitly. Migrations 00001–00020 remain immutable; 00021 is additive.
 Legacy `/k8s/...` page URLs check their existing permission before forwarding to
 the corresponding new page; Kubernetes HTTP APIs remain under `/api/v1/k8s`.
+Docker HTTP APIs are under `/api/v1/docker`.
 
 Assets Management / 资产管理 has one built-in sidebar child:
 
