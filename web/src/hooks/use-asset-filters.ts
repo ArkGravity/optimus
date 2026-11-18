@@ -77,6 +77,11 @@ export function useAssetFilters(options: AssetFiltersOptions) {
     page.value = 1
   }
 
+  function resetFilters() {
+    filters.value = { ...options.defaultFilters }
+    page.value = 1
+  }
+
   watch(filters, () => { page.value = 1; invalidateRequests() }, { deep: true, flush: 'sync' })
   watch([page, pageSize], invalidateRequests, { flush: 'sync' })
 
@@ -117,7 +122,7 @@ export function useAssetFilters(options: AssetFiltersOptions) {
     accountOptions.value = []
     accountError.value = undefined
   })
-  return { family: options.family, filters, page, pageSize, canReadAccounts, accountOptions, loadingAccounts, accountError, loading, requestError, setFilters, loadAccounts, captureRequest, isCurrentRequest, invalidateRequests, runRequest }
+  return { family: options.family, filters, page, pageSize, canReadAccounts, accountOptions, loadingAccounts, accountError, loading, requestError, setFilters, resetFilters, loadAccounts, captureRequest, isCurrentRequest, invalidateRequests, runRequest }
 }
 
 export type AssetFiltersController = ReturnType<typeof useAssetFilters>

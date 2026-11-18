@@ -73,6 +73,16 @@ describe('shared asset filters', () => {
     wrapper.unmount()
   })
 
+  it('clears every selected filter back to defaults', () => {
+    const { filters, wrapper } = setup()
+    filters.setFilters({ provider: 'gcp', account_id: 8, region: 'europe-west4', q: 'web', include_deleted: true })
+    filters.page.value = 3
+    filters.resetFilters()
+    expect(filters.filters.value).toEqual({})
+    expect(filters.page.value).toBe(1)
+    wrapper.unmount()
+  })
+
   it('never calls account APIs without read permission and retains a numeric account filter', async () => {
     const allowed = ref(false)
     const { filters, list, wrapper } = setup(allowed)

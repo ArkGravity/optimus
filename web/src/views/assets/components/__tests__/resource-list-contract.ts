@@ -53,15 +53,10 @@ export function resourceListContract(component: Component, family: Exclude<Asset
       if (family === 'vpc') {
         for (const record of rows) {
           const row = wrapper.get(`[data-row="${record.asset_key}"]`)
-          expect(row.attributes('role')).toBe('link'); expect(row.attributes('tabindex')).toBe('0')
+          expect(row.attributes('role')).toBeUndefined()
+          expect(row.attributes('tabindex')).toBeUndefined()
           await row.trigger('click'); await flushPromises()
-          expect(router.currentRoute.value.name).toBe('assets.vpcs.detail')
-          expect(router.currentRoute.value.params).toEqual({ id: record.asset_key })
-          await router.push('/')
-          await row.trigger('keydown', { key: 'Enter' }); await flushPromises()
-          expect(router.currentRoute.value.name).toBe('assets.vpcs.detail')
-          expect(router.currentRoute.value.params).toEqual({ id: record.asset_key })
-          await router.push('/')
+          expect(router.currentRoute.value.name).not.toBe('assets.vpcs.detail')
         }
       }
     })

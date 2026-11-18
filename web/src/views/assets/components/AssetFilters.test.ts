@@ -61,6 +61,17 @@ describe('AssetFilters', () => {
     expect(controller.filters.value.region).toBeUndefined()
     wrapper.unmount()
   })
+  it('resets every selected filter and emits change', async () => {
+    const { wrapper, controller, change } = setup()
+    controller.setFilters({ provider: 'gcp', region: 'europe-west4', q: 'web', include_deleted: true })
+    await nextTick()
+    change.mockClear()
+    await wrapper.get('[data-testid="reset-filters"]').trigger('click')
+    expect(controller.filters.value).toEqual({})
+    expect(change).toHaveBeenCalledOnce()
+    wrapper.unmount()
+  })
+
   it('shows global context distinctly without sending a fabricated location filter', async () => {
     const { wrapper, controller } = setup('firewall', ref(false), 'global')
     expect(wrapper.find('[data-testid="location-context"]').text()).toContain('assets.filters.location.global')

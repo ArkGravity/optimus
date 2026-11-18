@@ -3,7 +3,7 @@
     <PageHeader :title="t('assets.resource.vpc.title')" />
     <AssetFilters class="u-mb-16" :controller="controller" @change="reload" />
     <a-alert v-if="errorMessage" type="error" :message="errorMessage" show-icon class="u-mb-16" />
-    <a-table :columns="columns" :data-source="items" :loading="controller.loading.value" :pagination="false" row-key="asset_key" :scroll="{ x: 'max-content' }" :custom-row="vpcRow">
+    <a-table :columns="columns" :data-source="items" :loading="controller.loading.value" :pagination="false" row-key="asset_key" :scroll="{ x: 'max-content' }">
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'native_id'"><RouterLink :to="{ name: 'assets.vpcs.detail', params: { id: record.asset_key } }" @click.stop>{{ record.native_id }}</RouterLink></template>
         <template v-else-if="column.key === 'account'">{{ record.cloud_account_name || record.cloud_account_id }}</template>
@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { computed, inject } from 'vue'
-import { RouterLink, useRouter } from 'vue-router'
+import { RouterLink } from 'vue-router'
 import type { AssetsResourceApi } from '@/api/assets/resource'
 import type { VPCSummary } from '@/types/assets'
 import PageHeader from '@/components/PageHeader.vue'
@@ -51,12 +51,4 @@ const columns = computed(() => [
   { key: 'last_seen_at', title: t('assets.resource.common.last_seen_at'), dataIndex: 'last_seen_at' },
   { key: 'deleted', title: '' },
 ])
-
-const router = useRouter()
-function vpcRow(record: VPCSummary) {
-  const goDetail = () => { void router.push({ name: 'assets.vpcs.detail', params: { id: record.asset_key } }) }
-  return { onClick: goDetail, onKeydown: (event: KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); goDetail() }
-  }, tabindex: 0, role: 'link' }
-}
 </script>
