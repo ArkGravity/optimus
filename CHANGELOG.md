@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.1.3 — release preparation
+
+- Fold Assets navigation into one Inventory workspace and keep lists
+  cross-account.
+- Collapse extra VPC, firewall, instance and database filters behind More
+  filters, and remove the Firewalls list inventory notice.
+- Add native GKE authentication through an existing GCP Service Account Cloud
+  Key, with additive migration 00020. See
+  [v0.1.3 notes](docs/releases/v0.1.3.md).
+
 ## v0.1.2 — 2026-11-12
 
 Published with verified Linux amd64/arm64 archives and images in both registries.

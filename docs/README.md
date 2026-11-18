@@ -9,6 +9,7 @@ Optimus ships its Go API and Vue web UI as one binary with PostgreSQL 17. Start 
 - [v0.1.0 release notes](releases/v0.1.0.md) — published 2026-11-06 (UTC)
 - [v0.1.1 release notes](releases/v0.1.1.md) — direct source release, 2026-11-12
 - [v0.1.2 release notes](releases/v0.1.2.md) — published 2026-11-12; verified binary archives and dual-registry images
+- [v0.1.3 release notes](releases/v0.1.3.md) — Inventory workspace and native GKE authentication
 - [Published releases](https://github.com/ArkGravity/optimus/releases)
 
 ## User guides
@@ -34,9 +35,9 @@ Use disposable resources for checklists and never publish credentials or provide
 
 - [Database transitions, backup and recovery](operations/recovery.md)
 - [Installation and configuration](installation.md)
-- [Native GKE connections](operations/gke.md) — source feature, not included in v0.1.2
+- [Native GKE connections](operations/gke.md) — included in v0.1.3
 
-Published v0.1.0–v0.1.2 use fresh head19 with 31 business tables plus Goose history. The GKE source feature appends 00020 and upgrades head19 in place. Historical 00022/00023/00028 databases cannot upgrade in place using renumbered files. Preserve the database backup and matching vault key before a separately authorized recreation. See the [recovery guide](operations/recovery.md), including historical acceptance and current operator reports.
+Published v0.1.0–v0.1.2 use fresh head19 with 31 business tables plus Goose history. v0.1.3 appends 00020 and upgrades head19 in place. Historical 00022/00023/00028 databases cannot upgrade in place using renumbered files. Preserve the database backup and matching vault key before a separately authorized recreation. See the [recovery guide](operations/recovery.md), including historical acceptance and current operator reports.
 
 ## Reference
 
