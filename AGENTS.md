@@ -17,19 +17,28 @@ Cross-check checkpoints with Git status/history.
 
 ## Status
 
-Current delivery (2026-11-18): **v0.1.3 is published and independently verified**
-as [GitHub Release `450441441`](https://github.com/ArkGravity/optimus/releases/tag/v0.1.3)
-at `2026-11-18T19:24:53Z`. Selected source is
-`29a966d63a05f17894b468f5ba4cd3ea0a6bcdc4`; immutable annotated tag object is
-`80b317f9cf96a770d044a19b348ca1f68af6bc13`. The user explicitly authorized the
-merge after CI passed, formal publication and the documentation update.
-Exact-source main CI `44376048952` passed all six jobs. Release workflow
-`44377265594` attempt 2 passed all four jobs; attempt 1's publisher failed the
+Current delivery (2026-11-18): **v0.1.4 is published and independently verified**
+as [GitHub Release `450662295`](https://github.com/ArkGravity/optimus/releases/tag/v0.1.4)
+at `2026-11-18T23:06:10Z`. Selected source is
+`9fabf263003c525668fe1f4b11da46026ce0f571`; immutable annotated tag object is
+`50c0dfe94077fa40618c3299ac897f9e35a9f7c2`. The operator confirmed Production
+acceptance, then authorized formal publication and the documentation update.
+Exact-source main CI `44414653841` passed all six jobs. Release workflow
+`44416004900` attempt 2 passed all four jobs; attempt 1's publisher failed the
 immediate draft read-back after the native-tested images were already published,
 and the retry reused those outputs. The tag, images and six attachment IDs were
 not replaced. Shared index:
+`sha256:097f499c8b1320c70aad6c71a9ed36beed29ac4910af525f4aaf943c7db236f7`.
+Full evidence: `docs/superpowers/plans/2026-11-18-v0.1.4-release.md`.
+
+Previous delivery (2026-11-18): **v0.1.3 is published and independently verified**
+as [GitHub Release `450441441`](https://github.com/ArkGravity/optimus/releases/tag/v0.1.3)
+at `2026-11-18T19:24:53Z`. Selected source is
+`29a966d63a05f17894b468f5ba4cd3ea0a6bcdc4`; immutable annotated tag object is
+`80b317f9cf96a770d044a19b348ca1f68af6bc13`. Exact-source main CI `44376048952`
+passed all six jobs. Release workflow `44377265594` attempt 2 passed all four
+jobs. Shared index:
 `sha256:1dd12328b678042339c9226b1ba52a3c3870892e98d9c09ebf7ba7f2f2edadea`.
-No Production deployment or application database operation was performed.
 Full evidence: `docs/superpowers/plans/2026-11-18-v0.1.3-release.md`.
 
 Current GKE delivery (2026-11-13): native GKE authentication on
@@ -425,7 +434,7 @@ Run from the repository root:
 - `make swag` / `make swagger-diff`
 - `make dump-perms` / `make perm-check`
 - `make migrate-up` / `make migrate-down`
-- `make migrate-new name=<snake_case>` (sequential numbering, next is 00021)
+- `make migrate-new name=<snake_case>` (sequential numbering, next is 00022)
 - `make seed`
 
 Frontend commands run from `web/`: `bun install`, `bun run dev`,
