@@ -28,7 +28,7 @@ Optimus 是可自托管的基础设施控制台，将访问管理、凭据保护
 
 推荐使用 Docker Compose 部署应用与 PostgreSQL，也可使用 Linux 二进制连接现有 PostgreSQL 17。运行发布包无需安装 Go 或 Bun。
 
-**[v0.1.2 已于 2026-11-12（UTC）正式发布](https://github.com/ArkGravity/optimus/releases/tag/v0.1.2)。** Linux amd64/arm64 二进制包、部署包及两个镜像仓库均已通过 [实际产物验证](https://github.com/ArkGravity/optimus/actions/runs/43303096304/attempts/2) 和发布后独立复核。请按 [安装指南](docs/installation_zh.md) 下载发行附件。
+**[v0.1.3 已于 2026-11-18（UTC）正式发布](https://github.com/ArkGravity/optimus/releases/tag/v0.1.3)。** Linux amd64/arm64 二进制包、部署包及两个镜像仓库均已通过 [实际产物验证](https://github.com/ArkGravity/optimus/actions/runs/44377265594) 和发布后独立复核。请按 [安装指南](docs/installation_zh.md) 下载发行附件。
 
 1. 按照 [Compose 或二进制安装指南](docs/installation_zh.md) 操作。共享环境启动前必须分别生成数据库密码、JWT 密钥和 vault 密钥。
 2. 本机打开 `http://127.0.0.1:8080`，远程访问使用反向代理配置的 HTTPS 地址。
@@ -46,7 +46,7 @@ Optimus 是可自托管的基础设施控制台，将访问管理、凭据保护
 
 ## 数据库基线
 
-已发布的 v0.1.0–v0.1.2 使用全新的 19 个迁移文件基线，包含 31 张业务表及 Goose 历史表。[原生 GKE 接入源码功能](docs/operations/gke.md)追加 00020，可在 head19 上原地升级。历史 00022、00023 或 00028 数据库无法使用重新编号的迁移原地升级。使用已有数据库前，请阅读 [数据库切换与恢复指南](docs/operations/recovery.md)。重建容器不会清除 PostgreSQL 持久化数据。
+已发布的 v0.1.0–v0.1.2 使用全新的 19 个迁移文件基线，包含 31 张业务表及 Goose 历史表。v0.1.3 追加 [迁移 00020](docs/operations/gke.md)，用于原生 GKE 接入，可在 head19 上原地升级。历史 00022、00023 或 00028 数据库无法使用重新编号的迁移原地升级。使用已有数据库前，请阅读 [数据库切换与恢复指南](docs/operations/recovery.md)。重建容器不会清除 PostgreSQL 持久化数据。
 
 ## 文档与开发
 
